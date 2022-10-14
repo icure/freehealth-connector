@@ -1,5 +1,7 @@
 package be.apb.gfddpp.common.medicationscheme.validator.schematron;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.commons.lang.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,10 +21,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class SchematronValidator {
    private static final Logger LOG = LogManager.getLogger(SchematronValidator.class);
-   private static volatile Map<String, Templates> cachedTemplates = new HashMap();
+   private static volatile Cache<String, Templates> cachedTemplates = Caffeine.newBuilder()
+           .expireAfterWrite(1, TimeUnit.MINUTES)
+           .maximumSize(100)
+           .build();;
    private static volatile TransformerFactory transformerFactory = TransformerFactory.newInstance();
    private Transformer transformer;
    private SchematronResult validationResult;
@@ -36,15 +42,19 @@ public class SchematronValidator {
    public static synchronized SchematronValidator getInstance(String schematronLocation) throws TransformerException {
       Validate.notEmpty(schematronLocation, "Location for the Schematron schema needs to be specified.");
       LOG.info(String.format("Retrieving validator for schematron file [%s]", schematronLocation));
-      if (!cachedTemplates.containsKey(schematronLocation)) {
+
+      Templates template = cachedTemplates.get(schematronLocation, key -> {
          LOG.debug(String.format("Template for schematron file [%s] not in cache, creating it", schematronLocation));
          Source dataSource = new StreamSource(SchematronValidator.class.getResource(schematronLocation).toString());
-         Templates templates = transformerFactory.newTemplates(dataSource);
-         cachedTemplates.put(schematronLocation, templates);
+         Templates templates = null;
+         try {
+            templates = transformerFactory.newTemplates(dataSource);
+         } catch (TransformerException e) {
+            LOG.error(String.format("Error creating template for schematron file [%s]", schematronLocation), e);
+         }
          LOG.debug(String.format("Template for schematron file [%s] created and cached", schematronLocation));
-      }
-
-      Templates template = cachedTemplates.get(schematronLocation);
+         return templates;
+      });
       return new SchematronValidator(template);
    }
 

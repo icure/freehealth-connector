@@ -182,6 +182,7 @@ dependencies {
 	compile group: 'net.sf.saxon', name: 'Saxon-HE', version: '9.9.1-5'
 	compile group: 'org.bitbucket.b_c', name: 'jose4j', version: '0.7.2'
 	compile group: 'com.fasterxml.jackson.module', name:'jackson-module-kotlin', version:'2.9.8'
+	implementation 'com.github.ben-manes.caffeine:caffeine:3.0.4'
 
 	implementation 'org.webjars:webjars-locator-core'
 	implementation 'org.webjars:sockjs-client:1.0.2'

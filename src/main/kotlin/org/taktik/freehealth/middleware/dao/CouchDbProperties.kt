@@ -29,6 +29,7 @@ class CouchDbProperties {
     var prefix = ""
 	var url = "http://127.0.0.1:5984"
     var dbName = "fhc-users"
+    var schematronDbName = "fhc-schematron"
 	var username :String? = "icure"
 	var password :String? = object : Any() {
         var t: Int = 0
