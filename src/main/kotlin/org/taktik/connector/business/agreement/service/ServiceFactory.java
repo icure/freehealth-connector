@@ -1,4 +1,4 @@
-package org.taktik.connector.business.mycarenet.agreement.service;
+package org.taktik.connector.business.agreement.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public final class ServiceFactory {
 
    public static GenericRequest getAgreementPort(SAMLToken token) throws TechnicalConnectorException {
       Validate.notNull(token, "Required parameter SAMLToken is null.");
-      return (new GenericRequest()).setEndpoint(config.getProperty("endpoint.agreement", "$uddi{uddi:ehealth-fgov-be:business:mycareneteagreement:v1}")).setCredential(token, TokenType.SAML).addDefaulHandlerChain();
+      return (new GenericRequest()).setEndpoint(config.getProperty(PROP_ENDPOINT_AGREEMENT, "$uddi{uddi:ehealth-fgov-be:business:mycareneteagreement:v1}")).setCredential(token, TokenType.SAML).addDefaulHandlerChain();
    }
 
    static {

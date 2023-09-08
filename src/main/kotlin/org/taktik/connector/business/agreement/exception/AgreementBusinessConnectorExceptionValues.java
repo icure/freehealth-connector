@@ -1,4 +1,4 @@
-package org.taktik.connector.business.mycarenet.agreement.exception;
+package org.taktik.connector.business.agreement.exception;
 
 public enum AgreementBusinessConnectorExceptionValues {
    PARAMETER_NULL("parameters.null", "This parameter is null : {0}");

@@ -1,4 +1,4 @@
-package org.taktik.connector.business.mycarenet.agreement.domain;
+package org.taktik.connector.business.agreement.domain;
 
 
 import be.fgov.ehealth.agreement.protocol.v1.ConsultAgreementRequest;

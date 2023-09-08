@@ -1,4 +1,4 @@
-package org.taktik.connector.business.mycarenet.agreement.domain;
+package org.taktik.connector.business.agreement.domain;
 
 import be.cin.encrypted.EncryptedKnownContent;
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationResult;

@@ -1,4 +1,4 @@
-package org.taktik.connector.business.mycarenet.agreement.exception;
+package org.taktik.connector.business.agreement.exception;
 
 import org.taktik.connector.technical.exception.ConnectorException;
 

@@ -1,4 +1,4 @@
-package org.taktik.connector.business.mycarenet.agreement.validator;
+package org.taktik.connector.business.agreement.validator;
 
 import be.fgov.ehealth.agreement.protocol.v1.AskAgreementRequest;
 import be.fgov.ehealth.agreement.protocol.v1.AskAgreementResponse;

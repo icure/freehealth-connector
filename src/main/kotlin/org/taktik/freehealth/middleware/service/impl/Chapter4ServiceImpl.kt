@@ -156,8 +156,6 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val drugsL
     private val freehealthChapter4Service: org.taktik.connector.business.chapterIV.service.ChapterIVService =
         org.taktik.connector.business.chapterIV.service.impl.ChapterIVServiceImpl(EhealthReplyValidatorImpl())
 
-    private var demandMessages: List<AbstractMessage> = ArrayList()
-    private var consultMessages: List<AbstractMessage> = ArrayList()
     private val chapter4XmlValidator: Chapter4XmlValidator = Chapter4XmlValidatorImpl()
     private val config = ConfigFactory.getConfigValidator(emptyList())
     private var configValidator = ConfigFactory.getConfigValidator(listOf(

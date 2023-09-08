@@ -1,4 +1,4 @@
-package org.taktik.connector.business.mycarenet.agreement.domain;
+package org.taktik.connector.business.agreement.domain;
 
 import be.cin.encrypted.BusinessContent;
 import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendRequestType;

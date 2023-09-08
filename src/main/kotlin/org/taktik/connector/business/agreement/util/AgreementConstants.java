@@ -1,4 +1,4 @@
-package org.taktik.connector.business.mycarenet.agreement.util;
+package org.taktik.connector.business.agreement.util;
 
 public final class AgreementConstants {
    public static final String PROJECT_IDENTIFIER = "agreement";
