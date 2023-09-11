@@ -1,0 +1,12 @@
+************************************************************
+* eHealth Business Mycarenet eAgreement ASYNC RELEASE NOTES    *
+************************************************************
+
+3.20.2 release (october 2020)
+  . Initial release
+   
+3.20.1 release (september 2020)
+   . internal release
+   
+3.20.0 release (september 2020)
+   . internal release
