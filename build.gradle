@@ -182,6 +182,7 @@ dependencies {
 	compile('joda-time:joda-time:2.9')
 	compile group: 'com.sun.xml.messaging.saaj', name: 'saaj-impl', version: '1.3.28'
 	compile('com.sun.xml.wss:xws-security:3.0')
+	compile('com.hazelcast:hazelcast:3.9.4')
 	compile('com.google.code.gson:gson:2.7')
 	compile('net.sf.dozer:dozer:5.5.1') //WTF... This must go away
 	compile group: 'ma.glasnost.orika', name: 'orika-core', version: '1.4.6'
