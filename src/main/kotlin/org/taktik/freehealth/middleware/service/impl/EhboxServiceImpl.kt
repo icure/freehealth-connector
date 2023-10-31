@@ -26,7 +26,6 @@ import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetMessageAcknowledgmentsS
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetMessagesListRequest
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.MessageRequestType
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.MoveMessageRequest
-import be.fgov.ehealth.ehbox.core.v3.BoxIdType
 import be.fgov.ehealth.errors.core.v1.LocalisedStringType
 import be.fgov.ehealth.errors.soa.v1.BusinessError
 import be.fgov.ehealth.errors.soa.v1.EnvironmentType
@@ -220,6 +219,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         passPhrase: String,
         boxId: String,
         limit: Int?,
+        skip: Int,
         alternateKeystores: List<AltKeystore>?
                              ): MessagesResponse {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -227,8 +227,8 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         val messagesListRequest = GetMessagesListRequest()
 
         messagesListRequest.source = boxId
-        messagesListRequest.startIndex = 1
-        messagesListRequest.endIndex = 100
+        messagesListRequest.startIndex = skip + 1
+        messagesListRequest.endIndex = skip + 100
 
         val result = mutableListOf<Message>()
         var status: StatusType?
