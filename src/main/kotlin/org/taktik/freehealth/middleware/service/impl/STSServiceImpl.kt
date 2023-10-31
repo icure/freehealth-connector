@@ -26,6 +26,7 @@ import com.google.common.cache.CacheLoader
 import com.hazelcast.core.IMap
 import com.hazelcast.core.ISet
 import org.apache.commons.logging.LogFactory
+import org.joda.time.DateTime
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import org.taktik.connector.technical.config.ConfigFactory
@@ -39,6 +40,7 @@ import org.taktik.connector.technical.service.sts.domain.SAMLAttribute
 import org.taktik.connector.technical.service.sts.domain.SAMLAttributeDesignator
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
+import org.taktik.connector.technical.service.sts.utils.SAMLConverter
 import org.taktik.connector.technical.service.sts.utils.SAMLHelper
 import org.taktik.connector.technical.utils.CertificateParser
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
@@ -85,12 +87,10 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
     override fun isAcceptance() = config.getProperty("endpoint.sts").contains("-acpt")
 
     override fun registerToken(tokenId: UUID, token: String, quality: String) {
-        val factory = DocumentBuilderFactory.newInstance()
-        val builder = factory.newDocumentBuilder()
-        val document = builder.parse(InputSource(StringReader(token)))
-        val assertion = document.documentElement
+        val assertion: Element = SAMLConverter.toElement(token)
+        val notOnOrAfterCondition: DateTime = SAMLHelper.getNotOnOrAfterCondition(assertion)
 
-        tokensMap[tokenId] = SamlTokenResult(tokenId, token, System.currentTimeMillis(), SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis, quality)
+        tokensMap[tokenId] = SamlTokenResult(tokenId, token, System.currentTimeMillis(), notOnOrAfterCondition.toInstant().millis, quality)
         log.info("tokensMap size: ${tokensMap.size}")
     }
 
