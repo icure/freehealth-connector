@@ -44,8 +44,9 @@ class STSController(private val stsService: STSService, private val ssoService: 
     @PostMapping("/keystore", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun uploadKeystore(@RequestParam file: MultipartFile) = UUIDType(stsService.uploadKeystore(file))
 
-    @GetMapping("/keystore/{keystoreId}/info", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun getKeystoreInfo(@PathVariable(name = "keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String) = stsService.getKeystoreInfo(keystoreId, passPhrase)
+    @GetMapping("/keystore/{keystoreId}/info/{quality}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun getKeystoreInfo(@PathVariable(name = "keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,  @PathVariable(name = "quality") quality: String) =
+        stsService.getKeystoreInfo(keystoreId, passPhrase, quality)
 
     @Deprecated("Please specify a quality")
     @GetMapping("/token", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])

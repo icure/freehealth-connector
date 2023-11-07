@@ -519,9 +519,9 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         }
     }
 
-    override fun getKeystoreInfo(keystoreId: UUID, passPhrase: String): CertificateInfo {
+    override fun getKeystoreInfo(keystoreId: UUID, passPhrase: String, quality: String?): CertificateInfo {
         val keystore = getKeyStore(keystoreId, passPhrase)
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, "doctor") //Shouldn't assume but won't be used
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, quality ?: "doctor") //Shouldn't assume but won't be used
         val parser = CertificateParser(credential.certificate)
 
         return CertificateInfo(credential.certificate.notAfter.time, parser.type, parser.id, parser.application, parser.owner)
