@@ -67,9 +67,8 @@ class STSController(private val stsService: STSService, private val ssoService: 
         stsService.requestToken(keystoreId, ssin, passPhrase, quality, previousTokenId, cbeNumber)
 
     @PostMapping("/token", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun registerToken(@RequestBody token: String, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam(required = false) quality: String?) {
+    fun registerToken(@RequestBody token: String, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam(required = false) quality: String?) : Boolean =
         stsService.registerToken(tokenId, token, quality ?: "doctor")
-    }
 
     @GetMapping("/keystore/check", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun checkKeystoreExist(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID) = stsService.checkIfKeystoreExist(keystoreId)

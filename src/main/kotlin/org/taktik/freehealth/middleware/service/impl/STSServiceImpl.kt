@@ -86,12 +86,23 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
 
     override fun isAcceptance() = config.getProperty("endpoint.sts").contains("-acpt")
 
-    override fun registerToken(tokenId: UUID, token: String, quality: String) {
-        val assertion: Element = SAMLConverter.toElement(token)
-        val notOnOrAfterCondition: DateTime = SAMLHelper.getNotOnOrAfterCondition(assertion)
+    override fun registerToken(tokenId: UUID, token: String, quality: String) : Boolean {
+        try {
+            val assertion: Element = SAMLConverter.toElement(token)
+            val notOnOrAfterCondition: DateTime = SAMLHelper.getNotOnOrAfterCondition(assertion)
+            tokensMap[tokenId] = SamlTokenResult(tokenId, token, System.currentTimeMillis(), notOnOrAfterCondition.toInstant().millis, quality)
+            log.info("registerToken: tokensMap size: ${tokensMap.size}")
 
-        tokensMap[tokenId] = SamlTokenResult(tokenId, token, System.currentTimeMillis(), notOnOrAfterCondition.toInstant().millis, quality)
-        log.info("registerToken: tokensMap size: ${tokensMap.size}")
+            return true
+        }
+        catch (e: TechnicalConnectorException) {
+            log.error("registerToken: ")
+            throw e
+        }
+        catch (e: NullPointerException) {
+            log.error("registerToken: Specified key or value is null")
+            throw e
+        }
     }
 
     override fun getSAMLToken(tokenId: UUID, keystoreId: UUID, passPhrase: String): SAMLToken? {
