@@ -112,6 +112,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         passPhrase: String,
         quality: String,
         tokenId: UUID?,
+        cbeNumber: String?,
         extraDesignators: List<Pair<String, String>>
     ): SamlTokenResult? {
         val now = System.currentTimeMillis()
@@ -140,6 +141,20 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         }
 
         val designators = when (quality) {
+            "institution" -> listOf(
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:enterprise:cbe-number",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:kbo-bce:organization:cbe-number",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin",
+                    "urn:be:fgov:identification-namespace"
+                )
+            )
             "medicalhouse" -> listOf(
                 SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:medicalhouse:nihii-number",
@@ -389,6 +404,23 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         } + extraDesignators.map { SAMLAttributeDesignator(it.second, it.first) }
 
         val attributes = when (quality) {
+            "institution" -> listOf(
+                SAMLAttribute(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:enterprise:cbe-number",
+                    "urn:be:fgov:identification-namespace",
+                    cbeNumber
+                ),
+                SAMLAttribute(
+                    "urn:be:fgov:kbo-bce:organization:cbe-number",
+                    "urn:be:fgov:identification-namespace",
+                    cbeNumber
+                ),
+                SAMLAttribute(
+                    "urn:be:fgov:person:ssin",
+                    "urn:be:fgov:identification-namespace",
+                    nihiiOrSsin
+                )
+            )
             "medicalhouse" -> listOf(
                 SAMLAttribute(
                     "urn:be:fgov:ehealth:1.0:medicalhouse:nihii-number",

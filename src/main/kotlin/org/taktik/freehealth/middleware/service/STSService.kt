@@ -38,6 +38,7 @@ interface STSService {
         passPhrase: String,
         quality: String = "doctor",
         tokenId: UUID? = null,
+        cbeNumber: String? = null,
         extraDesignators: List<Pair<String, String>> = listOf()
     ): SamlTokenResult?
 
