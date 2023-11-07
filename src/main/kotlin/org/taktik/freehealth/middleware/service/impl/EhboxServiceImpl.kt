@@ -29,6 +29,7 @@ import be.fgov.ehealth.ehbox.consultation.protocol.v3.MoveMessageRequest
 import be.fgov.ehealth.errors.core.v1.LocalisedStringType
 import be.fgov.ehealth.errors.soa.v1.BusinessError
 import be.fgov.ehealth.errors.soa.v1.EnvironmentType
+import org.apache.commons.logging.LogFactory
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.domain.ehbox.fault.FaultType
 import org.taktik.connector.business.ehbox.v3.builders.impl.ConsultationMessageBuilderImpl
@@ -70,12 +71,13 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         org.taktik.connector.business.ehbox.service.impl.EhboxServiceImpl(EhboxReplyValidatorImpl())
     private val consultationMessageBuilder = ConsultationMessageBuilderImpl()
     private val sendMessageBuilder = SendMessageBuilderImpl(KeyDepotManagerImpl.getInstance(keyDepotService))
-
+    private val log = LogFactory.getLog(this.javaClass)
 
     override fun getInfos(keystoreId: UUID, tokenId: UUID, passPhrase: String): BoxInfo {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
             ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
         val infoRequest = GetBoxInfoRequest()
+        log.info("getInfos: ")
         return try {
             freehealthEhboxService.getBoxInfo(samlToken, infoRequest).let { response ->
                 return BoxInfo(
@@ -106,6 +108,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
             this.messageId = messageId
             this.source = boxId
         }
+        log.info("getFullMessage: ")
         return try {
             freehealthEhboxService.getFullMessage(samlToken, messageRequest).let { msg ->
                 if (msg.status?.code == "100") try {
@@ -147,6 +150,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
                             ): MessageOperationResponse {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
             ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
+
         val request =
             sendMessageBuilder.buildMessage(
                 keystoreId,
@@ -162,6 +166,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
                 }
             }
         request.publicationId = UUID.randomUUID().toString().substring(0, 12)
+        log.info("sendMessage: ")
         return try {
             freehealthEhboxService.sendMessage(samlToken, request).let { sendMessageResponse ->
                 if (sendMessageResponse.status?.code == "100") MessageOperationResponse(success= true, messageId = sendMessageResponse.id) else MessageOperationResponse(false, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
@@ -185,6 +190,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
                             ): MessageOperationResponse {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
             ?: throw MissingTokenException("Cannot obtain token for Ehealth Box operations")
+
         val request =
             sendMessageBuilder.buildMessage(
                 keystoreId,
@@ -201,6 +207,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
                 }
             }
         request.publicationId = UUID.randomUUID().toString().substring(0, 12)
+        log.info("sendMessage2Ebox: ")
         return try {
             freehealthEhboxService.sendMessage2Ebox(samlToken, request).let { sendMessageResponse ->
                 if (sendMessageResponse.status?.code == "100") MessageOperationResponse(true) else MessageOperationResponse(false, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
@@ -232,6 +239,8 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
 
         val result = mutableListOf<Message>()
         var status: StatusType?
+
+        log.info("loadMessages: ")
 
         return try {
             while (true) {
@@ -293,6 +302,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         mmr.source = source
         mmr.destination = destination
         mmr.messageIds.addAll(messageIds)
+        log.info("moveMessages: ")
         return try {
             freehealthEhboxService.moveMessage(samlToken, mmr)
                 .let { moveMessageResult ->
@@ -319,6 +329,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
             this.startIndex = 1
             this.endIndex = 100
         }
+        log.info("getMessageAckStatus: ")
         return try {
             freehealthEhboxService.getMessageAcknowledgmentsStatusResponse(samlToken, asr)
                 .let { statusMessageResult ->
@@ -345,6 +356,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
         val mmr = be.fgov.ehealth.ehbox.consultation.protocol.v3.DeleteMessageRequest()
         mmr.source = source
         mmr.messageIds.addAll(messageIds)
+        log.info("deleteMessages: ")
         return try {
             freehealthEhboxService.deleteMessage(samlToken, mmr).let { deleteMessageResult ->
                 if (deleteMessageResult.status?.code == "100") MessageOperationResponse(true) else MessageOperationResponse(false, Error(deleteMessageResult.status?.code, deleteMessageResult.status?.messages?.joinToString(",")))
