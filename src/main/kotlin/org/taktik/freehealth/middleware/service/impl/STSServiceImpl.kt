@@ -91,7 +91,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val notOnOrAfterCondition: DateTime = SAMLHelper.getNotOnOrAfterCondition(assertion)
 
         tokensMap[tokenId] = SamlTokenResult(tokenId, token, System.currentTimeMillis(), notOnOrAfterCondition.toInstant().millis, quality)
-        log.info("tokensMap size: ${tokensMap.size}")
+        log.info("registerToken: tokensMap size: ${tokensMap.size}")
     }
 
     override fun getSAMLToken(tokenId: UUID, keystoreId: UUID, passPhrase: String): SAMLToken? {
@@ -510,11 +510,11 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             val samlTokenResult =
                 SamlTokenResult(randomUUID, samlToken, now, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis, quality)
             tokensMap[randomUUID] = samlTokenResult
-            log.info("tokensMap size: ${tokensMap.size}")
+            log.info("requestToken: tokensMap size: ${tokensMap.size}")
 
             samlTokenResult
         } catch (e: TechnicalConnectorException) {
-            log.info("STS token request failure: ${e.errorCode} : ${e.message} : ${e.stackTrace}")
+            log.info("requestToken: STS token request failure: ${e.errorCode} : ${e.message} : ${e.stackTrace}")
             currentToken // FIXME: should throw if no currentToken
         }
     }
@@ -528,9 +528,12 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
     }
 
     override fun checkTokenValid(tokenId: UUID): Boolean {
-        return tokensMap[tokenId]?.let {
+        val result = tokensMap[tokenId]?.let {
             (it.token?.length ?: 0) > 0 && (it.validity ?: 0) > Instant.now().toEpochMilli()
         } ?: false
+        log.info("checkTokenValid: result $result tokenmap size: ${tokensMap.size}")
+
+        return result;
     }
 
     override fun getHolderOfKeysEtk(credential: KeyStoreCredential, nihiiOrSsin: String?): EncryptionToken? {
@@ -562,7 +565,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
     override fun uploadKeystore(file: MultipartFile): UUID {
         val keystoreId = UUID.nameUUIDFromBytes(file.bytes)
         keystoresMap[keystoreId] = file.bytes
-        log.info("keystoresMap size: ${keystoresMap.size}")
+        log.info("uploadKeystore(MultipartFile): keystoresMap size: ${keystoresMap.size}")
 
         return keystoreId
     }
@@ -570,7 +573,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
     override fun uploadKeystore(data: ByteArray): UUID {
         val keystoreId = UUID.nameUUIDFromBytes(data)
         keystoresMap[keystoreId] = data
-        log.info("keystoresMap size: ${keystoresMap.size}")
+        log.info("uploadKeystore(ByteArray): keystoresMap size: ${keystoresMap.size}")
 
         return keystoreId
     }
@@ -588,7 +591,9 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
     }
 
     override fun checkIfKeystoreExist(keystoreId: UUID): Boolean {
-        return keystoresMap.get(keystoreId) != null
+        val result = keystoresMap.get(keystoreId) != null
+        log.info("checkIfKeystoreExist: result: $result keystoresMap size: ${keystoresMap.size}");
+        return result;
     }
 
 }
