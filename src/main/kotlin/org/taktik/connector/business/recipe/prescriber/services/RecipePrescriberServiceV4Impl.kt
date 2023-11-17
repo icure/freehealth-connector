@@ -13,6 +13,8 @@ import be.fgov.ehealth.recipe.protocol.v4.ListFeedbacksRequest
 import be.fgov.ehealth.recipe.protocol.v4.ListFeedbacksResponse
 import be.fgov.ehealth.recipe.protocol.v4.ListOpenRidsRequest
 import be.fgov.ehealth.recipe.protocol.v4.ListOpenRidsResponse
+import be.fgov.ehealth.recipe.protocol.v4.ListPrescriptionsRequest
+import be.fgov.ehealth.recipe.protocol.v4.ListPrescriptionsResponse
 import be.fgov.ehealth.recipe.protocol.v4.ListRidsHistoryRequest
 import be.fgov.ehealth.recipe.protocol.v4.ListRidsHistoryResponse
 import be.fgov.ehealth.recipe.protocol.v4.PutFeedbackFlagRequest
@@ -100,6 +102,13 @@ class RecipePrescriberServiceV4Impl : RecipePrescriberServiceV4 {
         callGenericWs(samlToken, credential, request, ListRidsHistoryResponse::class.java,
             "\"urn:be:fgov:ehealth:recipe:protocol:v4:listRidsHistory\""
         )
+
+    @Throws(IntegrationModuleException::class)
+    fun listPrescriptions(samlToken: SAMLToken, credential: Credential, request: ListPrescriptionsRequest) =
+        callGenericWs(samlToken, credential, request, ListPrescriptionsResponse::class.java,
+            "\"urn:be:fgov:ehealth:recipe:protocol:v4:ListPrescriptions\""
+        )
+
 
     private fun <T: StatusResponseType> callGenericWs(
         samlToken: SAMLToken,

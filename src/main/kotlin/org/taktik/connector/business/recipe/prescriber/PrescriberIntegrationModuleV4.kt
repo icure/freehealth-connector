@@ -1,5 +1,6 @@
 package org.taktik.connector.business.recipe.prescriber
 
+import be.fgov.ehealth.recipe.protocol.v4.ListPrescriptionsResult
 import be.recipe.services.prescriber.GetPrescriptionForPrescriberResult
 import be.recipe.services.prescriber.GetPrescriptionStatusResult
 import be.recipe.services.prescriber.ListOpenRidsParam
@@ -99,4 +100,12 @@ interface PrescriberIntegrationModuleV4 {
         vendorName: String? = null,
         packageVersion: String? = null
     ): ValidationPropertiesResult?
+
+    fun listPrescriptions(
+        samlToken: SAMLToken,
+        credential: KeyStoreCredential,
+        patientSsin: String,
+        vendorName: String? = null,
+        packageVersion: String? = null
+    ): ListPrescriptionsResult
 }
