@@ -118,7 +118,6 @@ import java.math.BigInteger
 import java.nio.charset.Charset
 import java.time.Instant
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutionException
@@ -176,6 +175,38 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         }
         return emptyList()
     }
+
+    override fun listPrescriptions(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        patientId: String
+    ): List<Prescription> {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+
+        val prescriptionsList = service.listPrescriptions(samlToken, credential, patientId)
+
+        return try {
+            prescriptionsList.partial.prescriptions.map {
+                Prescription(
+                    creationDate = it.date.toGregorianCalendar().time,
+                    encryptionKeyId = it.encryptionKey,
+                    rid = it.rid,
+                    patientId = patientId,
+                    prescriberId = it.prescriber?.id,
+                    visionByOthers = it.visionOtherPrescribers?.name
+                )
+            }
+        } catch (e: InterruptedException) {
+            log.error("Unexpected error", e)
+            emptyList()
+        }
+    }
+
 
     override fun listFeedbacks(keystoreId: UUID, tokenId: UUID, passPhrase: String): List<Feedback> {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")

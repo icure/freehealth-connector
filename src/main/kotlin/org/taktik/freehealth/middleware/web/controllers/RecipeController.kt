@@ -138,6 +138,25 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             patientId = patientId
         )
 
+    @GetMapping("/patient/all", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun listPrescriptionsByPatient(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam patientId: String,
+        @RequestParam(required = false) hcpQuality: String?,
+        @RequestParam(required = false) hcpSsin: String?,
+        @RequestParam(required = false) hcpName: String?
+    ): List<Prescription> =
+        recipeV4Service.listPrescriptions(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpNihii = hcpNihii,
+            patientId = patientId
+        )
+
     @PostMapping("/notify/{rid}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendNotification(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,

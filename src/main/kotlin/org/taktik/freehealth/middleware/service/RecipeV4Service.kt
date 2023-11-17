@@ -157,4 +157,12 @@ interface RecipeV4Service {
         hcpQuality: String,
         expirationDate: LocalDateTime?
     ): org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
+
+    fun listPrescriptions(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        patientId: String
+    ): List<Prescription>
 }

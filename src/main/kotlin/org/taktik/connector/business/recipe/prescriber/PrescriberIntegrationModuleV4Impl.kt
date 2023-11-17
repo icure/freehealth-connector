@@ -12,6 +12,8 @@ import be.fgov.ehealth.recipe.protocol.v4.GetPrescriptionStatusRequest
 import be.fgov.ehealth.recipe.protocol.v4.GetValidationPropertiesRequest
 import be.fgov.ehealth.recipe.protocol.v4.ListFeedbacksRequest
 import be.fgov.ehealth.recipe.protocol.v4.ListOpenRidsRequest
+import be.fgov.ehealth.recipe.protocol.v4.ListPrescriptionsRequest
+import be.fgov.ehealth.recipe.protocol.v4.ListPrescriptionsResult
 import be.fgov.ehealth.recipe.protocol.v4.ListRidsHistoryRequest
 import be.fgov.ehealth.recipe.protocol.v4.PutFeedbackFlagRequest
 import be.fgov.ehealth.recipe.protocol.v4.PutVisionForPrescriberRequest
@@ -27,6 +29,7 @@ import be.recipe.services.prescriber.ListFeedbacksParam
 import be.recipe.services.prescriber.ListFeedbacksResult
 import be.recipe.services.prescriber.ListOpenRidsParam
 import be.recipe.services.prescriber.ListOpenRidsResult
+import be.recipe.services.prescriber.ListPrescriptionsParam
 import be.recipe.services.prescriber.ListRidsHistoryParam
 import be.recipe.services.prescriber.ListRidsHistoryResult
 import be.recipe.services.prescriber.PutVisionParam
@@ -507,6 +510,47 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
     } catch (t: Throwable) {
         Exceptionutils.errorHandler(t)
     }
+
+    override fun listPrescriptions(
+        samlToken: SAMLToken,
+        credential: KeyStoreCredential,
+        patientSsin: String,
+        vendorName: String?,
+        packageVersion: String?
+    ): ListPrescriptionsResult = try {
+        val helper = MarshallerHelper(ListPrescriptionsParam::class.java, ListPrescriptionsParam::class.java)
+
+        val param = ListPrescriptionsParam().apply {
+            this.patientId = patientSsin
+            this.symmKey = recipeSymmKey.encoded
+        }
+        val request = ListPrescriptionsRequest().apply {
+            this.securedListPrescriptionsRequest = createSecuredContentType(
+                sealRequest(
+                    getCrypto(credential),
+                    etkHelper.recipe_ETK[0] as EncryptionToken,
+                    helper.toXMLByteArray(param)
+                )
+            )
+            this.programId = "${vendorName ?: "freehealth-connector"}/${packageVersion ?: ""}"
+            this.issueInstant = DateTime()
+            this.id = "id" + UUID.randomUUID().toString()
+        }
+        try {
+            recipePrescriberServiceV4.listPrescriptions(samlToken, credential, request).let { response ->
+                MarshallerHelper(
+                    ListPrescriptionsResult::class.java,
+                    Any::class.java
+                ).unsealWithSymmKey(response.securedListPrescriptionsResponse.securedContent, recipeSymmKey)
+                    .also { checkStatus(it) }
+            }
+        } catch (cte: ClientTransportException) {
+            throw IntegrationModuleException(I18nHelper.getLabel("error.connection.executor"), cte)
+        }
+    } catch (t: Throwable) {
+        Exceptionutils.errorHandler(t)
+    }
+
 
     override fun setVision(
         samlToken: SAMLToken,
