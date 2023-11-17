@@ -11,5 +11,6 @@ steps:
         args: [ '-c', './gradlew :dockerize -x test -PdockerPush' ]
 
 options:
-    machineType: 'N1_HIGHCPU_32'
+    pool:
+        name: "projects/taktik-dev/locations/europe-west1/workerPools/taktik-gcb-large-pool"
 timeout: 2700s
