@@ -106,7 +106,7 @@ class RecipePrescriberServiceV4Impl : RecipePrescriberServiceV4 {
     @Throws(IntegrationModuleException::class)
     fun listPrescriptions(samlToken: SAMLToken, credential: Credential, request: ListPrescriptionsRequest) =
         callGenericWs(samlToken, credential, request, ListPrescriptionsResponse::class.java,
-            "\"urn:be:fgov:ehealth:recipe:protocol:v4:ListPrescriptions\""
+            "\"urn:be:fgov:ehealth:recipe:protocol:v4:listPrescriptions\""
         )
 
 
