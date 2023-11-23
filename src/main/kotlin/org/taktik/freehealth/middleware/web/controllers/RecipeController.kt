@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import be.recipe.services.core.PrescriptionStatus
 import be.recipe.services.core.VisionOtherPrescribers
 import be.recipe.services.prescriber.PutVisionResult
 import org.springframework.http.MediaType
@@ -148,7 +149,16 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
         @RequestParam patientId: String,
+        @RequestParam(required = false) prescriberId: String?,
+        @RequestParam(required = false) from: Long?,
+        @RequestParam(required = false) toInclusive: Long?,
+        @RequestParam(required = false) statuses: String?,
+        @RequestParam(required = false) expiringFrom: Long?,
+        @RequestParam(required = false) expiringToInclusive: Long?,
         @RequestParam(required = false) hcpQuality: String?,
+        @RequestParam(required = false) pageYear: Int?,
+        @RequestParam(required = false) pageMonth: Int?,
+        @RequestParam(required = false) pageNumber: Long?,
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?
     ): List<Prescription> =
@@ -157,7 +167,16 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             tokenId = tokenId,
             passPhrase = passPhrase,
             hcpNihii = hcpNihii,
-            patientId = patientId
+            patientId = patientId,
+            prescriberId = prescriberId,
+            from = from,
+            toInclusive = toInclusive,
+            statuses = statuses?.let { it.split(",").map { PrescriptionStatus.fromValue(it) } },
+            expiringFrom = expiringFrom,
+            expiringToInclusive = expiringToInclusive,
+            pageYear = pageYear,
+            pageMonth = pageMonth,
+            pageNumber = pageNumber
         )
 
     @PostMapping("/notify/{rid}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])

@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.service.impl
 
+import be.recipe.services.core.PrescriptionStatus
 import be.recipe.services.core.VisionOtherPrescribers
 import be.recipe.services.prescriber.GetPrescriptionForPrescriberResult
 import be.recipe.services.prescriber.GetPrescriptionStatusResult
@@ -182,14 +183,36 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         tokenId: UUID,
         passPhrase: String,
         hcpNihii: String,
-        patientId: String
+        patientId: String,
+        prescriberId: String?,
+        from: Long?,
+        toInclusive: Long?,
+        statuses: List<PrescriptionStatus>?,
+        expiringFrom: Long?,
+        expiringToInclusive: Long?,
+        pageYear: Int?,
+        pageMonth: Int?,
+        pageNumber: Long?
     ): List<Prescription> {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
 
-        val prescriptionsList = service.listPrescriptions(samlToken, credential, patientId)
+        val prescriptionsList = service.listPrescriptions(
+            samlToken,
+            credential,
+            patientId,
+            prescriberId,
+            from,
+            toInclusive,
+            statuses,
+            expiringFrom,
+            expiringToInclusive,
+            pageYear,
+            pageMonth,
+            pageNumber
+        )
 
         return try {
             prescriptionsList.partial.prescriptions.map {

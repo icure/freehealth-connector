@@ -19,6 +19,9 @@ import be.fgov.ehealth.recipe.protocol.v4.PutFeedbackFlagRequest
 import be.fgov.ehealth.recipe.protocol.v4.PutVisionForPrescriberRequest
 import be.fgov.ehealth.recipe.protocol.v4.RevokePrescriptionRequest
 import be.fgov.ehealth.recipe.protocol.v4.SendNotificationRequest
+import be.recipe.services.core.Between
+import be.recipe.services.core.Page
+import be.recipe.services.core.PrescriptionStatus
 import be.recipe.services.core.VisionOtherPrescribers
 import be.recipe.services.prescriber.CreatePrescriptionParam
 import be.recipe.services.prescriber.CreatePrescriptionResult
@@ -47,6 +50,7 @@ import com.sun.xml.internal.ws.client.ClientTransportException
 import org.apache.commons.lang3.StringUtils
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
+import org.taktik.connector.business.domain.kmehr.v20190301.makeXMLGregorianCalendarFromFuzzyLong
 import org.taktik.connector.business.recipe.common.AbstractIntegrationModule
 import org.taktik.connector.business.recipe.prescriber.domain.ListFeedbackItem
 import org.taktik.connector.business.recipe.prescriber.services.RecipePrescriberServiceV4Impl
@@ -77,6 +81,8 @@ import org.w3c.dom.NodeList
 import org.xml.sax.SAXException
 import java.io.ByteArrayInputStream
 import java.io.IOException
+import java.math.BigInteger
+import java.math.BigInteger.ZERO
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -517,6 +523,15 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
         samlToken: SAMLToken,
         credential: KeyStoreCredential,
         patientSsin: String,
+        prescriberId: String?,
+        from: Long?,
+        toInclusive: Long?,
+        statuses: List<PrescriptionStatus>?,
+        expiringFrom: Long?,
+        expiringToInclusive: Long?,
+        pageYear: Int?,
+        pageMonth: Int?,
+        pageNumber: Long?,
         vendorName: String?,
         packageVersion: String?
     ): ListPrescriptionsResult = try {
@@ -525,6 +540,27 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
         val param = ListPrescriptionsParam().apply {
             this.patientId = patientSsin
             this.symmKey = recipeSymmKey.encoded
+            this.between = if (from != null || toInclusive != null) {
+                Between().apply {
+                    this.from = makeXMLGregorianCalendarFromFuzzyLong(from)
+                    this.toInclusive = makeXMLGregorianCalendarFromFuzzyLong(toInclusive)
+                }
+            } else null
+            this.status = statuses?.takeIf { it.isNotEmpty() }?.let { ListPrescriptionsParam.Status(statuses) }
+            this.expiringBetween = if (expiringFrom != null || expiringToInclusive != null) {
+                Between().apply {
+                    this.from = makeXMLGregorianCalendarFromFuzzyLong(expiringFrom)
+                    this.toInclusive = makeXMLGregorianCalendarFromFuzzyLong(expiringToInclusive)
+                }
+            } else null
+            this.prescriberId = prescriberId
+            this.page = if (pageYear != null || pageMonth != null || pageNumber != null) {
+                Page().apply {
+                    this.month = pageMonth ?: 1
+                    this.year = pageYear ?: 2000
+                    this.pageNumber = pageNumber?.let { BigInteger.valueOf(it) }
+                }
+            } else null
         }
         val request = ListPrescriptionsRequest().apply {
             this.securedListPrescriptionsRequest = createSecuredContentType(

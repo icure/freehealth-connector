@@ -289,6 +289,11 @@ public class ListPrescriptionsParam {
            "statuses"
    })
    public static class Status {
+      public Status() {}
+
+      public Status(List<PrescriptionStatus> statuses) {
+         this.statuses = statuses;
+      }
 
       @XmlElement(name = "status", required = true)
       protected List<PrescriptionStatus> statuses;

@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.service
 
+import be.recipe.services.core.PrescriptionStatus
 import be.recipe.services.core.VisionOtherPrescribers
 import be.recipe.services.prescriber.GetPrescriptionStatusResult
 import be.recipe.services.prescriber.ListRidsHistoryResult
@@ -166,6 +167,15 @@ interface RecipeV4Service {
         tokenId: UUID,
         passPhrase: String,
         hcpNihii: String,
-        patientId: String
+        patientId: String,
+        prescriberId: String?,
+        from: Long?,
+        toInclusive: Long?,
+        statuses: List<PrescriptionStatus>?,
+        expiringFrom: Long?,
+        expiringToInclusive: Long?,
+        pageYear: Int?,
+        pageMonth: Int?,
+        pageNumber: Long?
     ): List<Prescription>
 }
