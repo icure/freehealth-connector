@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.service
 
+import be.recipe.services.core.VisionOtherPrescribers
 import be.recipe.services.prescriber.GetPrescriptionStatusResult
 import be.recipe.services.prescriber.ListRidsHistoryResult
 import be.recipe.services.prescriber.PutVisionResult
@@ -65,6 +66,7 @@ interface RecipeV4Service {
         vendorEmail: String? = null,
         vendorPhone: String? = null,
         vision: String? = null,
+        visionOthers: VisionOtherPrescribers? = null,
         expirationDate: LocalDateTime? = null,
         lang: String?
     ): Prescription
@@ -116,7 +118,8 @@ interface RecipeV4Service {
         tokenId: UUID,
         passPhrase: String,
         rid: String,
-        vision: String
+        vision: String,
+        visionOthers: VisionOtherPrescribers?
     ): PutVisionResult
 
     fun listRidsHistory(

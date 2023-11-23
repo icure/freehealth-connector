@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.service.impl
 
+import be.recipe.services.core.VisionOtherPrescribers
 import be.recipe.services.prescriber.GetPrescriptionForPrescriberResult
 import be.recipe.services.prescriber.GetPrescriptionStatusResult
 import be.recipe.services.prescriber.ListRidsHistoryResult
@@ -310,12 +311,19 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
     }
 
 
-    override fun setVision(keystoreId: UUID, tokenId: UUID, passPhrase: String, rid: String, vision: String): PutVisionResult {
+    override fun setVision(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        rid: String,
+        vision: String,
+        visionOthers: VisionOtherPrescribers?
+    ): PutVisionResult {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
-        return service.setVision(samlToken, credential, rid, vision)
+        return service.setVision(samlToken, credential, rid, vision, visionOthers)
     }
 
     override fun updateFeedbackFlag(
@@ -354,6 +362,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         vendorEmail: String?,
         vendorPhone: String?,
         vision: String?,
+        visionOthers: VisionOtherPrescribers?,
         expirationDate: LocalDateTime?,
         lang: String?
     ): Prescription {
@@ -389,8 +398,8 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
             if (unconstrainedDate.isAfter(limitDate)) limitDate else unconstrainedDate,
             prescription,
             vision,
-            vendorName ?: "phyMedispringTopaz",
-            packageVersion ?: "1.0-freehealth-connector"
+            vendorName = vendorName ?: "phyMedispringTopaz",
+            packageVersion = packageVersion ?: "1.0-freehealth-connector"
         )
 
         val result = Prescription(Date(), "", prescriptionId, false, null, false, ConnectorXmlUtils.toString(m))

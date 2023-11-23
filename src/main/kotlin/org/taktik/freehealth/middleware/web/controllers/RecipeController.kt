@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import be.recipe.services.core.VisionOtherPrescribers
 import be.recipe.services.prescriber.PutVisionResult
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -78,6 +79,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             vendorEmail = prescription.vendorEmail,
             vendorPhone = prescription.vendorPhone,
             vision = prescription.vision,
+            visionOthers = prescription.visionOthers?. let { VisionOtherPrescribers.fromValue(it) },
             expirationDate = prescription.expirationDate?.let {FuzzyValues.getLocalDateTime(it)},
             lang = prescription.lang
         )
@@ -115,6 +117,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             vendorEmail = prescription.vendorEmail,
             vendorPhone = prescription.vendorPhone,
             vision = prescription.vision,
+            visionOthers = prescription.visionOthers?. let { VisionOtherPrescribers.fromValue(it) },
             expirationDate = prescription.expirationDate?.let {FuzzyValues.getLocalDateTime(it)},
             lang = prescription.lang
         )
@@ -245,13 +248,15 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable rid: String,
-        @RequestParam vision: String
+        @RequestParam vision: String,
+        @RequestParam(required = false) visionOthers: String? //open, locked, gmd_prescriber
     ): PutVisionResult = recipeV4Service.setVision(
         keystoreId = keystoreId,
         tokenId = tokenId,
         passPhrase = passPhrase,
         rid = rid,
-        vision = vision
+        vision = vision,
+        visionOthers = visionOthers?.let { VisionOtherPrescribers.fromValue(it) }
     )
 
     @GetMapping("/prescription/{rid}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])

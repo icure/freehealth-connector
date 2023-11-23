@@ -19,6 +19,7 @@ import be.fgov.ehealth.recipe.protocol.v4.PutFeedbackFlagRequest
 import be.fgov.ehealth.recipe.protocol.v4.PutVisionForPrescriberRequest
 import be.fgov.ehealth.recipe.protocol.v4.RevokePrescriptionRequest
 import be.fgov.ehealth.recipe.protocol.v4.SendNotificationRequest
+import be.recipe.services.core.VisionOtherPrescribers
 import be.recipe.services.prescriber.CreatePrescriptionParam
 import be.recipe.services.prescriber.CreatePrescriptionResult
 import be.recipe.services.prescriber.GetPrescriptionForPrescriberParam
@@ -207,6 +208,7 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
         expirationDate: LocalDateTime,
         prescription: ByteArray,
         visibility: String?,
+        visionOthers: VisionOtherPrescribers?,
         vendorName: String?,
         packageVersion: String?
     ): String = try {
@@ -239,7 +241,7 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
             this.patientId = patientSsin
             this.expirationDate = expDateAsString
             this.vision = visibility
-            this.prescriberId = nihii
+            this.visionOtherPrescribers = visionOthers
         }
         val request = CreatePrescriptionRequest().apply {
             this.securedCreatePrescriptionRequest = createSecuredContentType(
@@ -557,6 +559,7 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
         credential: KeyStoreCredential,
         rid: String,
         vision: String,
+        visionOthers: VisionOtherPrescribers?,
         vendorName: String?,
         packageVersion: String?
     ): PutVisionResult = try {
@@ -568,6 +571,7 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
             this.rid = rid
             this.vision = vision
             this.symmKey = recipeSymmKey.encoded
+            this.visionOtherPrescribers = visionOthers
         }
 
         val request = PutVisionForPrescriberRequest().apply {
