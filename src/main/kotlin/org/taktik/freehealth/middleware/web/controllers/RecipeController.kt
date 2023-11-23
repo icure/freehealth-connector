@@ -155,10 +155,10 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam(required = false) statuses: String?,
         @RequestParam(required = false) expiringFrom: Long?,
         @RequestParam(required = false) expiringToInclusive: Long?,
-        @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) pageYear: Int?,
         @RequestParam(required = false) pageMonth: Int?,
         @RequestParam(required = false) pageNumber: Long?,
+        @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?
     ): List<Prescription> =
