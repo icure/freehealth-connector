@@ -1,9 +1,9 @@
 package org.taktik.connector.business.recipe.prescriber
 
 import be.fgov.ehealth.recipe.protocol.v4.ListPrescriptionsResult
+import be.recipe.services.core.VisionOtherPrescribers
 import be.recipe.services.prescriber.GetPrescriptionForPrescriberResult
 import be.recipe.services.prescriber.GetPrescriptionStatusResult
-import be.recipe.services.prescriber.ListOpenRidsParam
 import be.recipe.services.prescriber.ListOpenRidsResult
 import be.recipe.services.prescriber.ListRidsHistoryResult
 import be.recipe.services.prescriber.PutVisionResult
@@ -13,7 +13,6 @@ import be.recipe.services.prescriber.ValidationPropertiesResult
 import org.taktik.connector.business.recipe.prescriber.domain.ListFeedbackItem
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
-import java.security.KeyStore
 import java.time.LocalDateTime
 
 
@@ -37,6 +36,7 @@ interface PrescriberIntegrationModuleV4 {
         expirationDate: LocalDateTime = LocalDateTime.now().plusMonths(3),
         prescription: ByteArray,
         visibility: String? = null,
+        visionOthers: VisionOtherPrescribers? = null,
         vendorName: String? = null,
         packageVersion: String? = null
     ): String?
@@ -63,6 +63,7 @@ interface PrescriberIntegrationModuleV4 {
         credential: KeyStoreCredential,
         rid: String,
         vision: String,
+        visionOthers: VisionOtherPrescribers?,
         vendorName: String? = null,
         packageVersion: String? = null
     ): PutVisionResult?
