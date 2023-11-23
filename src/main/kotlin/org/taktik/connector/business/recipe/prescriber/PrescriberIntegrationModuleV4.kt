@@ -1,6 +1,7 @@
 package org.taktik.connector.business.recipe.prescriber
 
 import be.fgov.ehealth.recipe.protocol.v4.ListPrescriptionsResult
+import be.recipe.services.core.PrescriptionStatus
 import be.recipe.services.core.VisionOtherPrescribers
 import be.recipe.services.prescriber.GetPrescriptionForPrescriberResult
 import be.recipe.services.prescriber.GetPrescriptionStatusResult
@@ -106,6 +107,15 @@ interface PrescriberIntegrationModuleV4 {
         samlToken: SAMLToken,
         credential: KeyStoreCredential,
         patientSsin: String,
+        prescriberId: String? = null,
+        from: Long? = null,
+        toInclusive: Long? = null,
+        statuses: List<PrescriptionStatus>? = null,
+        expiringFrom: Long? = null,
+        expiringToInclusive: Long? = null,
+        pageYear: Int? = null,
+        pageMonth: Int? = null,
+        pageNumber: Long? = null,
         vendorName: String? = null,
         packageVersion: String? = null
     ): ListPrescriptionsResult
