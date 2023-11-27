@@ -26,7 +26,7 @@ import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationM
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.domain.recipe.CompoundPrescription
 import org.taktik.freehealth.middleware.domain.recipe.Feedback
-import org.taktik.freehealth.middleware.domain.recipe.Prescription
+import org.taktik.freehealth.middleware.domain.recipe.PrescriptionSummary
 import org.taktik.freehealth.middleware.dto.HealthcareParty
 import org.taktik.freehealth.middleware.service.impl.examples.PrescriptionExample
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils
@@ -170,7 +170,7 @@ class RecipeStories {
         assertThat(createdPrescription1.rid, not(equalTo(createdPrescription2.rid)))
     }
 
-    fun prescription_createListOpenByPatient_ridInList(prescription: PrescriptionExample): Prescription {
+    fun prescription_createListOpenByPatient_ridInList(prescription: PrescriptionExample): PrescriptionSummary {
         val createdPrescription = createPrescription(prescription)
         val openPrescriptions = listOpenPrescriptionsByPatient(prescription.patient.ssin!!)
         assumeThat("cannot find back ${createdPrescription.rid} in open prescriptions: list is empty", openPrescriptions.size, greaterThan(0))
@@ -246,7 +246,7 @@ class RecipeStories {
         return recipeService.getPrescriptionMessage(keystoreId!!, tokenId!!, passPhrase!!, nihii!!, rid)
     }
 
-    private fun createPrescription(prescription: PrescriptionExample, notification: String? = null, feedbackRequested: Boolean = false): Prescription {
+    private fun createPrescription(prescription: PrescriptionExample, notification: String? = null, feedbackRequested: Boolean = false): PrescriptionSummary {
         val executorId = null
         val createdPrescription = recipeService.createPrescription(
             keystoreId!!,
@@ -268,7 +268,7 @@ class RecipeStories {
         return createdPrescription
     }
 
-    private fun listOpenPrescriptionsByPatient(patientSsin: String): List<Prescription> {
+    private fun listOpenPrescriptionsByPatient(patientSsin: String): List<PrescriptionSummary> {
         return recipeService.listOpenPrescriptions(keystoreId!!, tokenId!!, passPhrase!!, nihii!!, patientSsin)
     }
 
