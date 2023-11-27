@@ -102,7 +102,7 @@ import org.taktik.freehealth.middleware.dao.CodeDao
 import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.domain.recipe.Feedback
 import org.taktik.freehealth.middleware.domain.recipe.Medication
-import org.taktik.freehealth.middleware.domain.recipe.Prescription
+import org.taktik.freehealth.middleware.domain.recipe.PrescriptionSummary
 import org.taktik.freehealth.middleware.domain.recipe.PrescriptionFullWithFeedback
 import org.taktik.freehealth.middleware.drugs.dto.MppId
 import org.taktik.freehealth.middleware.drugs.logic.DrugsLogic
@@ -145,7 +145,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         passPhrase: String,
         hcpNihii: String,
         patientId: String
-    ): List<Prescription> {
+    ): List<PrescriptionSummary> {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
@@ -161,7 +161,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
                 passPhrase
             ) }
             val futures = es.invokeAll<GetPrescriptionForPrescriberResult>(ridList.prescriptions.map { rid -> Callable<GetPrescriptionForPrescriberResult> { ridCache[rid, { service.getPrescription(samlToken, credential, hcpNihii, rid) }] } })
-            val result = futures.map { f -> f.get() }.map { r -> Prescription(r.creationDate.time, r.encryptionKeyId, r.rid, r.feedbackAllowed, r.patientId) }
+            val result = futures.map { f -> f.get() }.map { r -> PrescriptionSummary(r.creationDate.time, r.encryptionKeyId, r.rid, r.feedbackAllowed, r.patientId) }
 
             try {
                 for (d in getFeedback.get()) {
@@ -375,7 +375,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         visionOthers: VisionOtherPrescribers?,
         expirationDate: LocalDateTime?,
         lang: String?
-    ): Prescription {
+    ): PrescriptionSummary {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
@@ -412,7 +412,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
             packageVersion = packageVersion ?: "1.0-freehealth-connector"
         )
 
-        val result = Prescription(Date(), "", prescriptionId, false, null, false, ConnectorXmlUtils.toString(m))
+        val result = PrescriptionSummary(Date(), "", prescriptionId, false, null, false, ConnectorXmlUtils.toString(m))
 
         return result
     }
