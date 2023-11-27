@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.service
 
+import be.fgov.ehealth.recipe.protocol.v4.ListPrescriptionsResult
 import be.recipe.services.core.PrescriptionStatus
 import be.recipe.services.core.VisionOtherPrescribers
 import be.recipe.services.prescriber.GetPrescriptionStatusResult
@@ -177,5 +178,5 @@ interface RecipeV4Service {
         pageYear: Int?,
         pageMonth: Int?,
         pageNumber: Long?
-    ): List<Prescription>
+    ): ListPrescriptionsResult
 }

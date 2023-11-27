@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import be.fgov.ehealth.recipe.protocol.v4.ListPrescriptionsResult
 import be.recipe.services.core.PrescriptionStatus
 import be.recipe.services.core.VisionOtherPrescribers
 import be.recipe.services.prescriber.PutVisionResult
@@ -161,7 +162,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?
-    ): List<Prescription> =
+    ): ListPrescriptionsResult =
         recipeV4Service.listPrescriptions(
             keystoreId = keystoreId,
             tokenId = tokenId,
