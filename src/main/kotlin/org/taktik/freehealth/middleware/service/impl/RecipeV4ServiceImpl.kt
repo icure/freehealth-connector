@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.service.impl
 
+import be.fgov.ehealth.recipe.protocol.v4.ListPrescriptionsResult
 import be.recipe.services.core.PrescriptionStatus
 import be.recipe.services.core.VisionOtherPrescribers
 import be.recipe.services.prescriber.GetPrescriptionForPrescriberResult
@@ -193,7 +194,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         pageYear: Int?,
         pageMonth: Int?,
         pageNumber: Long?
-    ): List<Prescription> {
+    ): ListPrescriptionsResult {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
@@ -214,21 +215,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
             pageNumber
         )
 
-        return try {
-            prescriptionsList.partial.prescriptions.map {
-                Prescription(
-                    creationDate = it.date.toGregorianCalendar().time,
-                    encryptionKeyId = it.encryptionKey,
-                    rid = it.rid,
-                    patientId = patientId,
-                    prescriberId = it.prescriber?.id,
-                    visionByOthers = it.visionOtherPrescribers?.name
-                )
-            }
-        } catch (e: InterruptedException) {
-            log.error("Unexpected error", e)
-            emptyList()
-        }
+        return prescriptionsList
     }
 
 
