@@ -31,7 +31,7 @@ import java.util.Date
  * Time: 10:07
  * To change this template use File | Settings | File Templates.
  */
-open class PrescriptionSummary(
+open class Prescription(
     var creationDate: Date,
     var encryptionKeyId: String,
     var rid: String,

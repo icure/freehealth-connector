@@ -43,4 +43,4 @@ class PrescriptionFullWithFeedback(
     var deliverableTo: Date? = null,
     var feedbacks: List<Feedback> = emptyList(),
     var fullAuthorName: String? = null
-) : PrescriptionSummary(creationDate, encryptionKeyId, rid, isFeedbackAllowed, patientId, notificationWasSent)
+) : Prescription(creationDate, encryptionKeyId, rid, isFeedbackAllowed, patientId, notificationWasSent)

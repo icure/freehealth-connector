@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeKmehrmessageType
 import org.taktik.freehealth.middleware.domain.recipe.Feedback
-import org.taktik.freehealth.middleware.domain.recipe.PrescriptionSummary
+import org.taktik.freehealth.middleware.domain.recipe.Prescription
 import org.taktik.freehealth.middleware.domain.recipe.PrescriptionFullWithFeedback
 import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.recipe.PrescriptionRequest
@@ -59,7 +59,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?,
         @RequestBody prescription: PrescriptionRequest
-    ): PrescriptionSummary =
+    ): Prescription =
         recipeV4Service.createPrescription(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -97,7 +97,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?,
         @RequestBody prescription: PrescriptionRequest
-    ): PrescriptionSummary =
+    ): Prescription =
         recipeV4Service.createPrescription(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -134,7 +134,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?
-    ): List<PrescriptionSummary> =
+    ): List<Prescription> =
         recipeV4Service.listOpenPrescriptions(
             keystoreId = keystoreId,
             tokenId = tokenId,
