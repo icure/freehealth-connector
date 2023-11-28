@@ -11,7 +11,7 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.domain.recipe.Medication
-import org.taktik.freehealth.middleware.domain.recipe.PrescriptionSummary
+import org.taktik.freehealth.middleware.domain.recipe.Prescription
 import org.taktik.freehealth.middleware.dto.HealthcareParty
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Medications.Companion.compoundPrescriptionP2
@@ -87,7 +87,7 @@ class CreatePrescriptionTest {
         Assert.assertTrue(infos.rid.trim() != "")
     }
 
-    private fun createTestPrescription(medications: List<Medication>): PrescriptionSummary {
+    private fun createTestPrescription(medications: List<Medication>): Prescription {
 
         //InsurabilityInfo infos = generalInsurabilityLogic.getGeneralInsurabity(niss, null, null, "T@kt1k1Cur3", "/Users/aduchate/ehealth/keystore", "SSIN=79121430944 20121128-151901.acc-p12");
 

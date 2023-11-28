@@ -31,7 +31,7 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 import org.taktik.freehealth.middleware.domain.recipe.Medication
 import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.domain.recipe.Feedback
-import org.taktik.freehealth.middleware.domain.recipe.PrescriptionSummary
+import org.taktik.freehealth.middleware.domain.recipe.Prescription
 import org.taktik.freehealth.middleware.domain.recipe.PrescriptionFullWithFeedback
 import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.HealthcareParty
@@ -71,7 +71,7 @@ interface RecipeV4Service {
         visionOthers: VisionOtherPrescribers? = null,
         expirationDate: LocalDateTime? = null,
         lang: String?
-    ): PrescriptionSummary
+    ): Prescription
 
     fun listOpenPrescriptions(
         keystoreId: UUID,
@@ -79,7 +79,7 @@ interface RecipeV4Service {
         passPhrase: String,
         hcpNihii: String,
         patientId: String
-    ): List<PrescriptionSummary>
+    ): List<Prescription>
 
     fun listFeedbacks(
         keystoreId: UUID,
