@@ -191,8 +191,8 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
                             patientId = patientId,
                             prescriberId = it.prescriber?.id,
                             visionByOthers = it.visionOtherPrescribers?.name,
-                            status = it.status.value(),
-                            validUntil = it.validUntil.toGregorianCalendar().time
+                            status = it.status?.value(),
+                            validUntil = it.validUntil?.toGregorianCalendar()?.time
                         )
                     },
                     hasHidden = partial.isHasHidden,
