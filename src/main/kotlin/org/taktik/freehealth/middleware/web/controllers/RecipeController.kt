@@ -162,7 +162,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?
-    ): ListPrescriptionsResult =
+    ): org.taktik.freehealth.middleware.dto.recipe.ListPrescriptionsResult =
         recipeV4Service.listPrescriptions(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -178,7 +178,28 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             pageYear = pageYear,
             pageMonth = pageMonth,
             pageNumber = pageNumber
-        )
+        ).let { org.taktik.freehealth.middleware.dto.recipe.ListPrescriptionsResult(
+            status = it.status,
+            id = it.id,
+            partial = it.partial?.let { partial ->
+                org.taktik.freehealth.middleware.dto.recipe.Partial(
+                    prescriptions = partial.prescriptions.map {
+                        org.taktik.freehealth.middleware.domain.recipe.Prescription(
+                            creationDate = it.date.toGregorianCalendar().time,
+                            encryptionKeyId = it.encryptionKey,
+                            rid = it.rid,
+                            patientId = patientId,
+                            prescriberId = it.prescriber?.id,
+                            visionByOthers = it.visionOtherPrescribers?.name,
+                            status = it.status.value(),
+                            validUntil = it.validUntil.toGregorianCalendar().time
+                        )
+                    },
+                    hasHidden = partial.isHasHidden,
+                    hasMoreResults = partial.isHasMoreResults
+                )
+            }
+        ) }
 
     @PostMapping("/notify/{rid}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendNotification(
