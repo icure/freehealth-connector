@@ -40,5 +40,7 @@ open class Prescription(
     var notificationWasSent: Boolean? = null,
     var requestXml: String? = null,
     var prescriberId: String? = null,
-    var visionByOthers: String? = null
+    var visionByOthers: String? = null,
+    var status: String? = null,
+    var validUntil: Date? = null
 ) : Serializable
