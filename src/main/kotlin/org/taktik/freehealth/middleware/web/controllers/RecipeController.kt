@@ -192,7 +192,9 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
                             prescriberId = it.prescriber?.id,
                             visionByOthers = it.visionOtherPrescribers?.name,
                             status = it.status?.value(),
-                            validUntil = it.validUntil?.toGregorianCalendar()?.time
+                            validUntil = it.validUntil?.toGregorianCalendar()?.time,
+                            encryptionKey = it.encryptionKey,
+                            encryptedContent = it.encryptedContent
                         )
                     },
                     hasHidden = partial.isHasHidden,

@@ -42,5 +42,7 @@ open class Prescription(
     var prescriberId: String? = null,
     var visionByOthers: String? = null,
     var status: String? = null,
-    var validUntil: Date? = null
+    var validUntil: Date? = null,
+    var encryptionKey: String? = null,
+    var encryptedContent: ByteArray? = null
 ) : Serializable
