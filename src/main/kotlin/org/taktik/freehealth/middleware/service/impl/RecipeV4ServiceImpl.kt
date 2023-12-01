@@ -408,6 +408,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
             if (unconstrainedDate.isAfter(limitDate)) limitDate else unconstrainedDate,
             prescription,
             vision,
+            visionOthers,
             vendorName = vendorName ?: "phyMedispringTopaz",
             packageVersion = packageVersion ?: "1.0-freehealth-connector"
         )
