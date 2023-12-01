@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service
 import org.taktik.connector.business.domain.kmehr.v20161201.be.ehealth.logic.recipe.xsd.v20160906.RecipeNotification
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeKmehrmessageType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeitemType
+import org.taktik.connector.business.domain.kmehr.v20190301.*
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESS
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESSschemes
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.cd.v1.CDADMINISTRATIONUNIT
@@ -80,11 +81,6 @@ import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.TelecomType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.TemporalityType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.TransactionType
-import org.taktik.connector.business.domain.kmehr.v20190301.makeDateTypeFromFuzzyLong
-import org.taktik.connector.business.domain.kmehr.v20190301.makeXGC
-import org.taktik.connector.business.domain.kmehr.v20190301.makeXMLGregorianCalendarFromFuzzyLong
-import org.taktik.connector.business.domain.kmehr.v20190301.makeXmlGregorianCalendar
-import org.taktik.connector.business.domain.kmehr.v20190301.s
 import org.taktik.connector.business.recipe.prescriber.PrescriberIntegrationModuleV4Impl
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelper
 import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4
@@ -99,10 +95,7 @@ import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.CodeDao
 import org.taktik.freehealth.middleware.domain.common.Patient
-import org.taktik.freehealth.middleware.domain.recipe.Feedback
-import org.taktik.freehealth.middleware.domain.recipe.Medication
-import org.taktik.freehealth.middleware.domain.recipe.Prescription
-import org.taktik.freehealth.middleware.domain.recipe.PrescriptionFullWithFeedback
+import org.taktik.freehealth.middleware.domain.recipe.*
 import org.taktik.freehealth.middleware.drugs.dto.MppId
 import org.taktik.freehealth.middleware.drugs.logic.DrugsLogic
 import org.taktik.freehealth.middleware.dto.Address
@@ -232,10 +225,28 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
 
                 StructuredPrescription(prescribers = it?.decryptedContent?.header?.sender?.hcparties?.map {
                     HealthcareParty(
-                        firstName = it.firstname
+                        firstName = it.firstname,
+                        lastName = it.familyname,
+                        nihii = it.ids.find { it.s == IDHCPARTYschemes.ID_HCPARTY }?.value,
+                        speciality = it.cds.find { it.s == CDHCPARTYschemes.CD_HCPARTY }?.value,
                     )
                 } ?: emptyList(), patientId = p.ids.find { it.s == IDPATIENTschemes.ID_PATIENT }?.value ?: throw IllegalStateException("Patient ID not found"),
-                    medications = medications.map { Medication() }
+                    medications = medications.map { m -> Medication(
+                        beginMoment = m.beginmoment?.let { makeFuzzyLongFromXMLGregorianCalendar(it.date) },
+                        endMoment = m.endmoment?.let { makeFuzzyLongFromXMLGregorianCalendar(it.date) },
+                        instructionForPatient = m.instructionforpatient?.value,
+                        medicinalProduct = m.contents?.find { it.medicinalproduct != null }?.medicinalproduct?.let { mp ->
+                            Medicinalproduct().apply {
+                                intendedcds = mp.intendedcds?.map { Code(it.s.value(), it.value) } ?: emptyList()
+                            }
+                        },
+                        substanceProduct = m.contents?.find { it.substanceproduct != null }?.substanceproduct?.let { sp ->
+                            Substanceproduct().apply {
+                                intendedcds = listOf(Code(sp.intendedcd.s.value(), sp.intendedcd.value))
+                                intendedname = sp.intendedname
+                            }
+                        }
+                    ) }
                     )
 
             }, it.partial?.hasHidden ?: false, it.partial?.hasMoreResults ?: false))
