@@ -95,6 +95,7 @@ import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathExpressionException
 import javax.xml.xpath.XPathFactory
+import kotlin.collections.HashMap
 
 
 class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotService: KeyDepotService) :
@@ -580,6 +581,7 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
             Kmehrmessage::class.java,
             Any::class.java
         )
+        val kgssMap = HashMap<String, KeyResult>()
         try {
             recipePrescriberServiceV4.listPrescriptions(samlToken, credential, request).let { response ->
                 MarshallerHelper(
@@ -603,12 +605,12 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
                                 validUntil = it.validUntil?.toGregorianCalendar()?.time,
                                 decryptedContent = it.encryptedContent?.let { ec ->
                                     try {
-                                        getKeyFromKgss(
+                                        (kgssMap[it.encryptionKey] ?: getKeyFromKgss(
                                             credential,
                                             samlToken,
                                             it.encryptionKey,
                                             stsService.getHolderOfKeysEtk(credential, prescriberId)!!.encoded
-                                        )?.let { key ->
+                                        )?.also { k -> kgssMap[it.encryptionKey] = k })?.let { key ->
                                             // unseal WS response
                                             IOUtils.decompress(
                                                 getCrypto(credential).unseal(
