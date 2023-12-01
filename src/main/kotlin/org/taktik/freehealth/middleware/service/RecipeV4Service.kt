@@ -35,6 +35,7 @@ import org.taktik.freehealth.middleware.domain.recipe.Prescription
 import org.taktik.freehealth.middleware.domain.recipe.PrescriptionFullWithFeedback
 import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.HealthcareParty
+import org.taktik.freehealth.middleware.dto.recipe.ListStructuredPrescriptionsResult
 import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionConfig
 import java.time.LocalDateTime
 import java.util.UUID
@@ -178,5 +179,5 @@ interface RecipeV4Service {
         pageYear: Int?,
         pageMonth: Int?,
         pageNumber: Long?
-    ): ListPrescriptionsResult
+    ): ListStructuredPrescriptionsResult
 }

@@ -1,6 +1,5 @@
 package org.taktik.freehealth.middleware.service.impl
 
-import be.fgov.ehealth.recipe.protocol.v4.ListPrescriptionsResult
 import be.recipe.services.core.PrescriptionStatus
 import be.recipe.services.core.VisionOtherPrescribers
 import be.recipe.services.prescriber.GetPrescriptionForPrescriberResult
@@ -109,6 +108,10 @@ import org.taktik.freehealth.middleware.drugs.logic.DrugsLogic
 import org.taktik.freehealth.middleware.dto.Address
 import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.HealthcareParty
+import org.taktik.freehealth.middleware.dto.recipe.ListPrescriptionsResult
+import org.taktik.freehealth.middleware.dto.recipe.ListStructuredPrescriptionsResult
+import org.taktik.freehealth.middleware.dto.recipe.StructuredPartial
+import org.taktik.freehealth.middleware.dto.recipe.StructuredPrescription
 import org.taktik.freehealth.middleware.service.RecipeV4Service
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.utils.FuzzyValues
@@ -194,7 +197,7 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
         pageYear: Int?,
         pageMonth: Int?,
         pageNumber: Long?
-    ): ListPrescriptionsResult {
+    ): ListStructuredPrescriptionsResult {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
@@ -215,7 +218,28 @@ class RecipeV4ServiceImpl(private val codeDao: CodeDao, private val stsService: 
             pageNumber
         )
 
-        return prescriptionsList
+        return prescriptionsList.let {
+            ListStructuredPrescriptionsResult(status =  it.status, id = it.id, partial = StructuredPartial(it.partial?.prescriptions?.map {
+                val f = it.decryptedContent?.folders?.first()
+                val p = f?.patient
+                val t = f?.transactions?.first()
+                val medications = ((t?.headingsAndItemsAndTexts?.first() as? HeadingType)?.headingsAndItemsAndTexts ?: t?.headingsAndItemsAndTexts)?.filterIsInstance<ItemType>()
+
+                checkNotNull(f)
+                checkNotNull(p)
+                checkNotNull(t)
+                checkNotNull(medications)
+
+                StructuredPrescription(prescribers = it?.decryptedContent?.header?.sender?.hcparties?.map {
+                    HealthcareParty(
+                        firstName = it.firstname
+                    )
+                } ?: emptyList(), patientId = p.ids.find { it.s == IDPATIENTschemes.ID_PATIENT }?.value ?: throw IllegalStateException("Patient ID not found"),
+                    medications = medications.map { Medication() }
+                    )
+
+            }, it.partial?.hasHidden ?: false, it.partial?.hasMoreResults ?: false))
+        }
     }
 
 
