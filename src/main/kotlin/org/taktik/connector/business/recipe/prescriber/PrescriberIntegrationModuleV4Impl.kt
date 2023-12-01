@@ -612,9 +612,9 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
                                             (kgssMap[it.encryptionKey] ?: getKeyFromKgss(
                                                 credential,
                                                 samlToken,
-                                                it.encryptionKey,
+                                                it.encryptionKey.also { log.info("Getting kgss key for {}", it) },
                                                 stsService.getHolderOfKeysEtk(credential, prescriberId)!!.encoded
-                                            ).let { k ->
+                                            ).also { _ -> log.info("Done getting kgss key for {}", it.encryptionKey) } .let { k ->
                                                 val wrapped = k?.let { Optional.of(it) } ?: Optional.empty()
                                                 kgssMap[it.encryptionKey] = wrapped
                                                 wrapped
