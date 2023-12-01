@@ -118,5 +118,5 @@ interface PrescriberIntegrationModuleV4 {
         pageNumber: Long? = null,
         vendorName: String? = null,
         packageVersion: String? = null
-    ): ListPrescriptionsResult
+    ): org.taktik.freehealth.middleware.dto.recipe.ListPrescriptionsResult
 }

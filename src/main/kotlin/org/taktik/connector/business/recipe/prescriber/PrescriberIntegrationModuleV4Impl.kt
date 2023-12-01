@@ -50,6 +50,7 @@ import com.sun.xml.internal.ws.client.ClientTransportException
 import org.apache.commons.lang3.StringUtils
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
+import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import org.taktik.connector.business.domain.kmehr.v20190301.makeXMLGregorianCalendarFromFuzzyLong
 import org.taktik.connector.business.recipe.common.AbstractIntegrationModule
 import org.taktik.connector.business.recipe.prescriber.domain.ListFeedbackItem
@@ -75,6 +76,7 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.MarshallerHelper
+import org.taktik.freehealth.middleware.domain.recipe.Prescription
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
@@ -534,7 +536,7 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
         pageNumber: Long?,
         vendorName: String?,
         packageVersion: String?
-    ): ListPrescriptionsResult = try {
+    ): org.taktik.freehealth.middleware.dto.recipe.ListPrescriptionsResult = try {
         val helper = MarshallerHelper(ListPrescriptionsParam::class.java, ListPrescriptionsParam::class.java)
 
         val param = ListPrescriptionsParam().apply {
@@ -574,6 +576,10 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
             this.issueInstant = DateTime()
             this.id = "id" + UUID.randomUUID().toString()
         }
+        val kmehrUnmarshaller = MarshallerHelper(
+            Kmehrmessage::class.java,
+            Any::class.java
+        )
         try {
             recipePrescriberServiceV4.listPrescriptions(samlToken, credential, request).let { response ->
                 MarshallerHelper(
@@ -581,7 +587,48 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
                     Any::class.java
                 ).unsealWithSymmKey(response.securedListPrescriptionsResponse.securedContent, recipeSymmKey)
                     .also { checkStatus(it) }
-            }
+            }.let { org.taktik.freehealth.middleware.dto.recipe.ListPrescriptionsResult(
+                status = it.status,
+                id = it.id,
+                partial = it.partial?.let { partial ->
+                    org.taktik.freehealth.middleware.dto.recipe.Partial(
+                        prescriptions = partial.prescriptions.map {
+                            Prescription(
+                                creationDate = it.date.toGregorianCalendar().time,
+                                encryptionKeyId = it.encryptionKey,
+                                rid = it.rid,
+                                prescriberId = it.prescriber?.id,
+                                visionByOthers = it.visionOtherPrescribers?.value(),
+                                status = it.status?.value(),
+                                validUntil = it.validUntil?.toGregorianCalendar()?.time,
+                                decryptedContent = it.encryptedContent?.let { ec ->
+                                    try {
+                                        getKeyFromKgss(
+                                            credential,
+                                            samlToken,
+                                            it.encryptionKey,
+                                            stsService.getHolderOfKeysEtk(credential, prescriberId)!!.encoded
+                                        )?.let { key ->
+                                            // unseal WS response
+                                            IOUtils.decompress(
+                                                getCrypto(credential).unseal(
+                                                    Crypto.SigningPolicySelector.WITH_NON_REPUDIATION,
+                                                    key,
+                                                    ec
+                                                ).contentAsByte
+                                            ).let { kmehrUnmarshaller.toObject(it) }
+                                        }
+                                    } catch (t: Throwable) {
+                                        null
+                                    }
+                                }
+                            )
+                        },
+                        hasHidden = partial.isHasHidden,
+                        hasMoreResults = partial.isHasMoreResults
+                    )
+                }
+            ) }
         } catch (cte: ClientTransportException) {
             throw IntegrationModuleException(I18nHelper.getLabel("error.connection.executor"), cte)
         }
