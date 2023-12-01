@@ -332,9 +332,11 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
     }
 
     @Throws(IntegrationModuleException::class)
-    private fun performValidation(prescription: ByteArray,
-                                  prescriptionType: String,
-                                  expirationDateFromRequest: String) {
+    private fun performValidation(
+        prescription: ByteArray,
+        prescriptionType: String,
+        expirationDateFromRequest: String
+    ) {
         val errors = ArrayList<String>()
         try {
             kmehrHelper.assertValidKmehrPrescription(prescription, prescriptionType)
@@ -430,7 +432,8 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
         }.feedbacks.map {
             ListFeedbackItem(it).apply {
                 setContent(try {
-                    unsealFeedback(getCrypto(credential), it.content)?.let { it -> IOUtils.decompress(it) } ?: it.content
+                    unsealFeedback(getCrypto(credential), it.content)?.let { it -> IOUtils.decompress(it) }
+                        ?: it.content
                 } catch (t: Throwable) {
                     this.linkedException = t; it.content
                 })
@@ -581,7 +584,7 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
             Kmehrmessage::class.java,
             Any::class.java
         )
-        val kgssMap = HashMap<String, KeyResult>()
+        val kgssMap = HashMap<String, Optional<KeyResult>>()
         try {
             recipePrescriberServiceV4.listPrescriptions(samlToken, credential, request).let { response ->
                 MarshallerHelper(
@@ -589,48 +592,54 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
                     Any::class.java
                 ).unsealWithSymmKey(response.securedListPrescriptionsResponse.securedContent, recipeSymmKey)
                     .also { checkStatus(it) }
-            }.let { org.taktik.freehealth.middleware.dto.recipe.ListPrescriptionsResult(
-                status = it.status,
-                id = it.id,
-                partial = it.partial?.let { partial ->
-                    org.taktik.freehealth.middleware.dto.recipe.Partial(
-                        prescriptions = partial.prescriptions.map {
-                            Prescription(
-                                creationDate = it.date.toGregorianCalendar().time,
-                                encryptionKeyId = it.encryptionKey,
-                                rid = it.rid,
-                                prescriberId = it.prescriber?.id,
-                                visionByOthers = it.visionOtherPrescribers?.value(),
-                                status = it.status?.value(),
-                                validUntil = it.validUntil?.toGregorianCalendar()?.time,
-                                decryptedContent = it.encryptedContent?.let { ec ->
-                                    try {
-                                        (kgssMap[it.encryptionKey] ?: getKeyFromKgss(
-                                            credential,
-                                            samlToken,
-                                            it.encryptionKey,
-                                            stsService.getHolderOfKeysEtk(credential, prescriberId)!!.encoded
-                                        )?.also { k -> kgssMap[it.encryptionKey] = k })?.let { key ->
-                                            // unseal WS response
-                                            IOUtils.decompress(
-                                                getCrypto(credential).unseal(
-                                                    Crypto.SigningPolicySelector.WITH_NON_REPUDIATION,
-                                                    key,
-                                                    ec
-                                                ).contentAsByte
-                                            ).let { kmehrUnmarshaller.toObject(it) }
+            }.let {
+                org.taktik.freehealth.middleware.dto.recipe.ListPrescriptionsResult(
+                    status = it.status,
+                    id = it.id,
+                    partial = it.partial?.let { partial ->
+                        org.taktik.freehealth.middleware.dto.recipe.Partial(
+                            prescriptions = partial.prescriptions.map {
+                                Prescription(
+                                    creationDate = it.date.toGregorianCalendar().time,
+                                    encryptionKeyId = it.encryptionKey,
+                                    rid = it.rid,
+                                    prescriberId = it.prescriber?.id,
+                                    visionByOthers = it.visionOtherPrescribers?.value(),
+                                    status = it.status?.value(),
+                                    validUntil = it.validUntil?.toGregorianCalendar()?.time,
+                                    decryptedContent = it.encryptedContent?.let { ec ->
+                                        try {
+                                            (kgssMap[it.encryptionKey] ?: getKeyFromKgss(
+                                                credential,
+                                                samlToken,
+                                                it.encryptionKey,
+                                                stsService.getHolderOfKeysEtk(credential, prescriberId)!!.encoded
+                                            ).let { k ->
+                                                val wrapped = k?.let { Optional.of(it) } ?: Optional.empty()
+                                                kgssMap[it.encryptionKey] = wrapped
+                                                wrapped
+                                            }).orElse(null)?.let { key ->
+                                                // unseal WS response
+                                                IOUtils.decompress(
+                                                    getCrypto(credential).unseal(
+                                                        Crypto.SigningPolicySelector.WITH_NON_REPUDIATION,
+                                                        key,
+                                                        ec
+                                                    ).contentAsByte
+                                                ).let { kmehrUnmarshaller.toObject(it) }
+                                            }
+                                        } catch (t: Throwable) {
+                                            null
                                         }
-                                    } catch (t: Throwable) {
-                                        null
                                     }
-                                }
-                            )
-                        },
-                        hasHidden = partial.isHasHidden,
-                        hasMoreResults = partial.isHasMoreResults
-                    )
-                }
-            ) }
+                                )
+                            },
+                            hasHidden = partial.isHasHidden,
+                            hasMoreResults = partial.isHasMoreResults
+                        )
+                    }
+                )
+            }
         } catch (cte: ClientTransportException) {
             throw IntegrationModuleException(I18nHelper.getLabel("error.connection.executor"), cte)
         }
@@ -716,7 +725,8 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
             MarshallerHelper(
                 UpdateFeedbackFlagResult::class.java,
                 UpdateFeedbackFlagResult::class.java
-            ).unsealWithSymmKey(response.securedPutFeedbackFlagResponse.securedContent, recipeSymmKey).also { checkStatus(it) }
+            ).unsealWithSymmKey(response.securedPutFeedbackFlagResponse.securedContent, recipeSymmKey)
+                .also { checkStatus(it) }
         }
     } catch (t: Throwable) {
         Exceptionutils.errorHandler(t)
