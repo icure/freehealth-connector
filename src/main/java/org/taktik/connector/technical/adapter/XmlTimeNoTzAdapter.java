@@ -22,7 +22,7 @@ public class XmlTimeNoTzAdapter extends XmlTimeAdapter {
          log.debug(MessageFormat.format("Unmarshal {0} to {1}", value, dateTime));
          return dateTime;
       } catch (Exception var3) {
-         log.warn(MessageFormat.format("Unable to parse time {0}", value));
+         log.debug(MessageFormat.format("Unable to parse time {0}, switching to regex", value));
 
          if (value.matches(regex)) {
             return this.unmarshal(value.replaceAll(regex, "$1:$2:$3"));

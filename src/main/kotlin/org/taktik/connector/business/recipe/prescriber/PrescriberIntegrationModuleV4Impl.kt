@@ -23,6 +23,7 @@ import be.recipe.services.core.Between
 import be.recipe.services.core.Page
 import be.recipe.services.core.PrescriptionStatus
 import be.recipe.services.core.VisionOtherPrescribers
+import be.recipe.services.core.VisionType
 import be.recipe.services.prescriber.CreatePrescriptionParam
 import be.recipe.services.prescriber.CreatePrescriptionResult
 import be.recipe.services.prescriber.GetPrescriptionForPrescriberParam
@@ -666,6 +667,7 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
             this.vision = vision
             this.symmKey = recipeSymmKey.encoded
             this.visionOtherPrescribers = visionOthers
+            this.type = VisionType.PRESCRIBER
         }
 
         val request = PutVisionForPrescriberRequest().apply {
