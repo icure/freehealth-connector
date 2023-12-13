@@ -403,12 +403,12 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("13",990)
         if (sender.isMedicalHouse) ws.write("14", sender.nihii)
         if (!sender.isMedicalHouse) ws.write("15", icd.doctorIdentificationNumber)
-        if (sender.isMedicalHouse && icd.codeNomenclature == 109594L) ws.write("15", sender.nihii)
+        if (sender.isMedicalHouse && (icd.codeNomenclature == 109594L || icd.codeNomenclature == 400396L)) ws.write("15", sender.nihii)
         //ws.write("16", if (sender.isMedicalHouse) 0 else if (icd.gnotionNihii == null || icd.gnotionNihii?.let { it.isEmpty() } == true) 1 else 4)
         ws.write("16",
             when {
                 isDentist -> 1
-                sender.isMedicalHouse && icd.codeNomenclature != 109594L -> 0
+                sender.isMedicalHouse && icd.codeNomenclature != 109594L && icd.codeNomenclature != 400396L -> 0
                 icd.gnotionNihii?.isNotEmpty() == true -> 4
                 icd.internshipNihii?.isNotEmpty() == true -> 5
                 else -> 1
