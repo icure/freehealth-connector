@@ -80,12 +80,15 @@ import org.taktik.icure.fhir.entities.r4.messageheader.MessageHeader
 import org.taktik.icure.fhir.entities.r4.messageheader.MessageHeaderDestination
 import org.taktik.icure.fhir.entities.r4.messageheader.MessageHeaderSource
 import org.taktik.icure.fhir.entities.r4.organization.Organization
+import org.taktik.icure.fhir.entities.r4.parameters.Parameters
+import org.taktik.icure.fhir.entities.r4.parameters.ParametersParameter
 import org.taktik.icure.fhir.entities.r4.patient.Patient
 import org.taktik.icure.fhir.entities.r4.period.Period
 import org.taktik.icure.fhir.entities.r4.practitioner.Practitioner
 import org.taktik.icure.fhir.entities.r4.practitionerrole.PractitionerRole
 import org.taktik.icure.fhir.entities.r4.reference.Reference
 import org.taktik.icure.fhir.entities.r4.servicerequest.ServiceRequest
+import org.w3._2005._05.xmlmime.Base64Binary
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
 import java.io.StringWriter
@@ -208,7 +211,7 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
                 val xmlByteArray = handleEncryption(encryptedKnownContent, credential, crypto, detailId)
 
                 val blob =
-                    BlobBuilderFactory.getBlobBuilder("attest")
+                    BlobBuilderFactory.getBlobBuilder("eagreement")
                         .build(
                             xmlByteArray,
                             "none",
@@ -218,7 +221,7 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
                             "3.0",
                             "encryptedForKnownBED"
                         )
-                blob.messageName = "E-ATTEST"
+                blob.messageName = "E-AGREEMENT"
 
                 commonInput = CommonInputType().apply {
                     request =
@@ -385,7 +388,12 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
                                 name = "MyCareNet"
                             )
                         ),
-                        source = MessageHeaderSource()
+                        source = MessageHeaderSource(),
+                        focus = listOf(
+                            Reference().apply {
+                                claim
+                            }
+                        )
                     )
                 )
             )
@@ -412,76 +420,72 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         }
     }
 
-    private fun getPractitioner(hcpNihii: String, hcpFirstName: String, hcpLastName: String, hcpSpeciality: String): Reference{
-        return Reference().apply {
-            PractitionerRole().apply {
-                id = "PractitionerRole1"
-                meta = Meta(
-                    profile = listOf("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-practitionerrole")
-                )
-                when{
-                    hcpSpeciality.startsWith("org") -> {
-                        organization = Reference().apply {
-                            Organization(
-                                id = "Organization1",
-                                meta = Meta(
-                                    profile = listOf("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-organization")
-                                ),
-                                identifier = listOf(
-                                    Identifier(
-                                        value = hcpNihii,
-                                        system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/nihdi"
-                                    )
-                                ),
-                                type = listOf(
-                                    CodeableConcept(
-                                        coding = listOf(
-                                            Coding(
-                                                system = "https://www.ehealth.fgov.be/standards/fhir/core/CodeSystem/cd-hcparty",
-                                                code = hcpSpeciality
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        }
-                    }
-                    hcpSpeciality.startsWith("pers") -> {
-                        practitioner = Reference().apply{
-                            Practitioner(
-                                id = "Practitioner1",
-                                meta = Meta(
-                                    profile = listOf("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-practitioner")
-                                ),
-                                identifier = listOf(
-                                    Identifier(
-                                        value = hcpNihii,
-                                        system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/nihdi"
-                                    )
-                                ),
-                                name = listOf(
-                                    HumanName(
-                                        family = hcpLastName,
-                                        given = listOf(hcpFirstName!!)
-                                    )
-                                )
-                            )
-                        }
-                    }
-                }
-                code = listOf(CodeableConcept().apply {
+    private fun getPractitionerRole(hcpNihii: String, hcpFirstName: String, hcpLastName: String): PractitionerRole{
+        return PractitionerRole().apply {
+            id = "PractionerRole1"
+            meta = Meta(
+                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-practitionerrole")
+            )
+            practitioner = Reference().apply {
+                getPractitioner(hcpNihii, hcpFirstName, hcpLastName)
+            }
+            code = listOf(
+                CodeableConcept().apply {
                     Coding(
                         system = "https://www.ehealth.fgov.be/standards/fhir/core/CodeSystem/cd-hcparty",
-                        code = hcpSpeciality
+                        code = "persphysiotherapist"
                     )
-                })
-            }
+                }
+            )
         }
     }
 
-    private fun getPatient(patientFirstName: String, patientLastName: String, gender: String, patientSsin: String?, io: String ?, ioMembership: String?): Reference{
-        return Reference().apply {
-            Patient(
+    private fun getPractitioner(hcpNihii: String, hcpFirstName: String, hcpLastName: String): Practitioner{
+        return Practitioner().apply {
+                id = "Practioner1"
+                meta = Meta(
+                    profile = listOf("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-practitioner")
+                )
+                identifier = listOf(
+                    Identifier().apply {
+                        system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/nihdi"
+                        value = hcpNihii
+                    }
+                )
+               name = listOf(
+                   HumanName(
+                       family = hcpLastName,
+                       given = listOf(hcpFirstName)
+                   )
+               )
+        }
+    }
+
+    private fun getOrganization(orgNihii: String, organizationType: String): Organization{
+        return Organization().apply {
+            id = "Organization1"
+            meta = Meta(
+                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-organization")
+            )
+            identifier = listOf(
+                Identifier().apply {
+                    system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/nihdi"
+                    value = orgNihii
+                }
+            )
+            type = listOf(
+                CodeableConcept().apply {
+                    Coding(
+                        system = "https://www.ehealth.fgov.be/standards/fhir/core/CodeSystem/cd-hcparty",
+                        code = organizationType
+                    )
+                }
+            )
+        }
+    }
+
+    private fun getPatient(patientFirstName: String, patientLastName: String, gender: String, patientSsin: String?, io: String ?, ioMembership: String?): Patient{
+        return Patient(
                 id = "Patient1",
                 meta = Meta(
                     profile = listOf("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-patient")
@@ -514,7 +518,111 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
                     )
                 ),
                 gender = gender
+        )
+    }
+
+    private fun getServiceRequest(idName: String, data: String, quantity: Float, patientFirstName: String, patientLastName: String, gender: String, hcpNihii: String, hcpFirstName: String, hcpLastName: String, patientSsin: String?, io: String?, ioMembership: String?): ServiceRequest{
+        return ServiceRequest().apply {
+            id = idName
+            meta = Meta(
+                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementservicerequest")
             )
+            contained = getContained(data, "annexSR1")
+            identifier = listOf(
+                Identifier().apply {
+                    system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/uhmep"
+                    value = "Prescription id"
+                }
+            )
+            status = "active"
+            intent = "order"
+            category = listOf(
+                CodeableConcept().apply {
+                    Coding(
+                        system = "http://snomed.info/sct",
+                        code = "91251008",
+                        display = "Physical therapy procedure"
+                    )
+                }
+            )
+            code = CodeableConcept().apply {
+                Coding(
+                    system = "http://snomed.info/sct",
+                    code = "91251008",
+                    display = "Physical therapy procedure"
+                )
+            }
+            quantityQuantity = Count().apply {
+                value = quantity
+            }
+            subject = Reference().apply {
+                getPatient(patientFirstName!!, patientLastName!!, gender!!, patientSsin, io, ioMembership)
+            }
+            authoredOn = DateTime().toString()
+            requester = Reference().apply {
+                getPractitionerRole(hcpNihii, hcpFirstName, hcpLastName)
+            }
+            //supportingInfo =
+        }
+    }
+
+    private fun getContained(data: String, idName: String): List<Binary>{
+        return listOf(
+            Binary(
+                contentType = "application/pdf",
+                data = data,
+                id = idName
+            )
+        )
+    }
+    private fun getParameters(idName: String, parameterNames: Array<String>,
+                              agreementTypes: String,
+                              startDate: DateTime?,
+                              endDate: DateTime?,
+                              patientFirstName: String?,
+                              patientLastName: String?,
+                              patientGender: String?,
+                              patientSsin: String?,
+                              io: String?,
+                              ioMembership: String?): Parameters{
+        val param = mutableListOf<ParametersParameter>();
+        for (parameterName in parameterNames){
+            param.add(getParameter(parameterName, agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership))
+        }
+        return Parameters().apply {
+            id = idName
+            parameter = param
+        }
+    }
+
+    private fun getParameter(parameterName: String,
+                             agreementTypes: String?,
+                             startDate: DateTime?,
+                             endDate: DateTime?,
+                             patientFirstName: String?,
+                             patientLastName: String?,
+                             patientGender: String?,
+                             patientSsin: String?,
+                             io: String?,
+                             ioMembership: String?
+    ): ParametersParameter{
+        return ParametersParameter().apply {
+            name = parameterName
+            when{
+                parameterName == "resourceType" -> valueString = "Claim"
+                parameterName == "patient" -> valueReference = Reference().apply {
+                    getPatient(patientFirstName!!, patientLastName!!, patientGender!!, patientSsin, io, ioMembership)
+                }
+                parameterName == "use" -> valueCode = "preauthorization"
+                parameterName == "subType" -> valueCoding = Coding().apply {
+                    system = "https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/agreement-types"
+                    code = agreementTypes
+                }
+                parameterName == "preAuthPeriod" -> valuePeriod = Period().apply {
+                    start = startDate.toString()
+                    end = endDate.toString()
+                }
+            }
         }
     }
 
