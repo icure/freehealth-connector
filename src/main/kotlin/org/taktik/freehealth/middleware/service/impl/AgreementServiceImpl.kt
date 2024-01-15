@@ -114,6 +114,15 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         "chapterIV.keydepot.identifiersubtype",
         "chapterIV.keydepot.identifiervalue"))
 
+    enum class RequestTypeEnum {
+        ASK,
+        EXTEND,
+        ARGUE,
+        COMPLETE_AGREEMENT,
+        CANCEL,
+        CONSULT_LIST
+    }
+
     private val log = LoggerFactory.getLogger(this.javaClass)
 
     private fun generateError(e: AgreementBusinessConnectorException, co: CommonOutput): AgreementResponse {
@@ -135,24 +144,32 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
-        requestType: String,
-        hcpSsin: String,
-        hcpNihii: String,
-        hcpFirstName: String,
-        hcpLastName: String,
-        hcpSpeciality: String,
+        requestType: RequestTypeEnum,
+        messageEventSystem: String,
+        messageEventCode: String,
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
         patientSsin: String?,
-        io: String?,
-        ioMembership: String?,
-        code: String?,
-        insuranceRef: String?,
-        startDate: DateTime?,
-        quantity: Int?,
-        pathologyDate: DateTime?,
-        pathologyCode: String
+        patientIo: String?,
+        patientIoMembership: String?,
+        pathologyStartDate: DateTime,
+        pathologyCode: String,
+        insuranceRef: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        orgNihii: String?,
+        organizationType: String?,
+        annex1: String?,
+        annex2: String?,
+        parameterNames: Array<String>?,
+        agreementStartDate: DateTime?,
+        agreementEndDate: DateTime?,
+        agreementType: String?,
+        numberOfSessionForAnnex1: Float?,
+        numberOfSessionForAnnex2: Float?
     ): AgreementResponse? {
         val isTest = config.getProperty("endpoint.agreement").contains("-acpt")
         val samlToken =
@@ -178,24 +195,32 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         refDateTime.timezone = DatatypeConstants.FIELD_UNDEFINED
 
         return extractEtk(credential)?.let {
-            val askAgreementRequest = createAskAgreementRequest(
+            val askAgreementRequest = createSynchronousAgreementRequest(
                 requestType,
-                hcpNihii,
-                hcpFirstName,
-                hcpLastName,
-                hcpSpeciality,
+                messageEventSystem,
+                messageEventCode,
                 patientFirstName,
                 patientLastName,
                 patientGender,
                 patientSsin,
-                io,
-                ioMembership,
-                code,
+                patientIo,
+                patientIoMembership,
+                pathologyStartDate,
+                pathologyCode,
                 insuranceRef,
-                startDate,
-                quantity,
-                pathologyDate,
-                pathologyCode
+                hcpNihii,
+                hcpFirstName,
+                hcpLastName,
+                orgNihii,
+                organizationType,
+                annex1,
+                annex2,
+                parameterNames,
+                agreementStartDate,
+                agreementEndDate,
+                agreementType,
+                numberOfSessionForAnnex1,
+                numberOfSessionForAnnex2
             )
             val kmehrMarshallHelper = MarshallerHelper(AskAgreementRequest::class.java, AskAgreementRequest::class.java)
             val requestXml = kmehrMarshallHelper.toXMLByteArray(askAgreementRequest)
@@ -298,26 +323,34 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         }
     }
 
-    private fun createAskAgreementRequest(
-        requestType: String,
-        hcpNihii: String,
-        hcpFirstName: String,
-        hcpLastName: String,
-        hcpSpeciality: String,
+    private fun createSynchronousAgreementRequest(
+        requestType: RequestTypeEnum,
+        messageEventSystem: String,
+        messageEventCode: String,
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
         patientSsin: String?,
-        io: String?,
-        ioMembership: String?,
-        code: String?,
-        insuranceRef: String?,
-        startDate: DateTime?,
-        quantity: Int?,
-        pathologyDate: DateTime?,
-        pathologyCode: String
+        patientIo: String?,
+        patientIoMembership: String?,
+        pathologyStartDate: DateTime,
+        pathologyCode: String,
+        insuranceRef: String,
+        hcpNihii: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        orgNihii: String?,
+        organizationType: String?,
+        annex1: String?,
+        annex2: String?,
+        parameterNames: Array<String>?,
+        agreementStartDate: DateTime?,
+        agreementEndDate: DateTime?,
+        agreementType: String?,
+        numberOfSessionForAnnex1: Float?,
+        numberOfSessionForAnnex2: Float?
     ): AskAgreementRequest{
-
+/*
         val prescription = Reference().apply {
             getPrescriptionInfos(quantity!!, "", "")
         }
@@ -340,64 +373,27 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
             code = getCodableConcept("https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/annex-types", "medical-report"),
             category = getCodableConcept("http://terminology.hl7.org/CodeSystem/claiminformationcategory", "attachment")
         )
-
-
-        val claim = Claim(
-            id = "Claim1",
-            meta = Meta(
-                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementclaim-kine")
-            ),
-            status = "active",
-            type = getCodableConcept("http://terminology.hl7.org/CodeSystem/claim-type", "professional"),
-            subType = getCodableConcept("https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/agreement-types", code!!),
-            use = "preauthorization",
-            patient = getPatient(patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership),
-            billablePeriod = getBillablePeriod(startDate!!),
-            created = DateTime().toString(),
-            enterer = getPractitioner(hcpNihii, hcpFirstName, hcpLastName, hcpSpeciality),
-            provider = getPractitioner(hcpNihii, hcpFirstName, hcpLastName, hcpSpeciality),
-            priority = getCodableConcept("http://terminology.hl7.org/CodeSystem/processpriority", "stat"),
-            referral = prescription,
-            insurance = getInsurance(insuranceRef!!),
-            supportingInfo = listOf(additionalNotes, pastPrescription, otherAppendix),
-            item = listOf(getServicedDateItem(pathologyDate!!, pathologyCode), getCodeItem(code))
-       )
-
-        val Bundle = Bundle(
-            id = "Bundle1",
-            meta = Meta(
-                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementdemand")
-            ),
-            type = "message",
-            timestamp = DateTime().toString(),
-            entry = listOf(
-                BundleEntry(
-                    fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl",
-                    resource = MessageHeader(
-                        id = "generate id",
-                        meta = Meta(
-                            profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementmessageheader")
-                        ),
-                        eventCoding = Coding(
-                            system = "https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/message-events",
-                            code = "????"
-                        ),
-                        destination = listOf(
-                            MessageHeaderDestination(
-                                endpoint = "MyCareNet",
-                                name = "MyCareNet"
-                            )
-                        ),
-                        source = MessageHeaderSource(),
-                        focus = listOf(
-                            Reference().apply {
-                                claim
-                            }
-                        )
-                    )
-                )
-            )
+*/
+        val claim = getClaim(
+            claimId = "1",
+            claimStatus = "active",
+            subTypeCode = "kine",
+            patientFirstName = patientFirstName,
+            patientLastName = patientLastName,
+            patientGender = patientGender,
+            hcpNihii = hcpNihii,
+            hcpFirstName = hcpFirstName,
+            hcpLastName = hcpLastName,
+            agreementStartDate = DateTime(),
+            insuranceRef = insuranceRef!!,
+            pathologyCode = pathologyCode,
+            pathologyStartDate = pathologyStartDate,
+            patientSsin = patientSsin,
+            io = patientIo,
+            ioMembership = patientIoMembership
         )
+
+        val bundle = getBundle(requestType, claim, messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, orgNihii, organizationType, annex1, annex2, parameterNames, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForAnnex1, numberOfSessionForAnnex2)
 
         val request = AskAgreementRequest().apply {
             commonInput
@@ -407,6 +403,114 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         }
 
         return request;
+    }
+
+    private fun getBundle(
+        requestType: RequestTypeEnum,
+        claim: Claim,
+        messageEventSystem: String,
+        messageEventCode: String,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
+        patientSsin: String?,
+        patientIo: String?,
+        patientIoMembership: String?,
+        hcpNihii: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        orgNihii: String?,
+        organizationType: String?,
+        annex1: String?,
+        annex2: String?,
+        parameterNames: Array<String>?,
+        agreementStartDate: DateTime?,
+        agreementEndDate: DateTime?,
+        agreementType: String?,
+        numberOfSessionForAnnex1: Float?,
+        numberOfSessionForAnnex2: Float?
+    ): Bundle{
+        return Bundle().apply {
+            id = "Bundle1"
+            meta = Meta(
+                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementdemand")
+            )
+            type = "message"
+            timestamp = DateTime().toString()
+            entry = listOf<BundleEntry>().apply {
+                BundleEntry(
+                    resource = getMessageHeader(claim, messageEventSystem, messageEventCode),
+                    fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+                )
+                BundleEntry(
+                    resource = getPatient(patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership),
+                    fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+                )
+                BundleEntry(
+                    resource = getPractitionerRole("1", hcpNihii, hcpFirstName, hcpLastName),
+                    fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+                )
+                BundleEntry(
+                    resource = getPractitioner("1", hcpNihii, hcpFirstName, hcpLastName),
+                    fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+                )
+                BundleEntry(
+                    resource = getOrganization("1", orgNihii!!, organizationType!!),
+                    fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+                )
+                when{
+                    //Claim 1
+                    requestType != RequestTypeEnum.CONSULT_LIST -> BundleEntry(
+                        resource = claim,
+                        fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+                    )
+                    //Parameters 1
+                    requestType == RequestTypeEnum.CONSULT_LIST ->   BundleEntry(
+                        resource = getParameters("1", parameterNames!!, agreementType!!, agreementStartDate, agreementEndDate, hcpNihii, hcpFirstName, hcpLastName, patientSsin, patientIo, patientIoMembership),
+                        fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+                    )
+                    //Service Request 1
+                    requestType != RequestTypeEnum.CANCEL && requestType != RequestTypeEnum.CONSULT_LIST ->
+                        BundleEntry(
+                            resource = getServiceRequest("1", annex1!!, "1", numberOfSessionForAnnex1!!, patientFirstName, patientLastName, patientGender, hcpNihii, hcpFirstName, hcpLastName, patientSsin, patientIo, patientIoMembership),
+                            fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+                        )
+                    //Service request 2
+                    requestType == RequestTypeEnum.ARGUE || requestType == RequestTypeEnum.ASK ->
+                        BundleEntry(
+                            resource = getServiceRequest("2", annex2!!, "2", numberOfSessionForAnnex2!!, patientFirstName, patientLastName, patientGender, hcpNihii, hcpFirstName, hcpLastName, patientSsin, patientIo, patientIoMembership),
+                            fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+                        )
+                }
+            }
+        }
+    }
+
+    private fun getMessageHeader(claim: Claim, messageEventSystem: String, messageEventsCode: String): MessageHeader{
+        return MessageHeader(
+            eventCoding = Coding(
+                system = messageEventSystem,
+                code = messageEventsCode
+            ),
+            source = MessageHeaderSource()
+        ).apply {
+            id = "generate id"
+            meta = Meta(
+                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementmessageheader")
+            )
+
+            destination = listOf(
+                MessageHeaderDestination(
+                    endpoint = "MyCareNet",
+                    name = "MyCareNet"
+                )
+            )
+            focus = listOf(
+                Reference().apply {
+                    claim
+                }
+            )
+        }
     }
 
     private fun getCodableConcept(system: String, code: String): CodeableConcept{
@@ -420,14 +524,72 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         }
     }
 
-    private fun getPractitionerRole(hcpNihii: String, hcpFirstName: String, hcpLastName: String): PractitionerRole{
+    private fun getClaim(
+        claimId: String,
+        claimStatus: String,
+        subTypeCode: String,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
+        hcpNihii: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        agreementStartDate: DateTime,
+        insuranceRef: String,
+        pathologyCode: String,
+        pathologyStartDate: DateTime?,
+        patientSsin: String?,
+        io: String?,
+        ioMembership: String?
+    ): Claim{
+        val serviceRequestRef = Reference().apply { getServiceRequest("ServiceRequest/ServiceRequest1", "", "", 1f, patientFirstName, patientLastName, patientGender, hcpNihii, hcpFirstName, hcpLastName, patientSsin, io, ioMembership) }
+        return Claim(
+            patient = Reference().apply { getPatient(patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership) },
+            priority = getCodableConcept("http://terminology.hl7.org/CodeSystem/processpriority", "stat"),
+            provider = Reference().apply { getPractitioner("", hcpNihii, hcpFirstName, hcpLastName) },
+            type = getCodableConcept("http://terminology.hl7.org/CodeSystem/claim-type", "professional")
+        ).apply {
+            id = "Claim$claimId"
+            meta = Meta(
+                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementclaim-kine")
+            )
+            status = claimStatus
+            subType = getCodableConcept("https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/agreement-types", subTypeCode)
+            use = "preauthorization"
+            billablePeriod = getBillablePeriod(agreementStartDate!!)
+            created = DateTime().toString()
+            enterer = Reference().apply { getPractitioner("", hcpNihii, hcpFirstName, hcpLastName) }
+            referral = serviceRequestRef
+            insurance = getInsurance(insuranceRef, "")
+            supportingInfo = listOf(getSupportingInfo(serviceRequestRef))
+            item = listOf(getServicedDateItem(pathologyStartDate!!, pathologyCode), getCodeItem(pathologyCode))
+        }
+    }
+
+    private fun getSupportingInfo(serviceRequest: Reference): ClaimSupportingInfo{
+        val category = CodeableConcept().apply {
+            Coding(
+                system = "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+                code = "info"
+            )
+        }
+        return ClaimSupportingInfo(
+            category = category
+        ).apply {
+            sequence = 1
+            valueReference = serviceRequest
+        }
+
+    }
+
+    private fun getPractitionerRole(practitionerRoleId: String, hcpNihii: String, hcpFirstName: String, hcpLastName: String): PractitionerRole{
         return PractitionerRole().apply {
-            id = "PractionerRole1"
+            id = "PractitionerRole$practitionerRoleId"
             meta = Meta(
                 profile = listOf("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-practitionerrole")
             )
             practitioner = Reference().apply {
-                getPractitioner(hcpNihii, hcpFirstName, hcpLastName)
+                getPractitioner(practitionerRoleId, hcpNihii, hcpFirstName, hcpLastName)
             }
             code = listOf(
                 CodeableConcept().apply {
@@ -440,9 +602,9 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         }
     }
 
-    private fun getPractitioner(hcpNihii: String, hcpFirstName: String, hcpLastName: String): Practitioner{
+    private fun getPractitioner(practitionerId: String, hcpNihii: String, hcpFirstName: String, hcpLastName: String): Practitioner{
         return Practitioner().apply {
-                id = "Practioner1"
+                id = "Practitioner$practitionerId"
                 meta = Meta(
                     profile = listOf("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-practitioner")
                 )
@@ -461,9 +623,9 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         }
     }
 
-    private fun getOrganization(orgNihii: String, organizationType: String): Organization{
+    private fun getOrganization(organizationId: String, orgNihii: String, organizationType: String): Organization{
         return Organization().apply {
-            id = "Organization1"
+            id = "Organization$organizationId"
             meta = Meta(
                 profile = listOf("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-organization")
             )
@@ -521,13 +683,14 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         )
     }
 
-    private fun getServiceRequest(idName: String, data: String, quantity: Float, patientFirstName: String, patientLastName: String, gender: String, hcpNihii: String, hcpFirstName: String, hcpLastName: String, patientSsin: String?, io: String?, ioMembership: String?): ServiceRequest{
-        return ServiceRequest().apply {
-            id = idName
+    private fun getServiceRequest(serviceRequestId: String, data: String, annexId: String, quantity: Float, patientFirstName: String, patientLastName: String, gender: String, hcpNihii: String, hcpFirstName: String, hcpLastName: String, patientSsin: String?, io: String?, ioMembership: String?): ServiceRequest{
+        val patient = getPatient(patientFirstName!!, patientLastName!!, gender!!, patientSsin, io, ioMembership)
+        return ServiceRequest(subject = Reference().apply { patient }).apply {
+            id = "ServiceRequest$serviceRequestId"
             meta = Meta(
                 profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementservicerequest")
             )
-            contained = getContained(data, "annexSR1")
+            contained = getContained(data, annexId)
             identifier = listOf(
                 Identifier().apply {
                     system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/uhmep"
@@ -560,22 +723,24 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
             }
             authoredOn = DateTime().toString()
             requester = Reference().apply {
-                getPractitionerRole(hcpNihii, hcpFirstName, hcpLastName)
+                getPractitionerRole("", hcpNihii, hcpFirstName, hcpLastName)
             }
-            //supportingInfo =
+            supportingInfo = listOf<Reference>().apply {
+                getContained(data, annexId)
+            }
         }
     }
 
-    private fun getContained(data: String, idName: String): List<Binary>{
+    private fun getContained(data: String, containedId: String): List<Binary>{
         return listOf(
             Binary(
                 contentType = "application/pdf",
                 data = data,
-                id = idName
+                id = "annexSR$containedId"
             )
         )
     }
-    private fun getParameters(idName: String, parameterNames: Array<String>,
+    private fun getParameters(parameterId: String, parameterNames: Array<String>,
                               agreementTypes: String,
                               startDate: DateTime?,
                               endDate: DateTime?,
@@ -590,7 +755,7 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
             param.add(getParameter(parameterName, agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership))
         }
         return Parameters().apply {
-            id = idName
+            id = "Parameters$parameterId"
             parameter = param
         }
     }
@@ -626,13 +791,13 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         }
     }
 
-    private fun getInsurance(insuranceRef: String): List<ClaimInsurance>{
+    private fun getInsurance(insuranceRef: String, display: String): List<ClaimInsurance>{
         return listOf(
             ClaimInsurance(
                 sequence = 1,
                 focal = true,
                 coverage = Reference(
-                    display = "????"
+                    display = display
                 ),
                 preAuthRef = listOf(insuranceRef)
             )
@@ -641,7 +806,7 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
 
     private fun getBillablePeriod(startDate: DateTime): Period{
         return Period(
-            start = DateTime().toString()
+            start = startDate.toString()
         )
     }
 
@@ -815,6 +980,7 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
     ): ByteArray? {
         val marshaller = JAXBContext.newInstance(request.javaClass).createMarshaller()
         val res = DOMResult()
+
         marshaller.marshal(request, res)
 
         val doc = res.node as Document
