@@ -102,7 +102,7 @@ import javax.xml.transform.dom.DOMResult
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
-class AgreementServiceImpl(private val stsService: STSService, private val keyDepotService: KeyDepotService) : AgreementService {
+class AgreementServiceImpl(private val stsService: STSService?, private val keyDepotService: KeyDepotService?) : AgreementService {
     private val freehealthAgreementService: org.taktik.connector.business.agreement.service.AgreementService =
         AgreementServiceImpl()
 
@@ -140,7 +140,7 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         return error
     }
 
-    override fun consultAgreement(
+    override fun consultSynchronousAgreement(
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
@@ -173,9 +173,9 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
     ): AgreementResponse? {
         val isTest = config.getProperty("endpoint.agreement").contains("-acpt")
         val samlToken =
-            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+            stsService?.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Agreement operations")
-        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+        val keystore = stsService?.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
@@ -195,7 +195,7 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         refDateTime.timezone = DatatypeConstants.FIELD_UNDEFINED
 
         return extractEtk(credential)?.let {
-            val askAgreementRequest = createSynchronousAgreementRequest(
+            val synchronousAgreementRequest = createSynchronousAgreementRequest(
                 requestType,
                 messageEventSystem,
                 messageEventCode,
@@ -223,7 +223,7 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
                 numberOfSessionForAnnex2
             )
             val kmehrMarshallHelper = MarshallerHelper(AskAgreementRequest::class.java, AskAgreementRequest::class.java)
-            val requestXml = kmehrMarshallHelper.toXMLByteArray(askAgreementRequest)
+            val requestXml = kmehrMarshallHelper.toXMLByteArray(synchronousAgreementRequest)
 
             val request = AskAgreementRequest().apply {
                 val encryptedKnownContent = EncryptedKnownContent()
@@ -323,7 +323,7 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         }
     }
 
-    private fun createSynchronousAgreementRequest(
+    fun createSynchronousAgreementRequest(
         requestType: RequestTypeEnum,
         messageEventSystem: String,
         messageEventCode: String,
@@ -350,30 +350,7 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         numberOfSessionForAnnex1: Float?,
         numberOfSessionForAnnex2: Float?
     ): AskAgreementRequest{
-/*
-        val prescription = Reference().apply {
-            getPrescriptionInfos(quantity!!, "", "")
-        }
 
-        val additionalNotes = getAdditionalNotes("");
-        val pastPrescription = ClaimSupportingInfo(
-            sequence = 3,
-            valueReference = Reference().apply {
-                getPrescriptionInfos( quantity!!, "", "");
-            },
-            category = getCodableConcept("http://terminology.hl7.org/CodeSystem/claiminformationcategory", "info")
-        )
-        val otherAppendix = ClaimSupportingInfo(
-            sequence = 1,
-            valueAttachment = Attachment(
-                contentType = "application/pdf",
-                data = "",
-                title = ""
-            ),
-            code = getCodableConcept("https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/annex-types", "medical-report"),
-            category = getCodableConcept("http://terminology.hl7.org/CodeSystem/claiminformationcategory", "attachment")
-        )
-*/
         val claim = getClaim(
             claimId = "1",
             claimStatus = "active",
@@ -394,15 +371,9 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         )
 
         val bundle = getBundle(requestType, claim, messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, orgNihii, organizationType, annex1, annex2, parameterNames, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForAnnex1, numberOfSessionForAnnex2)
+        return AskAgreementRequest().apply {
 
-        val request = AskAgreementRequest().apply {
-            commonInput
-            detail
-            routing
-            xades
         }
-
-        return request;
     }
 
     private fun getBundle(
@@ -910,9 +881,9 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
     ): AgreementResponse? {
         val isTest = config.getProperty("endpoint.agreement").contains("-acpt")
         val samlToken =
-            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+            stsService?.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Agreement operations")
-        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+        val keystore = stsService?.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
@@ -1030,3 +1001,4 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         return sb.toString()
     }
 }
+

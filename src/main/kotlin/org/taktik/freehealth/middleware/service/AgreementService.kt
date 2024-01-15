@@ -8,7 +8,7 @@ import org.taktik.freehealth.middleware.service.impl.AgreementServiceImpl
 import java.util.UUID
 
 interface AgreementService {
-    fun consultAgreement(
+    fun consultSynchronousAgreement(
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
