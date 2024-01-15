@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.stereotype.Service
 import org.taktik.connector.business.agreement.exception.AgreementBusinessConnectorException
 import org.taktik.connector.business.agreement.service.impl.AgreementServiceImpl
 import org.taktik.connector.business.agreement.validator.AgreementXmlValidatorImpl
@@ -102,7 +103,8 @@ import javax.xml.transform.dom.DOMResult
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
-class AgreementServiceImpl(private val stsService: STSService?, private val keyDepotService: KeyDepotService?) : AgreementService {
+@Service
+class AgreementServiceImpl(private val stsService: STSService, private val keyDepotService: KeyDepotService) : AgreementService {
     private val freehealthAgreementService: org.taktik.connector.business.agreement.service.AgreementService =
         AgreementServiceImpl()
 
@@ -173,9 +175,9 @@ class AgreementServiceImpl(private val stsService: STSService?, private val keyD
     ): AgreementResponse? {
         val isTest = config.getProperty("endpoint.agreement").contains("-acpt")
         val samlToken =
-            stsService?.getSAMLToken(tokenId, keystoreId, passPhrase)
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Agreement operations")
-        val keystore = stsService?.getKeyStore(keystoreId, passPhrase)!!
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
@@ -881,9 +883,9 @@ class AgreementServiceImpl(private val stsService: STSService?, private val keyD
     ): AgreementResponse? {
         val isTest = config.getProperty("endpoint.agreement").contains("-acpt")
         val samlToken =
-            stsService?.getSAMLToken(tokenId, keystoreId, passPhrase)
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Agreement operations")
-        val keystore = stsService?.getKeyStore(keystoreId, passPhrase)!!
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())

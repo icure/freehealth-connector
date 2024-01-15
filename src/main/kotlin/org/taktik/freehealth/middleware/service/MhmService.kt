@@ -20,12 +20,9 @@
 
 package org.taktik.freehealth.middleware.service
 
-import org.taktik.freehealth.middleware.dto.eattest.Eattest
-import org.taktik.freehealth.middleware.dto.eattest.SendAttestResultWithResponse
 import org.taktik.freehealth.middleware.dto.mhm.CancelSubscriptionResultWithResponse
 import org.taktik.freehealth.middleware.dto.mhm.EndSubscriptionResultWithResponse
 import org.taktik.freehealth.middleware.dto.mhm.StartSubscriptionResultWithResponse
-import java.time.Instant
 import java.util.*
 
 interface MhmService {

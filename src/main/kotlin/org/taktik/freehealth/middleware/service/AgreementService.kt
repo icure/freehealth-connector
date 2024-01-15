@@ -1,11 +1,9 @@
 package org.taktik.freehealth.middleware.service
 
-import be.fgov.ehealth.agreement.protocol.v1.AskAgreementResponse
-import be.fgov.ehealth.agreement.protocol.v1.ConsultAgreementResponse
 import org.joda.time.DateTime
 import org.taktik.connector.business.domain.agreement.AgreementResponse
 import org.taktik.freehealth.middleware.service.impl.AgreementServiceImpl
-import java.util.UUID
+import java.util.*
 
 interface AgreementService {
     fun consultSynchronousAgreement(
