@@ -24,11 +24,12 @@ import be.fgov.ehealth.etee.crypto.utils.KeyManager
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.hazelcast.core.IMap
-import com.hazelcast.core.ISet
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.server.ResponseStatusException
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.config.ConfigValidator
 import org.taktik.connector.technical.exception.TechnicalConnectorException
@@ -50,7 +51,7 @@ import org.taktik.freehealth.middleware.pkcs11.remote.RemoteKeystore
 import org.taktik.freehealth.middleware.service.RemoteKeystoreService
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Element
-import org.xml.sax.InputSource
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.StringReader
 import java.io.StringWriter
@@ -59,7 +60,6 @@ import java.time.Instant
 import java.util.*
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
-import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMResult
 import javax.xml.transform.dom.DOMSource
@@ -607,4 +607,63 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         return result;
     }
 
+    override fun mergeKeystores(newKeystore: String, oldKeystore: String, newPassword: String, oldPassword: String): ByteArray {
+        val newKeystoreBytes: ByteArray = try {
+            Base64.getDecoder().decode(newKeystore)
+        } catch (exception: IllegalArgumentException) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while base64 decoding new keystore")
+        }
+
+        val oldKeystoreBytes: ByteArray = try {
+            Base64.getDecoder().decode(oldKeystore)
+        } catch (exception: IllegalArgumentException) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while base64 decoding old keystore")
+        }
+
+        if (newKeystoreBytes.contentEquals(oldKeystoreBytes)) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Old and new keystores are equal")
+        }
+
+        val targetKeystore = KeyStore.getInstance("pkcs12")
+
+        try {
+            targetKeystore.load(newKeystoreBytes.inputStream(), newPassword.toCharArray())
+        } catch (exception: IOException) {
+            throw determineIOExceptionMessage(exception, "new keystore")
+        }
+
+        val sourceKeystore = KeyStore.getInstance("pkcs12")
+
+        try {
+            sourceKeystore.load(oldKeystoreBytes.inputStream(), oldPassword.toCharArray())
+        } catch (exception: IOException) {
+            throw determineIOExceptionMessage(exception, "old keystore")
+        }
+
+        val aliases = sourceKeystore.aliases()
+
+        while (aliases.hasMoreElements()) {
+            val alias = aliases.nextElement()
+
+            if (alias == "authentication" || targetKeystore.getCertificate(alias) != null) {
+                continue;
+            }
+
+            val cert = sourceKeystore.getCertificate(alias)
+            targetKeystore.setCertificateEntry(alias, cert)
+        }
+
+        val output = ByteArrayOutputStream()
+        targetKeystore.store(output, newPassword.toCharArray())
+
+        return output.toByteArray()
+    }
+
+    fun determineIOExceptionMessage(exception: IOException, keystoreName: String): ResponseStatusException {
+        var message = "IOException while reading $keystoreName"
+        exception.message?.let {
+            message = if(it.contains("keystore password was incorrect")) "$keystoreName password incorrect" else it
+        }
+        throw ResponseStatusException(HttpStatus.BAD_REQUEST, message)
+    }
 }

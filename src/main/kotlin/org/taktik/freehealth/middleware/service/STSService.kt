@@ -50,4 +50,5 @@ interface STSService {
     fun checkTokenValid(tokenId: UUID): Boolean
     fun getKeystoreInfo(keystoreId: UUID, passPhrase: String, quality: String?): CertificateInfo
     fun isAcceptance(): Boolean
+    fun mergeKeystores(newKeystore: String, oldKeystore: String, newPassword: String, oldPassword: String): ByteArray
 }
