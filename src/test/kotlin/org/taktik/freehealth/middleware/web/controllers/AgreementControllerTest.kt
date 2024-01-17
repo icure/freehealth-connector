@@ -45,6 +45,4 @@ class AgreementControllerTest : EhealthTest() {
         HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase).body
 
     }
-
-
 }
