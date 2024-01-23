@@ -358,23 +358,16 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
             claimId = "1",
             claimStatus = "active",
             subTypeCode = "kine",
-            patientFirstName = patientFirstName,
-            patientLastName = patientLastName,
-            patientGender = patientGender,
-            hcpNihii = hcpNihii,
-            hcpFirstName = hcpFirstName,
-            hcpLastName = hcpLastName,
             agreementStartDate = DateTime(),
             insuranceRef = insuranceRef!!,
             pathologyCode = pathologyCode,
             pathologyStartDate = pathologyStartDate,
-            patientSsin = patientSsin,
-            io = patientIo,
-            ioMembership = patientIoMembership
+            providerType = ""
         )
 
         val bundle = agreementServiceUtils.getBundle(requestType, claim, messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, orgNihii, organizationType, annex1, annex2, parameterNames, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForAnnex1, numberOfSessionForAnnex2)
         return AskAgreementRequest().apply {
+
 
         }
     }

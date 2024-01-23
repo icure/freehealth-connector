@@ -1,7 +1,9 @@
 package org.taktik.freehealth.middleware.service.impl
 
 import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import org.taktik.icure.fhir.entities.r4.Meta
+import org.taktik.icure.fhir.entities.r4.attachment.Attachment
 import org.taktik.icure.fhir.entities.r4.binary.Binary
 import org.taktik.icure.fhir.entities.r4.bundle.Bundle
 import org.taktik.icure.fhir.entities.r4.bundle.BundleEntry
@@ -35,14 +37,15 @@ class AgreementServiceUtils {
                 profile = listOf("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-practitionerrole")
             )
             practitioner = Reference().apply {
-                getPractitioner(practitionerRoleId, hcpNihii, hcpFirstName, hcpLastName)
+                reference = "Practitioner/Practitioner$practitionerRoleId"
             }
             code = listOf(
                 CodeableConcept().apply {
-                    Coding(
+                   coding = listOf(
+                       Coding(
                         system = "https://www.ehealth.fgov.be/standards/fhir/core/CodeSystem/cd-hcparty",
                         code = "persphysiotherapist"
-                    )
+                    ))
                 }
             )
         }
@@ -84,25 +87,16 @@ class AgreementServiceUtils {
         claimId: String,
         claimStatus: String,
         subTypeCode: String,
-        patientFirstName: String,
-        patientLastName: String,
-        patientGender: String,
-        hcpNihii: String,
-        hcpFirstName: String,
-        hcpLastName: String,
         agreementStartDate: DateTime,
         insuranceRef: String,
         pathologyCode: String,
         pathologyStartDate: DateTime?,
-        patientSsin: String?,
-        io: String?,
-        ioMembership: String?
+        providerType: String
     ): Claim {
-        val serviceRequestRef = Reference().apply { getServiceRequest("ServiceRequest/ServiceRequest1", "", "", 1f, patientFirstName, patientLastName, patientGender, hcpNihii, hcpFirstName, hcpLastName, patientSsin, io, ioMembership) }
         return Claim(
-            patient = Reference().apply { getPatient(patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership) },
+            patient = Reference().apply { reference = "Patient/Patient1" },
             priority = getCodableConcept("http://terminology.hl7.org/CodeSystem/processpriority", "stat"),
-            provider = Reference().apply { getPractitioner("", hcpNihii, hcpFirstName, hcpLastName) },
+            provider = Reference().apply { reference = providerType },
             type = getCodableConcept("http://terminology.hl7.org/CodeSystem/claim-type", "professional")
         ).apply {
             id = "Claim$claimId"
@@ -114,26 +108,58 @@ class AgreementServiceUtils {
             use = "preauthorization"
             billablePeriod = getBillablePeriod(agreementStartDate!!)
             created = DateTime().toString()
-            enterer = Reference().apply { getPractitioner("", hcpNihii, hcpFirstName, hcpLastName) }
-            referral = serviceRequestRef
+            enterer = Reference().apply { reference = "PractitionerRole/PractitionerRole1"}
+            referral = Reference().apply {
+                reference = "ServiceRequest/ServiceRequest1"
+            }
             insurance = getInsurance(insuranceRef, "")
-            supportingInfo = listOf(getSupportingInfo(serviceRequestRef))
+            supportingInfo = listOf(
+                getSupportingInfo(1, "attachment", "functional-report", null, null, "QW5uZXhlIGlubGluZSwgYmFzZTY0ZWQ=", "nom/description de l'annexe", "application/pdf"),
+                getSupportingInfo(2, "info", null, null, "additional Information", null, null, null),
+                getSupportingInfo(3, "info", null, "ServiceRequest/ServiceRequest2", null, null, null, null)
+            )
+
             item = listOf(getServicedDateItem(pathologyStartDate!!, pathologyCode), getCodeItem(pathologyCode))
         }
     }
 
-    fun getSupportingInfo(serviceRequest: Reference): ClaimSupportingInfo {
+    fun getSupportingInfo(sequenceNumber: Int, claimInformationCategory: String, annexTypeCode: String?, valueReference: String?, valueString: String?, valueAttachmentData: String?, valueAttachmentTitle: String?, valueAttachmentContentType: String?): ClaimSupportingInfo {
+        var code: CodeableConcept? = null
         val category = CodeableConcept().apply {
-            Coding(
+             coding = listOf(Coding(
                 system = "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
-                code = "info"
-            )
+                code = claimInformationCategory
+            ))
         }
+
+        if(!annexTypeCode.isNullOrEmpty()){
+             code = CodeableConcept().apply {
+                coding = listOf(Coding(
+                    system = "https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/annex-types",
+                    code = annexTypeCode
+                ))
+            }
+        }
+
+
         return ClaimSupportingInfo(
             category = category
         ).apply {
-            sequence = 1
-            valueReference = serviceRequest
+            when{
+                code != null -> this.code = code
+                !valueReference.isNullOrEmpty() -> this.valueReference = Reference().apply {
+                    reference = valueReference
+                }
+                !valueString.isNullOrEmpty() -> this.valueString = valueString
+                !valueAttachmentData.isNullOrEmpty() -> this.valueAttachment = Attachment().apply {
+                    contentType = valueAttachmentContentType
+                    data = valueAttachmentData
+                    title = valueAttachmentTitle
+                }
+            }
+
+            sequence = sequenceNumber
+
         }
     }
 
@@ -151,9 +177,11 @@ class AgreementServiceUtils {
             )
             type = listOf(
                 CodeableConcept().apply {
-                    Coding(
-                        system = "https://www.ehealth.fgov.be/standards/fhir/core/CodeSystem/cd-hcparty",
-                        code = organizationType
+                    coding = listOf(
+                        Coding(
+                            system = "https://www.ehealth.fgov.be/standards/fhir/core/CodeSystem/cd-hcparty",
+                            code = organizationType
+                        )
                     )
                 }
             )
@@ -169,11 +197,11 @@ class AgreementServiceUtils {
             identifier = listOf(
                 Identifier().apply {
                     when{
-                        patientSsin != null && ioMembership == null -> {
+                        !patientSsin.isNullOrEmpty() && ioMembership.isNullOrEmpty() -> {
                             system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/ssin"
                             value = patientSsin
                         }
-                        patientSsin == null && ioMembership != null && io != null -> {
+                        patientSsin.isNullOrEmpty() && !ioMembership.isNullOrEmpty() && !io.isNullOrEmpty() -> {
                             system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/insurancymembership"
                             value = ioMembership
                             assigner = Reference(identifier = Identifier().apply {
@@ -181,7 +209,7 @@ class AgreementServiceUtils {
                                 value = io
                             })
                         }
-                        patientSsin != null && ioMembership != null -> {
+                        !patientSsin.isNullOrEmpty() && !ioMembership.isNullOrEmpty() -> {
                             system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/ssin"
                             value = patientSsin
                         }
@@ -320,8 +348,9 @@ class AgreementServiceUtils {
     }
 
     fun getBillablePeriod(startDate: DateTime): Period{
+        val formatter = DateTimeFormat.forPattern("yyyy-MM-dd")
         return Period(
-            start = startDate.toString()
+            start = formatter.print(startDate)
         )
     }
 
