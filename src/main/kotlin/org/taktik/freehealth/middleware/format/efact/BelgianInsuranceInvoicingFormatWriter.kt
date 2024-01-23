@@ -74,9 +74,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                 if (affCode.startsWith("3")) {
                     if (Arrays.asList("304", "305", "309", "311", "315", "317", "319", "322", "323", "325").contains(firstCode)) "300"
                     else "306"
-                } else
-                    if (affCode.startsWith("4")) "400"
-                    else firstCode
+                } else firstCode
             }
         } else {
             if (affCode.startsWith("3")) {
@@ -85,9 +83,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                 }else{
                     firstCode
                 }
-            } else
-                if (affCode.startsWith("4")) "400"
-                else firstCode
+            } else firstCode
         }
     }
 
@@ -311,7 +307,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         //Silly rules for this field
         var affCode = insuranceCode
 
-        if (affCode.startsWith("2") || affCode.startsWith("5")) {
+        if (affCode.startsWith("2") || affCode.startsWith("4") || affCode.startsWith("5")) {
             affCode = "000"
         }
 
