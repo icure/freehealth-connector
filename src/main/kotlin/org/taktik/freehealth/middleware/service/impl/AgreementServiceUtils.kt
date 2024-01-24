@@ -112,14 +112,14 @@ class AgreementServiceUtils {
             referral = Reference().apply {
                 reference = "ServiceRequest/ServiceRequest1"
             }
-            insurance = getInsurance(insuranceRef, "")
+            insurance = listOf(getInsurance(insuranceRef, ""))
             supportingInfo = listOf(
                 getSupportingInfo(1, "attachment", "functional-report", null, null, "QW5uZXhlIGlubGluZSwgYmFzZTY0ZWQ=", "nom/description de l'annexe", "application/pdf"),
                 getSupportingInfo(2, "info", null, null, "additional Information", null, null, null),
                 getSupportingInfo(3, "info", null, "ServiceRequest/ServiceRequest2", null, null, null, null)
             )
 
-            item = listOf(getServicedDateItem(pathologyStartDate!!, pathologyCode), getCodeItem(pathologyCode))
+            item = listOf(getServicedDateItem(pathologyStartDate!!, pathologyCode, 1), getCodeItem(pathologyCode))
         }
     }
 
@@ -227,6 +227,7 @@ class AgreementServiceUtils {
 
     fun getServiceRequest(serviceRequestId: String, data: String, annexId: String, quantity: Float, patientFirstName: String, patientLastName: String, gender: String, hcpNihii: String, hcpFirstName: String, hcpLastName: String, patientSsin: String?, io: String?, ioMembership: String?): ServiceRequest {
         val patient = getPatient(patientFirstName!!, patientLastName!!, gender!!, patientSsin, io, ioMembership)
+        val formatter = DateTimeFormat.forPattern("yyyy-MM-dd")
         return ServiceRequest(subject = Reference().apply { patient }).apply {
             id = "ServiceRequest$serviceRequestId"
             meta = Meta(
@@ -243,33 +244,37 @@ class AgreementServiceUtils {
             intent = "order"
             category = listOf(
                 CodeableConcept().apply {
+                    coding = listOf(
+                        Coding(
+                            system = "http://snomed.info/sct",
+                            code = "91251008",
+                            display = "Physical therapy procedure"
+                        )
+                    )
+                }
+            )
+            code = CodeableConcept().apply {
+                coding = listOf(
                     Coding(
                         system = "http://snomed.info/sct",
                         code = "91251008",
                         display = "Physical therapy procedure"
                     )
-                }
-            )
-            code = CodeableConcept().apply {
-                Coding(
-                    system = "http://snomed.info/sct",
-                    code = "91251008",
-                    display = "Physical therapy procedure"
                 )
             }
             quantityQuantity = Count().apply {
                 value = quantity
             }
             subject = Reference().apply {
-                getPatient(patientFirstName!!, patientLastName!!, gender!!, patientSsin, io, ioMembership)
+                reference = "Patient/Patient1"
             }
-            authoredOn = DateTime().toString()
+            authoredOn = formatter.print(DateTime())
             requester = Reference().apply {
-                getPractitionerRole("", hcpNihii, hcpFirstName, hcpLastName)
+                reference = "PractitionerRole/PractitionerRole2"
             }
-            supportingInfo = listOf<Reference>().apply {
-                getContained(data, annexId)
-            }
+            supportingInfo = listOf(Reference().apply {
+                reference = "#annexSR$annexId"
+            })
         }
     }
 
@@ -317,9 +322,9 @@ class AgreementServiceUtils {
         return ParametersParameter().apply {
             name = parameterName
             when{
-                parameterName == "resourceType" -> valueString = "Claim"
+                parameterName == "resourceType" -> valueString = "ClaimResponse"
                 parameterName == "patient" -> valueReference = Reference().apply {
-                    getPatient(patientFirstName!!, patientLastName!!, patientGender!!, patientSsin, io, ioMembership)
+                    reference = "Patient/Patient1"
                 }
                 parameterName == "use" -> valueCode = "preauthorization"
                 parameterName == "subType" -> valueCoding = Coding().apply {
@@ -334,16 +339,14 @@ class AgreementServiceUtils {
         }
     }
 
-    fun getInsurance(insuranceRef: String, display: String): List<ClaimInsurance>{
-        return listOf(
-            ClaimInsurance(
-                sequence = 1,
-                focal = true,
-                coverage = Reference(
-                    display = display
-                ),
-                preAuthRef = listOf(insuranceRef)
-            )
+    fun getInsurance(insuranceRef: String, display: String): ClaimInsurance{
+        return ClaimInsurance(
+            sequence = 1,
+            focal = true,
+            coverage = Reference(
+                display = display
+            ),
+            preAuthRef = listOf(insuranceRef)
         )
     }
 
@@ -354,8 +357,10 @@ class AgreementServiceUtils {
         )
     }
 
-    fun getServicedDateItem(pathologyDate: DateTime, pathologyCode: String): ClaimItem {
+    fun getServicedDateItem(pathologyDate: DateTime, pathologyCode: String, sequenceNumber: Int): ClaimItem {
+        val formatter = DateTimeFormat.forPattern("yyyy-MM-dd")
         return ClaimItem(
+            sequence = sequenceNumber,
             productOrService = CodeableConcept(
                 coding = listOf(
                     Coding(
@@ -364,7 +369,7 @@ class AgreementServiceUtils {
                     )
                 )
             ),
-            servicedDate = pathologyDate.toString()
+            servicedDate = formatter.print(pathologyDate)
         )
     }
 

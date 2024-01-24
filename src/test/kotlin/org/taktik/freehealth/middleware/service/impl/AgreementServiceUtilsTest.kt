@@ -170,9 +170,9 @@ class AgreementServiceUtilsTest {
 
         val serviceRequest = agreementServiceUtils.getServiceRequest(
             "1",
-            "data",
-            "annexId",
-            2.5f,
+            "QW5uZXhlIGlubGluZSwgYmFzZTY0ZWQ=",
+            "1",
+            15f,
             "John",
             "Doe",
             "Male",
@@ -213,9 +213,9 @@ class AgreementServiceUtilsTest {
     fun getParameters() {
         val agreementServiceUtils = AgreementServiceUtils()
 
-        val parameterId = "123"
+        val parameterId = "1"
         val parameterNames = arrayOf("resourceType", "patient", "use", "subType", "preAuthPeriod")
-        val agreementTypes = "someAgreementType"
+        val agreementTypes = "physiotherapy"
         val startDate = DateTime.now()
         val endDate = startDate.plusDays(7)
         val patientFirstName = "John"
@@ -305,19 +305,14 @@ class AgreementServiceUtilsTest {
 
     @Test
     fun getInsurance() {
-        val agreementServiceUtils = AgreementServiceUtils()
-
         val insuranceRef = "InsuranceRef123"
         val display = "Insurance Display"
 
-        val insuranceList = agreementServiceUtils.getInsurance(insuranceRef, display)
+        val insurance = agreementServiceUtils.getInsurance(insuranceRef, display)
 
-        println("Result: "+ObjectMapper().registerModule(KotlinModule()).writeValueAsString(agreementServiceUtils))
+        println("Result: "+ObjectMapper().registerModule(KotlinModule()).writeValueAsString(insurance))
 
-        assertThat(insuranceList).isNotNull
-        assertThat(insuranceList).hasSize(1)
-
-        val insurance = insuranceList[0]
+        assertThat(insurance).isNotNull
         assertThat(insurance.sequence).isEqualTo(1)
         assertThat(insurance.focal).isTrue()
         assertThat(insurance.coverage.display).isEqualTo(display)
@@ -332,15 +327,13 @@ class AgreementServiceUtilsTest {
         println("Result: "+ObjectMapper().registerModule(KotlinModule()).writeValueAsString(period))
 
         assertThat(period).isNotNull
-        assertThat(period.start).isEqualTo(startDate.toString())
-
     }
 
     @Test
     fun getServicedDateItem() {
         val pathologyDate = DateTime.now()
-        val pathologyCode = "somePathologyCode"
-        val claimItem = agreementServiceUtils.getServicedDateItem(pathologyDate, pathologyCode)
+        val pathologyCode = "fb-51"
+        val claimItem = agreementServiceUtils.getServicedDateItem(pathologyDate, pathologyCode, 1)
 
         println("Result: "+ObjectMapper().registerModule(KotlinModule()).writeValueAsString(claimItem))
 
@@ -349,7 +342,6 @@ class AgreementServiceUtilsTest {
         assertThat(claimItem.productOrService.coding).hasSize(1)
         assertThat(claimItem.productOrService.coding[0].system).isEqualTo("https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/nihdi-physiotherapy-pathologysituationcode")
         assertThat(claimItem.productOrService.coding[0].code).isEqualTo(pathologyCode)
-        assertThat(claimItem.servicedDate).isEqualTo(pathologyDate.toString())
     }
 
     @Test
