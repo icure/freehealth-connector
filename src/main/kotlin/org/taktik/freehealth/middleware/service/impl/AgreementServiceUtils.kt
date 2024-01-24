@@ -30,7 +30,7 @@ import org.taktik.icure.fhir.entities.r4.reference.Reference
 import org.taktik.icure.fhir.entities.r4.servicerequest.ServiceRequest
 
 class AgreementServiceUtils {
-    fun getPractitionerRole(practitionerRoleId: String, hcpNihii: String, hcpFirstName: String, hcpLastName: String): PractitionerRole {
+    fun getPractitionerRole(practitionerRoleId: String, practitionerRole: String): PractitionerRole {
         return PractitionerRole().apply {
             id = "PractitionerRole$practitionerRoleId"
             meta = Meta(
@@ -44,7 +44,7 @@ class AgreementServiceUtils {
                    coding = listOf(
                        Coding(
                         system = "https://www.ehealth.fgov.be/standards/fhir/core/CodeSystem/cd-hcparty",
-                        code = "persphysiotherapist"
+                        code = practitionerRole
                     ))
                 }
             )
@@ -225,7 +225,7 @@ class AgreementServiceUtils {
         )
     }
 
-    fun getServiceRequest(serviceRequestId: String, data: String, annexId: String, quantity: Float, patientFirstName: String, patientLastName: String, gender: String, hcpNihii: String, hcpFirstName: String, hcpLastName: String, patientSsin: String?, io: String?, ioMembership: String?): ServiceRequest {
+    fun getServiceRequest(serviceRequestId: String, prescriptionId: String, data: String, annexId: String, quantity: Float, patientFirstName: String, patientLastName: String, gender: String, patientSsin: String?, io: String?, ioMembership: String?): ServiceRequest {
         val patient = getPatient(patientFirstName!!, patientLastName!!, gender!!, patientSsin, io, ioMembership)
         val formatter = DateTimeFormat.forPattern("yyyy-MM-dd")
         return ServiceRequest(subject = Reference().apply { patient }).apply {
@@ -237,7 +237,7 @@ class AgreementServiceUtils {
             identifier = listOf(
                 Identifier().apply {
                     system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/uhmep"
-                    value = "Prescription id"
+                    value = prescriptionId
                 }
             )
             status = "active"
@@ -473,6 +473,7 @@ class AgreementServiceUtils {
         }
     }
 
+
     fun getBundle(
         requestType: AgreementServiceImpl.RequestTypeEnum,
         claim: Claim,
@@ -515,7 +516,7 @@ class AgreementServiceUtils {
                     fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
                 )
                 BundleEntry(
-                    resource = getPractitionerRole("1", hcpNihii, hcpFirstName, hcpLastName),
+                    resource = getPractitionerRole("1", "persphysiotherapist"),
                     fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
                 )
                 BundleEntry(
@@ -540,13 +541,13 @@ class AgreementServiceUtils {
                     //Service Request 1
                     requestType != AgreementServiceImpl.RequestTypeEnum.CANCEL && requestType != AgreementServiceImpl.RequestTypeEnum.CONSULT_LIST ->
                         BundleEntry(
-                            resource = getServiceRequest("1", annex1!!, "1", numberOfSessionForAnnex1!!, patientFirstName, patientLastName, patientGender, hcpNihii, hcpFirstName, hcpLastName, patientSsin, patientIo, patientIoMembership),
+                            resource = getServiceRequest("1", "BE8779879789", annex1!!, "1", numberOfSessionForAnnex1!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership),
                             fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
                         )
                     //Service request 2
                     requestType == AgreementServiceImpl.RequestTypeEnum.ARGUE || requestType == AgreementServiceImpl.RequestTypeEnum.ASK ->
                         BundleEntry(
-                            resource = getServiceRequest("2", annex2!!, "2", numberOfSessionForAnnex2!!, patientFirstName, patientLastName, patientGender, hcpNihii, hcpFirstName, hcpLastName, patientSsin, patientIo, patientIoMembership),
+                            resource = getServiceRequest("2", "BE8779879789", annex2!!, "2", numberOfSessionForAnnex2!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership),
                             fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
                         )
                 }
