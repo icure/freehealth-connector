@@ -49,4 +49,6 @@ interface AgreementService {
         patientSsin: String
     ): AgreementResponse?
 
+    // abstract fun LicenseType(): Any
+
 }

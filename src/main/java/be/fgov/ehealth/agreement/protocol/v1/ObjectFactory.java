@@ -1,7 +1,7 @@
 package be.fgov.ehealth.agreement.protocol.v1;
 
-import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendRequestType;
-import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendResponseType;
+import be.fgov.ehealth.mycarenet.commons.protocol.v4.SendRequestType;
+import be.fgov.ehealth.mycarenet.commons.protocol.v4.SendResponseType;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
