@@ -1,7 +1,7 @@
 package org.taktik.connector.business.agreement.domain;
 
 import be.cin.encrypted.BusinessContent;
-import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendRequestType;
+import be.fgov.ehealth.mycarenet.commons.protocol.v4.SendRequestType;
 
 public abstract class AgreementBuilderRequest<T extends SendRequestType> {
    private T request;

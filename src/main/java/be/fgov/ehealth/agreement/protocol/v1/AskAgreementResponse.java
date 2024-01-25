@@ -1,6 +1,6 @@
 package be.fgov.ehealth.agreement.protocol.v1;
 
-import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendResponseType;
+import be.fgov.ehealth.mycarenet.commons.protocol.v4.SendResponseType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(
