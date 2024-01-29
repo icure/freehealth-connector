@@ -31,14 +31,37 @@ class EagreementControllerTest : EhealthTest() {
     @Test
     fun createSynchronousAgreementRequest() {
         //generate test
-        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val agreement = this.restTemplate.exchange("http://localhost:$port/agreement/askAgreement?hcpNihii=$nihii1&hcpName=$name1&hcpSsin=$ssin1&hcpFirstName=$firstName1&hcpLastName=$lastName1" +
-            "&patientFirstName=$firstName2&patientLastName=$lastName2&patientGender=&requestType=${EagreementServiceImpl.RequestTypeEnum.ASK}" +
-            "&messageEventSystem={messageEventSystem}&messageEventCode={messageEventCode}&pathologyStartDate="+20200605+"&pathologyCode={pathologyCode}&insuranceRef={insuranceRef}" +
-            "&patientSsin={ssin2}&patientIo={io}&patientIoMembership={ioMembership}&annex1={annex1}&annex2={annex2}" +
-            "&orgNihii={nihii}&organizationType={organizationType}&parameterNames={parameterNames}&agreementStartDate="+20200605+"&agreementEndDate="+20200605+"&agreementType={agreementType}" +
-            "&numberOfSessionForAnnex1={numberOfSessionForAnnex1}&numberOfSessionForAnnex2={numberOfSessionForAnnex2}",
-        HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase).body
 
+        val io = "300"
+        val gender = "male"
+        val requestType = "agreement-ask"
+        val messageEventSystem = ""
+        val messageEventCode = ""
+        val pathologyCode = ""
+        val insuranceRef = ""
+        val ioMembership = ""
+        val annex1 = ""
+        val annex2 = ""
+        val orgNihii = ""
+        val organizationType = ""
+        val parameterNames = ""
+        val agreementType = ""
+        val numberOfSessionForAnnex1 = ""
+        val numberOfSessionForAnnex2 = ""
+
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin4!!, password4!!)
+        val agreement = this.restTemplate.exchange("http://localhost:$port/eagreement/askAgreement?hcpNihii=$nihii4&hcpName=$name4&hcpSsin=$ssin4&hcpFirstName=$firstName4&hcpLastName=$lastName4" +
+            "&patientFirstName=$firstName4&patientLastName=$lastName4&patientGender=$gender&requestType=$requestType" +
+            "&messageEventSystem=$messageEventSystem&messageEventCode=$messageEventCode&pathologyStartDate="+20200605+"&pathologyCode=$pathologyCode&insuranceRef=$insuranceRef" +
+            "&patientSsin={$ssin4}&patientIo=$io&patientIoMembership=$ioMembership&annex1=$annex1&annex2=$annex2" +
+            "&orgNihii=$orgNihii&organizationType=$organizationType&parameterNames=$parameterNames&agreementStartDate="+20200605+"&agreementEndDate="+20200605+"&agreementType=$agreementType" +
+            "&numberOfSessionForAnnex1=$numberOfSessionForAnnex1&numberOfSessionForAnnex2=$numberOfSessionForAnnex2",
+        HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase).body
+        println(agreement)
+
+    }
+
+    @Test
+    fun askAgreement() {
     }
 }
