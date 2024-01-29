@@ -4,7 +4,6 @@ import be.cin.encrypted.BusinessContent
 import be.cin.encrypted.EncryptedKnownContent
 import be.fgov.ehealth.agreement.protocol.v1.AskAgreementRequest
 import be.fgov.ehealth.agreement.protocol.v1.AskAgreementResponse
-import be.fgov.ehealth.chap4.protocol.v1.AskChap4MedicalAdvisorAgreementResponse
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
 import be.fgov.ehealth.mycarenet.commons.core.v4.*
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration
@@ -13,7 +12,6 @@ import be.fgov.ehealth.technicalconnector.signature.transformers.EncapsulationTr
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang.StringUtils
 import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
@@ -41,37 +39,11 @@ import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
-import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
-import org.taktik.freehealth.middleware.service.AgreementService
+import org.taktik.freehealth.middleware.service.EagreementService
 import org.taktik.freehealth.middleware.service.STSService
-import org.taktik.icure.fhir.entities.r4.Meta
-import org.taktik.icure.fhir.entities.r4.attachment.Attachment
 import org.taktik.icure.fhir.entities.r4.binary.Binary
-import org.taktik.icure.fhir.entities.r4.bundle.Bundle
-import org.taktik.icure.fhir.entities.r4.bundle.BundleEntry
-import org.taktik.icure.fhir.entities.r4.claim.Claim
-import org.taktik.icure.fhir.entities.r4.claim.ClaimInsurance
-import org.taktik.icure.fhir.entities.r4.claim.ClaimItem
-import org.taktik.icure.fhir.entities.r4.claim.ClaimSupportingInfo
-import org.taktik.icure.fhir.entities.r4.codeableconcept.CodeableConcept
-import org.taktik.icure.fhir.entities.r4.coding.Coding
-import org.taktik.icure.fhir.entities.r4.count.Count
-import org.taktik.icure.fhir.entities.r4.humanname.HumanName
-import org.taktik.icure.fhir.entities.r4.identifier.Identifier
-import org.taktik.icure.fhir.entities.r4.messageheader.MessageHeader
-import org.taktik.icure.fhir.entities.r4.messageheader.MessageHeaderDestination
-import org.taktik.icure.fhir.entities.r4.messageheader.MessageHeaderSource
-import org.taktik.icure.fhir.entities.r4.organization.Organization
-import org.taktik.icure.fhir.entities.r4.parameters.Parameters
-import org.taktik.icure.fhir.entities.r4.parameters.ParametersParameter
-import org.taktik.icure.fhir.entities.r4.patient.Patient
-import org.taktik.icure.fhir.entities.r4.period.Period
-import org.taktik.icure.fhir.entities.r4.practitioner.Practitioner
-import org.taktik.icure.fhir.entities.r4.practitionerrole.PractitionerRole
-import org.taktik.icure.fhir.entities.r4.reference.Reference
-import org.taktik.icure.fhir.entities.r4.servicerequest.ServiceRequest
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
 import java.io.StringWriter
@@ -86,7 +58,7 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
 @Service
-class AgreementServiceImpl(private val stsService: STSService, private val keyDepotService: KeyDepotService) : AgreementService {
+class EagreementServiceImpl(private val stsService: STSService, private val keyDepotService: KeyDepotService) : EagreementService {
     private val freehealthAgreementService: org.taktik.connector.business.agreement.service.AgreementService = org.taktik.connector.business.agreement.service.impl.AgreementServiceImpl()
 
     private val config = ConfigFactory.getConfigValidator(emptyList())
@@ -96,15 +68,15 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         "chapterIV.keydepot.identifiersubtype",
         "chapterIV.keydepot.identifiervalue"))
 
-    val agreementServiceUtils: AgreementServiceUtilsImpl = AgreementServiceUtilsImpl();
+    val agreementServiceUtils: EagreementServiceUtilsImpl = EagreementServiceUtilsImpl();
 
-    enum class RequestTypeEnum {
-        ASK,
-        EXTEND,
-        ARGUE,
-        COMPLETE_AGREEMENT,
-        CANCEL,
-        CONSULT_LIST
+    enum class RequestTypeEnum(val requestType: String) {
+        ASK("claim-ask"),
+        EXTEND("claim-extend"),
+        ARGUE("claim-argue"),
+        COMPLETE_AGREEMENT("claim-completeAgreement"),
+        CANCEL("claim-cancel"),
+        CONSULT_LIST("")
     }
 
     private val log = LoggerFactory.getLogger(this.javaClass)
@@ -335,10 +307,15 @@ class AgreementServiceImpl(private val stsService: STSService, private val keyDe
         )
 
         val bundle = this.agreementServiceUtils.getBundle(requestType, claim, messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, orgNihii, organizationType, annex1, annex2, parameterNames, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForAnnex1, numberOfSessionForAnnex2)
-        return AskAgreementRequest().apply {
-
-
+        val multipart = java.util.Base64.getDecoder().decode(bundle.entry.mapNotNull { it.resource as? Binary }.first().data!!)
+        val askAgreementRequest = AskAgreementRequest().apply {
+            commonInput
+            routing
+            detail.apply { this.value = multipart }
+            xades
         }
+
+        return askAgreementRequest;
     }
 
     override fun requestAgreement(

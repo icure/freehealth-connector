@@ -2,7 +2,7 @@ package org.taktik.freehealth.middleware.service.impl
 
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
-import org.taktik.freehealth.middleware.service.AgreementServiceUtils
+import org.taktik.freehealth.middleware.service.EagreementServiceUtils
 import org.taktik.icure.fhir.entities.r4.Meta
 import org.taktik.icure.fhir.entities.r4.attachment.Attachment
 import org.taktik.icure.fhir.entities.r4.binary.Binary
@@ -30,7 +30,7 @@ import org.taktik.icure.fhir.entities.r4.practitionerrole.PractitionerRole
 import org.taktik.icure.fhir.entities.r4.reference.Reference
 import org.taktik.icure.fhir.entities.r4.servicerequest.ServiceRequest
 
-class AgreementServiceUtilsImpl(): AgreementServiceUtils {
+class EagreementServiceUtilsImpl(): EagreementServiceUtils {
     override fun getPractitionerRole(practitionerRoleId: String, practitionerRole: String): PractitionerRole {
         return PractitionerRole().apply {
             id = "PractitionerRole$practitionerRoleId"
@@ -476,7 +476,7 @@ class AgreementServiceUtilsImpl(): AgreementServiceUtils {
 
 
     override fun getBundle(
-        requestType: AgreementServiceImpl.RequestTypeEnum,
+        requestType: EagreementServiceImpl.RequestTypeEnum,
         claim: Claim,
         messageEventSystem: String,
         messageEventCode: String,
@@ -530,23 +530,23 @@ class AgreementServiceUtilsImpl(): AgreementServiceUtils {
                 )
                 when{
                     //Claim 1
-                    requestType != AgreementServiceImpl.RequestTypeEnum.CONSULT_LIST -> BundleEntry(
+                    requestType != EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST -> BundleEntry(
                         resource = claim,
                         fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
                     )
                     //Parameters 1
-                    requestType == AgreementServiceImpl.RequestTypeEnum.CONSULT_LIST ->   BundleEntry(
+                    requestType == EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST ->   BundleEntry(
                         resource = getParameters("1", parameterNames!!, agreementType!!, agreementStartDate, agreementEndDate, hcpNihii, hcpFirstName, hcpLastName, patientSsin, patientIo, patientIoMembership),
                         fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
                     )
                     //Service Request 1
-                    requestType != AgreementServiceImpl.RequestTypeEnum.CANCEL && requestType != AgreementServiceImpl.RequestTypeEnum.CONSULT_LIST ->
+                    requestType != EagreementServiceImpl.RequestTypeEnum.CANCEL && requestType != EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST ->
                         BundleEntry(
                             resource = getServiceRequest("1", "BE8779879789", annex1!!, "1", numberOfSessionForAnnex1!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership),
                             fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
                         )
                     //Service request 2
-                    requestType == AgreementServiceImpl.RequestTypeEnum.ARGUE || requestType == AgreementServiceImpl.RequestTypeEnum.ASK ->
+                    requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE || requestType == EagreementServiceImpl.RequestTypeEnum.ASK ->
                         BundleEntry(
                             resource = getServiceRequest("2", "BE8779879789", annex2!!, "2", numberOfSessionForAnnex2!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership),
                             fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"

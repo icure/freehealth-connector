@@ -1,7 +1,7 @@
 package org.taktik.freehealth.middleware.service
 
 import org.joda.time.DateTime
-import org.taktik.freehealth.middleware.service.impl.AgreementServiceImpl
+import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
 import org.taktik.icure.fhir.entities.r4.binary.Binary
 import org.taktik.icure.fhir.entities.r4.bundle.Bundle
 import org.taktik.icure.fhir.entities.r4.claim.Claim
@@ -19,7 +19,7 @@ import org.taktik.icure.fhir.entities.r4.practitioner.Practitioner
 import org.taktik.icure.fhir.entities.r4.practitionerrole.PractitionerRole
 import org.taktik.icure.fhir.entities.r4.servicerequest.ServiceRequest
 
-interface AgreementServiceUtils {
+interface EagreementServiceUtils {
     fun getPractitionerRole(practitionerRoleId: String, practitionerRole: String): PractitionerRole?
 
     fun getPractitioner(practitionerId: String, hcpNihii: String, hcpFirstName: String, hcpLastName: String): Practitioner?
@@ -84,7 +84,7 @@ interface AgreementServiceUtils {
 
 
     fun getBundle(
-        requestType: AgreementServiceImpl.RequestTypeEnum,
+        requestType: EagreementServiceImpl.RequestTypeEnum,
         claim: Claim,
         messageEventSystem: String,
         messageEventCode: String,

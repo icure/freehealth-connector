@@ -1,6 +1,6 @@
 package org.taktik.freehealth.middleware.web.controllers
 
-import be.fgov.ehealth.agreement.protocol.v1.AskAgreementResponse
+import ma.glasnost.orika.MapperFacade
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.exception.MissingTokenException
-import org.taktik.freehealth.middleware.service.AgreementService
-import org.taktik.freehealth.middleware.service.impl.AgreementServiceImpl
+import org.taktik.freehealth.middleware.service.EagreementService
+import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 
 @RestController
-@RequestMapping("/agreement")
-class AgreementController(val agreementService: AgreementService) {
+@RequestMapping("/eagreement")
+class EagreementController(val eagreementService: EagreementService, val mapper: MapperFacade) {
     @Value("\${mycarenet.timezone}")
     internal val mcnTimezone: String = "Europe/Brussels"
 
@@ -54,7 +54,7 @@ class AgreementController(val agreementService: AgreementService) {
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
-        @RequestParam requestType: AgreementServiceImpl.RequestTypeEnum,
+        @RequestParam requestType: String,
         @RequestParam messageEventSystem: String,
         @RequestParam messageEventCode: String,
         @RequestParam pathologyStartDate: DateTime,
@@ -74,36 +74,36 @@ class AgreementController(val agreementService: AgreementService) {
         @RequestParam(required = false) numberOfSessionForAnnex1: Float?,
         @RequestParam(required = false) numberOfSessionForAnnex2: Float?
     ): Any? {
-        return agreementService.consultSynchronousAgreement(
-            keystoreId,
-            tokenId,
-            passPhrase,
-            requestType,
-            messageEventSystem,
-            messageEventCode,
-            patientFirstName,
-            patientLastName,
-            patientGender,
-            patientSsin,
-            patientIo,
-            patientIoMembership,
-            pathologyStartDate,
-            pathologyCode,
-            insuranceRef,
-            hcpNihii,
-            hcpSsin,
-            hcpFirstName,
-            hcpLastName,
-            orgNihii,
-            organizationType,
-            annex1,
-            annex2,
-            parameterNames,
-            agreementStartDate,
-            agreementEndDate,
-            agreementType,
-            numberOfSessionForAnnex1,
-            numberOfSessionForAnnex2
+        return eagreementService.consultSynchronousAgreement(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            requestType = EagreementServiceImpl.RequestTypeEnum.valueOf(requestType),
+            messageEventSystem = messageEventSystem,
+            messageEventCode = messageEventCode,
+            patientFirstName = patientFirstName,
+            patientLastName = patientLastName,
+            patientGender = patientGender,
+            patientSsin = patientSsin,
+            patientIo = patientIo,
+            patientIoMembership = patientIoMembership,
+            pathologyStartDate = pathologyStartDate,
+            pathologyCode = pathologyCode,
+            insuranceRef = insuranceRef,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpFirstName = hcpFirstName,
+            hcpLastName = hcpLastName,
+            orgNihii = orgNihii,
+            organizationType = organizationType,
+            annex1 = annex1,
+            annex2 = annex2,
+            parameterNames = parameterNames,
+            agreementStartDate = agreementStartDate,
+            agreementEndDate = agreementEndDate,
+            agreementType = agreementType,
+            numberOfSessionForAnnex1 = numberOfSessionForAnnex1,
+            numberOfSessionForAnnex2 = numberOfSessionForAnnex2
         )
     }
 }

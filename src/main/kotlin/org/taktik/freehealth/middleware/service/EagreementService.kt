@@ -2,15 +2,15 @@ package org.taktik.freehealth.middleware.service
 
 import org.joda.time.DateTime
 import org.taktik.connector.business.domain.agreement.AgreementResponse
-import org.taktik.freehealth.middleware.service.impl.AgreementServiceImpl
+import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
 import java.util.*
 
-interface AgreementService {
+interface EagreementService {
     fun consultSynchronousAgreement(
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
-        requestType: AgreementServiceImpl.RequestTypeEnum,
+        requestType: EagreementServiceImpl.RequestTypeEnum,
         messageEventSystem: String,
         messageEventCode: String,
         patientFirstName: String,
