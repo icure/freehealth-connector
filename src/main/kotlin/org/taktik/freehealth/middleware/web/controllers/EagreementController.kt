@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import org.taktik.connector.business.domain.agreement.AgreementResponse
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EagreementService
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
@@ -57,7 +58,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam requestType: String,
         @RequestParam messageEventSystem: String,
         @RequestParam messageEventCode: String,
-        @RequestParam pathologyStartDate: DateTime,
+        @RequestParam pathologyStartDate: Int,
         @RequestParam pathologyCode: String,
         @RequestParam insuranceRef: String,
         @RequestParam(required = false) patientSsin: String?,
@@ -68,13 +69,14 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) annex1: String?,
         @RequestParam(required = false) annex2: String?,
         @RequestParam(required = false) parameterNames: Array<String>?,
-        @RequestParam(required = false) agreementStartDate: DateTime?,
-        @RequestParam(required = false) agreementEndDate: DateTime?,
+        @RequestParam(required = false) agreementStartDate: Int?,
+        @RequestParam(required = false) agreementEndDate: Int?,
         @RequestParam(required = false) agreementType: String?,
         @RequestParam(required = false) numberOfSessionForAnnex1: Float?,
         @RequestParam(required = false) numberOfSessionForAnnex2: Float?
-    ): Any? {
-        return eagreementService.consultSynchronousAgreement(
+    ): AgreementResponse? {
+        val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
+        return eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
@@ -87,7 +89,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             patientSsin = patientSsin,
             patientIo = patientIo,
             patientIoMembership = patientIoMembership,
-            pathologyStartDate = pathologyStartDate,
+            pathologyStartDate = formatter.parseDateTime(pathologyStartDate.toString()),
             pathologyCode = pathologyCode,
             insuranceRef = insuranceRef,
             hcpNihii = hcpNihii,
@@ -99,8 +101,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             annex1 = annex1,
             annex2 = annex2,
             parameterNames = parameterNames,
-            agreementStartDate = agreementStartDate,
-            agreementEndDate = agreementEndDate,
+            agreementStartDate = formatter.parseDateTime(agreementStartDate.toString()),
+            agreementEndDate = formatter.parseDateTime(agreementEndDate.toString()),
             agreementType = agreementType,
             numberOfSessionForAnnex1 = numberOfSessionForAnnex1,
             numberOfSessionForAnnex2 = numberOfSessionForAnnex2

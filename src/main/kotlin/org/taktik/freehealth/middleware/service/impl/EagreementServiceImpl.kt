@@ -1,14 +1,27 @@
 package org.taktik.freehealth.middleware.service.impl
 
+import be.apb.gfddpp.common.utils.Utils
 import be.cin.encrypted.BusinessContent
 import be.cin.encrypted.EncryptedKnownContent
 import be.fgov.ehealth.agreement.protocol.v1.AskAgreementRequest
 import be.fgov.ehealth.agreement.protocol.v1.AskAgreementResponse
+import be.fgov.ehealth.agreement.protocol.v1.ConsultAgreementResponse
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
+import be.fgov.ehealth.messageservices.mycarenet.core.v1.SendTransactionRequest
+import be.fgov.ehealth.mycarenet.commons.core.v4.CareProviderType
+import be.fgov.ehealth.mycarenet.commons.core.v4.LicenseType
+import be.fgov.ehealth.mycarenet.commons.core.v3.NihiiType
+import be.fgov.ehealth.mycarenet.commons.core.v4.OriginType
+import be.fgov.ehealth.mycarenet.commons.core.v4.PackageType
+import be.fgov.ehealth.mycarenet.commons.core.v4.ValueRefString
+import be.fgov.ehealth.mycarenet.commons.core.v4.CareReceiverIdType
+import be.fgov.ehealth.mycarenet.commons.core.v4.RoutingType
 import be.fgov.ehealth.mycarenet.commons.core.v4.*
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
 import be.fgov.ehealth.technicalconnector.signature.transformers.EncapsulationTransformer
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang.StringUtils
 import org.joda.time.DateTime
@@ -17,9 +30,9 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.agreement.exception.AgreementBusinessConnectorException
 import org.taktik.connector.business.domain.agreement.AgreementResponse
-import org.taktik.connector.business.mycarenetcommons.mapper.v4.BlobMapper
+import org.taktik.connector.business.mycarenet.attest.mappers.BlobMapper
+import org.taktik.connector.business.mycarenetcommons.builders.util.BlobUtil
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
-import org.taktik.connector.business.mycarenetdomaincommons.domain.InputReference
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.exception.SoaErrorException
@@ -43,13 +56,13 @@ import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EagreementService
 import org.taktik.freehealth.middleware.service.STSService
-import org.taktik.icure.fhir.entities.r4.binary.Binary
+import org.taktik.icure.fhir.entities.r4.bundle.Bundle
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
 import java.io.StringWriter
+import java.time.LocalDateTime
 import java.util.*
 import javax.xml.bind.JAXBContext
-import javax.xml.datatype.DatatypeConstants
 import javax.xml.datatype.DatatypeFactory
 import javax.xml.transform.TransformerException
 import javax.xml.transform.TransformerFactory
@@ -61,6 +74,7 @@ import javax.xml.transform.stream.StreamResult
 class EagreementServiceImpl(private val stsService: STSService, private val keyDepotService: KeyDepotService) : EagreementService {
     private val freehealthAgreementService: org.taktik.connector.business.agreement.service.AgreementService = org.taktik.connector.business.agreement.service.impl.AgreementServiceImpl()
 
+    private val keyDepotManager = KeyDepotManagerImpl.getInstance(keyDepotService)
     private val config = ConfigFactory.getConfigValidator(emptyList())
     private var configValidator = ConfigFactory.getConfigValidator(listOf(
         "chapterIV.keydepot.application",
@@ -96,7 +110,8 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         return error
     }
 
-    override fun consultSynchronousAgreement(
+
+    override fun askAgreement(
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
@@ -127,7 +142,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         numberOfSessionForAnnex1: Float?,
         numberOfSessionForAnnex2: Float?
     ): AgreementResponse? {
-        val isTest = config.getProperty("endpoint.agreement").contains("-acpt")
+        val isTest = config.getProperty("endpoint.mcn.agreement").contains("-acpt")
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Agreement operations")
@@ -138,20 +153,15 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-        val packageInfo = McnConfigUtil.retrievePackageInfo("eagreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
-        val inputReference = InputReference().inputReference
+        val packageInfo = McnConfigUtil.retrievePackageInfo("genins", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
+        val blobBuilder = BlobBuilderFactory.getBlobBuilder("agreement")
 
-        val instant = DateTime.now()
-        val now = DateTime(0).withYear(instant.year).withMonthOfYear(instant.monthOfYear).withDayOfMonth(instant.dayOfMonth).withHourOfDay(instant.hourOfDay).withMinuteOfHour(instant.minuteOfHour).withSecondOfMinute(instant.secondOfMinute).withMillisOfSecond(0)
-        val calendar = GregorianCalendar()
-        calendar.time = now.toDate()
-        val refDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar)
-        refDateTime.timezone = DatatypeConstants.FIELD_UNDEFINED
-
+        val now = DateTime.now().withMillisOfSecond(0)
+        val xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(now.toGregorianCalendar())
         return extractEtk(credential)?.let {
-            val synchronousAgreementRequest = createSynchronousAgreementRequest(
+            val requestBundle = createRequestBundle(
                 requestType,
                 messageEventSystem,
                 messageEventCode,
@@ -178,40 +188,21 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 numberOfSessionForAnnex1,
                 numberOfSessionForAnnex2
             )
-            val kmehrMarshallHelper = MarshallerHelper(AskAgreementRequest::class.java, AskAgreementRequest::class.java)
-            val requestXml = kmehrMarshallHelper.toXMLByteArray(synchronousAgreementRequest)
 
-            val request = AskAgreementRequest().apply {
-                val encryptedKnownContent = EncryptedKnownContent()
-                encryptedKnownContent.replyToEtk = it.encoded
-                val businessContent = BusinessContent().apply { id = detailId }
-                encryptedKnownContent.businessContent = businessContent
+            val askAgreementRequest = AskAgreementRequest().apply {
+                val requestJson = ObjectMapper().registerModule(KotlinModule()).writeValueAsString(requestBundle)
+                val unEncryptedQuery = ConnectorXmlUtils.toByteArray(requestJson as Any)
 
-                businessContent.value = requestXml
-                log.info("Request is: " + businessContent.value.toString(Charsets.UTF_8))
-                val xmlByteArray = handleEncryption(encryptedKnownContent, credential, crypto, detailId)
-
-                val blob =
-                    BlobBuilderFactory.getBlobBuilder("eagreement")
-                        .build(
-                            xmlByteArray,
-                            "none",
-                            detailId,
-                            "text/xml",
-                            null as String?,
-                            "3.0",
-                            "encryptedForKnownBED"
-                        )
-                blob.messageName = "E-AGREEMENT"
-
-                commonInput = CommonInputType().apply {
+                this.commonInput = CommonInputType().apply {
                     request =
-                        RequestType().apply {
-                            isIsTest = config.getProperty("endpoint.genins")?.contains("-acpt") ?: false
-                        }
+                        be.fgov.ehealth.mycarenet.commons.core.v4.RequestType()
+                            .apply {
+                                isIsTest = config.getProperty("endpoint.mcn.agreement")?.contains("-acpt") ?: false
+                            }
+                    this.inputReference = inputReference
                     origin = OriginType().apply {
                         `package` = PackageType().apply {
-                            license = be.fgov.ehealth.mycarenet.commons.core.v4.LicenseType().apply {
+                            license = LicenseType().apply {
                                 username = packageInfo.userName
                                 password = packageInfo.password
                             }
@@ -219,36 +210,70 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                         }
                         careProvider = CareProviderType().apply {
                             nihii =
-                                NihiiType().apply {
-                                    quality = "doctor"; value =
-                                    ValueRefString().apply { value = hcpNihii }
+                                be.fgov.ehealth.mycarenet.commons.core.v4.NihiiType().apply {
+                                    quality = "physiotherapist";
+                                    value = ValueRefString().apply { value = hcpNihii }
                                 }
                             physicalPerson = IdType().apply {
                                 name = ValueRefString().apply { value = "$hcpFirstName $hcpLastName" }
                                 ssin = ValueRefString().apply { value = hcpSsin }
-                                nihii =
-                                    NihiiType().apply {
-                                        quality = "doctor"; value =
-                                        ValueRefString().apply { value = hcpNihii }
-                                    }
+                                nihii = be.fgov.ehealth.mycarenet.commons.core.v4.NihiiType().apply {
+                                    quality = "physiotherapist";
+                                    value = ValueRefString().apply { value = hcpNihii }
+                                }
                             }
                         }
                     }
-                    this.inputReference = inputReference
                 }
-                routing = RoutingType().apply {
+                this.routing = RoutingType().apply {
                     careReceiver = CareReceiverIdType().apply {
-                        ssin = patientSsin
+                        patientSsin?.let {
+                            ssin = patientSsin
+                        }
+                        patientIoMembership?.let {
+                            mutuality = patientIo
+                            regNrWithMut = patientIoMembership
+                        }
                     }
-                    this.referenceDate = refDateTime
+                    this.referenceDate = xmlGregorianCalendar
                 }
-                this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
-                this.issueInstant = DateTime()
-                this.detail = BlobMapper.mapBlobTypefromBlob(blob)
+
+                val encryptedQuery = unEncryptedQuery.let { aqb ->
+                    val identifierTypeString = "CBE"
+                    val identifierValue = 820563481L
+                    val applicationId = "MYCARENET"
+                    val identifierSource = 48
+                    val identifier = IdentifierType.lookup(identifierTypeString, null as String?, identifierSource)
+
+                    val mbEtk = if (identifier == null) {
+                        throw IllegalStateException("invalid configuration : identifier with type ]$identifierTypeString[ for source ETKDEPOT not found")
+                    } else {
+                        keyDepotManager.getEtkSet(IdentifierType.CBE, identifierValue, applicationId, keystoreId, false)
+                    }
+
+                    crypto.seal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, mbEtk, ConnectorXmlUtils.toByteArray(
+                        EncryptedKnownContent().apply {
+                            replyToEtk = keyDepotManager.getETK(credential, keystoreId).encoded
+                            businessContent = BusinessContent().apply {
+                                id = detailId
+                                value = aqb
+                                contentType = "text/xml"
+                            }
+                        })).let {
+                        org.taktik.connector.business.mycarenetcommons.mapper.v4.BlobMapper.mapBlobTypefromBlob(blobBuilder.build(it, "none", detailId, "text/xml", "eAgreement-ask", "encryptedForKnownBED"))
+                    }
+                }
+
+                this.detail = encryptedQuery
+
+                this.xades //= BlobUtil.generateXades(credential, this.detail, "eAgreement-response")
             }
 
-            val response = try {
-                freehealthAgreementService.askAgreement(samlToken, request)
+
+
+            val askAgreementResponse = try {
+                freehealthAgreementService.askAgreement(samlToken, askAgreementRequest)
+
             } catch (e: SoaErrorException) {
                 return generateError(e).apply {
                     val rt = e.responseType
@@ -259,15 +284,24 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
             }
 
             val commonOutput =
-                CommonOutput(response?.`return`?.commonOutput?.inputReference, response?.`return`?.commonOutput?.nipReference, response?.`return`?.commonOutput?.outputReference)
+                CommonOutput(
+                    askAgreementResponse?.`return`?.commonOutput?.inputReference,
+                    askAgreementResponse?.`return`?.commonOutput?.nipReference,
+                    askAgreementResponse?.`return`?.commonOutput?.outputReference
+                )
 
             return AgreementResponse().apply {
-
+                isAcknowledged = true
             }
+
         }
     }
 
-    fun createSynchronousAgreementRequest(
+    override fun consultAgreement(keystoreId: UUID, tokenId: UUID, passPhrase: String): ConsultAgreementResponse? {
+        TODO("Not yet implemented")
+    }
+
+    fun createRequestBundle(
         requestType: RequestTypeEnum,
         messageEventSystem: String,
         messageEventCode: String,
@@ -293,7 +327,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         agreementType: String?,
         numberOfSessionForAnnex1: Float?,
         numberOfSessionForAnnex2: Float?
-    ): AskAgreementRequest{
+    ): Bundle?{
 
         val claim = this.agreementServiceUtils.getClaim(
             claimId = "1",
@@ -306,62 +340,8 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
             providerType = ""
         )
 
-        val bundle = this.agreementServiceUtils.getBundle(requestType, claim, messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, orgNihii, organizationType, annex1, annex2, parameterNames, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForAnnex1, numberOfSessionForAnnex2)
-        val multipart = java.util.Base64.getDecoder().decode(bundle.entry.mapNotNull { it.resource as? Binary }.first().data!!)
-        val askAgreementRequest = AskAgreementRequest().apply {
-            commonInput
-            routing
-            detail.apply { this.value = multipart }
-            xades
-        }
-
-        return askAgreementRequest;
-    }
-
-    override fun requestAgreement(
-        keystoreId: UUID,
-        tokenId: UUID,
-        hcpNihii: String,
-        hcpSsin: String,
-        hcpFirstName: String,
-        hcpLastName: String,
-        passPhrase: String,
-        patientSsin: String
-    ): AgreementResponse? {
-        val isTest = config.getProperty("endpoint.agreement").contains("-acpt")
-        val samlToken =
-            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw MissingTokenException("Cannot obtain token for Agreement operations")
-        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
-
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
-        val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
-        val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
-
-        val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-        val packageInfo = McnConfigUtil.retrievePackageInfo("genins", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
-
-
-
-        val request = AskAgreementRequest()
-
-        val response = try {
-            freehealthAgreementService.askAgreement(samlToken, request)
-        } catch (e: SoaErrorException) {
-            return generateError(e).apply {
-                val rt = e.responseType
-                if (rt is AskAgreementResponse) {
-                    // do something
-                }
-            }
-        }
-
-        val commonOutput =
-            CommonOutput(response?.`return`?.commonOutput?.inputReference, response?.`return`?.commonOutput?.nipReference, response?.`return`?.commonOutput?.outputReference)
-
-        return AgreementResponse().apply {
-
-        }
+        val bundle = this.agreementServiceUtils.getBundle(requestType, claim, messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, orgNihii, organizationType, annex1, annex2, parameterNames, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForAnnex1, numberOfSessionForAnnex2) ?: throw IllegalArgumentException("Cannot load fhir")
+        return bundle
     }
 
     private fun extractEtk(cred: KeyStoreCredential): EncryptionToken? {

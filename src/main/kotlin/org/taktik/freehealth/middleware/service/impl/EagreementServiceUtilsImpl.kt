@@ -499,7 +499,53 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         agreementType: String?,
         numberOfSessionForAnnex1: Float?,
         numberOfSessionForAnnex2: Float?
-    ): Bundle {
+    ): Bundle? {
+        var entries = mutableListOf<BundleEntry>()
+        entries.add(BundleEntry(
+            resource = getMessageHeader(claim, messageEventSystem, messageEventCode),
+            fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+        ))
+        entries.add( BundleEntry(
+            resource = getPatient(patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership),
+            fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+        ))
+        entries.add(   BundleEntry(
+            resource = getPractitionerRole("1", "persphysiotherapist"),
+            fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+        ))
+        entries.add(BundleEntry(
+            resource = getPractitioner("1", hcpNihii, hcpFirstName, hcpLastName),
+            fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+        ))
+        entries.add(BundleEntry(
+            resource = getOrganization("1", orgNihii!!, organizationType!!),
+            fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+        ))
+        when{
+            //Claim 1
+            requestType != EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST -> entries.add(BundleEntry(
+                resource = claim,
+                fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+            ))
+            //Parameters 1
+            requestType == EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST ->   entries.add(BundleEntry(
+                resource = getParameters("1", parameterNames!!, agreementType!!, agreementStartDate, agreementEndDate, hcpNihii, hcpFirstName, hcpLastName, patientSsin, patientIo, patientIoMembership),
+                fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+            ))
+            //Service Request 1
+            requestType != EagreementServiceImpl.RequestTypeEnum.CANCEL && requestType != EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST ->
+                entries.add(BundleEntry(
+                    resource = getServiceRequest("1", "BE8779879789", annex1!!, "1", numberOfSessionForAnnex1!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership),
+                    fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+                ))
+            //Service request 2
+            requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE || requestType == EagreementServiceImpl.RequestTypeEnum.ASK ->
+                entries.add(BundleEntry(
+                    resource = getServiceRequest("2", "BE8779879789", annex2!!, "2", numberOfSessionForAnnex2!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership),
+                    fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+                ))
+        }
+
         return Bundle().apply {
             id = "Bundle1"
             meta = Meta(
@@ -507,52 +553,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             )
             type = "message"
             timestamp = DateTime().toString()
-            entry = listOf<BundleEntry>().apply {
-                BundleEntry(
-                    resource = getMessageHeader(claim, messageEventSystem, messageEventCode),
-                    fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
-                )
-                BundleEntry(
-                    resource = getPatient(patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership),
-                    fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
-                )
-                BundleEntry(
-                    resource = getPractitionerRole("1", "persphysiotherapist"),
-                    fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
-                )
-                BundleEntry(
-                    resource = getPractitioner("1", hcpNihii, hcpFirstName, hcpLastName),
-                    fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
-                )
-                BundleEntry(
-                    resource = getOrganization("1", orgNihii!!, organizationType!!),
-                    fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
-                )
-                when{
-                    //Claim 1
-                    requestType != EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST -> BundleEntry(
-                        resource = claim,
-                        fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
-                    )
-                    //Parameters 1
-                    requestType == EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST ->   BundleEntry(
-                        resource = getParameters("1", parameterNames!!, agreementType!!, agreementStartDate, agreementEndDate, hcpNihii, hcpFirstName, hcpLastName, patientSsin, patientIo, patientIoMembership),
-                        fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
-                    )
-                    //Service Request 1
-                    requestType != EagreementServiceImpl.RequestTypeEnum.CANCEL && requestType != EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST ->
-                        BundleEntry(
-                            resource = getServiceRequest("1", "BE8779879789", annex1!!, "1", numberOfSessionForAnnex1!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership),
-                            fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
-                        )
-                    //Service request 2
-                    requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE || requestType == EagreementServiceImpl.RequestTypeEnum.ASK ->
-                        BundleEntry(
-                            resource = getServiceRequest("2", "BE8779879789", annex2!!, "2", numberOfSessionForAnnex2!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership),
-                            fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
-                        )
-                }
-            }
+            entry = entries
         }
     }
 }

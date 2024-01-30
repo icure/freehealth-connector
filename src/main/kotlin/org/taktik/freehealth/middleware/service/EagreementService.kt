@@ -1,12 +1,20 @@
 package org.taktik.freehealth.middleware.service
 
+import be.fgov.ehealth.agreement.protocol.v1.ConsultAgreementResponse
 import org.joda.time.DateTime
 import org.taktik.connector.business.domain.agreement.AgreementResponse
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
 import java.util.*
 
 interface EagreementService {
-    fun consultSynchronousAgreement(
+    /**
+     * @name askAgreement
+     * @goal Request new agreement
+     * @goal Argue a request being processed
+     * @goal Extend an existing agreement
+     * @goal Cancel request in the event of an error
+     * */
+    fun askAgreement(
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
@@ -38,17 +46,16 @@ interface EagreementService {
         numberOfSessionForAnnex2: Float?
     ): AgreementResponse?
 
-    fun requestAgreement(
+    // abstract fun LicenseType(): Any
+
+    /**
+     * @name consultAgreement
+     * @goal Consult the request for agreement form a patient
+     * */
+    fun consultAgreement(
         keystoreId: UUID,
         tokenId: UUID,
-        hcpNihii: String,
-        hcpSsin: String,
-        hcpFirstName: String,
-        hcpLastName: String,
-        passPhrase: String,
-        patientSsin: String
-    ): AgreementResponse?
-
-    // abstract fun LicenseType(): Any
+        passPhrase: String
+    ): ConsultAgreementResponse?
 
 }
