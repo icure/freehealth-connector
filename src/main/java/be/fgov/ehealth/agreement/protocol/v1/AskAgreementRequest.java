@@ -1,9 +1,9 @@
 package be.fgov.ehealth.agreement.protocol.v1;
 
-import be.fgov.ehealth.mycarenet.commons.core.v4.BlobType;
-import be.fgov.ehealth.mycarenet.commons.core.v4.CommonInputType;
-import be.fgov.ehealth.mycarenet.commons.core.v4.RoutingType;
-import be.fgov.ehealth.mycarenet.commons.protocol.v4.SendRequestType;
+import be.fgov.ehealth.mycarenet.commons.core.v3.BlobType;
+import be.fgov.ehealth.mycarenet.commons.core.v3.CommonInputType;
+import be.fgov.ehealth.mycarenet.commons.core.v3.RoutingType;
+import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendRequestType;
 import org.w3._2005._05.xmlmime.Base64Binary;
 
 import javax.xml.bind.annotation.XmlElement;

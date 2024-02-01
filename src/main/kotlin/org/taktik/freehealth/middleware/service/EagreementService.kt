@@ -19,6 +19,7 @@ interface EagreementService {
         tokenId: UUID,
         passPhrase: String,
         requestType: EagreementServiceImpl.RequestTypeEnum,
+        hcpQuality: String,
         messageEventSystem: String,
         messageEventCode: String,
         patientFirstName: String,

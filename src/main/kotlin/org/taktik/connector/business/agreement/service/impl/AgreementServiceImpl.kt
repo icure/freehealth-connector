@@ -4,8 +4,8 @@ import be.fgov.ehealth.agreement.protocol.v1.AskAgreementRequest
 import be.fgov.ehealth.agreement.protocol.v1.AskAgreementResponse
 import be.fgov.ehealth.agreement.protocol.v1.ConsultAgreementRequest
 import be.fgov.ehealth.agreement.protocol.v1.ConsultAgreementResponse
-import be.fgov.ehealth.mycarenet.commons.protocol.v4.SendRequestType
-import be.fgov.ehealth.mycarenet.commons.protocol.v4.SendResponseType
+import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendRequestType
+import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendResponseType
 import org.slf4j.LoggerFactory
 import org.taktik.connector.business.agreement.service.AgreementService
 import org.taktik.connector.business.agreement.service.ServiceFactory
@@ -29,6 +29,8 @@ class AgreementServiceImpl : AgreementService, ModuleBootstrapHook {
             "urn:be:fgov:ehealth:mycarenet:agreement:protocol:v1:AskAgreement",
             AskAgreementResponse::class.java
         )
+
+
     }
 
     @Throws(TechnicalConnectorException::class)
@@ -42,6 +44,7 @@ class AgreementServiceImpl : AgreementService, ModuleBootstrapHook {
             "urn:be:fgov:ehealth:mycarenet:agreement:protocol:v1:ConsultAgreement",
             ConsultAgreementResponse::class.java
         )
+
     }
 
     @Throws(TechnicalConnectorException::class)
