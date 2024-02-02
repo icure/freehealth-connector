@@ -23,14 +23,19 @@ class AgreementServiceImpl : AgreementService, ModuleBootstrapHook {
 
     @Throws(TechnicalConnectorException::class)
     override fun askAgreement(samlToken: SAMLToken?, askAgreementRequest: AskAgreementRequest?): AskAgreementResponse? {
-        return callAgreementService(
-            samlToken,
-            askAgreementRequest,
-            "urn:be:fgov:ehealth:mycarenet:agreement:protocol:v1:AskAgreement",
-            AskAgreementResponse::class.java
-        )
+        try {
+            val service = ServiceFactory.getAgreementPort(samlToken)
+            service.setPayload(askAgreementRequest)
+            service.setSoapAction("urn:be:fgov:ehealth:mycarenet:agreement:protocol:v1:AskAgreement")
 
+            val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
 
+            val askAgreementResponse = xmlResponse.asObject(AskAgreementResponse::class.java) as AskAgreementResponse
+
+            return askAgreementResponse;
+        }catch (ex: SOAPException){
+            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
+        }
     }
 
     @Throws(TechnicalConnectorException::class)
@@ -38,13 +43,19 @@ class AgreementServiceImpl : AgreementService, ModuleBootstrapHook {
         samlToken: SAMLToken?,
         consultAgreementRequest: ConsultAgreementRequest?
     ): ConsultAgreementResponse? {
-        return callAgreementService(
-            samlToken,
-            consultAgreementRequest,
-            "urn:be:fgov:ehealth:mycarenet:agreement:protocol:v1:ConsultAgreement",
-            ConsultAgreementResponse::class.java
-        )
+        try {
+            val service = ServiceFactory.getAgreementPort(samlToken);
+            service.setPayload(consultAgreementRequest);
+            service.setSoapAction("urn:be:fgov:ehealth:mycarenet:agreement:protocol:v1:ConsultAgreement");
 
+            val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+
+            val consultAgreementResponse = xmlResponse.asObject(ConsultAgreementResponse::class.java) as ConsultAgreementResponse
+
+            return consultAgreementResponse;
+        }catch (ex: SOAPException){
+            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
+        }
     }
 
     @Throws(TechnicalConnectorException::class)

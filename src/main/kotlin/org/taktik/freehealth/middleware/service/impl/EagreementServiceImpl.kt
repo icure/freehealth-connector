@@ -26,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.agreement.exception.AgreementBusinessConnectorException
 import org.taktik.connector.business.domain.agreement.AgreementResponse
+import org.taktik.connector.business.mycarenet.attest.domain.InputReference
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
