@@ -30,6 +30,7 @@ import org.taktik.connector.business.mycarenet.attest.domain.InputReference
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
+import org.taktik.connector.business.mycarenetdomaincommons.util.PropertyUtil
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.exception.SoaErrorException
 import org.taktik.connector.technical.exception.TechnicalConnectorException
@@ -218,6 +219,11 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                                 password = packageInfo.password
                             }
                             name = ValueRefString().apply { value = packageInfo.packageName }
+                        }
+                        config.getProperty("mycarenet.${PropertyUtil.retrieveProjectNameToUse("agreement", "mycarenet.")}.site.id")?.let {
+                            if (it.isNotBlank()) {
+                                siteID = ValueRefString().apply { value = it }
+                            }
                         }
                         careProvider = CareProviderType().apply {
                             nihii =
