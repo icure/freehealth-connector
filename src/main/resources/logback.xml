@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="30 seconds">
+	<property name="LOGS" value="./logs" />
 	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
 	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
@@ -7,6 +8,78 @@
 		</encoder>
 		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
 			<level>DEBUG</level>
+		</filter>
+	</appender>
+
+
+	<appender name="FILE-THREAD" class="ch.qos.logback.classic.sift.SiftingAppender">
+		<!-- This is MDC value -->
+		<!-- We will assign a value to 'keystoreId' via Java code -->
+		<discriminator>
+			<key>keystoreId</key>
+			<defaultValue>0-noKeyStoreId</defaultValue>
+		</discriminator>
+
+		<sift>
+			<!-- A standard RollingFileAppender, the log file is based on 'keystoreId' at runtime  -->
+			<appender name="FILE-${keystoreId}"
+					  class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<file>/opt/freehealth/logs/keystorelogs/${keystoreId}.log</file>
+
+				<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+					<Pattern>
+						%d{yyyy-MM-dd HH:mm:ss} %level %logger{35} [X-Company: %X{company}] - %msg%n
+					</Pattern>
+				</encoder>
+
+				<rollingPolicy
+						class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+					<FileNamePattern>/opt/freehealth/logs/keystorelogs/${keystoreId}.%i.log.zip
+					</FileNamePattern>
+					<MinIndex>1</MinIndex>
+					<MaxIndex>2</MaxIndex>
+				</rollingPolicy>
+
+
+				<triggeringPolicy
+						class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+					<MaxFileSize>1MB</MaxFileSize>
+				</triggeringPolicy>
+				<filter class="ch.qos.logback.classic.filter.LevelFilter">
+					<level>INFO</level>
+					<onMatch>ACCEPT</onMatch>
+					<onMismatch>DENY</onMismatch>
+				</filter>
+			</appender>
+		</sift>
+	</appender>
+
+	<appender name="FILE-GeneralErrors"
+			  class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>/opt/freehealth/logs/generalErrors.log</file>
+
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} %level %logger{35} [X-Company: %X{company}] - %msg%n
+			</Pattern>
+		</encoder>
+
+		<rollingPolicy
+				class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>/opt/freehealth/logs/generalErrors.%i.log.zip
+			</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>7</MaxIndex>
+		</rollingPolicy>
+
+		<triggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>10MB</MaxFileSize>
+		</triggeringPolicy>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
 		</filter>
 	</appender>
 
@@ -26,5 +99,9 @@
 
 	<root level="INFO">
 		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="FILE-THREAD" />
+	</root>
+	<root level="ERROR">
+		<appender-ref ref="FILE-GeneralErrors" />
 	</root>
 </configuration>
