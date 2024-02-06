@@ -252,6 +252,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("7", sendingNumber)
         ws.write("13", invoiceContent)
         ws.write("14", sender.nihii.toString().padEnd(11, '0'))
+        if(!sender.isMedicalHouse) ws.write("18", sender.nihii.toString().substring(0,1).padEnd(2, '0'))
         ws.write("22", invoicingYear)
         ws.write("23", invoicingMonth)
         ws.write("25", formattedCreationDate)
