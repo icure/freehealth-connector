@@ -28,7 +28,7 @@
 
 				<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 					<Pattern>
-						%d{yyyy-MM-dd HH:mm:ss} %level %logger{35} [X-Company: %X{company}] - %msg%n
+						%d{yyyy-MM-dd HH:mm:ss} %level %logger{35} [X-Company: %X{company}] [KeystoreId: %X{keystoreId}] - %msg%n
 					</Pattern>
 				</encoder>
 
@@ -60,7 +60,7 @@
 
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<Pattern>
-				%d{yyyy-MM-dd HH:mm:ss} %level %logger{35} [X-Company: %X{company}] - %msg%n
+				%d{yyyy-MM-dd HH:mm:ss} %level %logger{35} [X-Company: %X{company}] [KeystoreId: %X{keystoreId}] - %msg%n
 			</Pattern>
 		</encoder>
 
