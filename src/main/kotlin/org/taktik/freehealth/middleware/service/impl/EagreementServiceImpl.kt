@@ -198,20 +198,20 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                             "text/xml",
                             null as String?,
                             "3.0",
-                            null
+                            "encryptedForKnownBED"
                         )
                 blob.messageName = "eAgreement-ask"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
                 val packageInfo = McnConfigUtil.retrievePackageInfo("agreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 
-                this.commonInput = CommonInputType().apply {
+                commonInput = CommonInputType().apply {
                     request =
                         RequestType()
                             .apply {
                                 isIsTest = config.getProperty("endpoint.agreement")?.contains("-acpt") ?: false
                             }
-                    this.inputReference = inputReference
+                    inputReference = inputReference
                     origin = OriginType().apply {
                         `package` = PackageType().apply {
                             license = LicenseType().apply {
@@ -242,7 +242,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                         }
                     }
                 }
-                this.routing = RoutingType().apply {
+                routing = RoutingType().apply {
                     careReceiver = CareReceiverIdType().apply {
                         patientSsin?.let {
                             ssin = patientSsin
@@ -252,13 +252,12 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                             regNrWithMut = patientIoMembership
                         }
                     }
-                    this.referenceDate = DateTime()
+                    referenceDate = DateTime()
                 }
-                this.issueInstant = DateTime()
-
+                issueInstant = DateTime()
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
 
-                //this.xades = BlobUtil.generateXades(credential, this.detail, "agreement")
+                // xades = BlobUtil.generateXades(credential, detail, "agreement")
             }
 
 

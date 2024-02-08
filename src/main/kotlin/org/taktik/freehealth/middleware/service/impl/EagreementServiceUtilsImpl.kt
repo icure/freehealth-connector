@@ -517,10 +517,12 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             resource = getPractitioner("1", hcpNihii, hcpFirstName, hcpLastName),
             fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
         ))
-        entries.add(BundleEntry(
-            resource = getOrganization("1", orgNihii!!, organizationType!!),
-            fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
-        ))
+        if (orgNihii != null && organizationType != null) {
+            entries.add(BundleEntry(
+                resource = getOrganization("1", orgNihii, organizationType),
+                fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
+            ))
+        }
         when{
             //Claim 1
             requestType != EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST -> entries.add(BundleEntry(
