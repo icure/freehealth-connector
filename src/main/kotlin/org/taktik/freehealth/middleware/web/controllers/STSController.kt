@@ -49,7 +49,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
     val log = LoggerFactory.getLogger(this.javaClass)
 
     @PostMapping("/keystore", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun uploadKeystore(@RequestParam file: MultipartFile, @RequestHeader(name = "X-Company", required = false) company: String): UUIDType {
+    fun uploadKeystore(@RequestParam file: MultipartFile, @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String): UUIDType {
         MDC.put("company", company)
         val uuidTypeResponse = UUIDType(stsService.uploadKeystore(file))
         MDC.clear()
@@ -57,7 +57,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
     }
 
     @GetMapping("/keystore/{keystoreId}/info/{quality}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun getKeystoreInfo(@PathVariable(name = "keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestHeader(name = "X-Company", required = false) company: String,  @PathVariable(name = "quality") quality: String): CertificateInfo {
+    fun getKeystoreInfo(@PathVariable(name = "keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,  @PathVariable(name = "quality") quality: String): CertificateInfo {
         MDC.put("keystoreId", keystoreId)
         MDC.put("company", company)
         val keystoreInfoResponse = stsService.getKeystoreInfo(keystoreId, passPhrase, quality)
@@ -67,7 +67,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
 
     @Deprecated("Please specify a quality")
     @GetMapping("/token", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun requestToken(@RequestHeader(name = "X-FHC-passPhrase") passPhrase: String?, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-Company", required = false) company: String, @RequestParam(required = false) isMedicalHouse: Boolean?, @RequestParam(required = false) isGuardPost: Boolean?, @RequestParam(required = false) isSortingCenter: Boolean?, @RequestHeader(name = "X-FHC-tokenId", required = false) previousTokenId: UUID?): SamlTokenResult? {
+    fun requestToken(@RequestHeader(name = "X-FHC-passPhrase") passPhrase: String?, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String, @RequestParam(required = false) isMedicalHouse: Boolean?, @RequestParam(required = false) isGuardPost: Boolean?, @RequestParam(required = false) isSortingCenter: Boolean?, @RequestHeader(name = "X-FHC-tokenId", required = false) previousTokenId: UUID?): SamlTokenResult? {
         MDC.put("keystoreId", keystoreId)
         MDC.put("company", company)
         val requestTokenResponse = stsService.requestToken(keystoreId, ssin, passPhrase ?: "", when {
@@ -81,7 +81,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
     }
 
     @GetMapping("/token/{quality}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun requestToken(@RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-Company", required = false) company: String, @PathVariable(name = "quality") quality: String, @RequestHeader(name = "X-FHC-tokenId", required = false) previousTokenId: UUID?): SamlTokenResult? {
+    fun requestToken(@RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String, @PathVariable(name = "quality") quality: String, @RequestHeader(name = "X-FHC-tokenId", required = false) previousTokenId: UUID?): SamlTokenResult? {
         MDC.put("keystoreId", keystoreId)
         MDC.put("company", company)
         val requestTokenResponse = stsService.requestToken(keystoreId, ssin, passPhrase, quality ?: "doctor", previousTokenId)
@@ -90,7 +90,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
     }
 
     @GetMapping("/token/{quality}/{cbeNumber}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun requestTokenInstitutions(@RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-Company", required = false) company: String, @PathVariable(name = "quality") quality: String, @PathVariable(name = "cbeNumber") cbeNumber: String, @RequestHeader(name = "X-FHC-tokenId", required = false) previousTokenId: UUID?): SamlTokenResult? {
+    fun requestTokenInstitutions(@RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String, @PathVariable(name = "quality") quality: String, @PathVariable(name = "cbeNumber") cbeNumber: String, @RequestHeader(name = "X-FHC-tokenId", required = false) previousTokenId: UUID?): SamlTokenResult? {
         MDC.put("keystoreId", keystoreId)
         MDC.put("company", company)
         val requestTokenResponse = stsService.requestToken(keystoreId, ssin, passPhrase, quality, previousTokenId, cbeNumber)
@@ -99,7 +99,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
     }
 
     @PostMapping("/token", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun registerToken(@RequestBody token: String, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam(required = false) quality: String?, @RequestHeader(name = "X-Company", required = false) company: String) : Boolean{
+    fun registerToken(@RequestBody token: String, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestParam(required = false) quality: String?, @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String) : Boolean{
         MDC.put("company", company)
         val registerTokenResponse = stsService.registerToken(tokenId, token, quality ?: "doctor")
         MDC.clear()
@@ -107,7 +107,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
     }
 
     @GetMapping("/keystore/check", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun checkKeystoreExist(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-Company", required = false) company: String): Boolean {
+    fun checkKeystoreExist(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String): Boolean {
         MDC.put("keystoreId", keystoreId)
         MDC.put("company", company)
         val checkIfKeyStoreExistsResponse = stsService.checkIfKeystoreExist(keystoreId)
@@ -116,7 +116,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
     }
 
     @GetMapping("/token/check", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun checkTokenValid(@RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-Company", required = false) company: String): Boolean {
+    fun checkTokenValid(@RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String): Boolean {
         MDC.put("company", company)
         val checkTokenValidResponse = stsService.checkTokenValid(tokenId)
         MDC.clear()
@@ -124,7 +124,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
     }
 
     @GetMapping("/token/bearer", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun getBearerToken(@RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-Company", required = false) company: String): BearerToken? {
+    fun getBearerToken(@RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String): BearerToken? {
         MDC.put("keystoreId", keystoreId)
         MDC.put("company", company)
         val bearerTokenResponse = ssoService.getBearerToken(tokenId, keystoreId, passPhrase)
@@ -137,7 +137,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
-        @RequestHeader(name = "X-Company", required = false) company: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
         @PathVariable(name = "cbe") cbe: String,
         @PathVariable(name = "kid") kid: String
     ): TokenResponse {
@@ -149,7 +149,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
     }
 
     @PostMapping("/keystore/merge", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun mergeKeystores(@RequestBody request: MergeKeystoresRequestBody, @RequestHeader(name = "X-Company", required = false) company: String): MergeKeystoresResponseDto {
+    fun mergeKeystores(@RequestBody request: MergeKeystoresRequestBody, @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String): MergeKeystoresResponseDto {
         MDC.put("company", company)
         val mergeKeystoresResponse = stsService.mergeKeystores(request.newKeystore, request.oldKeystore, request.newPassword, request.oldPassword)
         MDC.clear()
