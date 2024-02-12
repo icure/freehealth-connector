@@ -31,6 +31,7 @@ class InvoiceSender {
     var firstName: String? = null
     var phoneNumber: Long? = null
     var conventionCode: Int? = null
+    var professionCode: Int? = null
 
     var isMedicalHouse:Boolean = false
         get() = nihii != null && nihii!!.toString().startsWith("8") && Arrays.asList("111", "110", "100", "101", "001", "010", "011").contains(nihii!!.toString().substring(8))
