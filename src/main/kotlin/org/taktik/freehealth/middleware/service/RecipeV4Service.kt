@@ -79,13 +79,17 @@ interface RecipeV4Service {
         tokenId: UUID,
         passPhrase: String,
         hcpNihii: String,
-        patientId: String
+        patientId: String,
+        vendorName: String?,
+        packageVersion: String?
     ): List<Prescription>
 
     fun listFeedbacks(
         keystoreId: UUID,
         tokenId: UUID,
-        passPhrase: String
+        passPhrase: String,
+        vendorName: String?,
+        packageVersion: String?
     ): List<Feedback>
 
     fun revokePrescription(
@@ -94,7 +98,9 @@ interface RecipeV4Service {
         passPhrase: String,
         hcpNihii: String,
         rid: String,
-        reason: String
+        reason: String,
+        vendorName: String?,
+        packageVersion: String?
     )
 
     fun getPrescriptionStatus(
@@ -102,7 +108,9 @@ interface RecipeV4Service {
         tokenId: UUID,
         passPhrase: String,
         hcpNihii: String,
-        rid: String
+        rid: String,
+        vendorName: String?,
+        packageVersion: String?
     ): GetPrescriptionStatusResult
 
     fun sendNotification(
@@ -113,7 +121,9 @@ interface RecipeV4Service {
         patientId: String,
         executorId: String,
         rid: String,
-        text: String
+        text: String,
+        vendorName: String?,
+        packageVersion: String?
     )
 
     fun setVision(
@@ -122,7 +132,9 @@ interface RecipeV4Service {
         passPhrase: String,
         rid: String,
         vision: String,
-        visionOthers: VisionOtherPrescribers?
+        visionOthers: VisionOtherPrescribers?,
+        vendorName: String?,
+        packageVersion: String?
     ): PutVisionResult
 
     fun listRidsHistory(
@@ -131,7 +143,9 @@ interface RecipeV4Service {
         passPhrase: String,
         patientSsin: String,
         rid: String,
-        reason: String
+        reason: String,
+        vendorName: String?,
+        packageVersion: String?
     ): ListRidsHistoryResult
 
     fun updateFeedbackFlag(
@@ -140,7 +154,9 @@ interface RecipeV4Service {
         passPhrase: String,
         hcpNihii: String,
         rid: String,
-        feedbackAllowed: Boolean
+        feedbackAllowed: Boolean,
+        vendorName: String?,
+        packageVersion: String?
     ): UpdateFeedbackFlagResult
 
     fun getGalToAdministrationUnit(galId: String): Code?
@@ -150,7 +166,9 @@ interface RecipeV4Service {
         tokenId: UUID,
         passPhrase: String,
         hcpNihii: String,
-        rid: String
+        rid: String,
+        vendorName: String?,
+        packageVersion: String?
     ): RecipeKmehrmessageType?
 
     fun inferPrescriptionType(medications: List<Medication>, prescriptionType: String?): String
@@ -178,6 +196,8 @@ interface RecipeV4Service {
         expiringToInclusive: Long?,
         pageYear: Int?,
         pageMonth: Int?,
-        pageNumber: Long?
+        pageNumber: Long?,
+        vendorName: String?,
+        packageVersion: String?
     ): ListStructuredPrescriptionsResult
 }
