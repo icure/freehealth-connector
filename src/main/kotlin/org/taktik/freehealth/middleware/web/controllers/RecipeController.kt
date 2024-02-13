@@ -61,7 +61,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam(required = false) hcpName: String?,
         @RequestBody prescription: PrescriptionRequest,
         @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
-        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
+        @RequestHeader(required = false, name = "X-FHC-packageVersion") packageVersion: String?
         ): Prescription =
         recipeV4Service.createPrescription(
             keystoreId = keystoreId,
@@ -101,7 +101,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam(required = false) hcpName: String?,
         @RequestBody prescription: PrescriptionRequest,
         @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
-        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
+        @RequestHeader(required = false, name = "X-FHC-packageVersion") packageVersion: String?
     ): Prescription =
         recipeV4Service.createPrescription(
             keystoreId = keystoreId,
@@ -140,7 +140,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?,
         @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
-        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
+        @RequestHeader(required = false, name = "X-FHC-packageVersion") packageVersion: String?
     ): List<Prescription> =
         recipeV4Service.listOpenPrescriptions(
             keystoreId = keystoreId,
@@ -172,7 +172,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?,
         @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
-        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
+        @RequestHeader(required = false, name = "X-FHC-packageVersion") packageVersion: String?
     ): ListStructuredPrescriptionsResult =
         recipeV4Service.listPrescriptions(
             keystoreId = keystoreId,
@@ -207,7 +207,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @PathVariable rid: String,
         @RequestParam text: String,
         @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
-        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
+        @RequestHeader(required = false, name = "X-FHC-packageVersion") packageVersion: String?
     ) = recipeV4Service.sendNotification(
         keystoreId = keystoreId,
         tokenId = tokenId,
@@ -233,7 +233,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?,
         @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
-        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
+        @RequestHeader(required = false, name = "X-FHC-packageVersion") packageVersion: String?
     ) =
         recipeV4Service.revokePrescription(
             keystoreId = keystoreId,
@@ -254,7 +254,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam hcpNihii: String,
         @PathVariable rid: String,
         @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
-        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
+        @RequestHeader(required = false, name = "X-FHC-packageVersion") packageVersion: String?
     ) =
         recipeV4Service.getPrescriptionStatus(
             keystoreId = keystoreId,
@@ -278,7 +278,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?,
         @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
-        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
+        @RequestHeader(required = false, name = "X-FHC-packageVersion") packageVersion: String?
     ) =
         recipeV4Service.updateFeedbackFlag(
             keystoreId = keystoreId,
@@ -300,7 +300,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam vision: String,
         @RequestParam(required = false) visionOthers: String?, //open, locked, gmd_prescriber
         @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
-    @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
+    @RequestHeader(required = false, name = "X-FHC-packageVersion") packageVersion: String?
     ): PutVisionResult = recipeV4Service.setVision(
         keystoreId = keystoreId,
         tokenId = tokenId,
@@ -323,7 +323,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?,
         @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
-        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
+        @RequestHeader(required = false, name = "X-FHC-packageVersion") packageVersion: String?
     ): RecipeKmehrmessageType? =
         recipeV4Service.getPrescriptionMessage(
             keystoreId = keystoreId,
@@ -345,7 +345,7 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?,
         @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
-        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
+        @RequestHeader(required = false, name = "X-FHC-packageVersion") packageVersion: String?
     ): List<Feedback> =
         recipeV4Service.listFeedbacks(
             keystoreId = keystoreId,
