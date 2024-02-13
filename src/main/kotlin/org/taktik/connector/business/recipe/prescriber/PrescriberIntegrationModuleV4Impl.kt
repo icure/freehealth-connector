@@ -880,7 +880,9 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
         samlToken: SAMLToken, credential: KeyStoreCredential,
         notificationText: ByteArray,
         patientId: String,
-        executorId: String
+        executorId: String,
+        vendorName: String?,
+        packageVersion: String?
     ) {
         try {
             val helper = MarshallerHelper(Any::class.java, SendNotificationParam::class.java)
@@ -899,7 +901,7 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
                 request.securedSendNotificationRequest = this.createSecuredContentType(
                     this.sealRequest(getCrypto(credential), etkRecipes[0], helper.toXMLByteArray(param))
                 )
-                request.programId = PropertyHandler.getInstance().getProperty("programIdentification")
+                request.programId = "${vendorName ?: "freehealth-connector"}/${packageVersion ?: ""}"
                 request.issueInstant = DateTime()
                 request.id = "id" + UUID.randomUUID().toString()
                 try {

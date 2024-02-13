@@ -59,8 +59,10 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam hcpNihii: String,
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?,
-        @RequestBody prescription: PrescriptionRequest
-    ): Prescription =
+        @RequestBody prescription: PrescriptionRequest,
+        @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
+        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
+        ): Prescription =
         recipeV4Service.createPrescription(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -76,8 +78,8 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             executorId = prescription.executorId,
             samVersion = prescription.samVersion,
             deliveryDate = prescription.deliveryDate?.let {FuzzyValues.getLocalDateTime(it)},
-            vendorName = prescription.vendorName,
-            packageName = prescription.packageName,
+            vendorName = prescription.vendorName ?: vendorName,
+            packageName = prescription.packageName ?: packageVersion,
             packageVersion = prescription.packageVersion,
             vendorEmail = prescription.vendorEmail,
             vendorPhone = prescription.vendorPhone,
@@ -97,7 +99,9 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam hcpNihii: String,
         @RequestParam(required = false) hcpSsin: String?,
         @RequestParam(required = false) hcpName: String?,
-        @RequestBody prescription: PrescriptionRequest
+        @RequestBody prescription: PrescriptionRequest,
+        @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
+        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
     ): Prescription =
         recipeV4Service.createPrescription(
             keystoreId = keystoreId,
@@ -114,8 +118,8 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             executorId = prescription.executorId,
             samVersion = prescription.samVersion,
             deliveryDate = prescription.deliveryDate?.let {FuzzyValues.getLocalDateTime(it)},
-            vendorName = prescription.vendorName,
-            packageName = prescription.packageName,
+            vendorName = prescription.vendorName ?: vendorName,
+            packageName = prescription.packageName ?: packageVersion,
             packageVersion = prescription.packageVersion,
             vendorEmail = prescription.vendorEmail,
             vendorPhone = prescription.vendorPhone,
@@ -134,14 +138,18 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam patientId: String,
         @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) hcpSsin: String?,
-        @RequestParam(required = false) hcpName: String?
+        @RequestParam(required = false) hcpName: String?,
+        @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
+        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
     ): List<Prescription> =
         recipeV4Service.listOpenPrescriptions(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
             hcpNihii = hcpNihii,
-            patientId = patientId
+            patientId = patientId,
+            vendorName = vendorName,
+            packageVersion = packageVersion
         )
 
     @GetMapping("/patient/all", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -162,7 +170,9 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam(required = false) pageNumber: Long?,
         @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) hcpSsin: String?,
-        @RequestParam(required = false) hcpName: String?
+        @RequestParam(required = false) hcpName: String?,
+        @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
+        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
     ): ListStructuredPrescriptionsResult =
         recipeV4Service.listPrescriptions(
             keystoreId = keystoreId,
@@ -178,7 +188,9 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             expiringToInclusive = expiringToInclusive,
             pageYear = pageYear,
             pageMonth = pageMonth,
-            pageNumber = pageNumber
+            pageNumber = pageNumber,
+            vendorName = vendorName,
+            packageVersion = packageVersion
         )
 
     @PostMapping("/notify/{rid}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -193,7 +205,9 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam patientId: String,
         @RequestParam executorId: String,
         @PathVariable rid: String,
-        @RequestParam text: String
+        @RequestParam text: String,
+        @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
+        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
     ) = recipeV4Service.sendNotification(
         keystoreId = keystoreId,
         tokenId = tokenId,
@@ -202,7 +216,9 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         patientId = patientId,
         executorId = executorId,
         rid = rid,
-        text = text
+        text = text,
+        vendorName = vendorName,
+        packageVersion = packageVersion
     )
 
     @DeleteMapping("/{rid}")
@@ -215,7 +231,9 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam reason: String,
         @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) hcpSsin: String?,
-        @RequestParam(required = false) hcpName: String?
+        @RequestParam(required = false) hcpName: String?,
+        @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
+        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
     ) =
         recipeV4Service.revokePrescription(
             keystoreId = keystoreId,
@@ -223,7 +241,9 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             passPhrase = passPhrase,
             hcpNihii = hcpNihii,
             rid = rid,
-            reason = reason
+            reason = reason,
+            vendorName = vendorName,
+            packageVersion = packageVersion
         )
 
     @GetMapping("/{rid}/status", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -232,14 +252,18 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
-        @PathVariable rid: String
+        @PathVariable rid: String,
+        @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
+        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
     ) =
         recipeV4Service.getPrescriptionStatus(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
             hcpNihii = hcpNihii,
-            rid = rid
+            rid = rid,
+            vendorName = vendorName,
+            packageVersion = packageVersion
         )
 
     @PutMapping("/{rid}/feedback/{feedbackFlag}")
@@ -252,7 +276,9 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam hcpNihii: String,
         @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) hcpSsin: String?,
-        @RequestParam(required = false) hcpName: String?
+        @RequestParam(required = false) hcpName: String?,
+        @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
+        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
     ) =
         recipeV4Service.updateFeedbackFlag(
             keystoreId = keystoreId,
@@ -260,7 +286,9 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             passPhrase = passPhrase,
             hcpNihii = hcpNihii,
             rid = rid,
-            feedbackAllowed = feedbackFlag
+            feedbackAllowed = feedbackFlag,
+            vendorName = vendorName,
+            packageVersion = packageVersion
         )
 
     @PutMapping("/{rid}/vision")
@@ -270,14 +298,18 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @PathVariable rid: String,
         @RequestParam vision: String,
-        @RequestParam(required = false) visionOthers: String? //open, locked, gmd_prescriber
+        @RequestParam(required = false) visionOthers: String?, //open, locked, gmd_prescriber
+        @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
+    @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
     ): PutVisionResult = recipeV4Service.setVision(
         keystoreId = keystoreId,
         tokenId = tokenId,
         passPhrase = passPhrase,
         rid = rid,
         vision = vision,
-        visionOthers = visionOthers?.let { VisionOtherPrescribers.fromValue(it) }
+        visionOthers = visionOthers?.let { VisionOtherPrescribers.fromValue(it) },
+        vendorName = vendorName,
+        packageVersion = packageVersion
     )
 
     @GetMapping("/prescription/{rid}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -289,14 +321,18 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam hcpNihii: String,
         @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) hcpSsin: String?,
-        @RequestParam(required = false) hcpName: String?
+        @RequestParam(required = false) hcpName: String?,
+        @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
+        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
     ): RecipeKmehrmessageType? =
         recipeV4Service.getPrescriptionMessage(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
             hcpNihii = hcpNihii,
-            rid = rid
+            rid = rid,
+            vendorName = vendorName,
+            packageVersion = packageVersion
         )
 
     @GetMapping("/all/feedbacks", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -307,12 +343,16 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         @RequestParam(required = false) hcpQuality: String?,
         @RequestParam(required = false) hcpNihii: String?,
         @RequestParam(required = false) hcpSsin: String?,
-        @RequestParam(required = false) hcpName: String?
+        @RequestParam(required = false) hcpName: String?,
+        @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
+        @RequestHeader(required = false, name = "X-FHC-packageName") packageVersion: String?
     ): List<Feedback> =
         recipeV4Service.listFeedbacks(
             keystoreId = keystoreId,
             tokenId = tokenId,
-            passPhrase = passPhrase
+            passPhrase = passPhrase,
+            vendorName = vendorName,
+            packageVersion = packageVersion
         )
 
     @GetMapping("/gal/{galId}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
