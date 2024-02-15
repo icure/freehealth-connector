@@ -9,6 +9,8 @@ import be.fgov.ehealth.etee.crypto.utils.KeyManager
 import be.fgov.ehealth.mycarenet.commons.core.v3.*
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
+import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationError
+import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationResult
 import be.fgov.ehealth.technicalconnector.signature.transformers.EncapsulationTransformer
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -41,6 +43,7 @@ import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredenti
 import org.taktik.connector.technical.utils.CertificateParser
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.IdentifierType
+import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
@@ -256,33 +259,50 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 }
                 issueInstant = DateTime()
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
-
+                this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
                 // xades = BlobUtil.generateXades(credential, detail, "agreement")
             }
 
+            try {
+                val askAgreementResponse = freehealthAgreementService.askAgreement(samlToken, askAgreementRequest)
 
+                val blobType = askAgreementResponse?.`return`?.detail
+                val blob = org.taktik.connector.business.mycarenetcommons.mapper.v4.BlobMapper.mapBlobfromBlobType(blobType!!)
+                val unsealedData =
+                    crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, blob.content).contentAsByte
+                val encryptedKnownContent =
+                    MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(
+                        unsealedData)
 
-            val askAgreementResponse = try {
-                freehealthAgreementService.askAgreement(samlToken, askAgreementRequest)
+                val xades = encryptedKnownContent!!.xades
+                val signatureVerificationResult = xades?.let {
+                    val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
+                    val options = emptyMap<String, Any>()
+                    builder.verify(unsealedData, it, options)
+                } ?: SignatureVerificationResult().apply {
+                    errors.add(SignatureVerificationError.SIGNATURE_NOT_PRESENT)
+                }
 
+                val decryptedResponse = MarshallerHelper(
+                    AskAgreementResponse::class.java,
+                    AskAgreementResponse::class.java
+                ).toObject(encryptedKnownContent.businessContent.value)
+
+                log.info("Response is: " + decryptedResponse)
+
+                val commonOutput =
+                    CommonOutput(
+                        askAgreementResponse?.`return`?.commonOutput?.inputReference,
+                        askAgreementResponse?.`return`?.commonOutput?.nipReference,
+                        askAgreementResponse?.`return`?.commonOutput?.outputReference
+                    )
+                return AgreementResponse().apply {
+                    isAcknowledged = true
+                }
             } catch (e: SoaErrorException) {
                 return generateError(e).apply {
-                    val rt = e.responseType
-                    if (rt is AskAgreementResponse) {
-                        // do something
-                    }
+
                 }
-            }
-
-            val commonOutput =
-                CommonOutput(
-                    askAgreementResponse?.`return`?.commonOutput?.inputReference,
-                    askAgreementResponse?.`return`?.commonOutput?.nipReference,
-                    askAgreementResponse?.`return`?.commonOutput?.outputReference
-                )
-
-            return AgreementResponse().apply {
-                isAcknowledged = true
             }
 
         }
