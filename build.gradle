@@ -190,7 +190,11 @@ dependencies {
 	implementation 'org.webjars:bootstrap:3.3.7'
 	implementation 'org.webjars:jquery:3.1.1-1'
 
-	//Hibernate
+  //Fhir
+  implementation "ca.uhn.hapi.fhir:hapi-fhir-base:5.6.0" // Utilisez la dernière version
+  implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:5.6.0" // Pour FHIR R4, ajustez selon la version de FHIR que vous utilisez
+
+  //Hibernate
 	compile group:'org.hibernate', name: 'hibernate-core', version: '4.3.10.Final'
 	compile group:'com.h2database', name: 'h2', version: '1.4.187'
 

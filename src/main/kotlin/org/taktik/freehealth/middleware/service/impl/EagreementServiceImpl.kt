@@ -16,8 +16,11 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.*
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
 import be.fgov.ehealth.technicalconnector.signature.transformers.EncapsulationTransformer
+import ca.uhn.fhir.context.FhirContext
+import ca.uhn.fhir.parser.IParser
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.google.gson.Gson
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang.StringUtils
 import org.joda.time.DateTime
@@ -182,8 +185,17 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 val businessContent = BusinessContent().apply { id = detailId }
                 encryptedKnownContent.businessContent = businessContent
 
-                val requestJson = ObjectMapper().registerModule(KotlinModule()).writeValueAsString(requestBundle)
-                val unEncryptedQuery = ConnectorXmlUtils.toByteArray(requestJson as Any)
+                //val requestJson = ObjectMapper().registerModule(KotlinModule()).writeValueAsString(requestBundle)
+                val requestJson = Gson().toJson(requestBundle)
+
+                val ctx = FhirContext.forR4()
+                val jsonParser: IParser = ctx.newJsonParser()
+                val resource = jsonParser.parseResource(requestJson)
+
+                val xmlParser: IParser = ctx.newXmlParser()
+                val xmlFhirString = xmlParser.encodeResourceToString(resource)
+
+                val unEncryptedQuery = ConnectorXmlUtils.toByteArray(xmlFhirString as Any)
 
                 businessContent.value = unEncryptedQuery
 
