@@ -69,11 +69,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
 
     private val keyDepotManager = KeyDepotManagerImpl.getInstance(keyDepotService)
     private val config = ConfigFactory.getConfigValidator(emptyList())
-    private var configValidator = ConfigFactory.getConfigValidator(listOf(
-        "chapterIV.keydepot.application",
-        "chapterIV.keydepot.identifiertype",
-        "chapterIV.keydepot.identifiersubtype",
-        "chapterIV.keydepot.identifiervalue"))
 
     val agreementServiceUtils: EagreementServiceUtilsImpl = EagreementServiceUtilsImpl();
 

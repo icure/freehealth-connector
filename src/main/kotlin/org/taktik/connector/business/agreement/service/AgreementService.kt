@@ -9,7 +9,7 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken
 
 interface AgreementService {
     @Throws(TechnicalConnectorException::class)
-    fun askAgreement(samlToken: SAMLToken?, askAgreementRequest: AskAgreementRequest?): AskAgreementResponse?
+    fun askAgreement(samlToken: SAMLToken, askAgreementRequest: AskAgreementRequest?): AskAgreementResponse?
 
     @Throws(TechnicalConnectorException::class)
     fun consultAgreement(

@@ -22,17 +22,21 @@ class AgreementServiceImpl : AgreementService, ModuleBootstrapHook {
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun askAgreement(samlToken: SAMLToken?, askAgreementRequest: AskAgreementRequest?): AskAgreementResponse? {
+    override fun askAgreement(samlToken: SAMLToken, askAgreementRequest: AskAgreementRequest?): AskAgreementResponse? {
         try {
             val service = ServiceFactory.getAgreementPort(samlToken)
-            service.setPayload(askAgreementRequest)
+            service.setPayload(askAgreementRequest as Any)
             service.setSoapAction("urn:be:fgov:ehealth:mycarenet:agreement:protocol:v1:AskAgreement")
-
+            val start = System.currentTimeMillis()
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            val stop = System.currentTimeMillis()
+            val response = xmlResponse.asObject(AskAgreementResponse::class.java) as AskAgreementResponse
 
-            val askAgreementResponse = xmlResponse.asObject(AskAgreementResponse::class.java) as AskAgreementResponse
+            response.upstreamTiming = (stop - start).toInt();
+            response.soapRequest = xmlResponse.request
+            response.soapResponse = xmlResponse.soapMessage
 
-            return askAgreementResponse;
+            return response
         }catch (ex: SOAPException){
             throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
         }
