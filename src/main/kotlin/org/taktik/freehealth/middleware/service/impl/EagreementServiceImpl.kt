@@ -5,31 +5,23 @@ import be.cin.encrypted.EncryptedKnownContent
 import be.fgov.ehealth.agreement.protocol.v1.AskAgreementRequest
 import be.fgov.ehealth.agreement.protocol.v1.AskAgreementResponse
 import be.fgov.ehealth.agreement.protocol.v1.ConsultAgreementResponse
-import be.fgov.ehealth.mycarenet.commons.core.v3.CareProviderType
-import be.fgov.ehealth.mycarenet.commons.core.v3.LicenseType
-import be.fgov.ehealth.mycarenet.commons.core.v3.OriginType
-import be.fgov.ehealth.mycarenet.commons.core.v3.PackageType
-import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
-import be.fgov.ehealth.mycarenet.commons.core.v3.CareReceiverIdType
-import be.fgov.ehealth.mycarenet.commons.core.v3.RoutingType
+import be.fgov.ehealth.etee.crypto.utils.KeyManager
 import be.fgov.ehealth.mycarenet.commons.core.v3.*
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
 import be.fgov.ehealth.technicalconnector.signature.transformers.EncapsulationTransformer
-import ca.uhn.fhir.context.FhirContext
-import ca.uhn.fhir.parser.IParser
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.google.gson.Gson
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang.StringUtils
 import org.joda.time.DateTime
+import org.json.JSONObject
+import org.json.XML
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.agreement.exception.AgreementBusinessConnectorException
 import org.taktik.connector.business.domain.agreement.AgreementResponse
-import org.taktik.connector.business.mycarenet.attest.domain.InputReference
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
@@ -40,6 +32,7 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.service.etee.Crypto
+import org.taktik.connector.technical.service.etee.CryptoFactory
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
@@ -145,6 +138,8 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 ?: throw MissingTokenException("Cannot obtain token for Agreement operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+        val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
+        val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
 
         val now = DateTime.now().withMillisOfSecond(0)
@@ -185,26 +180,19 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 val businessContent = BusinessContent().apply { id = detailId }
                 encryptedKnownContent.businessContent = businessContent
 
-                //val requestJson = ObjectMapper().registerModule(KotlinModule()).writeValueAsString(requestBundle)
-                val requestJson = Gson().toJson(requestBundle)
-
-                val ctx = FhirContext.forR4()
-                val jsonParser: IParser = ctx.newJsonParser()
-                val resource = jsonParser.parseResource(requestJson)
-
-                val xmlParser: IParser = ctx.newXmlParser()
-                val xmlFhirString = xmlParser.encodeResourceToString(resource)
-
-                val unEncryptedQuery = ConnectorXmlUtils.toByteArray(xmlFhirString as Any)
-
-                businessContent.value = unEncryptedQuery
+                val requestJson = ObjectMapper().registerModule(KotlinModule()).writeValueAsString(requestBundle)
+                val json = JSONObject(requestJson)
+                val requestXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + "<todofindaname>" + XML.toString(json) + "</todofindaname>"
+                val byteArray = requestXml.toByteArray(Charsets.UTF_8)
+                businessContent.value = byteArray
 
                 log.info("Request is: " + businessContent.value.toString(Charsets.UTF_8))
+                val xmlByteArray = handleEncryption(encryptedKnownContent, credential, crypto, detailId)
 
                 val blob =
                     BlobBuilderFactory.getBlobBuilder("agreement")
                         .build(
-                            unEncryptedQuery, //or a toxml of encryptedKnownContent + XADES !!!!
+                            xmlByteArray,
                             "none",
                             detailId,
                             "text/xml",
