@@ -271,15 +271,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
 
                 val xades = decryptedKnownContent!!.xades
 
-                val signatureVerificationResult = xades?.let {
-                    val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
-                    val options = emptyMap<String, Any>()
-                    builder.verify(unsealedData, it, options)
-                } ?: SignatureVerificationResult().apply {
-                    errors.add(SignatureVerificationError.SIGNATURE_NOT_PRESENT)
-                }
-
-
                 log.info("Response is: " + decryptedKnownContent.businessContent?.value?.toString(Charsets.UTF_8));
 
                 val commonOutput =
@@ -289,7 +280,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                         askAgreementResponse?.`return`?.commonOutput?.outputReference
                     )
                 return AskAgreementResponse().apply {
-
+                    soapResponse = askAgreementResponse.soapResponse
                 }
             } catch (e: SoaErrorException) {
                 throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, e, e.message)
