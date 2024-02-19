@@ -130,7 +130,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         agreementType: String?,
         numberOfSessionForAnnex1: Float?,
         numberOfSessionForAnnex2: Float?
-    ): AgreementResponse? {
+    ): AskAgreementResponse? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Agreement operations")
@@ -262,14 +262,15 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 val askAgreementResponse = freehealthAgreementService.askAgreement(samlToken, askAgreementRequest)
 
                 val blobType = askAgreementResponse?.`return`?.detail
-                val blob = org.taktik.connector.business.mycarenetcommons.mapper.v4.BlobMapper.mapBlobfromBlobType(blobType!!)
+                val blob = org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper.mapBlobfromBlobType(blobType!!)
                 val unsealedData =
                     crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, blob.content).contentAsByte
-                val encryptedKnownContent =
+                val decryptedKnownContent =
                     MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(
                         unsealedData)
 
-                val xades = encryptedKnownContent!!.xades
+                val xades = decryptedKnownContent!!.xades
+
                 val signatureVerificationResult = xades?.let {
                     val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
                     val options = emptyMap<String, Any>()
@@ -278,12 +279,8 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                     errors.add(SignatureVerificationError.SIGNATURE_NOT_PRESENT)
                 }
 
-                val decryptedResponse = MarshallerHelper(
-                    AskAgreementResponse::class.java,
-                    AskAgreementResponse::class.java
-                ).toObject(encryptedKnownContent.businessContent.value)
 
-                log.info("Response is: " + decryptedResponse)
+                log.info("Response is: " + decryptedKnownContent.businessContent?.value?.toString(Charsets.UTF_8));
 
                 val commonOutput =
                     CommonOutput(
@@ -291,13 +288,11 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                         askAgreementResponse?.`return`?.commonOutput?.nipReference,
                         askAgreementResponse?.`return`?.commonOutput?.outputReference
                     )
-                return AgreementResponse().apply {
-                    isAcknowledged = true
-                }
-            } catch (e: SoaErrorException) {
-                return generateError(e).apply {
+                return AskAgreementResponse().apply {
 
                 }
+            } catch (e: SoaErrorException) {
+                throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, e, e.message)
             }
 
         }
