@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.web.controllers
 
+import be.fgov.ehealth.agreement.protocol.v1.AskAgreementResponseType
 import ma.glasnost.orika.MapperFacade
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Value
@@ -75,7 +76,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) agreementType: String?,
         @RequestParam(required = false) numberOfSessionForAnnex1: Float?,
         @RequestParam(required = false) numberOfSessionForAnnex2: Float?
-    ): AgreementResponse? {
+    ): AskAgreementResponseType? {
         val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
         return eagreementService.askAgreement(
             keystoreId = keystoreId,

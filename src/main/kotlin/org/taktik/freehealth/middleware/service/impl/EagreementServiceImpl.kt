@@ -4,9 +4,12 @@ import be.cin.encrypted.BusinessContent
 import be.cin.encrypted.EncryptedKnownContent
 import be.fgov.ehealth.agreement.protocol.v1.AskAgreementRequest
 import be.fgov.ehealth.agreement.protocol.v1.AskAgreementResponse
+import be.fgov.ehealth.agreement.protocol.v1.AskAgreementResponseType
 import be.fgov.ehealth.agreement.protocol.v1.ConsultAgreementResponse
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
+import be.fgov.ehealth.messageservices.mycarenet.core.v1.SendTransactionResponse
 import be.fgov.ehealth.mycarenet.commons.core.v3.*
+import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDERRORMYCARENETschemes
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationError
@@ -23,7 +26,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.agreement.exception.AgreementBusinessConnectorException
-import org.taktik.connector.business.domain.agreement.AgreementResponse
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
@@ -46,17 +48,21 @@ import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
+import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EagreementService
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.icure.fhir.entities.r4.bundle.Bundle
 import org.w3c.dom.Document
+import org.w3c.dom.Element
+import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.StringWriter
 import java.util.*
 import javax.xml.bind.JAXBContext
 import javax.xml.datatype.DatatypeFactory
+import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.TransformerException
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMResult
@@ -83,16 +89,16 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
 
     private val log = LoggerFactory.getLogger(this.javaClass)
 
-    private fun generateError(e: AgreementBusinessConnectorException, co: CommonOutput): AgreementResponse {
-        val error = AgreementResponse()
+    private fun generateError(e: AgreementBusinessConnectorException, co: CommonOutput): AskAgreementResponseType {
+        val error = AskAgreementResponseType()
         error.isAcknowledged = false
         error.errors = Arrays.asList(MycarenetError(code = e.errorCode, msgFr = e.message, msgNl = e.message))
         error.commonOutput = co
         return error
     }
 
-    private fun generateError(e: SoaErrorException): AgreementResponse {
-        val error = AgreementResponse()
+    private fun generateError(e: SoaErrorException): AskAgreementResponseType {
+        val error = AskAgreementResponseType()
         error.isAcknowledged = false
         error.errors = Arrays.asList(MycarenetError(code = e.errorCode, msgFr = e.message, msgNl = e.message))
         return error
@@ -130,7 +136,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         agreementType: String?,
         numberOfSessionForAnnex1: Float?,
         numberOfSessionForAnnex2: Float?
-    ): AgreementResponse? {
+    ): AskAgreementResponseType? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Agreement operations")
@@ -180,7 +186,9 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
 
                 val requestJson = ObjectMapper().registerModule(KotlinModule()).writeValueAsString(requestBundle)
                 val json = JSONObject(requestJson)
-                val requestXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + "<todofindaname>" + XML.toString(json) + "</todofindaname>"
+                val xmlString = "<Bundle xmlns=\"http://hl7.org/fhir\">" + XML.toString(json) + "</Bundle>"
+                val requestXml = transformXml(xmlString)
+
                 val byteArray = requestXml.toByteArray(Charsets.UTF_8)
                 businessContent.value = byteArray
 
@@ -262,14 +270,14 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 val askAgreementResponse = freehealthAgreementService.askAgreement(samlToken, askAgreementRequest)
 
                 val blobType = askAgreementResponse?.`return`?.detail
-                val blob = org.taktik.connector.business.mycarenetcommons.mapper.v4.BlobMapper.mapBlobfromBlobType(blobType!!)
+                val blob = BlobMapper.mapBlobfromBlobType(blobType!!)
                 val unsealedData =
                     crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, blob.content).contentAsByte
-                val encryptedKnownContent =
+                val decryptedKnownContent =
                     MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(
                         unsealedData)
 
-                val xades = encryptedKnownContent!!.xades
+                val xades = decryptedKnownContent!!.xades
                 val signatureVerificationResult = xades?.let {
                     val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
                     val options = emptyMap<String, Any>()
@@ -278,22 +286,32 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                     errors.add(SignatureVerificationError.SIGNATURE_NOT_PRESENT)
                 }
 
-                val decryptedResponse = MarshallerHelper(
-                    AskAgreementResponse::class.java,
-                    AskAgreementResponse::class.java
-                ).toObject(encryptedKnownContent.businessContent.value)
+                log.info("Response is: " + decryptedKnownContent.businessContent.value.toString(Charsets.UTF_8))
 
-                log.info("Response is: " + decryptedResponse)
+                val responseXML = decryptedKnownContent.businessContent.value.toString(Charsets.UTF_8)
+                val responseJSON = XML.toJSONObject(responseXML)
 
-                val commonOutput =
+                var commonOutput =
                     CommonOutput(
                         askAgreementResponse?.`return`?.commonOutput?.inputReference,
                         askAgreementResponse?.`return`?.commonOutput?.nipReference,
                         askAgreementResponse?.`return`?.commonOutput?.outputReference
                     )
-                return AgreementResponse().apply {
-                    isAcknowledged = true
-                }
+
+                var res = AskAgreementResponseType()
+                res.isAcknowledged = true
+                res.commonOutput = commonOutput
+                res.mycarenetConversation = MycarenetConversation(
+                    askAgreementResponse?.soapRequest?.toString(),
+                    askAgreementResponse?.soapResponse?.toString(),
+                    askAgreementRequest.toString(),
+                    askAgreementResponse.toString(),
+                    null
+                )
+                res.content = responseJSON.toString()
+                // TODO call that method but it's not fully implemented yest
+                // res.errors = extractErrors(responseJSON).toList()
+                return res;
             } catch (e: SoaErrorException) {
                 return generateError(e).apply {
 
@@ -306,6 +324,45 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
     override fun consultAgreement(keystoreId: UUID, tokenId: UUID, passPhrase: String): ConsultAgreementResponse? {
         TODO("Not yet implemented")
     }
+
+    fun transformElement(element: Element, doc: Document) {
+        val nodeList = element.childNodes
+        for (i in 0 until nodeList.length) {
+            val node = nodeList.item(i)
+            if (node is Element) {
+                transformElement(node, doc)
+            }
+        }
+        if (element.childNodes.length == 1 && element.firstChild.nodeType == Node.TEXT_NODE) {
+            val textContent = element.textContent
+            element.textContent = "" // Clear the current text content
+            element.setAttribute("value", textContent)
+        }
+    }
+
+
+    // TODO check if this is needed. This transform request the same way we receive response : <xmlTag value="hello"/> instead of <xmlTag>hello</xmlTag>
+    fun transformXml(inputXml: String): String {
+        // Parse the XML
+        val dbFactory = DocumentBuilderFactory.newInstance()
+        val dBuilder = dbFactory.newDocumentBuilder()
+        val originalDoc = dBuilder.parse(inputXml.byteInputStream())
+
+        // Transform the document
+        val rootElement = originalDoc.documentElement
+        transformElement(rootElement, originalDoc)
+
+        // Convert the document back to a string
+        val transformerFactory = TransformerFactory.newInstance()
+        val transformer = transformerFactory.newTransformer()
+        val domSource = DOMSource(originalDoc)
+        val writer = StringWriter()
+        val result = StreamResult(writer)
+        transformer.transform(domSource, result)
+
+        return writer.toString()
+    }
+
 
     fun createRequestBundle(
         requestType: RequestTypeEnum,
@@ -364,6 +421,29 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
             log.error(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND.message)
             throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND)
         }
+    }
+
+    private fun extractErrors(jsonObject: JSONObject): Set<MycarenetError> {
+        val errors = mutableSetOf<MycarenetError>()
+        val entries = jsonObject.getJSONObject("Bundle").getJSONArray("entry")
+
+        for (i in 0 until entries.length()) {
+            val entry = entries.getJSONObject(i)
+            val resource = entry.getJSONObject("resource")
+
+            if (resource.has("OperationOutcome")) {
+                val operationOutcome = resource.getJSONObject("OperationOutcome")
+                if (operationOutcome.has("issue")) {
+                    val issue = operationOutcome.getJSONObject("issue")
+                    if (issue.has("severity") && issue.getJSONObject("severity").getString("value") == "error") {
+                        val errorCode = issue.getJSONObject("details").getJSONObject("coding").getJSONObject("code").getString("value")
+                        errors.add(MycarenetError(code = errorCode))
+                    }
+                }
+            }
+        }
+
+        return errors
     }
 
     private fun handleEncryption(

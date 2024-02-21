@@ -471,6 +471,9 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                     claim
                 }
             )
+            sender = Reference().apply {
+                reference = "Organization/Organization1"
+            }
         }
     }
 
