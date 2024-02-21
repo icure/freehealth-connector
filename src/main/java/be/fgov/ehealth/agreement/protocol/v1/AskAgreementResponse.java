@@ -2,6 +2,7 @@ package be.fgov.ehealth.agreement.protocol.v1;
 
 import be.fgov.ehealth.commons.protocol.SoapConversationLogger;
 import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendResponseType;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.soap.SOAPMessage;

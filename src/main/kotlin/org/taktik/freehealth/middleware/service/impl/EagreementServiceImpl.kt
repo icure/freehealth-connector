@@ -313,9 +313,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 // res.errors = extractErrors(responseJSON).toList()
                 return res;
             } catch (e: SoaErrorException) {
-                return generateError(e).apply {
-
-                }
+                throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, e, e.message)
             }
 
         }
