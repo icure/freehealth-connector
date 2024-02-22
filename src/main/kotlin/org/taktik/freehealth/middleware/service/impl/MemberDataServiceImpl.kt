@@ -248,8 +248,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             origin = OrigineType().apply {
                 `package` = be.cin.mycarenet.esb.common.v2.PackageType().apply {
                     license = be.cin.mycarenet.esb.common.v2.LicenseType().apply {
-                        username = packageInfo.userName
-                        password = packageInfo.password
+                        username = principal?.mcnLicense ?: config.getProperty("mycarenet.license.username")
+                        password = principal?.mcnPassword ?: config.getProperty("mycarenet.license.password")
                     }
                     name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = packageInfo.packageName }
                 }
@@ -531,11 +531,12 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
     private fun buildOriginType(hcpNihii: String, hcpName: String, hcpQuality: String?, hcpSsin: String?): OrigineType =
         OrigineType().apply {
+            val principal = SecurityContextHolder.getContext().authentication?.principal as? User
             `package` = be.cin.mycarenet.esb.common.v2.PackageType().apply {
                 name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = config.getProperty("genericasync.dmg.package.name") }
                 license = be.cin.mycarenet.esb.common.v2.LicenseType().apply {
-                    username = config.getProperty("mycarenet.license.username")
-                    password = config.getProperty("mycarenet.license.password")
+                    username = principal?.mcnLicense ?: config.getProperty("mycarenet.license.username")
+                    password = principal?.mcnPassword ?: config.getProperty("mycarenet.license.password")
                 }
             }
             careProvider = be.cin.mycarenet.esb.common.v2.CareProviderType().apply {
