@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.agreement.exception.AgreementBusinessConnectorException
+import org.taktik.connector.business.mycarenetcommons.builders.util.BlobUtil
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
@@ -263,7 +264,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 issueInstant = DateTime()
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
                 this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
-                // xades = BlobUtil.generateXades(credential, detail, "agreement")
+                 //xades = BlobUtil.generateXades(credential, detail, "agreement")
             }
 
             try {
@@ -291,6 +292,8 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 val responseXML = decryptedKnownContent.businessContent.value.toString(Charsets.UTF_8)
                 val responseJSON = XML.toJSONObject(responseXML)
 
+                val errors = responseJSON.getJSONObject("Bundle").getJSONArray("entry")
+
                 var commonOutput =
                     CommonOutput(
                         askAgreementResponse?.`return`?.commonOutput?.inputReference,
@@ -301,13 +304,12 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 var res = AskAgreementResponseType()
                 res.isAcknowledged = true
                 res.commonOutput = commonOutput
-                res.mycarenetConversation = MycarenetConversation(
-                    askAgreementResponse?.soapRequest?.toString(),
-                    askAgreementResponse?.soapResponse?.toString(),
-                    askAgreementRequest.toString(),
-                    askAgreementResponse.toString(),
-                    null
-                )
+                res.mycarenetConversation = MycarenetConversation().apply {
+                    soapRequest = askAgreementResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())?.toString()
+                    soapResponse = askAgreementResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())?.toString()
+                    transactionRequest = ConnectorXmlUtils.toString(askAgreementRequest)
+                    transactionResponse = responseJSON.toString()
+                }
                 res.content = responseJSON.toString()
                 // TODO call that method but it's not fully implemented yest
                 // res.errors = extractErrors(responseJSON).toList()

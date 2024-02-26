@@ -472,7 +472,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 }
             )
             sender = Reference().apply {
-                reference = "Organization/Organization1"
+                reference = "PractitionerRole/PractitionerRole1" //todo organization or praticioner
             }
         }
     }
