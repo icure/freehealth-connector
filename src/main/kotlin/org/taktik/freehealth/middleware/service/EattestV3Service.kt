@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.service
 
+import org.springframework.web.bind.annotation.RequestParam
 import org.taktik.freehealth.middleware.dto.eattest.Eattest
 import org.taktik.freehealth.middleware.dto.eattest.SendAttestResultWithResponse
 import java.util.*
@@ -32,6 +33,8 @@ interface EattestV3Service {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
+        hcpQuality: String,
+        hcpMcnQuality: String,
         hcpCbe: String,
         treatmentReason : String?,
         traineeSupervisorSsin: String?,
@@ -59,6 +62,8 @@ interface EattestV3Service {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
+        hcpQuality: String,
+        hcpMcnQuality: String,
         hcpCbe: String,
         traineeSupervisorSsin: String?,
         traineeSupervisorNihii: String?,

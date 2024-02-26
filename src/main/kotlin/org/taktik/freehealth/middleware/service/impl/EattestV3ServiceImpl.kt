@@ -127,6 +127,8 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
+        hcpQuality: String,
+        hcpMcnQuality : String,
         hcpCbe: String,
         traineeSupervisorSsin: String?,
         traineeSupervisorNihii: String?,
@@ -169,6 +171,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                     hcpSsin,
                     hcpFirstName,
                     hcpLastName,
+                    hcpMcnQuality,
                     patientSsin,
                     patientFirstName,
                     patientLastName,
@@ -227,7 +230,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                         careProvider = CareProviderType().apply {
                             nihii =
                                 NihiiType().apply {
-                                    quality = "doctor"; value =
+                                    quality = hcpQuality; value =
                                     ValueRefString().apply { value = hcpNihii }
                                 }
                             physicalPerson = IdType().apply {
@@ -235,7 +238,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 ssin = ValueRefString().apply { value = hcpSsin }
                                 nihii =
                                     NihiiType().apply {
-                                        quality = "doctor"; value =
+                                        quality = hcpQuality; value =
                                         ValueRefString().apply { value = hcpNihii }
                                     }
                             }
@@ -322,6 +325,8 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
+        hcpQuality: String,
+        hcpMcnQuality : String,
         hcpCbe: String,
         treatmentReason: String?,
         traineeSupervisorSsin: String?,
@@ -372,6 +377,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                     hcpSsin,
                     hcpFirstName,
                     hcpLastName,
+                    hcpMcnQuality,
                     hcpCbe,
                     patientSsin,
                     patientFirstName,
@@ -436,7 +442,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             if (guardPostNihii?.isEmpty() != false) {
                                 nihii =
                                     NihiiType().apply {
-                                        quality = "doctor"; value =
+                                        quality = hcpQuality; value =
                                         ValueRefString().apply { value = hcpNihii }
                                     }
                                 physicalPerson = IdType().apply {
@@ -444,7 +450,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                     ssin = ValueRefString().apply { value = hcpSsin }
                                     nihii =
                                         NihiiType().apply {
-                                            quality = "doctor"; value =
+                                            quality = hcpQuality; value =
                                             ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
                                         }
                                 }
@@ -573,6 +579,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         hcpSsin: String?,
         hcpFirstName: String,
         hcpLastName: String,
+        hcpMcnQuality: String,
         hcpCbe: String,
         patientSsin: String,
         patientFirstName: String,
@@ -594,7 +601,10 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
 
         val requestAuthorNihii = guardPostNihii ?: hcpNihii
         val requestAuthorSsin = guardPostSsin ?: hcpSsin
-        val requestAuthorCdHcParty = if (guardPostNihii?.isEmpty() != false) "persphysician" else "guardpost"
+        val requestAuthorCdHcParty = if (guardPostNihii?.isEmpty() != false) hcpMcnQuality else "guardpost"
+
+        val totalPatientPaid = totalPatientPaid(attest);
+        val totalDoctorSupplement = totalDoctorSupplement(attest);
 
         return SendTransactionRequest().apply {
             messageProtocoleSchemaVersion = BigDecimal("1.34")
@@ -698,7 +708,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 })
                                 cds.add(CDHCPARTY().apply {
                                     s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
-                                    "persphysician"
+                                    hcpMcnQuality
                                 })
                                 firstname = traineeSupervisorFirstName
                                 familyname = traineeSupervisorLastName
@@ -716,7 +726,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 })
                                 cds.add(CDHCPARTY().apply {
                                     s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
-                                    "persphysician"
+                                    hcpMcnQuality
                                 })
                                 firstname = hcpFirstName
                                 familyname = hcpLastName
@@ -746,12 +756,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 "patientpaid"
                             })
                             cost = CostType().apply {
-                                decimal =
-                                    BigDecimal.valueOf(attest.codes.sumBy {
-                                        Math.round(
-                                            ((it.reimbursement ?: 0.0) + (it.reglementarySupplement ?: 0.0)) * 100
-                                                  ).toInt()
-                                    }.toLong()).divide(BigDecimal(100L)).setScale(2, RoundingMode.CEILING)
+                                decimal = totalPatientPaid
                                 unit = UnitType().apply {
                                     cd =
                                         CDUNIT().apply {
@@ -761,10 +766,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 }
                             }
                         },
-                        attest.codes.sumBy {
-                           Math.round((it.doctorSupplement ?: 0.0) * 100)
-                               .toInt()
-                        }.let {
+                        totalDoctorSupplement.let {
                            if (it !== 0) ItemType().apply {
                                ids.add(IDKMEHR().apply {
                                    s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
@@ -831,7 +833,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             })
                             cds.add(CDHCPARTY().apply {
                                 s = CDHCPARTYschemes.CD_HCPARTY; sv =
-                                "1.16"; value = "persphysician"
+                                "1.16"; value = hcpMcnQuality
                             })
                             firstname = hcpFirstName
                             familyname = hcpLastName
@@ -848,7 +850,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             })
                             cds.add(CDHCPARTY().apply {
                                 s = CDHCPARTYschemes.CD_HCPARTY; sv =
-                                "1.16"; value = "persphysician"
+                                "1.16"; value = hcpMcnQuality
                             })
                             firstname = traineeSupervisorFirstName
                             familyname = traineeSupervisorLastName
@@ -946,8 +948,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                     "patientpaid"
                                 })
                                 cost = CostType().apply {
-                                    decimal =
-                                        BigDecimal.valueOf((code.reimbursement ?: 0.0) + (code.reglementarySupplement ?: 0.0)).setScale(2, RoundingMode.CEILING)
+                                    decimal = patientPaid(code)
                                     unit = UnitType().apply {
                                         cd =
                                             CDUNIT().apply {
@@ -956,27 +957,30 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                             }
                                     }
                                 }
-                            }, ItemType().apply {
-                                ids.add(IDKMEHR().apply {
-                                    s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
-                                    (itemId++).toString()
-                                })
-                                cds.add(CDITEM().apply {
-                                    s = CD_ITEM_MYCARENET; sv = "1.6"; value =
-                                    "supplement"
-                                })
-                                cost = CostType().apply {
-                                    decimal =
-                                        BigDecimal.valueOf(code.doctorSupplement ?: 0.0).setScale(2, RoundingMode.CEILING)
-                                    unit = UnitType().apply {
-                                        cd =
-                                            CDUNIT().apply {
-                                                s = CDUNITschemes.CD_CURRENCY; sv = "1.0"; value =
-                                                "EUR"
-                                            }
+                            },
+                            code.doctorSupplement?.let {
+                                    if (it !== 0.0)  ItemType().apply {
+                                        ids.add(IDKMEHR().apply {
+                                            s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                            (itemId++).toString()
+                                        })
+                                        cds.add(CDITEM().apply {
+                                            s = CD_ITEM_MYCARENET; sv = "1.6"; value =
+                                            "supplement"
+                                        })
+                                        cost = CostType().apply {
+                                            decimal =
+                                                BigDecimal.valueOf(code.doctorSupplement ?: 0.0).setScale(2, RoundingMode.CEILING)
+                                            unit = UnitType().apply {
+                                                cd =
+                                                    CDUNIT().apply {
+                                                        s = CDUNITschemes.CD_CURRENCY; sv = "1.0"; value =
+                                                        "EUR"
+                                                    }
                                     }
                                 }
-                            }, code.location?.let { loc ->
+                            } else null
+                        }, code.location?.let { loc ->
                                 ItemType().apply {
                                     ids.add(IDKMEHR().apply {
                                         s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
@@ -1074,7 +1078,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                             cds.add(CDHCPARTY().apply {
                                                 s =
                                                     CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
-                                                gmdm.cdHcParty ?: "persphysician"
+                                                gmdm.cdHcParty ?: hcpMcnQuality
                                             })
                                             firstname = gmdm.firstName ?: ""
                                             familyname = gmdm.lastName ?: ""
@@ -1169,6 +1173,22 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                                                }
                                                            }).filterNotNull())
                                 }
+                            }, code.decisionReference?.let{
+                                    ItemType().apply {
+                                        ids.add(IDKMEHR().apply {
+                                            s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                            (itemId++).toString()
+                                        })
+                                        cds.add(CDITEM().apply {
+                                            s = CD_ITEM_MYCARENET; sv = "1.6"; value =
+                                            "decisionreference"
+                                        })
+                                        contents.add(ContentType().apply {
+                                            ids.add(IDKMEHR().apply {
+                                                s = IDKMEHRschemes.LOCAL ; sv = "1.0"; sl = "OAreferencesystemname"; value = it;
+                                            })
+                                        })
+                                    }
                             }).filterNotNull())
                         }
                     }))
@@ -1183,6 +1203,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
+        hcpMcnQuality: String,
         patientSsin: String,
         patientFirstName: String,
         patientLastName: String,
@@ -1211,7 +1232,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
                         cds.add(CDHCPARTY().apply {
                             s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
-                            "persphysician"
+                            hcpMcnQuality
                         })
                         firstname = hcpFirstName
                         familyname = hcpLastName
@@ -1238,7 +1259,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
                             cds.add(CDHCPARTY().apply {
                                 s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
-                                "persphysician"
+                                hcpMcnQuality
                             })
                             firstname = hcpFirstName
                             familyname = hcpLastName
@@ -1291,7 +1312,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 })
                                 cds.add(CDHCPARTY().apply {
                                     s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
-                                    "persphysician"
+                                    hcpMcnQuality
                                 })
                                 firstname = traineeSupervisorFirstName
                                 familyname = traineeSupervisorLastName
@@ -1309,7 +1330,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 })
                                 cds.add(CDHCPARTY().apply {
                                     s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
-                                    "persphysician"
+                                    hcpMcnQuality
                                 })
                                 firstname = hcpFirstName
                                 familyname = hcpLastName
@@ -1356,6 +1377,34 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         }
     }
 
+    private fun patientPaid(code: Eattest.EattestCode) : BigDecimal {
+        return BigDecimal.valueOf(code.patientPaid ?: ((code.reimbursement ?: 0.0) + (code.reglementarySupplement ?: 0.0))).setScale(2, RoundingMode.CEILING);
+    }
+
+    private fun totalPatientPaid(attest: Eattest) : BigDecimal {
+        return if (attest.patientPaid != null) {
+            BigDecimal.valueOf(Math.round(
+                ((attest.patientPaid ?: 0.0) * 100)
+            ).toInt().toLong()).divide(BigDecimal(100L)).setScale(2, RoundingMode.CEILING);
+        } else {
+            BigDecimal.valueOf(attest.codes.sumBy {
+                Math.round(
+                    ((it.reimbursement ?: 0.0) + (it.reglementarySupplement ?: 0.0)) * 100
+                ).toInt()
+            }.toLong()).divide(BigDecimal(100L)).setScale(2, RoundingMode.CEILING);
+        }
+    }
+
+    private fun totalDoctorSupplement(attest: Eattest) : Int {
+        return if (attest.doctorSupplement != null) {
+            Math.round((attest.doctorSupplement ?: 0.0) * 100).toInt()
+        } else {
+            attest.codes.sumBy {
+                Math.round((it.doctorSupplement ?: 0.0) * 100)
+                    .toInt()
+            }
+        }
+    }
 
     private fun dateTime(intDate: Int?) = intDate?.let {
         DateTime(0).withYear(intDate / 10000).withMonthOfYear((intDate / 100) % 100)
