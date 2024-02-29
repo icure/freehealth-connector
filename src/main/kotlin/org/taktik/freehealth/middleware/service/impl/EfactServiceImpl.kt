@@ -22,22 +22,18 @@ import org.taktik.connector.business.genericasync.service.impl.GenAsyncServiceIm
 import org.taktik.connector.business.mycarenetcommons.builders.util.BlobUtil
 import org.taktik.connector.business.mycarenetcommons.mapper.SendRequestMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.RequestBuilderFactory
+import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.business.mycarenetdomaincommons.util.WsAddressingUtil
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.handler.domain.WsAddressingHeader
+import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.ConnectorIOUtils
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
+import org.taktik.freehealth.middleware.dto.efact.*
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
-import org.taktik.freehealth.middleware.dto.efact.EfactMessage
-import org.taktik.freehealth.middleware.dto.efact.EfactSendResponse
-import org.taktik.freehealth.middleware.dto.efact.ErrorDetail
-import org.taktik.freehealth.middleware.dto.efact.FlatFileWithMetadata
-import org.taktik.freehealth.middleware.dto.efact.InvoicesBatch
-import org.taktik.freehealth.middleware.dto.efact.Record
-import org.taktik.freehealth.middleware.dto.efact.Zone
 import org.taktik.freehealth.middleware.dto.efact.segments.RecordOrSegmentDescription
 import org.taktik.freehealth.middleware.dto.efact.segments.ZoneDescription
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
@@ -291,6 +287,80 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             }
         }
     }
+
+    override fun sendFlatFile(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        invoice: InvoiceFlatFile
+    ): EfactSendResponse {
+        requireNotNull(keystoreId) { "Keystore id cannot be null" }
+        requireNotNull(tokenId) { "Token id cannot be null" }
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Efact operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+
+        val isTest = config.getProperty("endpoint.mcn.tarification").contains("-acpt")
+        val inputReference = IdGeneratorFactory.getIdGenerator().generateId().toString()
+
+        val requestObjectBuilder = try {
+            BuilderFactory.getRequestObjectBuilder("invoicing")
+        } catch (e: Exception) {
+            throw IllegalArgumentException(e)
+        }
+
+        val blob = RequestBuilderFactory.getBlobBuilder("invoicing").build(invoice.flatFile.toString().toByteArray(Charsets.UTF_8))
+
+        val messageName = "HCPFAC" // depends on content of message HCPFAC HCPAFD or HCPVWR
+        blob.messageName = messageName
+
+        // Creation of the request
+
+        val ci = CommonInput().apply {
+            request = be.cin.mycarenet.esb.common.v2.RequestType().apply {
+                isIsTest = isTest!!
+            }
+            origin =
+                buildOriginType(
+                    samlToken.quality,
+                    invoice.nihii!!.toString().padEnd(11, '0'),
+                    invoice.ssin!!.toString(),
+                    invoice.firstName!!,
+                    invoice.lastName!!
+                )
+            this.inputReference = inputReference
+        }
+
+        val xades = BlobUtil.generateXades(credential, SendRequestMapper.mapBlobToBlobType(blob), "invoicing").value
+
+        val post = requestObjectBuilder.buildPostRequest(ci, SendRequestMapper.mapBlobToCinBlob(blob), xades)
+        val header: WsAddressingHeader
+        try {
+            header = WsAddressingHeader(URI("urn:be:cin:nip:async:generic:post:msg"))
+            header.to = URI("urn:nip:destination:io:${invoice.destinationInsuranceNumber}")
+            header.faultTo = "http://www.w3.org/2005/08/addressing/anonymous"
+            header.replyTo = "http://www.w3.org/2005/08/addressing/anonymous"
+            header.messageID = URI("" + UUID.randomUUID())
+        } catch (e: URISyntaxException) {
+            throw IllegalStateException(e)
+        }
+
+        val postResponse = genAsyncService.postRequest(samlToken, post, header)
+
+        val tack = postResponse.getReturn()
+        val success = tack.resultMajor != null && tack.resultMajor == "urn:nip:tack:result:major:success"
+
+        val records = BelgianInsuranceInvoicingFormatReader("unused").parse(invoice.flatFile.toString().reader(), false)!!.map { mapper.map(it, Record::class.java) }
+        return EfactSendResponse(success, inputReference, tack, invoice.flatFile, records).apply {
+            this.mycarenetConversation = MycarenetConversation().apply {
+                this.transactionRequest = MarshallerHelper(Post::class.java, Post::class.java).toXMLByteArray(post).toString(Charsets.UTF_8)
+                this.transactionResponse = MarshallerHelper(PostResponse::class.java, PostResponse::class.java).toXMLByteArray(postResponse).toString(Charsets.UTF_8)
+                postResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                postResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+            }
+        }
+    }
+
 
     override fun loadMessages(
         keystoreId: UUID,

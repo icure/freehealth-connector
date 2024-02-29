@@ -1,15 +1,14 @@
 package org.taktik.freehealth.middleware.service
 
 import org.taktik.connector.business.domain.dmg.DmgAcknowledge
-import org.taktik.freehealth.middleware.dto.efact.EfactMessage
-import org.taktik.freehealth.middleware.dto.efact.EfactSendResponse
-import org.taktik.freehealth.middleware.dto.efact.FlatFileWithMetadata
-import org.taktik.freehealth.middleware.dto.efact.InvoicesBatch
+import org.taktik.freehealth.middleware.dto.efact.*
 import java.util.UUID
 
 interface EfactService {
 
     fun sendBatch(keystoreId: UUID, tokenId: UUID, passPhrase: String, batch: InvoicesBatch): EfactSendResponse
+    fun sendFlatFile(keystoreId: UUID, tokenId: UUID, passPhrase: String, invoice: InvoiceFlatFile): EfactSendResponse
+
     fun loadMessages(keystoreId: UUID,
                      tokenId: UUID,
                      passPhrase: String,

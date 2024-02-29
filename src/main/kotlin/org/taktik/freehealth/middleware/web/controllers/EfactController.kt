@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.taktik.freehealth.middleware.dto.efact.InvoiceFlatFile
 import org.taktik.freehealth.middleware.dto.efact.InvoicesBatch
 import org.taktik.freehealth.middleware.service.EfactService
 import java.util.*
@@ -50,6 +51,20 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             tokenId = tokenId,
             passPhrase = passPhrase,
             batch = batch
+        )
+
+    @PostMapping("/flatfile", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun sendFlatFile(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestBody invoice: InvoiceFlatFile
+    ) =
+        efactService.sendFlatFile(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            invoice = invoice
         )
 
     @PostMapping("/flat", produces = [MediaType.TEXT_PLAIN_VALUE])
