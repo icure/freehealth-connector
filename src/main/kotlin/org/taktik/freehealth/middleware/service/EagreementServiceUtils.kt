@@ -1,6 +1,7 @@
 package org.taktik.freehealth.middleware.service
 
 import org.joda.time.DateTime
+import org.json.JSONObject
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
 import org.taktik.icure.fhir.entities.r4.binary.Binary
 import org.taktik.icure.fhir.entities.r4.bundle.Bundle
@@ -83,7 +84,7 @@ interface EagreementServiceUtils {
     fun getMessageHeader(claim: Claim, messageEventSystem: String, messageEventsCode: String): MessageHeader?
 
 
-    fun getBundle(
+    fun getBundleJSON(
         requestType: EagreementServiceImpl.RequestTypeEnum,
         claim: Claim,
         messageEventSystem: String,
@@ -107,6 +108,6 @@ interface EagreementServiceUtils {
         agreementType: String?,
         numberOfSessionForAnnex1: Float?,
         numberOfSessionForAnnex2: Float?
-    ): Bundle?
+    ): JSONObject?
 
 }

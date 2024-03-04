@@ -16,6 +16,7 @@ import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerification
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationResult
 import be.fgov.ehealth.technicalconnector.signature.transformers.EncapsulationTransformer
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang.StringUtils
@@ -151,7 +152,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         val xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(now.toGregorianCalendar())
 
         return extractEtk(credential)?.let {
-            val requestBundle = createRequestBundle(
+            val requestBundleJSON = createRequestBundle(
                 requestType,
                 messageEventSystem,
                 messageEventCode,
@@ -185,9 +186,9 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 val businessContent = BusinessContent().apply { id = detailId }
                 encryptedKnownContent.businessContent = businessContent
 
-                val requestJson = ObjectMapper().registerModule(KotlinModule()).writeValueAsString(requestBundle)
-                val json = JSONObject(requestJson)
-                val xmlString = "<Bundle xmlns=\"http://hl7.org/fhir\">" + XML.toString(json) + "</Bundle>"
+                val mapper = ObjectMapper()
+                mapper.enable(SerializationFeature.WRAP_ROOT_VALUE)
+                val xmlString = XML.toString(requestBundleJSON)
                 val requestXml = transformXml(xmlString)
 
                 val byteArray = requestXml.toByteArray(Charsets.UTF_8)
@@ -264,7 +265,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 issueInstant = DateTime()
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
                 this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
-                 //xades = BlobUtil.generateXades(credential, detail, "agreement")
+                // xades = BlobUtil.generateXades(credential, detail, "agreement")
             }
 
             try {
@@ -292,7 +293,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 val responseXML = decryptedKnownContent.businessContent.value.toString(Charsets.UTF_8)
                 val responseJSON = XML.toJSONObject(responseXML)
 
-                val errors = responseJSON.getJSONObject("Bundle").getJSONArray("entry")
+                // val errors = responseJSON.getJSONObject("Bundle").getJSONArray("entry")
 
                 var commonOutput =
                     CommonOutput(
@@ -350,6 +351,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
 
         // Transform the document
         val rootElement = originalDoc.documentElement
+        rootElement.setAttribute("xmlns", "http://hl7.org/fhir")
         transformElement(rootElement, originalDoc)
 
         // Convert the document back to a string
@@ -390,7 +392,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         agreementType: String?,
         numberOfSessionForAnnex1: Float?,
         numberOfSessionForAnnex2: Float?
-    ): Bundle?{
+    ): JSONObject?{
 
         val claim = this.agreementServiceUtils.getClaim(
             claimId = "1",
@@ -403,8 +405,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
             providerType = ""
         )
 
-        val bundle = this.agreementServiceUtils.getBundle(requestType, claim, messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, orgNihii, organizationType, annex1, annex2, parameterNames, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForAnnex1, numberOfSessionForAnnex2) ?: throw IllegalArgumentException("Cannot load fhir")
-        return bundle
+        return this.agreementServiceUtils.getBundleJSON(requestType, claim, messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, orgNihii, organizationType, annex1, annex2, parameterNames, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForAnnex1, numberOfSessionForAnnex2) ?: throw IllegalArgumentException("Cannot load fhir")
     }
 
     private fun extractEtk(cred: KeyStoreCredential): EncryptionToken? {

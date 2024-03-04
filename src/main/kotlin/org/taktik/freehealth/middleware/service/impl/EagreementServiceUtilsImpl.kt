@@ -1,7 +1,11 @@
 package org.taktik.freehealth.middleware.service.impl
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
+import org.json.JSONObject
 import org.taktik.freehealth.middleware.service.EagreementServiceUtils
 import org.taktik.icure.fhir.entities.r4.Meta
 import org.taktik.icure.fhir.entities.r4.attachment.Attachment
@@ -211,8 +215,12 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                             })
                         }
                         !patientSsin.isNullOrEmpty() && !ioMembership.isNullOrEmpty() -> {
-                            system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/ssin"
-                            value = patientSsin
+                            system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/insurancymembership"
+                            value = ioMembership
+                            assigner = Reference(identifier = Identifier().apply {
+                                system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/insurancenumber"
+                                value = io
+                            })
                         }
                     }
                 }),
@@ -450,14 +458,14 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
     override fun getMessageHeader(claim: Claim, messageEventSystem: String, messageEventsCode: String): MessageHeader {
         return MessageHeader(
             eventCoding = Coding(
-                system = messageEventSystem,
-                code = messageEventsCode
+                system = "https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/message-events",
+                code = "claim-ask"
             ),
-            source = MessageHeaderSource()
+            source = MessageHeaderSource(endpoint = "urn:uuid:1dc5d974-5447-4afe-a4ab-57081ca518c3")
         ).apply {
-            id = "generate id"
+            id = "267b18ce-3d37-4581-9baa-6fada338038b"
             meta = Meta(
-                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementmessageheader")
+                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-messageheader")
             )
 
             destination = listOf(
@@ -468,7 +476,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             )
             focus = listOf(
                 Reference().apply {
-                    claim
+                    reference = "Claim/Claim1"
                 }
             )
             sender = Reference().apply {
@@ -477,8 +485,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         }
     }
 
-
-    override fun getBundle(
+    override fun getBundleJSON(
         requestType: EagreementServiceImpl.RequestTypeEnum,
         claim: Claim,
         messageEventSystem: String,
@@ -502,38 +509,56 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         agreementType: String?,
         numberOfSessionForAnnex1: Float?,
         numberOfSessionForAnnex2: Float?
-    ): Bundle? {
+    ): JSONObject? {
         var entries = mutableListOf<BundleEntry>()
-        entries.add(BundleEntry(
-            resource = getMessageHeader(claim, messageEventSystem, messageEventCode),
-            fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
-        ))
-        entries.add( BundleEntry(
-            resource = getPatient(patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership),
-            fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
-        ))
-        entries.add(   BundleEntry(
-            resource = getPractitionerRole("1", "persphysiotherapist"),
-            fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
-        ))
-        entries.add(BundleEntry(
-            resource = getPractitioner("1", hcpNihii, hcpFirstName, hcpLastName),
-            fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
-        ))
-        if (orgNihii != null && organizationType != null) {
-            entries.add(BundleEntry(
-                resource = getOrganization("1", orgNihii, organizationType),
-                fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
-            ))
+
+        val mapper = ObjectMapper()
+        mapper.registerModule(KotlinModule())
+        mapper.enable(SerializationFeature.WRAP_ROOT_VALUE)
+
+        val requestBundle = Bundle().apply {
+            id = "Bundle1"
+            meta = Meta(
+                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementdemand")
+            )
+            type = "message"
+            timestamp = DateTime().toString()
+            entry = entries
         }
+        val requestJson = mapper.writeValueAsString(requestBundle)
+        val json = JSONObject(requestJson)
+
+        val messageHeader = JSONObject().put("fullUrl" , "urn:uuid:ce2e2084-3f5c-4f52-8551-8088bb6d3491")
+        messageHeader.put("resource", JSONObject(mapper.writeValueAsString(getMessageHeader(claim, messageEventSystem, messageEventCode))))
+        json.getJSONObject("Bundle").getJSONArray("entry").put(messageHeader)
+
+        val practitioner = JSONObject().put("fullUrl" , "urn:uuid:1dc5d974-5447-4afe-a4ab-57081ca518c3")
+        practitioner.put("resource", JSONObject(mapper.writeValueAsString(getPractitioner("1", hcpNihii, hcpFirstName, hcpLastName))))
+        json.getJSONObject("Bundle").getJSONArray("entry").put(practitioner)
+
+        val patient = JSONObject().put("fullUrl" , "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl")
+        patient.put("resource", JSONObject(mapper.writeValueAsString(getPatient(patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership))))
+        json.getJSONObject("Bundle").getJSONArray("entry").put(patient)
+
+        val practitionerRole = JSONObject().put("fullUrl" , "urn:uuid:1dc5d974-5447-4afe-a4ab-57081ca518c3")
+        practitionerRole.put("resource", JSONObject(mapper.writeValueAsString(getPractitionerRole("1", "persphysiotherapist"))))
+        json.getJSONObject("Bundle").getJSONArray("entry").put(practitionerRole)
+
+        if (orgNihii != null && organizationType != null) {
+            val organization = JSONObject().put("fullUrl" , "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl")
+            organization.put("resource", JSONObject(mapper.writeValueAsString(getOrganization("1", orgNihii, organizationType))))
+            json.getJSONObject("Bundle").getJSONArray("entry").put(organization)
+        }
+
         when{
             //Claim 1
-            requestType != EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST -> entries.add(BundleEntry(
-                resource = claim,
-                fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
-            ))
+            requestType != EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST -> {
+                val parameter = JSONObject().put("fullUrl" , "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl")
+                parameter.put("resource", JSONObject(mapper.writeValueAsString(claim)))
+                json.getJSONObject("Bundle").getJSONArray("entry").put(parameter)
+            }
             //Parameters 1
-            requestType == EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST ->   entries.add(BundleEntry(
+            /*requestType == EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST ->   entries.add(BundleEntry(
                 resource = getParameters("1", parameterNames!!, agreementType!!, agreementStartDate, agreementEndDate, hcpNihii, hcpFirstName, hcpLastName, patientSsin, patientIo, patientIoMembership),
                 fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
             ))
@@ -548,17 +573,9 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 entries.add(BundleEntry(
                     resource = getServiceRequest("2", "BE8779879789", annex2!!, "2", numberOfSessionForAnnex2!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership),
                     fullUrl = "https://www.hl7.org/fhir/bundle-definitions.html#Bundle.entry.fullUrl"
-                ))
+                ))*/
         }
 
-        return Bundle().apply {
-            id = "Bundle1"
-            meta = Meta(
-                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementdemand")
-            )
-            type = "message"
-            timestamp = DateTime().toString()
-            entry = entries
-        }
+        return json
     }
 }
