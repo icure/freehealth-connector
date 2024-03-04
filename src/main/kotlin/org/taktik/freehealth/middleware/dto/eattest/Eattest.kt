@@ -57,8 +57,8 @@ class Eattest(
     class EattestCardReading(
         var date: Int? = null,
         var time: Int? = null,
-        var mediaType: Int = 1,
-        var inputType: Int = 1,
+        var mediaType: String? = null,
+        var inputType: String? = null,
         var manualInputReason: Int? = null,
         var vignetteReason: Int? = null,
         var serial: String? = null
