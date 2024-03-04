@@ -1139,7 +1139,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                                                    s =
                                                                        CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
                                                                    "NIHDI-ID-DOC-INPUT-TYPE"; value =
-                                                                   cr.inputType.toString()
+                                                                   cr.inputType
                                                                })
                                                            cr.manualInputReason?.let {
                                                                    cds.add(CDCONTENT().apply {
@@ -1161,7 +1161,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                                                    s =
                                                                        CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
                                                                    "NIHDI-ID-DOC-MEDIA-TYPE"; value =
-                                                                   cr.mediaType.toString()
+                                                                   cr.mediaType
                                                                })
                                                            },
                                                            cr.serial?.let {
