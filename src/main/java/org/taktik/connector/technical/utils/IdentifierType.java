@@ -48,6 +48,7 @@ public final class IdentifierType implements Serializable {
    public static final IdentifierType NIHII_BELRAI_SCREEN = new IdentifierType("NIHII-BELRAI_SCREEN", 8);
    public static final IdentifierType NIHII_GROUP_MIDWIVES = new IdentifierType("NIHII-GROUP_MIDWIVES", 8);
    public static final IdentifierType NIHII_SORTING_CENTER = new IdentifierType("NIHII-SORTING_CENTER", "NIHII-SORTING_CENTER", "SORTING_CENTER" , 8);
+   public static final IdentifierType NIHII_REEDUCATION = new IdentifierType("NIHII-REEDUCATION", 8);
    public static final IdentifierType UNKNOWN = new IdentifierType("UNKNOWN", "UNKNOWN", "UNKNOWN" , 8);
    /** @deprecated */
    @Deprecated
