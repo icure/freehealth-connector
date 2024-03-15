@@ -5,6 +5,7 @@ package org.taktik.icure.fhir.entities.r4.coding
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import kotlin.Boolean
 import kotlin.String
 import kotlin.collections.List
@@ -18,6 +19,7 @@ import org.taktik.icure.fhir.entities.r4.extension.Extension
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonPropertyOrder("system", "code")
 class Coding(
   /**
    * Symbol in syntax defined by the system

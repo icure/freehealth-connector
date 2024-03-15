@@ -5,6 +5,7 @@ package org.taktik.icure.fhir.entities.r4.servicerequest
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import kotlin.Boolean
@@ -34,6 +35,7 @@ import org.taktik.icure.fhir.entities.r4.timing.Timing
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonDeserialize(using= JsonDeserializer.None::class)
+@JsonPropertyOrder("id", "meta", "identifier", "contained", "status", "intent", "category", "code", "quantityQuantity", "subject", "authoredOn", "requester", "supportingInfo")
 class ServiceRequest(
   /**
    * Preconditions for service

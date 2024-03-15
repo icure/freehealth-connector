@@ -3,21 +3,17 @@ package org.taktik.freehealth.middleware.service.impl
 import be.cin.encrypted.BusinessContent
 import be.cin.encrypted.EncryptedKnownContent
 import be.fgov.ehealth.agreement.protocol.v1.AskAgreementRequest
-import be.fgov.ehealth.agreement.protocol.v1.AskAgreementResponse
 import be.fgov.ehealth.agreement.protocol.v1.AskAgreementResponseType
 import be.fgov.ehealth.agreement.protocol.v1.ConsultAgreementResponse
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
-import be.fgov.ehealth.messageservices.mycarenet.core.v1.SendTransactionResponse
 import be.fgov.ehealth.mycarenet.commons.core.v3.*
-import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDERRORMYCARENETschemes
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationError
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationResult
 import be.fgov.ehealth.technicalconnector.signature.transformers.EncapsulationTransformer
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang.StringUtils
 import org.joda.time.DateTime
@@ -27,7 +23,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.agreement.exception.AgreementBusinessConnectorException
-import org.taktik.connector.business.mycarenetcommons.builders.util.BlobUtil
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
@@ -55,13 +50,13 @@ import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EagreementService
 import org.taktik.freehealth.middleware.service.STSService
-import org.taktik.icure.fhir.entities.r4.bundle.Bundle
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.StringWriter
 import java.util.*
+import java.util.function.Consumer
 import javax.xml.bind.JAXBContext
 import javax.xml.datatype.DatatypeFactory
 import javax.xml.parsers.DocumentBuilderFactory
@@ -70,6 +65,7 @@ import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMResult
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
+
 
 @Service
 class EagreementServiceImpl(private val stsService: STSService, private val keyDepotService: KeyDepotService) : EagreementService {
@@ -186,9 +182,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 val businessContent = BusinessContent().apply { id = detailId }
                 encryptedKnownContent.businessContent = businessContent
 
-                val mapper = ObjectMapper()
-                mapper.enable(SerializationFeature.WRAP_ROOT_VALUE)
-                val xmlString = XML.toString(requestBundleJSON)
+                val xmlString = convertJsonObjectToXml(requestBundleJSON!!)
                 val requestXml = transformXml(xmlString)
 
                 val byteArray = requestXml.toByteArray(Charsets.UTF_8)
@@ -365,6 +359,43 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         return writer.toString()
     }
 
+    fun convertJsonObjectToXml(jsonObject: JsonObject): String {
+        val xmlBuilder = java.lang.StringBuilder()
+        // Ajout de l'en-tête XML (optionnel)
+        xmlBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
+        // Convertir le JsonObject en XML
+        xmlBuilder.append(convertElement(jsonObject.get("Bundle").asJsonObject, "Bundle"))
+        return xmlBuilder.toString()
+    }
+
+    private fun convertElement(jsonElement: JsonElement, elementName: String): String? {
+        // Cas de base : si l'élément est une primitive ou null, retourner sa représentation en chaîne
+        if (jsonElement.isJsonPrimitive || jsonElement.isJsonNull) {
+            return String.format("<%s>%s</%s>", elementName, jsonElement.asString, elementName)
+        } else if (jsonElement.isJsonObject) {
+            val elementBuilder = java.lang.StringBuilder()
+            elementBuilder.append(String.format("<%s>", elementName))
+            val jsonObject = jsonElement.asJsonObject
+            jsonObject.entrySet().forEach(Consumer { (key, value): Map.Entry<String, JsonElement> ->
+                // Récursion pour chaque élément du JsonObject
+                elementBuilder.append(convertElement(value, key))
+            })
+            elementBuilder.append(String.format("</%s>", elementName))
+            return elementBuilder.toString()
+        } else if (jsonElement.isJsonArray) {
+            // Gérer les tableaux JSON. Notez que cela ne définit pas de balises spécifiques pour les éléments de tableau
+            val arrayBuilder = java.lang.StringBuilder()
+            jsonElement.asJsonArray.forEach(Consumer { item: JsonElement ->
+                arrayBuilder.append(
+                    convertElement(item, elementName)
+                )
+            })
+            return arrayBuilder.toString()
+        }
+        // Retourner une chaîne vide pour tout autre cas (ce qui ne devrait normalement pas arriver)
+        return ""
+    }
+
 
     fun createRequestBundle(
         requestType: RequestTypeEnum,
@@ -392,12 +423,12 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         agreementType: String?,
         numberOfSessionForAnnex1: Float?,
         numberOfSessionForAnnex2: Float?
-    ): JSONObject?{
+    ): JsonObject?{
 
         val claim = this.agreementServiceUtils.getClaim(
             claimId = "1",
             claimStatus = "active",
-            subTypeCode = "kine",
+            subTypeCode = "physiotherapy-fb",
             agreementStartDate = DateTime(),
             insuranceRef = insuranceRef!!,
             pathologyCode = pathologyCode,
