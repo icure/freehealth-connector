@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.agreement.exception.AgreementBusinessConnectorException
+import org.taktik.connector.business.mycarenet.attest.domain.InputReference
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
@@ -213,7 +214,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                             .apply {
                                 isIsTest = config.getProperty("endpoint.agreement")?.contains("-acpt") ?: false
                             }
-                    inputReference = inputReference
+                    inputReference = InputReference().inputReference
                     origin = OriginType().apply {
                         `package` = PackageType().apply {
                             license = LicenseType().apply {

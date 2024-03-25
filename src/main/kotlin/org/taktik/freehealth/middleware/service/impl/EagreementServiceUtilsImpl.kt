@@ -121,11 +121,11 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             referral = Reference().apply {
                 reference = "ServiceRequest/ServiceRequest1"
             }
-            insurance = listOf(getInsurance(insuranceRef, "BASE"))
+            insurance = listOf(getInsurance(insuranceRef, "use of mandatory insurance coverage, no further details provided here."))
             supportingInfo = listOf(
-                getSupportingInfo(1, "attachment", "functional-report", null, null, "QW5uZXhlIGlubGluZSwgYmFzZTY0ZWQ=", "nom/description de l'annexe", "application/pdf"),
-                getSupportingInfo(2, "info", null, null, "additional Information", null, null, null),
-                getSupportingInfo(3, "info", null, "ServiceRequest/ServiceRequest2", null, null, null, null)
+                getSupportingInfo(1, "attachment", "physiotherapist-report", null, null, "QW5uZXhlIGlubGluZSwgYmFzZTY0ZWQ=", "nom/description de l'annexe", "application/pdf"),
+                getSupportingInfo(2, "info", null, null, "additional Information", null, null, null)
+                //getSupportingInfo(3, "info", null, "ServiceRequest/ServiceRequest2", null, null, null, null)
             )
 
             item = listOf(getServicedDateItem(pathologyStartDate!!, pathologyCode, 1))
@@ -154,8 +154,9 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         return ClaimSupportingInfo(
             category = category
         ).apply {
+            if (code != null) this.code = code
             when{
-                code != null -> this.code = code
+                //code != null -> this.code = code
                 !valueReference.isNullOrEmpty() -> this.valueReference = Reference().apply {
                     reference = valueReference
                 }
@@ -351,8 +352,8 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             focal = true,
             coverage = Reference(
                 display = display
-            ),
-            preAuthRef = listOf(insuranceRef)
+            )
+            //preAuthRef = listOf(insuranceRef)
         )
     }
 
