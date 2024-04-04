@@ -271,7 +271,6 @@ class EagreementServiceUtilsTest {
     fun getParameters() {
 
         val parameterId = "1"
-        val parameterNames = arrayOf("resourceType", "patient", "use", "subType", "preAuthPeriod")
         val agreementTypes = "physiotherapy"
         val startDate = DateTime.now()
         val endDate = startDate.plusDays(7)
@@ -284,7 +283,6 @@ class EagreementServiceUtilsTest {
 
         val parameters = agreementServiceUtils.getParameters(
             parameterId,
-            parameterNames,
             agreementTypes,
             startDate,
             endDate,
@@ -450,9 +448,10 @@ class EagreementServiceUtilsTest {
         )
 
         val messageHeader = agreementServiceUtils.getMessageHeader(
-            claim,
+            "Claim/Claim1",
             "https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/message-events",
-            "claim-ask"
+            "claim-ask",
+            "PractitionerRole/PractitionerRole1"
         )
 
         println("Result: "+ObjectMapper().registerModule(KotlinModule()).writeValueAsString(messageHeader));
@@ -473,7 +472,7 @@ class EagreementServiceUtilsTest {
         )
         val bundle = agreementServiceUtils.getBundleJSON(
             EagreementServiceImpl.RequestTypeEnum.ASK,
-            claim,
+            "Claim/Claim1",
             "",
             "",
             "Wathelet",
@@ -493,8 +492,8 @@ class EagreementServiceUtilsTest {
             null,
             null,
             null,
-            1f,
-            1f
+            DateTime.now(),
+            "ues"
             );
         println("Result: "+ObjectMapper().registerModule(KotlinModule()).writeValueAsString(bundle))
     }

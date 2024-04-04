@@ -44,7 +44,6 @@ class EagreementControllerTest : EhealthTest() {
         val annex2 = ""
         val orgNihii = ""
         val organizationType = ""
-        val parameterNames = ""
         val agreementType = ""
         val numberOfSessionForAnnex1 = ""
         val numberOfSessionForAnnex2 = ""
@@ -54,7 +53,7 @@ class EagreementControllerTest : EhealthTest() {
             "&patientFirstName=$firstName4&patientLastName=$lastName4&patientGender=$gender&requestType=$requestType" +
             "&messageEventSystem=$messageEventSystem&messageEventCode=$messageEventCode&pathologyStartDate="+20200605+"&pathologyCode=$pathologyCode&insuranceRef=$insuranceRef" +
             "&patientSsin={$ssin4}&patientIo=$io&patientIoMembership=$ioMembership&annex1=$annex1&annex2=$annex2" +
-            "&orgNihii=$orgNihii&organizationType=$organizationType&parameterNames=$parameterNames&agreementStartDate="+20200605+"&agreementEndDate="+20200605+"&agreementType=$agreementType" +
+            "&orgNihii=$orgNihii&organizationType=$organizationType&agreementStartDate="+20200605+"&agreementEndDate="+20200605+"&agreementType=$agreementType" +
             "&numberOfSessionForAnnex1=$numberOfSessionForAnnex1&numberOfSessionForAnnex2=$numberOfSessionForAnnex2",
         HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase).body
         println(agreement)

@@ -295,7 +295,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         )
     }
 
-    override fun getParameters(parameterId: String, parameterNames: Array<String>,
+    override fun getParameters(parameterId: String,
                                agreementTypes: String,
                                startDate: DateTime?,
                                endDate: DateTime?,
@@ -306,9 +306,10 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                                io: String?,
                                ioMembership: String?): Parameters {
         val param = mutableListOf<ParametersParameter>();
-        for (parameterName in parameterNames){
-            param.add(getParameter(parameterName, agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership))
-        }
+        param.add(getParameter("resourceType", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership))
+        param.add(getParameter("patient", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership))
+        param.add(getParameter("use", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership))
+        param.add(getParameter("subType", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership))
         return Parameters().apply {
             id = "Parameters$parameterId"
             parameter = param
@@ -336,7 +337,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 parameterName == "use" -> valueCode = "preauthorization"
                 parameterName == "subType" -> valueCoding = Coding().apply {
                     system = "https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/agreement-types"
-                    code = agreementTypes
+                    code = "physiotherapy"
                 }
                 parameterName == "preAuthPeriod" -> valuePeriod = Period().apply {
                     start = startDate.toString()
@@ -453,11 +454,11 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         )
     }
 
-    override fun getMessageHeader(claim: Claim, messageEventSystem: String, messageEventsCode: String, practitionerRole1UUID: String): MessageHeader {
+    override fun getMessageHeader(messageFocusReference: String, messageEventSystem: String, messageEventsCode: String, practitionerRole1UUID: String): MessageHeader {
         return MessageHeader(
             eventCoding = Coding(
-                system = "https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/message-events",
-                code = "claim-ask"
+                system = messageEventSystem,
+                code = messageEventsCode
             ),
             source = MessageHeaderSource(endpoint = "urn:uuid:$practitionerRole1UUID")
         ).apply {
@@ -474,7 +475,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             )
             focus = listOf(
                 Reference().apply {
-                    reference = "Claim/Claim1"
+                    reference = messageFocusReference
                 }
             )
             sender = Reference().apply {
@@ -485,7 +486,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
 
     override fun getBundleJSON(
         requestType: EagreementServiceImpl.RequestTypeEnum,
-        claim: Claim,
+        messageFocusReference: String,
         messageEventSystem: String,
         messageEventCode: String,
         patientFirstName: String,
@@ -497,16 +498,21 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         hcpNihii: String,
         hcpFirstName: String,
         hcpLastName: String,
+        hcp2Nihii: String?,
+        hcp2FirstName: String?,
+        hcp2LastName: String?,
         orgNihii: String?,
         organizationType: String?,
         annex1: String?,
         annex2: String?,
-        parameterNames: Array<String>?,
         agreementStartDate: DateTime?,
         agreementEndDate: DateTime?,
         agreementType: String?,
         numberOfSessionForAnnex1: Float?,
-        numberOfSessionForAnnex2: Float?
+        numberOfSessionForAnnex2: Float?,
+        insuranceRef: String?,
+        pathologyCode: String,
+        pathologyStartDate: DateTime?
     ): JsonObject? {
         val uuidGenerator = IdGeneratorFactory.getIdGenerator("uuid")
         val practitionerRole1UUID = uuidGenerator.generateId()
@@ -525,38 +531,124 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             timestamp = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"))
             entry = entries
         }
+        when (requestType) {
+            EagreementServiceImpl.RequestTypeEnum.ASK -> {
+                requestBundle.meta = Meta(
+                    profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementdemand")
+                )
+            }
+            EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST -> {
+                requestBundle.meta = Meta(
+                    profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementconsult")
+                )
+            }
+        }
+
         val requestJson = mapper.writeValueAsString(requestBundle)
         val gson = JsonParser().parse(requestJson).asJsonObject;
 
         val messageHeader = JsonObject()
-        messageHeader.addProperty("fullUrl" , "urn:uuid:"+uuidGenerator.generateId())
-        messageHeader.add("resource", JsonParser().parse(mapper.writeValueAsString(getMessageHeader(claim, messageEventSystem, messageEventCode, practitionerRole1UUID))).asJsonObject)
+        messageHeader.addProperty("fullUrl", "urn:uuid:" + uuidGenerator.generateId())
+        messageHeader.add(
+            "resource",
+            JsonParser().parse(
+                mapper.writeValueAsString(
+                    getMessageHeader(
+                        messageFocusReference,
+                        messageEventSystem,
+                        messageEventCode,
+                        practitionerRole1UUID
+                    )
+                )
+            ).asJsonObject
+        )
         gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(messageHeader)
 
-        val practitioner1 = JsonObject()
-        practitioner1.addProperty("fullUrl" , "urn:uuid:"+uuidGenerator.generateId())
-        practitioner1.add("resource", JsonParser().parse(mapper.writeValueAsString(getPractitioner("1", hcpNihii, hcpFirstName, hcpLastName))).asJsonObject)
-        gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(practitioner1)
+        if (hcpNihii != null && hcpFirstName != null && hcpLastName != null) {
+            val practitioner1 = JsonObject()
+            practitioner1.addProperty("fullUrl", "urn:uuid:" + uuidGenerator.generateId())
+            practitioner1.add(
+                "resource",
+                JsonParser().parse(
+                    mapper.writeValueAsString(
+                        getPractitioner(
+                            "1",
+                            hcpNihii,
+                            hcpFirstName,
+                            hcpLastName
+                        )
+                    )
+                ).asJsonObject
+            )
+            gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(practitioner1)
+        }
 
-        val practitioner2 = JsonObject()
-        practitioner2.addProperty("fullUrl" , "urn:uuid:"+uuidGenerator.generateId())
-        practitioner2.add("resource", JsonParser().parse(mapper.writeValueAsString(getPractitioner("2", "14375992004", "Robin", "Hormaux"))).asJsonObject)
-        gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(practitioner2)
+        if (hcp2Nihii != null && hcp2FirstName != null && hcp2LastName != null) {
+            val practitioner2 = JsonObject()
+            practitioner2.addProperty("fullUrl", "urn:uuid:" + uuidGenerator.generateId())
+            practitioner2.add(
+                "resource",
+                JsonParser().parse(
+                    mapper.writeValueAsString(
+                        getPractitioner(
+                            "2",
+                            hcp2Nihii,
+                            hcp2FirstName,
+                            hcp2LastName
+                        )
+                    )
+                ).asJsonObject
+            )
+            gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(practitioner2)
+        }
 
-        val patient = JsonObject()
-        patient.addProperty("fullUrl" , "urn:uuid:"+uuidGenerator.generateId())
-        patient.add("resource", JsonParser().parse(mapper.writeValueAsString(getPatient(patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership))).asJsonObject)
-        gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(patient)
+        if (patientFirstName != null && patientLastName != null && patientGender != null && (patientSsin != null || patientIo != null || patientIoMembership != null)) {
+            val patient = JsonObject()
+            patient.addProperty("fullUrl", "urn:uuid:" + uuidGenerator.generateId())
+            patient.add(
+                "resource",
+                JsonParser().parse(
+                    mapper.writeValueAsString(
+                        getPatient(
+                            patientFirstName,
+                            patientLastName,
+                            patientGender,
+                            patientSsin,
+                            patientIo,
+                            patientIoMembership
+                        )
+                    )
+                ).asJsonObject
+            )
+            gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(patient)
+        }
 
-        val practitionerRole1 = JsonObject()
-        practitionerRole1.addProperty("fullUrl" , "urn:uuid:$practitionerRole1UUID")
-        practitionerRole1.add("resource", JsonParser().parse(mapper.writeValueAsString(getPractitionerRole("1", "persphysiotherapist"))).asJsonObject)
-        gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(practitionerRole1)
+        if (hcpNihii != null) {
+            val practitionerRole1 = JsonObject()
+            practitionerRole1.addProperty("fullUrl", "urn:uuid:$practitionerRole1UUID")
+            practitionerRole1.add(
+                "resource",
+                JsonParser().parse(
+                    mapper.writeValueAsString(
+                        getPractitionerRole(
+                            "1",
+                            "persphysiotherapist"
+                        )
+                    )
+                ).asJsonObject
+            )
+            gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(practitionerRole1)
+        }
 
-        val practitionerRole2 = JsonObject()
-        practitionerRole2.addProperty("fullUrl" , "urn:uuid:"+uuidGenerator.generateId())
-        practitionerRole2.add("resource", JsonParser().parse(mapper.writeValueAsString(getPractitionerRole("2", "persphysician"))).asJsonObject)
-        gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(practitionerRole2)
+        if (hcp2Nihii != null) {
+            val practitionerRole2 = JsonObject()
+            practitionerRole2.addProperty("fullUrl", "urn:uuid:" + uuidGenerator.generateId())
+            practitionerRole2.add(
+                "resource",
+                JsonParser().parse(mapper.writeValueAsString(getPractitionerRole("2", "persphysician"))).asJsonObject
+            )
+            gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(practitionerRole2)
+        }
 
         /*if (orgNihii != null && organizationType != null) {
             val organization = JsonObject()
@@ -575,14 +667,32 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         //Parameters 1
         if (requestType == EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST) {
             val parameter1 = JsonObject()
-            parameter1.addProperty("fullUrl" , "urn:uuid:"+uuidGenerator.generateId())
-            parameter1.add("resource", JsonParser().parse(mapper.writeValueAsString(getParameters("1", parameterNames!!, agreementType!!, agreementStartDate, agreementEndDate, hcpNihii, hcpFirstName, hcpLastName, patientSsin, patientIo, patientIoMembership))).asJsonObject)
+            parameter1.addProperty("fullUrl", "urn:uuid:" + uuidGenerator.generateId())
+            parameter1.add(
+                "resource",
+                JsonParser().parse(
+                    mapper.writeValueAsString(
+                        getParameters(
+                            "1",
+                            agreementType!!,
+                            agreementStartDate,
+                            agreementEndDate,
+                            hcpNihii,
+                            hcpFirstName,
+                            hcpLastName,
+                            patientSsin,
+                            patientIo,
+                            patientIoMembership
+                        )
+                    )
+                ).asJsonObject
+            )
             gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(parameter1)
         }
         //Service Request 1
         if (requestType != EagreementServiceImpl.RequestTypeEnum.CANCEL && requestType != EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST) {
             val serviceRequest1 = JsonObject()
-            serviceRequest1.addProperty("fullUrl" , "urn:uuid:"+uuidGenerator.generateId())
+            serviceRequest1.addProperty("fullUrl" , "urn:uuid:" + uuidGenerator.generateId())
             serviceRequest1.add("resource", JsonParser().parse(mapper.writeValueAsString(getServiceRequest("1", "", "QW5uZXhlIGlubGluZSwgYmFzZTY0ZWQ=", "1", numberOfSessionForAnnex1!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership))).asJsonObject)
             serviceRequest1.getAsJsonObject("resource").getAsJsonObject("ServiceRequest").add("contained", JsonParser().parse(mapper.writeValueAsString( Binary(
                 contentType = "application/pdf",
@@ -601,7 +711,17 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         }*/
 
         //Claim 1
-        if (requestType != EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST) {
+        if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK) {
+            val claim = this.getClaim(
+                claimId = "1",
+                claimStatus = "active",
+                subTypeCode = "physiotherapy-fb",
+                agreementStartDate = DateTime(),
+                insuranceRef = insuranceRef!!,
+                pathologyCode = pathologyCode,
+                pathologyStartDate = pathologyStartDate,
+                providerType = ""
+            )
             val parameter = JsonObject()
             parameter.addProperty("fullUrl" , "urn:uuid:"+uuidGenerator.generateId())
             parameter.add("resource", JsonParser().parse(mapper.writeValueAsString(claim)).asJsonObject)

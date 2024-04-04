@@ -1,10 +1,11 @@
 package be.fgov.ehealth.agreement.protocol.v1;
 
-import be.fgov.ehealth.mycarenet.commons.protocol.v4.SendRequestType;
-import be.fgov.ehealth.mycarenet.commons.protocol.v4.SendResponseType;
+import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendRequestType;
+import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendResponseType;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
 
 @XmlRegistry
@@ -21,8 +22,8 @@ public class ObjectFactory {
       namespace = "urn:be:fgov:ehealth:mycarenet:agreement:protocol:v1",
       name = "AskAgreementRequest"
    )
-   public JAXBElement<SendRequestType> createAskAgreementRequest(SendRequestType value) {
-      return new JAXBElement(_AskAgreementRequest_QNAME, SendRequestType.class, (Class)null, value);
+   public JAXBElement<AskAgreementRequest> createAskAgreementRequest(SendRequestType value) {
+      return new JAXBElement(_AskAgreementRequest_QNAME, AskAgreementRequest.class, (Class)null, value);
    }
 
    @XmlElementDecl(
@@ -37,8 +38,8 @@ public class ObjectFactory {
       namespace = "urn:be:fgov:ehealth:mycarenet:agreement:protocol:v1",
       name = "ConsultAgreementRequest"
    )
-   public JAXBElement<SendRequestType> createConsultAgreementRequest(SendRequestType value) {
-      return new JAXBElement(_ConsultAgreementRequest_QNAME, SendRequestType.class, (Class)null, value);
+   public JAXBElement<ConsultAgreementRequest> createConsultAgreementRequest(SendRequestType value) {
+      return new JAXBElement(_ConsultAgreementRequest_QNAME, ConsultAgreementRequest.class, (Class)null, value);
    }
 
    @XmlElementDecl(

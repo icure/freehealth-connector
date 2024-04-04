@@ -1,6 +1,5 @@
 package org.taktik.freehealth.middleware.service
 
-import be.fgov.ehealth.agreement.protocol.v1.AskAgreementResponseType
 import be.fgov.ehealth.agreement.protocol.v1.ConsultAgreementResponse
 import org.joda.time.DateTime
 import org.taktik.connector.business.domain.agreement.AgreementResponse
@@ -40,13 +39,12 @@ interface EagreementService {
         organizationType: String?,
         annex1: String?,
         annex2: String?,
-        parameterNames: Array<String>?,
         agreementStartDate: DateTime?,
         agreementEndDate: DateTime?,
         agreementType: String?,
         numberOfSessionForAnnex1: Float?,
         numberOfSessionForAnnex2: Float?
-    ): AskAgreementResponseType?
+    ): AgreementResponse?
 
     // abstract fun LicenseType(): Any
 

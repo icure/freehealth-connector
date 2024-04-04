@@ -14,6 +14,7 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory
+import javax.xml.bind.JAXBElement
 import javax.xml.soap.SOAPException
 
 class AgreementServiceImpl : AgreementService, ModuleBootstrapHook {
@@ -48,15 +49,20 @@ class AgreementServiceImpl : AgreementService, ModuleBootstrapHook {
         consultAgreementRequest: ConsultAgreementRequest?
     ): ConsultAgreementResponse? {
         try {
-            val service = ServiceFactory.getAgreementPort(samlToken);
-            service.setPayload(consultAgreementRequest);
-            service.setSoapAction("urn:be:fgov:ehealth:mycarenet:agreement:protocol:v1:ConsultAgreement");
-
+            //return callAgreementService(samlToken, consultAgreementRequest, SOAP_ACTION_CONSULT_AGREEMENT, ConsultAgreementResponse::class.java)
+            val service = ServiceFactory.getAgreementPort(samlToken)
+            service.setPayload(consultAgreementRequest)
+            service.setSoapAction("urn:be:fgov:ehealth:mycarenet:agreement:protocol:v1:ConsultAgreement")
+            val start = System.currentTimeMillis()
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            val stop = System.currentTimeMillis()
+            val response = xmlResponse.asObject(ConsultAgreementResponse::class.java) as ConsultAgreementResponse
 
-            val consultAgreementResponse = xmlResponse.asObject(ConsultAgreementResponse::class.java) as ConsultAgreementResponse
+            response.upstreamTiming = (stop - start).toInt();
+            response.soapRequest = xmlResponse.request
+            response.soapResponse = xmlResponse.soapMessage
 
-            return consultAgreementResponse;
+            return response
         }catch (ex: SOAPException){
             throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
         }

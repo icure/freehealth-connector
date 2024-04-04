@@ -45,7 +45,7 @@ interface EagreementServiceUtils {
 
     fun getContained(data: String, containedId: String): List<Binary>?
 
-    fun getParameters(parameterId: String, parameterNames: Array<String>,
+    fun getParameters(parameterId: String,
                       agreementTypes: String,
                       startDate: DateTime?,
                       endDate: DateTime?,
@@ -80,12 +80,12 @@ interface EagreementServiceUtils {
 
     fun getPrescriptionInfos(quantity: Int, document: String, documentId: String): ServiceRequest?
 
-    fun getMessageHeader(claim: Claim, messageEventSystem: String, messageEventsCode: String, practitionerRole1UUID: String): MessageHeader?
+    fun getMessageHeader(messageFocusReference: String, messageEventSystem: String, messageEventsCode: String, practitionerRole1UUID: String): MessageHeader?
 
 
     fun getBundleJSON(
         requestType: EagreementServiceImpl.RequestTypeEnum,
-        claim: Claim,
+        messageFocusReference: String,
         messageEventSystem: String,
         messageEventCode: String,
         patientFirstName: String,
@@ -97,16 +97,21 @@ interface EagreementServiceUtils {
         hcpNihii: String,
         hcpFirstName: String,
         hcpLastName: String,
+        hcp2Nihii: String?,
+        hcp2FirstName: String?,
+        hcp2LastName: String?,
         orgNihii: String?,
         organizationType: String?,
         annex1: String?,
         annex2: String?,
-        parameterNames: Array<String>?,
         agreementStartDate: DateTime?,
         agreementEndDate: DateTime?,
         agreementType: String?,
         numberOfSessionForAnnex1: Float?,
-        numberOfSessionForAnnex2: Float?
+        numberOfSessionForAnnex2: Float?,
+        insuranceRef: String?,
+        pathologyCode: String,
+        pathologyStartDate: DateTime?
     ): JsonObject?
 
 }
