@@ -93,6 +93,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
     }
 
     override fun getClaim(
+        requestType: EagreementServiceImpl.RequestTypeEnum,
         claimId: String,
         claimStatus: String,
         subTypeCode: String,
@@ -121,14 +122,14 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             referral = Reference().apply {
                 reference = "ServiceRequest/ServiceRequest1"
             }
-            insurance = listOf(getInsurance(insuranceRef, "use of mandatory insurance coverage, no further details provided here."))
+            insurance = listOf(getInsurance(requestType, insuranceRef, "use of mandatory insurance coverage, no further details provided here."))
             supportingInfo = listOf(
                 getSupportingInfo(1, "attachment", "physiotherapist-report", null, null, "QW5uZXhlIGlubGluZSwgYmFzZTY0ZWQ=", "nom/description de l'annexe", "application/pdf"),
                 getSupportingInfo(2, "info", null, null, "additional Information", null, null, null)
                 //getSupportingInfo(3, "info", null, "ServiceRequest/ServiceRequest2", null, null, null, null)
             )
 
-            item = listOf(getServicedDateItem(pathologyStartDate!!, pathologyCode, 1))
+            item = listOf(getServicedDateItem(requestType, pathologyStartDate!!, pathologyCode, 1))
         }
     }
 
@@ -347,15 +348,16 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         }
     }
 
-    override fun getInsurance(insuranceRef: String, display: String): ClaimInsurance{
+    override fun getInsurance(requestType: EagreementServiceImpl.RequestTypeEnum, insuranceRef: String, display: String): ClaimInsurance{
         return ClaimInsurance(
             sequence = 1,
             focal = true,
             coverage = Reference(
                 display = display
             )
-            //preAuthRef = listOf(insuranceRef)
-        )
+        ).apply {
+            if(requestType != EagreementServiceImpl.RequestTypeEnum.EXTEND) preAuthRef = listOf(insuranceRef)
+        }
     }
 
     override fun getBillablePeriod(startDate: DateTime): Period{
@@ -365,7 +367,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         )
     }
 
-    override fun getServicedDateItem(pathologyDate: DateTime, pathologyCode: String, sequenceNumber: Int): ClaimItem {
+    override fun getServicedDateItem(requestType: EagreementServiceImpl.RequestTypeEnum, pathologyDate: DateTime, pathologyCode: String, sequenceNumber: Int): ClaimItem {
         val formatter = DateTimeFormat.forPattern("yyyy-MM-dd")
         return ClaimItem(
             sequence = sequenceNumber,
@@ -376,9 +378,10 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                         code = pathologyCode
                     )
                 )
-            ),
-            servicedDate = formatter.print(pathologyDate)
-        )
+            )
+        ).apply {
+            if(requestType != EagreementServiceImpl.RequestTypeEnum.EXTEND) servicedDate = formatter.print(pathologyDate)
+        }
     }
 
     override fun getCodeItem(code: String): ClaimItem {
@@ -542,6 +545,11 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                     profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementconsult")
                 )
             }
+            EagreementServiceImpl.RequestTypeEnum.EXTEND -> {
+                requestBundle.meta = Meta(
+                    profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementdemand")
+                )
+            }
         }
 
         val requestJson = mapper.writeValueAsString(requestBundle)
@@ -690,7 +698,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(parameter1)
         }
         //Service Request 1
-        if (requestType != EagreementServiceImpl.RequestTypeEnum.CANCEL && requestType != EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST) {
+        if (requestType != EagreementServiceImpl.RequestTypeEnum.CANCEL && requestType != EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST && requestType != EagreementServiceImpl.RequestTypeEnum.EXTEND) {
             val serviceRequest1 = JsonObject()
             serviceRequest1.addProperty("fullUrl" , "urn:uuid:" + uuidGenerator.generateId())
             serviceRequest1.add("resource", JsonParser().parse(mapper.writeValueAsString(getServiceRequest("1", "", "QW5uZXhlIGlubGluZSwgYmFzZTY0ZWQ=", "1", numberOfSessionForAnnex1!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership))).asJsonObject)
@@ -711,8 +719,9 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         }*/
 
         //Claim 1
-        if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK) {
+        if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) {
             val claim = this.getClaim(
+                requestType,
                 claimId = "1",
                 claimStatus = "active",
                 subTypeCode = "physiotherapy-fb",
