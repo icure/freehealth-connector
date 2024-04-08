@@ -356,7 +356,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 display = display
             )
         ).apply {
-            if(requestType != EagreementServiceImpl.RequestTypeEnum.EXTEND) preAuthRef = listOf(insuranceRef)
+            if(requestType != EagreementServiceImpl.RequestTypeEnum.ASK) preAuthRef = listOf(insuranceRef)
         }
     }
 
@@ -380,7 +380,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 )
             )
         ).apply {
-            if(requestType != EagreementServiceImpl.RequestTypeEnum.EXTEND) servicedDate = formatter.print(pathologyDate)
+            if(requestType == EagreementServiceImpl.RequestTypeEnum.ASK) servicedDate = formatter.print(pathologyDate)
         }
     }
 
@@ -546,6 +546,11 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 )
             }
             EagreementServiceImpl.RequestTypeEnum.EXTEND -> {
+                requestBundle.meta = Meta(
+                    profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementdemand")
+                )
+            }
+            EagreementServiceImpl.RequestTypeEnum.COMPLETE_AGREEMENT -> {
                 requestBundle.meta = Meta(
                     profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementdemand")
                 )
@@ -719,7 +724,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         }*/
 
         //Claim 1
-        if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) {
+        if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND || requestType == EagreementServiceImpl.RequestTypeEnum.COMPLETE_AGREEMENT) {
             val claim = this.getClaim(
                 requestType,
                 claimId = "1",
