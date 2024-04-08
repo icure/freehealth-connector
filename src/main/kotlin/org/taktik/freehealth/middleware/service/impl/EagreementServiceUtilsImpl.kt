@@ -122,7 +122,6 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             referral = Reference().apply {
                 reference = "ServiceRequest/ServiceRequest1"
             }
-            item = listOf(getServicedDateItem(pathologyStartDate!!, pathologyCode, 1))
             insurance = listOf(getInsurance(requestType, insuranceRef, "use of mandatory insurance coverage, no further details provided here."))
             if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK) {
                 supportingInfo = listOf(
