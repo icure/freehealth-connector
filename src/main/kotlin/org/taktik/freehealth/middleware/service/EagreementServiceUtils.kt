@@ -69,11 +69,11 @@ interface EagreementServiceUtils {
                      ioMembership: String?
     ): ParametersParameter?
 
-    fun getInsurance(insuranceRef: String, display: String): ClaimInsurance?
+    fun getInsurance(requestType: EagreementServiceImpl.RequestTypeEnum, insuranceRef: String, display: String): ClaimInsurance?
 
     fun getBillablePeriod(startDate: DateTime): Period?
 
-    fun getServicedDateItem(pathologyDate: DateTime, pathologyCode: String, sequenceNumber: Int): ClaimItem?
+    fun getServicedDateItem(requestType: EagreementServiceImpl.RequestTypeEnum, pathologyDate: DateTime, pathologyCode: String, sequenceNumber: Int): ClaimItem?
 
     fun getCodeItem(code: String): ClaimItem?
 
