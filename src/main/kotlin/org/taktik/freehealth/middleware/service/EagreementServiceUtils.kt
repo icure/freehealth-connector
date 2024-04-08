@@ -26,6 +26,7 @@ interface EagreementServiceUtils {
 
     fun getCodableConcept(system: String, code: String): CodeableConcept?
     fun getClaim(
+        requestType: EagreementServiceImpl.RequestTypeEnum,
         claimId: String,
         claimStatus: String,
         subTypeCode: String,

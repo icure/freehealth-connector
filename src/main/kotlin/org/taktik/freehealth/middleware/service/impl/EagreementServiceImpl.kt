@@ -174,6 +174,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
 
             var askAgreementRequest = when (requestType) {
                 RequestTypeEnum.ASK -> AskAgreementRequest()
+                RequestTypeEnum.CANCEL -> AskAgreementRequest()
                 RequestTypeEnum.CONSULT_LIST -> ConsultAgreementRequest()
                 else -> throw IllegalArgumentException("Request type not supported")
             }
@@ -266,6 +267,10 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
             try {
                 val agreementResponse: SendResponseType? = when (requestType) {
                     RequestTypeEnum.ASK -> {
+                        val agreementRequest = ObjectFactory().createAskAgreementRequest(askAgreementRequest).value
+                        freehealthAgreementService.askAgreement(samlToken, agreementRequest)
+                    }
+                    RequestTypeEnum.CANCEL -> {
                         val agreementRequest = ObjectFactory().createAskAgreementRequest(askAgreementRequest).value
                         freehealthAgreementService.askAgreement(samlToken, agreementRequest)
                     }
@@ -446,6 +451,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
     ): JsonObject?{
         when (requestType) {
             RequestTypeEnum.ASK -> return return this.agreementServiceUtils.getBundleJSON(requestType, "Claim/Claim1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, "14375992004", "Robin", "Hormaux", orgNihii, organizationType, annex1, annex2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForAnnex1, numberOfSessionForAnnex2, insuranceRef, pathologyCode, pathologyStartDate) ?: throw IllegalArgumentException("Cannot load fhir")
+            RequestTypeEnum.CANCEL -> return return this.agreementServiceUtils.getBundleJSON(requestType, "Claim/Claim1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, "14375992004", "Robin", "Hormaux", orgNihii, organizationType, annex1, annex2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForAnnex1, numberOfSessionForAnnex2, insuranceRef, pathologyCode, pathologyStartDate) ?: throw IllegalArgumentException("Cannot load fhir")
             RequestTypeEnum.CONSULT_LIST -> return this.agreementServiceUtils.getBundleJSON(requestType, "Parameters/Parameters1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, null, null, null, orgNihii, organizationType, annex1, annex2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForAnnex1, numberOfSessionForAnnex2, insuranceRef, pathologyCode, pathologyStartDate) ?: throw IllegalArgumentException("Cannot load fhir")
             else -> throw IllegalArgumentException("Request type not supported")
         }
