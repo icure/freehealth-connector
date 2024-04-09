@@ -119,12 +119,14 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             if(requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) billablePeriod = getBillablePeriod(agreementStartDate!!)
             created = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"))
             enterer = Reference().apply { reference = "PractitionerRole/PractitionerRole1"}
-            referral = Reference().apply {
-                reference = "ServiceRequest/ServiceRequest1"
+            if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK) {
+                referral = Reference().apply {
+                    reference = "ServiceRequest/ServiceRequest1"
+                }
             }
             if(requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) item = listOf(getServicedDateItem(requestType, pathologyStartDate!!, pathologyCode, 1))
             insurance = listOf(getInsurance(requestType, insuranceRef, "use of mandatory insurance coverage, no further details provided here."))
-            if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK) {
+            if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE) {
                 supportingInfo = listOf(
                     getSupportingInfo(1, "attachment", "physiotherapist-report", null, null, "QW5uZXhlIGlubGluZSwgYmFzZTY0ZWQ=", "nom/description de l'annexe", "application/pdf"),
                     getSupportingInfo(2, "info", null, null, "additional Information", null, null, null)
@@ -529,33 +531,14 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         val requestBundle = Bundle().apply {
             id = "Bundle1"
             meta = Meta(
-                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementdemand")
+                profile = when (requestType) {
+                    EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST -> listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementconsult")
+                    else -> listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementdemand")
+                }
             )
             type = "message"
             timestamp = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"))
             entry = entries
-        }
-        when (requestType) {
-            EagreementServiceImpl.RequestTypeEnum.ASK -> {
-                requestBundle.meta = Meta(
-                    profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementdemand")
-                )
-            }
-            EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST -> {
-                requestBundle.meta = Meta(
-                    profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementconsult")
-                )
-            }
-            EagreementServiceImpl.RequestTypeEnum.EXTEND -> {
-                requestBundle.meta = Meta(
-                    profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementdemand")
-                )
-            }
-            EagreementServiceImpl.RequestTypeEnum.COMPLETE_AGREEMENT -> {
-                requestBundle.meta = Meta(
-                    profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementdemand")
-                )
-            }
         }
 
         val requestJson = mapper.writeValueAsString(requestBundle)
@@ -704,7 +687,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(parameter1)
         }
         //Service Request 1
-        if (requestType != EagreementServiceImpl.RequestTypeEnum.CANCEL && requestType != EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST && requestType != EagreementServiceImpl.RequestTypeEnum.EXTEND) {
+        if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE) {
             val serviceRequest1 = JsonObject()
             serviceRequest1.addProperty("fullUrl" , "urn:uuid:" + uuidGenerator.generateId())
             serviceRequest1.add("resource", JsonParser().parse(mapper.writeValueAsString(getServiceRequest("1", "", "QW5uZXhlIGlubGluZSwgYmFzZTY0ZWQ=", "1", numberOfSessionForAnnex1!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership))).asJsonObject)
@@ -725,7 +708,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         }*/
 
         //Claim 1
-        if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.CANCEL || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND || requestType == EagreementServiceImpl.RequestTypeEnum.COMPLETE_AGREEMENT) {
+        if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE || requestType == EagreementServiceImpl.RequestTypeEnum.CANCEL || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND || requestType == EagreementServiceImpl.RequestTypeEnum.COMPLETE_AGREEMENT) {
             val claim = this.getClaim(
                 requestType,
                 claimId = "1",
