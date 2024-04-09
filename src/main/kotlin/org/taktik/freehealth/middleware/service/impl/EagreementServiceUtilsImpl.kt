@@ -39,6 +39,30 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class EagreementServiceUtilsImpl(): EagreementServiceUtils {
+
+    enum class MetaProfileEnum(val metaProfile: String){
+        BE_PRACTIONNERROLE("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-practitionerrole"),
+        BE_PRACTIONNER("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-practitioner"),
+        BE_AGREEMENT_CLAIM_KINE("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementclaim-kine"),
+        BE_ORGANIZATION("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-organization"),
+        BE_PATIENT("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-patient"),
+        BE_EAGREEMENTSERVICEREQUEST("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementservicerequest"),
+    }
+
+    enum class CodingSystemEnum(val codingSystem: String){
+        CD_HCPARTY("https://www.ehealth.fgov.be/standards/fhir/core/CodeSystem/cd-hcparty"),
+        NIHDI("https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/nihdi"),
+        CLAIM_INFORMATION_CATEGORY("http://terminology.hl7.org/CodeSystem/claiminformationcategory"),
+        ANNEX_TYPES("https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/annex-types"),
+        INSURANCE_NUMBER("https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/insurancenumber"),
+        INSURANCY_MEMBERSHIP("https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/insurancymembership"),
+        SSIN("https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/ssin"),
+        SCT("http://snomed.info/sct"),
+        UHMEP("https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/uhmep"),
+        NIHDI_PHYSIO_PATHO_SITUATION_CODE("https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/nihdi-physiotherapy-pathologysituationcode"),
+        AGREEMENT_TYPE("https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/agreement-types"),
+    }
+
     override fun getPractitionerRole(practitionerRoleId: String, practitionerRole: String): PractitionerRole {
         return PractitionerRole().apply {
             id = "PractitionerRole$practitionerRoleId"
