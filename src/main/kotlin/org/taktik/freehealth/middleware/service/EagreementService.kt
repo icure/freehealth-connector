@@ -20,7 +20,7 @@ interface EagreementService {
         passPhrase: String,
         requestType: EagreementServiceImpl.RequestTypeEnum,
         hcpQuality: String,
-        messageEventSystem: String,
+        messageEventSystem: EagreementServiceImpl.MessageEventSystemEnum,
         messageEventCode: String,
         patientFirstName: String,
         patientLastName: String,

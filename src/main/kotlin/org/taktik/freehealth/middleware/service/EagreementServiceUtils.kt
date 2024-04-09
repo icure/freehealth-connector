@@ -87,7 +87,7 @@ interface EagreementServiceUtils {
     fun getBundleJSON(
         requestType: EagreementServiceImpl.RequestTypeEnum,
         messageFocusReference: String,
-        messageEventSystem: String,
+        messageEventSystem: EagreementServiceImpl.MessageEventSystemEnum,
         messageEventCode: String,
         patientFirstName: String,
         patientLastName: String,

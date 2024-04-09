@@ -493,7 +493,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
     override fun getBundleJSON(
         requestType: EagreementServiceImpl.RequestTypeEnum,
         messageFocusReference: String,
-        messageEventSystem: String,
+        messageEventSystem: EagreementServiceImpl.MessageEventSystemEnum,
         messageEventCode: String,
         patientFirstName: String,
         patientLastName: String,
@@ -552,7 +552,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 mapper.writeValueAsString(
                     getMessageHeader(
                         messageFocusReference,
-                        messageEventSystem,
+                        messageEventSystem.eventSystem,
                         messageEventCode,
                         practitionerRole1UUID
                     )

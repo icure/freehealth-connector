@@ -86,6 +86,11 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         CONSULT_LIST("search-type")
     }
 
+    enum class MessageEventSystemEnum(val eventSystem: String){
+        MESSAGE_EVENTS("https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/message-events"),
+        INTERACTION("http://hl7.org/fhir/restful-interaction")
+    }
+
     private val log = LoggerFactory.getLogger(this.javaClass)
 
     private fun generateError(e: AgreementBusinessConnectorException, co: CommonOutput): AgreementResponse {
@@ -110,7 +115,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         passPhrase: String,
         requestType: RequestTypeEnum,
         hcpQuality: String,
-        messageEventSystem: String,
+        messageEventSystem: MessageEventSystemEnum,
         messageEventCode: String,
         patientFirstName: String,
         patientLastName: String,
@@ -435,7 +440,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
 
     fun createRequestBundle(
         requestType: RequestTypeEnum,
-        messageEventSystem: String,
+        messageEventSystem: MessageEventSystemEnum,
         messageEventCode: String,
         patientFirstName: String,
         patientLastName: String,
