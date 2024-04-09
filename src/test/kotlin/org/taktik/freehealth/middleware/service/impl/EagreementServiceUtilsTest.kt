@@ -91,6 +91,7 @@ class EagreementServiceUtilsTest {
 
         // Appeler la fonction que vous souhaitez tester
         val claim = agreementServiceUtils.getClaim(
+            EagreementServiceImpl.RequestTypeEnum.ASK,
             "1",
             "active",
             "physiotherapy-fb",
@@ -362,7 +363,7 @@ class EagreementServiceUtilsTest {
         val insuranceRef = "InsuranceRef123"
         val display = "Insurance Display"
 
-        val insurance = agreementServiceUtils.getInsurance(insuranceRef, display)
+        val insurance = agreementServiceUtils.getInsurance(EagreementServiceImpl.RequestTypeEnum.ASK, insuranceRef, display)
 
         println("Result: "+ObjectMapper().registerModule(KotlinModule()).writeValueAsString(insurance))
 
@@ -387,7 +388,7 @@ class EagreementServiceUtilsTest {
     fun getServicedDateItem() {
         val pathologyDate = DateTime.now()
         val pathologyCode = "fb-51"
-        val claimItem = agreementServiceUtils.getServicedDateItem(pathologyDate, pathologyCode, 1)
+        val claimItem = agreementServiceUtils.getServicedDateItem(EagreementServiceImpl.RequestTypeEnum.ASK, pathologyDate, pathologyCode, 1)
 
         println("Result: "+ObjectMapper().registerModule(KotlinModule()).writeValueAsString(claimItem))
 
@@ -437,6 +438,8 @@ class EagreementServiceUtilsTest {
     @Test
     fun getMessageHeader() {
         val claim = agreementServiceUtils.getClaim(
+
+            EagreementServiceImpl.RequestTypeEnum.ASK,
             "1",
             "active",
             "physiotherapy-fb",
@@ -461,6 +464,7 @@ class EagreementServiceUtilsTest {
     @Test
     fun getBundle() {
         val claim = agreementServiceUtils.getClaim(
+            EagreementServiceImpl.RequestTypeEnum.ASK,
             "1",
             "active",
             "physiotherapy-fb",
@@ -472,9 +476,9 @@ class EagreementServiceUtilsTest {
         )
         val bundle = agreementServiceUtils.getBundleJSON(
             EagreementServiceImpl.RequestTypeEnum.ASK,
+            "1",
+            EagreementServiceImpl.MessageEventSystemEnum.MESSAGE_EVENTS,
             "Claim/Claim1",
-            "",
-            "",
             "Wathelet",
             "Julien",
             "male",
@@ -492,8 +496,13 @@ class EagreementServiceUtilsTest {
             null,
             null,
             null,
-            DateTime.now(),
-            "ues"
+            null,
+            null,
+            null,
+            null,
+            null,
+            "",
+            null
             );
         println("Result: "+ObjectMapper().registerModule(KotlinModule()).writeValueAsString(bundle))
     }
