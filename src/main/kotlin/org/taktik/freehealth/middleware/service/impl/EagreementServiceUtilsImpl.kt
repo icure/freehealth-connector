@@ -541,7 +541,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         numberOfSessionForAnnex1: Float?,
         numberOfSessionForAnnex2: Float?,
         insuranceRef: String?,
-        pathologyCode: String,
+        pathologyCode: String?,
         pathologyStartDate: DateTime?
     ): JsonObject? {
         val uuidGenerator = IdGeneratorFactory.getIdGenerator("uuid")
@@ -740,7 +740,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 subTypeCode = "physiotherapy-fb",
                 agreementStartDate = DateTime(),
                 insuranceRef = insuranceRef!!,
-                pathologyCode = pathologyCode,
+                pathologyCode = pathologyCode!!,
                 pathologyStartDate = pathologyStartDate,
                 providerType = ""
             )

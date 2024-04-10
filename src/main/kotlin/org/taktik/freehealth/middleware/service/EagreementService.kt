@@ -52,10 +52,30 @@ interface EagreementService {
      * @name consultAgreement
      * @goal Consult the request for agreement form a patient
      * */
-    fun consultAgreement(
+    fun consultAgreementList(
         keystoreId: UUID,
         tokenId: UUID,
-        passPhrase: String
-    ): ConsultAgreementResponse?
+        passPhrase: String,
+        requestType: EagreementServiceImpl.RequestTypeEnum,
+        hcpQuality: String,
+        messageEventSystem: EagreementServiceImpl.MessageEventSystemEnum,
+        messageEventCode: String,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
+        patientSsin: String?,
+        patientIo: String?,
+        patientIoMembership: String?,
+        insuranceRef: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        orgNihii: String?,
+        organizationType: String?,
+        agreementStartDate: DateTime?,
+        agreementEndDate: DateTime?,
+        agreementType: String?
+    ): AgreementResponse?
 
 }

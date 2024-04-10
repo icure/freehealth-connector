@@ -177,14 +177,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 numberOfSessionForAnnex2
             )
 
-            var askAgreementRequest = when (requestType) {
-                RequestTypeEnum.ASK -> AskAgreementRequest()
-                RequestTypeEnum.COMPLETE_AGREEMENT -> AskAgreementRequest()
-                RequestTypeEnum.ARGUE -> AskAgreementRequest()
-                RequestTypeEnum.CANCEL -> AskAgreementRequest()
-                RequestTypeEnum.CONSULT_LIST -> ConsultAgreementRequest()
-                else -> throw IllegalArgumentException("Request type not supported")
-            }
+            var askAgreementRequest = AskAgreementRequest();
             askAgreementRequest.apply {
                 val encryptedKnownContent = EncryptedKnownContent()
                 encryptedKnownContent.replyToEtk = it.encoded
@@ -272,31 +265,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
             }
 
             try {
-                val agreementResponse: SendResponseType? = when (requestType) {
-                    RequestTypeEnum.ASK -> {
-                        val agreementRequest = ObjectFactory().createAskAgreementRequest(askAgreementRequest).value
-                        freehealthAgreementService.askAgreement(samlToken, agreementRequest)
-                    }
-                    RequestTypeEnum.ARGUE -> {
-                        val agreementRequest = ObjectFactory().createAskAgreementRequest(askAgreementRequest).value
-                        freehealthAgreementService.askAgreement(samlToken, agreementRequest)
-                    }
-                    RequestTypeEnum.CANCEL -> {
-                        val agreementRequest = ObjectFactory().createAskAgreementRequest(askAgreementRequest).value
-                        freehealthAgreementService.askAgreement(samlToken, agreementRequest)
-                    }
-                    RequestTypeEnum.COMPLETE_AGREEMENT -> {
-                        val agreementRequest = ObjectFactory().createAskAgreementRequest(askAgreementRequest).value
-                        freehealthAgreementService.askAgreement(samlToken, agreementRequest)
-                    }
-                    RequestTypeEnum.CONSULT_LIST -> {
-                        val agreementRequest = ObjectFactory().createConsultAgreementRequest(askAgreementRequest).value
-                        freehealthAgreementService.consultAgreement(samlToken, agreementRequest)
-                    }
-                    else -> {
-                        throw IllegalArgumentException("Request type not supported")
-                    }
-                }
+                val agreementResponse: AskAgreementResponse? =freehealthAgreementService.askAgreement(samlToken, ObjectFactory().createAskAgreementRequest(askAgreementRequest).value)
 
                 val blobType = agreementResponse?.`return`?.detail
                 val blob = BlobMapper.mapBlobfromBlobType(blobType!!)
@@ -333,17 +302,205 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 res.isAcknowledged = true
                 res.commonOutput = commonOutput
                 res.mycarenetConversation = MycarenetConversation().apply {
-                    soapRequest = when (agreementResponse) {
-                        is AskAgreementResponse -> agreementResponse.soapRequest?.writeTo(this.soapRequestOutputStream())?.toString()
-                        is ConsultAgreementResponse -> agreementResponse.soapRequest?.writeTo(this.soapRequestOutputStream())?.toString()
-                        else -> null
-                    }
-                    soapResponse = when (agreementResponse) {
-                        is AskAgreementResponse -> agreementResponse.soapResponse?.writeTo(this.soapResponseOutputStream())?.toString()
-                        is ConsultAgreementResponse -> agreementResponse.soapResponse?.writeTo(this.soapResponseOutputStream())?.toString()
-                        else -> null
-                    }
+                    soapRequest = agreementResponse.soapRequest?.writeTo(this.soapRequestOutputStream())?.toString()
+                    soapResponse = agreementResponse.soapResponse?.writeTo(this.soapResponseOutputStream())?.toString()
                     transactionRequest = ConnectorXmlUtils.toString(askAgreementRequest)
+                    transactionResponse = responseJSON.toString()
+                }
+                res.content = responseJSON.toString().toByteArray(Charsets.UTF_8)
+                // TODO call that method but it's not fully implemented yest
+                // res.errors = extractErrors(responseJSON).toList()
+                return res;
+            } catch (e: SoaErrorException) {
+                throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, e, e.message)
+            }
+        }
+    }
+
+    override fun consultAgreementList(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        requestType: RequestTypeEnum,
+        hcpQuality: String,
+        messageEventSystem: MessageEventSystemEnum,
+        messageEventCode: String,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
+        patientSsin: String?,
+        patientIo: String?,
+        patientIoMembership: String?,
+        insuranceRef: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        orgNihii: String?,
+        organizationType: String?,
+        agreementStartDate: DateTime?,
+        agreementEndDate: DateTime?,
+        agreementType: String?
+    ): AgreementResponse? {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for Agreement operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+        val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
+        val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
+        val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
+
+        return extractEtk(credential)?.let {
+            val requestBundleJSON = createConsultAgreementBundle(
+                requestType,
+                messageEventSystem,
+                messageEventCode,
+                patientFirstName,
+                patientLastName,
+                patientGender,
+                patientSsin,
+                patientIo,
+                patientIoMembership,
+                insuranceRef,
+                hcpNihii,
+                hcpFirstName,
+                hcpLastName,
+                orgNihii,
+                organizationType,
+                agreementStartDate,
+                agreementEndDate,
+                agreementType
+            )
+
+            var consultAgreementList = ConsultAgreementRequest()
+            consultAgreementList.apply {
+                val encryptedKnownContent = EncryptedKnownContent()
+                encryptedKnownContent.replyToEtk = it.encoded
+                val businessContent = BusinessContent().apply { id = detailId }
+                encryptedKnownContent.businessContent = businessContent
+
+                val xmlString = convertJsonObjectToXml(requestBundleJSON!!)
+                val requestXml = transformXml(xmlString)
+
+                val byteArray = requestXml.toByteArray(Charsets.UTF_8)
+                businessContent.value = byteArray
+
+                log.info("Request is: " + businessContent.value.toString(Charsets.UTF_8))
+                val xmlByteArray = handleEncryption(encryptedKnownContent, credential, crypto, detailId)
+
+                val blob =
+                    BlobBuilderFactory.getBlobBuilder("agreement")
+                        .build(
+                            xmlByteArray,
+                            "none",
+                            detailId,
+                            "text/xml",
+                            null as String?,
+                            "3.0",
+                            "encryptedForKnownBED"
+                        )
+                blob.messageName = "eAgreement-ask"
+
+                val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+                val packageInfo = McnConfigUtil.retrievePackageInfo("agreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
+
+                commonInput = CommonInputType().apply {
+                    request =
+                        RequestType()
+                            .apply {
+                                isIsTest = config.getProperty("endpoint.agreement")?.contains("-acpt") ?: false
+                            }
+                    inputReference = InputReference().inputReference
+                    origin = OriginType().apply {
+                        `package` = PackageType().apply {
+                            license = LicenseType().apply {
+                                username = packageInfo.userName
+                                password = packageInfo.password
+                            }
+                            name = ValueRefString().apply { value = packageInfo.packageName }
+                        }
+                        config.getProperty("mycarenet.${PropertyUtil.retrieveProjectNameToUse("agreement", "mycarenet.")}.site.id")?.let {
+                            if (it.isNotBlank()) {
+                                siteID = ValueRefString().apply { value = it }
+                            }
+                        }
+                        careProvider = CareProviderType().apply {
+                            nihii =
+                                NihiiType().apply {
+                                    quality = hcpQuality;
+                                    value = ValueRefString().apply { value = hcpNihii }
+                                }
+                            physicalPerson = IdType().apply {
+                                name = ValueRefString().apply { value = "$hcpFirstName $hcpLastName" }
+                                ssin = ValueRefString().apply { value = hcpSsin }
+                                nihii = NihiiType().apply {
+                                    quality = hcpQuality;
+                                    value = ValueRefString().apply { value = hcpNihii }
+                                }
+                            }
+                        }
+                    }
+                }
+                routing = RoutingType().apply {
+                    careReceiver = CareReceiverIdType().apply {
+                        patientSsin?.let {
+                            ssin = patientSsin
+                        }
+                        patientIoMembership?.let {
+                            mutuality = patientIo
+                            regNrWithMut = patientIoMembership
+                        }
+                    }
+                    referenceDate = DateTime()
+                }
+                issueInstant = DateTime()
+                this.detail = BlobMapper.mapBlobTypefromBlob(blob)
+                this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
+                // xades = BlobUtil.generateXades(credential, detail, "agreement")
+            }
+
+            try {
+                val consultAgreementResponse: ConsultAgreementResponse? = freehealthAgreementService.consultAgreement(samlToken, ObjectFactory().createConsultAgreementRequest(consultAgreementList).value)
+
+                val blobType = consultAgreementResponse?.`return`?.detail
+                val blob = BlobMapper.mapBlobfromBlobType(blobType!!)
+                val unsealedData =
+                    crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, blob.content).contentAsByte
+                val decryptedKnownContent =
+                    MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(
+                        unsealedData)
+
+                val xades = decryptedKnownContent!!.xades
+                val signatureVerificationResult = xades?.let {
+                    val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
+                    val options = emptyMap<String, Any>()
+                    builder.verify(unsealedData, it, options)
+                } ?: SignatureVerificationResult().apply {
+                    errors.add(SignatureVerificationError.SIGNATURE_NOT_PRESENT)
+                }
+
+                log.info("Response is: " + decryptedKnownContent.businessContent.value.toString(Charsets.UTF_8))
+
+                val responseXML = decryptedKnownContent.businessContent.value.toString(Charsets.UTF_8)
+                val responseJSON = XML.toJSONObject(responseXML)
+
+                // val errors = responseJSON.getJSONObject("Bundle").getJSONArray("entry")
+
+                var commonOutput =
+                    CommonOutput(
+                        consultAgreementResponse?.`return`?.commonOutput?.inputReference,
+                        consultAgreementResponse?.`return`?.commonOutput?.nipReference,
+                        consultAgreementResponse?.`return`?.commonOutput?.outputReference
+                    )
+
+                var res = AgreementResponse()
+                res.isAcknowledged = true
+                res.commonOutput = commonOutput
+                res.mycarenetConversation = MycarenetConversation().apply {
+                    soapRequest = consultAgreementResponse.soapRequest?.writeTo(this.soapRequestOutputStream())?.toString()
+                    soapResponse = consultAgreementResponse.soapResponse?.writeTo(this.soapResponseOutputStream())?.toString()
+                    transactionRequest = ConnectorXmlUtils.toString(consultAgreementResponse)
                     transactionResponse = responseJSON.toString()
                 }
                 res.content = responseJSON.toString().toByteArray(Charsets.UTF_8)
@@ -355,10 +512,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
             }
 
         }
-    }
-
-    override fun consultAgreement(keystoreId: UUID, tokenId: UUID, passPhrase: String): ConsultAgreementResponse? {
-        TODO("Not yet implemented")
     }
 
     fun transformElement(element: Element, doc: Document) {
@@ -469,11 +622,32 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
             RequestTypeEnum.ARGUE -> return return this.agreementServiceUtils.getBundleJSON(requestType, "Claim/Claim1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, "14375992004", "Robin", "Hormaux", orgNihii, organizationType, annex1, annex2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForAnnex1, numberOfSessionForAnnex2, insuranceRef, pathologyCode, pathologyStartDate) ?: throw IllegalArgumentException("Cannot load fhir")
             RequestTypeEnum.CANCEL -> return return this.agreementServiceUtils.getBundleJSON(requestType, "Claim/Claim1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, "14375992004", "Robin", "Hormaux", orgNihii, organizationType, annex1, annex2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForAnnex1, numberOfSessionForAnnex2, insuranceRef, pathologyCode, pathologyStartDate) ?: throw IllegalArgumentException("Cannot load fhir")
             RequestTypeEnum.COMPLETE_AGREEMENT -> return return this.agreementServiceUtils.getBundleJSON(requestType, "Claim/Claim1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, "14375992004", "Robin", "Hormaux", orgNihii, organizationType, annex1, annex2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForAnnex1, numberOfSessionForAnnex2, insuranceRef, pathologyCode, pathologyStartDate) ?: throw IllegalArgumentException("Cannot load fhir")
-            RequestTypeEnum.CONSULT_LIST -> return this.agreementServiceUtils.getBundleJSON(requestType, "Parameters/Parameters1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, null, null, null, orgNihii, organizationType, annex1, annex2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForAnnex1, numberOfSessionForAnnex2, insuranceRef, pathologyCode, pathologyStartDate) ?: throw IllegalArgumentException("Cannot load fhir")
             RequestTypeEnum.EXTEND -> return this.agreementServiceUtils.getBundleJSON(requestType, "Claim/Claim1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, "14375992004", "Robin", "Hormaux", orgNihii, organizationType, annex1, annex2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForAnnex1, numberOfSessionForAnnex2, insuranceRef, pathologyCode, pathologyStartDate) ?: throw IllegalArgumentException("Cannot load fhir")
-            RequestTypeEnum.COMPLETE_AGREEMENT -> return this.agreementServiceUtils.getBundleJSON(requestType, "Claim/Claim1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, "14375992004", "Robin", "Hormaux", orgNihii, organizationType, annex1, annex2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForAnnex1, numberOfSessionForAnnex2, insuranceRef, pathologyCode, pathologyStartDate) ?: throw IllegalArgumentException("Cannot load fhir")
             else -> throw IllegalArgumentException("Request type not supported")
         }
+    }
+
+    fun createConsultAgreementBundle(
+        requestType: RequestTypeEnum,
+        messageEventSystem: MessageEventSystemEnum,
+        messageEventCode: String,
+        patientFirstName: String,
+        patientLastName: String,
+        patientGender: String,
+        patientSsin: String?,
+        patientIo: String?,
+        patientIoMembership: String?,
+        insuranceRef: String,
+        hcpNihii: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        orgNihii: String?,
+        organizationType: String?,
+        agreementStartDate: DateTime?,
+        agreementEndDate: DateTime?,
+        agreementType: String?
+    ): JsonObject?{
+        return this.agreementServiceUtils.getBundleJSON(requestType, "Parameters/Parameters1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, null, null, null, orgNihii, organizationType, null, null, agreementStartDate, agreementEndDate, agreementType, null, null, insuranceRef, null, null) ?: throw IllegalArgumentException("Cannot load fhir")
     }
 
     private fun extractEtk(cred: KeyStoreCredential): EncryptionToken? {

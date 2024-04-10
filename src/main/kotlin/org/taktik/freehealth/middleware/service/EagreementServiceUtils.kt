@@ -111,7 +111,7 @@ interface EagreementServiceUtils {
         numberOfSessionForAnnex1: Float?,
         numberOfSessionForAnnex2: Float?,
         insuranceRef: String?,
-        pathologyCode: String,
+        pathologyCode: String?,
         pathologyStartDate: DateTime?
     ): JsonObject?
 
