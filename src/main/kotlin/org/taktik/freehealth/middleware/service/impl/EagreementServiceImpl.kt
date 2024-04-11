@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service
 import org.taktik.connector.business.agreement.exception.AgreementBusinessConnectorException
 import org.taktik.connector.business.domain.agreement.AgreementResponse
 import org.taktik.connector.business.mycarenet.attest.domain.InputReference
+import org.taktik.connector.business.mycarenetcommons.builders.util.BlobUtil
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
@@ -123,9 +124,9 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         patientSsin: String?,
         patientIo: String?,
         patientIoMembership: String?,
-        pathologyStartDate: DateTime,
-        pathologyCode: String,
-        insuranceRef: String,
+        pathologyStartDate: DateTime?,
+        pathologyCode: String?,
+        insuranceRef: String?,
         hcpNihii: String,
         hcpSsin: String,
         hcpFirstName: String,
@@ -457,7 +458,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 issueInstant = DateTime()
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
                 this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
-                // xades = BlobUtil.generateXades(credential, detail, "agreement")
+                //xades = BlobUtil.generateXades(credential, detail, "agreement")
             }
 
             try {
@@ -504,6 +505,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                     transactionResponse = responseJSON.toString()
                 }
                 res.content = responseJSON.toString().toByteArray(Charsets.UTF_8)
+
                 // TODO call that method but it's not fully implemented yest
                 // res.errors = extractErrors(responseJSON).toList()
                 return res;
@@ -601,9 +603,9 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         patientSsin: String?,
         patientIo: String?,
         patientIoMembership: String?,
-        pathologyStartDate: DateTime,
-        pathologyCode: String,
-        insuranceRef: String,
+        pathologyStartDate: DateTime?,
+        pathologyCode: String?,
+        insuranceRef: String?,
         hcpNihii: String,
         hcpFirstName: String,
         hcpLastName: String,

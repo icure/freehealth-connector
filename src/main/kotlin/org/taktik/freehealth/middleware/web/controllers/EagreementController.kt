@@ -178,23 +178,14 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam patientGender: String,
         @RequestParam messageEventSystem: String,
         @RequestParam messageEventCode: String,
-        @RequestParam pathologyStartDate: Int,
-        @RequestParam pathologyCode: String,
         @RequestParam insuranceRef: String,
         @RequestParam(required = false) patientSsin: String?,
         @RequestParam(required = false) patientIo: String?,
         @RequestParam(required = false) patientIoMembership: String?,
         @RequestParam(required = false) orgNihii: String?,
         @RequestParam(required = false) organizationType: String?,
-        @RequestParam(required = false) annex1: String?,
-        @RequestParam(required = false) annex2: String?,
-        @RequestParam(required = false) agreementStartDate: Int?,
-        @RequestParam(required = false) agreementEndDate: Int?,
-        @RequestParam(required = false) agreementType: String?,
-        @RequestParam(required = false) numberOfSessionForAnnex1: Float?,
-        @RequestParam(required = false) numberOfSessionForAnnex2: Float?
+        @RequestParam(required = false) agreementType: String?
     ): AgreementResponse? {
-        val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -209,8 +200,6 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             patientSsin = patientSsin,
             patientIo = patientIo,
             patientIoMembership = patientIoMembership,
-            pathologyStartDate = formatter.parseDateTime(pathologyStartDate.toString()),
-            pathologyCode = pathologyCode,
             insuranceRef = insuranceRef,
             hcpNihii = hcpNihii,
             hcpSsin = hcpSsin,
@@ -218,13 +207,15 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             hcpLastName = hcpLastName,
             orgNihii = orgNihii,
             organizationType = organizationType,
-            annex1 = annex1,
-            annex2 = annex2,
-            agreementStartDate = formatter.parseDateTime(agreementStartDate.toString()),
-            agreementEndDate = formatter.parseDateTime(agreementEndDate.toString()),
             agreementType = agreementType,
-            numberOfSessionForAnnex1 = numberOfSessionForAnnex1,
-            numberOfSessionForAnnex2 = numberOfSessionForAnnex2
+            agreementEndDate = null,
+            agreementStartDate = null,
+            annex1 = null,
+            annex2 = null,
+            pathologyCode = null,
+            pathologyStartDate = null,
+            numberOfSessionForAnnex1 = null,
+            numberOfSessionForAnnex2 = null
         )
     }
 
@@ -310,8 +301,6 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam patientGender: String,
         @RequestParam messageEventSystem: String,
         @RequestParam messageEventCode: String,
-        @RequestParam pathologyStartDate: Int,
-        @RequestParam pathologyCode: String,
         @RequestParam insuranceRef: String,
         @RequestParam(required = false) patientSsin: String?,
         @RequestParam(required = false) patientIo: String?,
@@ -320,13 +309,10 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) organizationType: String?,
         @RequestParam(required = false) annex1: String?,
         @RequestParam(required = false) annex2: String?,
-        @RequestParam(required = false) agreementStartDate: Int?,
-        @RequestParam(required = false) agreementEndDate: Int?,
         @RequestParam(required = false) agreementType: String?,
         @RequestParam(required = false) numberOfSessionForAnnex1: Float?,
         @RequestParam(required = false) numberOfSessionForAnnex2: Float?
     ): AgreementResponse? {
-        val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -341,8 +327,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             patientSsin = patientSsin,
             patientIo = patientIo,
             patientIoMembership = patientIoMembership,
-            pathologyStartDate = formatter.parseDateTime(pathologyStartDate.toString()),
-            pathologyCode = pathologyCode,
+            pathologyStartDate = null,
+            pathologyCode = null,
             insuranceRef = insuranceRef,
             hcpNihii = hcpNihii,
             hcpSsin = hcpSsin,
@@ -352,8 +338,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             organizationType = organizationType,
             annex1 = annex1,
             annex2 = annex2,
-            agreementStartDate = formatter.parseDateTime(agreementStartDate.toString()),
-            agreementEndDate = formatter.parseDateTime(agreementEndDate.toString()),
+            agreementStartDate = null,
+            agreementEndDate = null,
             agreementType = agreementType,
             numberOfSessionForAnnex1 = numberOfSessionForAnnex1,
             numberOfSessionForAnnex2 = numberOfSessionForAnnex2
@@ -376,8 +362,6 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam patientGender: String,
         @RequestParam messageEventSystem: String,
         @RequestParam messageEventCode: String,
-        @RequestParam pathologyStartDate: Int,
-        @RequestParam pathologyCode: String,
         @RequestParam insuranceRef: String,
         @RequestParam(required = false) patientSsin: String?,
         @RequestParam(required = false) patientIo: String?,
@@ -386,13 +370,10 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) organizationType: String?,
         @RequestParam(required = false) annex1: String?,
         @RequestParam(required = false) annex2: String?,
-        @RequestParam(required = false) agreementStartDate: Int?,
-        @RequestParam(required = false) agreementEndDate: Int?,
         @RequestParam(required = false) agreementType: String?,
         @RequestParam(required = false) numberOfSessionForAnnex1: Float?,
         @RequestParam(required = false) numberOfSessionForAnnex2: Float?
     ): AgreementResponse? {
-        val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -407,8 +388,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             patientSsin = patientSsin,
             patientIo = patientIo,
             patientIoMembership = patientIoMembership,
-            pathologyStartDate = formatter.parseDateTime(pathologyStartDate.toString()),
-            pathologyCode = pathologyCode,
+            pathologyStartDate = null,
+            pathologyCode = null,
             insuranceRef = insuranceRef,
             hcpNihii = hcpNihii,
             hcpSsin = hcpSsin,
@@ -418,8 +399,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             organizationType = organizationType,
             annex1 = annex1,
             annex2 = annex2,
-            agreementStartDate = formatter.parseDateTime(agreementStartDate.toString()),
-            agreementEndDate = formatter.parseDateTime(agreementEndDate.toString()),
+            agreementStartDate = null,
+            agreementEndDate = null,
             agreementType = agreementType,
             numberOfSessionForAnnex1 = numberOfSessionForAnnex1,
             numberOfSessionForAnnex2 = numberOfSessionForAnnex2

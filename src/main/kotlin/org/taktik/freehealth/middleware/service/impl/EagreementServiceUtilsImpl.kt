@@ -150,13 +150,13 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             }
             if(requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) item = listOf(getServicedDateItem(requestType, pathologyStartDate!!, pathologyCode, 1))
             insurance = listOf(getInsurance(requestType, insuranceRef, "use of mandatory insurance coverage, no further details provided here."))
-            if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE) {
+            /*if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE) {
                 supportingInfo = listOf(
                     getSupportingInfo(1, "attachment", "physiotherapist-report", null, null, "QW5uZXhlIGlubGluZSwgYmFzZTY0ZWQ=", "nom/description de l'annexe", "application/pdf"),
                     getSupportingInfo(2, "info", null, null, "additional Information", null, null, null)
                     //getSupportingInfo(3, "info", null, "ServiceRequest/ServiceRequest2", null, null, null, null)
                 )
-            }
+            }*/
         }
     }
 
