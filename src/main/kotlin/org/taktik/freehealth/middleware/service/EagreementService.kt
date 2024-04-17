@@ -13,6 +13,7 @@ interface EagreementService {
      * @goal Argue a request being processed
      * @goal Extend an existing agreement
      * @goal Cancel request in the event of an error
+     * @goal Complete existing ask agreement
      * */
     fun askAgreement(
         keystoreId: UUID,
@@ -46,11 +47,9 @@ interface EagreementService {
         numberOfSessionForAnnex2: Float?
     ): AgreementResponse?
 
-    // abstract fun LicenseType(): Any
-
     /**
      * @name consultAgreement
-     * @goal Consult the request for agreement form a patient
+     * @goal Consult the request for agreement of a patient
      * */
     fun consultAgreementList(
         keystoreId: UUID,

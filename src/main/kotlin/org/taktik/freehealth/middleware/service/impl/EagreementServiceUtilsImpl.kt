@@ -737,7 +737,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 requestType,
                 claimId = "1",
                 claimStatus = "active",
-                subTypeCode = "physiotherapy-fb",
+                subTypeCode = agreementType!!,
                 agreementStartDate = DateTime(),
                 insuranceRef = insuranceRef!!,
                 pathologyCode = pathologyCode!!,
