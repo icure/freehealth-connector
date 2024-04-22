@@ -44,7 +44,9 @@ interface EagreementService {
         agreementEndDate: DateTime?,
         agreementType: String?,
         numberOfSessionForAnnex1: Float?,
-        numberOfSessionForAnnex2: Float?
+        numberOfSessionForAnnex2: Float?,
+        sctCode: String?,
+        sctDisplay: String?
     ): AgreementResponse?
 
     /**
@@ -70,6 +72,7 @@ interface EagreementService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
+        subTypeCode: String,
         orgNihii: String?,
         organizationType: String?,
         agreementStartDate: DateTime?,

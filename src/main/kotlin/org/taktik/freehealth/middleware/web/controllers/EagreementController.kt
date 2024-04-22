@@ -1,7 +1,6 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import ma.glasnost.orika.MapperFacade
-import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -61,6 +60,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam pathologyStartDate: Int,
         @RequestParam pathologyCode: String,
         @RequestParam insuranceRef: String,
+        @RequestParam sctCode: String,
+        @RequestParam(required = false) sctDisplay: String?,
         @RequestParam(required = false) patientSsin: String?,
         @RequestParam(required = false) patientIo: String?,
         @RequestParam(required = false) patientIoMembership: String?,
@@ -104,7 +105,9 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             agreementEndDate = formatter.parseDateTime(agreementEndDate.toString()),
             agreementType = agreementType,
             numberOfSessionForAnnex1 = numberOfSessionForAnnex1,
-            numberOfSessionForAnnex2 = numberOfSessionForAnnex2
+            numberOfSessionForAnnex2 = numberOfSessionForAnnex2,
+            sctCode = sctCode,
+            sctDisplay = sctDisplay
         )
     }
 
@@ -125,6 +128,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam messageEventSystem: String,
         @RequestParam messageEventCode: String,
         @RequestParam insuranceRef: String,
+        @RequestParam subTypeCode: String,
         @RequestParam(required = false) patientSsin: String?,
         @RequestParam(required = false) patientIo: String?,
         @RequestParam(required = false) patientIoMembership: String?,
@@ -154,6 +158,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             hcpSsin = hcpSsin,
             hcpFirstName = hcpFirstName,
             hcpLastName = hcpLastName,
+            subTypeCode = subTypeCode,
             orgNihii = orgNihii,
             organizationType = organizationType,
             agreementStartDate = formatter.parseDateTime(agreementStartDate.toString()),
@@ -190,7 +195,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
-            requestType = EagreementServiceImpl.RequestTypeEnum.ASK,
+            requestType = EagreementServiceImpl.RequestTypeEnum.CANCEL,
             hcpQuality = hcpQuality,
             messageEventSystem = EagreementServiceImpl.MessageEventSystemEnum.MESSAGE_EVENTS,
             messageEventCode = "claim-cancel",
@@ -215,7 +220,9 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             pathologyCode = null,
             pathologyStartDate = null,
             numberOfSessionForAnnex1 = null,
-            numberOfSessionForAnnex2 = null
+            numberOfSessionForAnnex2 = null,
+            sctCode = null,
+            sctDisplay = null
         )
     }
 
@@ -238,6 +245,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam pathologyStartDate: Int,
         @RequestParam pathologyCode: String,
         @RequestParam insuranceRef: String,
+        @RequestParam sctCode: String,
+        @RequestParam(required = false) sctDisplay: String?,
         @RequestParam(required = false) patientSsin: String?,
         @RequestParam(required = false) patientIo: String?,
         @RequestParam(required = false) patientIoMembership: String?,
@@ -281,7 +290,9 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             agreementEndDate = formatter.parseDateTime(agreementEndDate.toString()),
             agreementType = agreementType,
             numberOfSessionForAnnex1 = numberOfSessionForAnnex1,
-            numberOfSessionForAnnex2 = numberOfSessionForAnnex2
+            numberOfSessionForAnnex2 = numberOfSessionForAnnex2,
+            sctCode = sctCode,
+            sctDisplay = sctDisplay
         )
     }
 
@@ -302,6 +313,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam messageEventSystem: String,
         @RequestParam messageEventCode: String,
         @RequestParam insuranceRef: String,
+        @RequestParam sctCode: String,
+        @RequestParam(required = false) sctDisplay: String?,
         @RequestParam(required = false) patientSsin: String?,
         @RequestParam(required = false) patientIo: String?,
         @RequestParam(required = false) patientIoMembership: String?,
@@ -342,7 +355,9 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             agreementEndDate = null,
             agreementType = agreementType,
             numberOfSessionForAnnex1 = numberOfSessionForAnnex1,
-            numberOfSessionForAnnex2 = numberOfSessionForAnnex2
+            numberOfSessionForAnnex2 = numberOfSessionForAnnex2,
+            sctCode = sctCode,
+            sctDisplay = sctDisplay
         )
     }
 
@@ -363,6 +378,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam messageEventSystem: String,
         @RequestParam messageEventCode: String,
         @RequestParam insuranceRef: String,
+        @RequestParam sctCode: String,
+        @RequestParam(required = false) sctDisplay: String?,
         @RequestParam(required = false) patientSsin: String?,
         @RequestParam(required = false) patientIo: String?,
         @RequestParam(required = false) patientIoMembership: String?,
@@ -403,7 +420,9 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             agreementEndDate = null,
             agreementType = agreementType,
             numberOfSessionForAnnex1 = numberOfSessionForAnnex1,
-            numberOfSessionForAnnex2 = numberOfSessionForAnnex2
+            numberOfSessionForAnnex2 = numberOfSessionForAnnex2,
+            sctCode = sctCode,
+            sctDisplay = sctDisplay
         )
     }
 }

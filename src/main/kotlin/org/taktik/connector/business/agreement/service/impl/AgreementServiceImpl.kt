@@ -44,12 +44,8 @@ class AgreementServiceImpl : AgreementService, ModuleBootstrapHook {
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun consultAgreement(
-        samlToken: SAMLToken?,
-        consultAgreementRequest: ConsultAgreementRequest?
-    ): ConsultAgreementResponse? {
+    override fun consultAgreement(samlToken: SAMLToken?, consultAgreementRequest: ConsultAgreementRequest?): ConsultAgreementResponse? {
         try {
-            //return callAgreementService(samlToken, consultAgreementRequest, SOAP_ACTION_CONSULT_AGREEMENT, ConsultAgreementResponse::class.java)
             val service = ServiceFactory.getAgreementPort(samlToken)
             service.setPayload(consultAgreementRequest)
             service.setSoapAction("urn:be:fgov:ehealth:mycarenet:agreement:protocol:v1:ConsultAgreement")

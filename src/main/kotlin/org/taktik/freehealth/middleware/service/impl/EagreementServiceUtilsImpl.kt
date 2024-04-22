@@ -41,6 +41,9 @@ import java.time.format.DateTimeFormatter
 class EagreementServiceUtilsImpl(): EagreementServiceUtils {
 
     enum class MetaProfileEnum(val metaProfile: String){
+        BE_MESSAGEHEADER("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-messageheader"),
+        BE_AGREEMENTCONSULT("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementconsult"),
+        BE_AGREEMENTDEMAND("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementdemand"),
         BE_PRACTIONNERROLE("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-practitionerrole"),
         BE_PRACTIONNER("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-practitioner"),
         BE_AGREEMENT_CLAIM_KINE("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementclaim-kine"),
@@ -61,13 +64,15 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         UHMEP("https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/uhmep"),
         NIHDI_PHYSIO_PATHO_SITUATION_CODE("https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/nihdi-physiotherapy-pathologysituationcode"),
         AGREEMENT_TYPE("https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/agreement-types"),
+        PROCESS_PRIORITY("http://terminology.hl7.org/CodeSystem/processpriority"),
+        CLAIM_TYPE("http://terminology.hl7.org/CodeSystem/claim-type"),
     }
 
     override fun getPractitionerRole(practitionerRoleId: String, practitionerRole: String): PractitionerRole {
         return PractitionerRole().apply {
             id = "PractitionerRole$practitionerRoleId"
             meta = Meta(
-                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-practitionerrole")
+                profile = listOf(MetaProfileEnum.BE_PRACTIONNERROLE.metaProfile)
             )
             practitioner = Reference().apply {
                 reference = "Practitioner/Practitioner$practitionerRoleId"
@@ -76,7 +81,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 CodeableConcept().apply {
                     coding = listOf(
                         Coding(
-                            system = "https://www.ehealth.fgov.be/standards/fhir/core/CodeSystem/cd-hcparty",
+                            system = CodingSystemEnum.CD_HCPARTY.codingSystem,
                             code = practitionerRole
                         ))
                 }
@@ -88,11 +93,11 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         return Practitioner().apply {
             id = "Practitioner$practitionerId"
             meta = Meta(
-                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-practitioner")
+                profile = listOf(MetaProfileEnum.BE_PRACTIONNER.metaProfile)
             )
             identifier = listOf(
                 Identifier().apply {
-                    system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/nihdi"
+                    system = CodingSystemEnum.NIHDI.codingSystem
                     value = hcpNihii
                 }
             )
@@ -119,26 +124,25 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
     override fun getClaim(
         requestType: EagreementServiceImpl.RequestTypeEnum,
         claimId: String,
-        claimStatus: String,
         subTypeCode: String,
         agreementStartDate: DateTime,
         insuranceRef: String,
-        pathologyCode: String,
+        pathologyCode: String?,
         pathologyStartDate: DateTime?,
-        providerType: String
+        provider: String
     ): Claim {
         return Claim(
             patient = Reference().apply { reference = "Patient/Patient1" },
-            priority = getCodableConcept("http://terminology.hl7.org/CodeSystem/processpriority", "stat"),
-            provider = Reference().apply { reference = "PractitionerRole/PractitionerRole1" },
-            type = getCodableConcept("http://terminology.hl7.org/CodeSystem/claim-type", "professional")
+            priority = getCodableConcept(CodingSystemEnum.PROCESS_PRIORITY.codingSystem, "stat"),
+            provider = Reference().apply { reference = provider },
+            type = getCodableConcept(CodingSystemEnum.CLAIM_TYPE.codingSystem, "professional")
         ).apply {
             id = "Claim$claimId"
             meta = Meta(
-                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementclaim-kine")
+                profile = listOf(MetaProfileEnum.BE_AGREEMENT_CLAIM_KINE.metaProfile)
             )
-            status = claimStatus
-            subType = getCodableConcept("https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/agreement-types", subTypeCode)
+            status = "active"
+            subType = getCodableConcept(CodingSystemEnum.AGREEMENT_TYPE.codingSystem, subTypeCode)
             use = "preauthorization"
             if(requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) billablePeriod = getBillablePeriod(agreementStartDate!!)
             created = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"))
@@ -150,13 +154,6 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             }
             if(requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) item = listOf(getServicedDateItem(requestType, pathologyStartDate!!, pathologyCode, 1))
             insurance = listOf(getInsurance(requestType, insuranceRef, "use of mandatory insurance coverage, no further details provided here."))
-            /*if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE) {
-                supportingInfo = listOf(
-                    getSupportingInfo(1, "attachment", "physiotherapist-report", null, null, "QW5uZXhlIGlubGluZSwgYmFzZTY0ZWQ=", "nom/description de l'annexe", "application/pdf"),
-                    getSupportingInfo(2, "info", null, null, "additional Information", null, null, null)
-                    //getSupportingInfo(3, "info", null, "ServiceRequest/ServiceRequest2", null, null, null, null)
-                )
-            }*/
         }
     }
 
@@ -164,7 +161,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         var code: CodeableConcept? = null
         val category = CodeableConcept().apply {
             coding = listOf(Coding(
-                system = "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+                system = CodingSystemEnum.CLAIM_INFORMATION_CATEGORY.codingSystem,
                 code = claimInformationCategory
             ))
         }
@@ -172,7 +169,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         if(!annexTypeCode.isNullOrEmpty()){
             code = CodeableConcept().apply {
                 coding = listOf(Coding(
-                    system = "https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/annex-types",
+                    system = CodingSystemEnum.ANNEX_TYPES.codingSystem,
                     code = annexTypeCode
                 ))
             }
@@ -205,11 +202,11 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         return Organization().apply {
             id = "Organization$organizationId"
             meta = Meta(
-                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-organization")
+                profile = listOf(MetaProfileEnum.BE_ORGANIZATION.metaProfile)
             )
             identifier = listOf(
                 Identifier().apply {
-                    system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/nihdi"
+                    system = CodingSystemEnum.NIHDI.codingSystem
                     value = orgNihii
                 }
             )
@@ -217,7 +214,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 CodeableConcept().apply {
                     coding = listOf(
                         Coding(
-                            system = "https://www.ehealth.fgov.be/standards/fhir/core/CodeSystem/cd-hcparty",
+                            system = CodingSystemEnum.CD_HCPARTY.codingSystem,
                             code = organizationType
                         )
                     )
@@ -230,28 +227,28 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         return Patient(
             id = "Patient1",
             meta = Meta(
-                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/core/StructureDefinition/be-patient")
+                profile = listOf(MetaProfileEnum.BE_PATIENT.metaProfile)
             ),
             identifier = listOf(
                 Identifier().apply {
                     when{
                         !patientSsin.isNullOrEmpty() && ioMembership.isNullOrEmpty() -> {
-                            system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/ssin"
+                            system = CodingSystemEnum.SSIN.codingSystem
                             value = patientSsin
                         }
                         patientSsin.isNullOrEmpty() && !ioMembership.isNullOrEmpty() && !io.isNullOrEmpty() -> {
-                            system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/insurancymembership"
+                            system = CodingSystemEnum.INSURANCY_MEMBERSHIP.codingSystem
                             value = ioMembership
                             assigner = Reference(identifier = Identifier().apply {
-                                system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/insurancenumber"
+                                system = CodingSystemEnum.INSURANCE_NUMBER.codingSystem
                                 value = io
                             })
                         }
                         !patientSsin.isNullOrEmpty() && !ioMembership.isNullOrEmpty() -> {
-                            system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/insurancymembership"
+                            system = CodingSystemEnum.INSURANCY_MEMBERSHIP.codingSystem
                             value = ioMembership
                             assigner = Reference(identifier = Identifier().apply {
-                                system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/insurancenumber"
+                                system = CodingSystemEnum.INSURANCE_NUMBER.codingSystem
                                 value = io
                             })
                         }
@@ -267,13 +264,13 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         )
     }
 
-    override fun getServiceRequest(serviceRequestId: String, prescriptionId: String, data: String, annexId: String, quantity: Float, patientFirstName: String, patientLastName: String, gender: String, patientSsin: String?, io: String?, ioMembership: String?): ServiceRequest {
+    override fun getServiceRequest(serviceRequestId: String, prescriptionId: String, data: String, annexId: String, quantity: Float, patientFirstName: String, patientLastName: String, gender: String, patientSsin: String?, io: String?, ioMembership: String?, sctCode: String?, sctDisplay: String?): ServiceRequest {
         val patient = getPatient(patientFirstName!!, patientLastName!!, gender!!, patientSsin, io, ioMembership)
         val formatter = DateTimeFormat.forPattern("yyyy-MM-dd")
         return ServiceRequest(subject = Reference().apply { patient }).apply {
             id = "ServiceRequest$serviceRequestId"
             meta = Meta(
-                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementservicerequest")
+                profile = listOf(MetaProfileEnum.BE_EAGREEMENTSERVICEREQUEST.metaProfile)
             )
             status = "active"
             intent = "order"
@@ -281,9 +278,9 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 CodeableConcept().apply {
                     coding = listOf(
                         Coding(
-                            system = "http://snomed.info/sct",
-                            code = "91251008",
-                            display = "Physical therapy procedure"
+                            system = CodingSystemEnum.SCT.codingSystem,
+                            code = sctCode,
+                            display = sctDisplay
                         )
                     )
                 }
@@ -291,9 +288,9 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             code = CodeableConcept().apply {
                 coding = listOf(
                     Coding(
-                        system = "http://snomed.info/sct",
-                        code = "91251008",
-                        display = "Physical therapy procedure"
+                        system = CodingSystemEnum.SCT.codingSystem,
+                        code = sctCode,
+                        display = sctDisplay
                     )
                 )
             }
@@ -332,12 +329,14 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                                patientGender: String?,
                                patientSsin: String?,
                                io: String?,
-                               ioMembership: String?): Parameters {
+                               ioMembership: String?,
+                               subTypeCode: String?
+    ): Parameters {
         val param = mutableListOf<ParametersParameter>();
-        param.add(getParameter("resourceType", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership))
-        param.add(getParameter("patient", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership))
-        param.add(getParameter("use", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership))
-        param.add(getParameter("subType", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership))
+        param.add(getParameter("resourceType", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
+        param.add(getParameter("patient", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
+        param.add(getParameter("use", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
+        param.add(getParameter("subType", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
         return Parameters().apply {
             id = "Parameters$parameterId"
             parameter = param
@@ -353,7 +352,8 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                               patientGender: String?,
                               patientSsin: String?,
                               io: String?,
-                              ioMembership: String?
+                              ioMembership: String?,
+                              subTypeCode: String?
     ): ParametersParameter{
         return ParametersParameter().apply {
             name = parameterName
@@ -364,8 +364,8 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 }
                 parameterName == "use" -> valueCode = "preauthorization"
                 parameterName == "subType" -> valueCoding = Coding().apply {
-                    system = "https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/agreement-types"
-                    code = "physiotherapy"
+                    system = CodingSystemEnum.AGREEMENT_TYPE.codingSystem
+                    code = subTypeCode
                 }
                 parameterName == "preAuthPeriod" -> valuePeriod = Period().apply {
                     start = startDate.toString()
@@ -394,14 +394,14 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         )
     }
 
-    override fun getServicedDateItem(requestType: EagreementServiceImpl.RequestTypeEnum, pathologyDate: DateTime, pathologyCode: String, sequenceNumber: Int): ClaimItem {
+    override fun getServicedDateItem(requestType: EagreementServiceImpl.RequestTypeEnum, pathologyDate: DateTime, pathologyCode: String?, sequenceNumber: Int): ClaimItem {
         val formatter = DateTimeFormat.forPattern("yyyy-MM-dd")
         return ClaimItem(
             sequence = sequenceNumber,
             productOrService = CodeableConcept(
                 coding = listOf(
                     Coding(
-                        system = "https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/nihdi-physiotherapy-pathologysituationcode",
+                        system = CodingSystemEnum.NIHDI_PHYSIO_PATHO_SITUATION_CODE.codingSystem,
                         code = pathologyCode
                     )
                 )
@@ -413,7 +413,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
 
     override fun getCodeItem(code: String): ClaimItem {
         return ClaimItem(
-            productOrService = getCodableConcept("https://www.ehealth.fgov.be/standards/fhir/mycarenet/CodeSystem/nihdi-physiotherapy-pathologysituationcode", code)
+            productOrService = getCodableConcept(CodingSystemEnum.NIHDI_PHYSIO_PATHO_SITUATION_CODE.codingSystem, code)
         )
     }
 
@@ -422,7 +422,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             sequence = 2,
             category = CodeableConcept().apply {
                 coding = listOf(Coding().apply {
-                    system = "http://terminology.hl7.org/CodeSystem/claiminformationcategory"
+                    system = CodingSystemEnum.CLAIM_INFORMATION_CATEGORY.codingSystem
                     code = "info"
                 })
             },
@@ -430,12 +430,12 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         )
     }
 
-    override fun getPrescriptionInfos(quantity: Int, document: String, documentId: String): ServiceRequest{
+    override fun getPrescriptionInfos(quantity: Int, document: String, documentId: String, sctCode: String?, sctDisplay: String?): ServiceRequest{
         return ServiceRequest(
             identifier = listOf(
                 Identifier(
                     value = "Prescription id",
-                    system = "https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/uhmep"
+                    system = CodingSystemEnum.UHMEP.codingSystem
                 )
             ),
             status = "active",
@@ -444,9 +444,9 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 CodeableConcept(
                     coding = listOf(
                         Coding(
-                            system = "http://snomed.info/sct",
-                            code = "procedure snomed",
-                            display = "?????"
+                            system = CodingSystemEnum.SCT.codingSystem,
+                            code = sctCode,
+                            display = sctDisplay
                         )
                     )
                 )
@@ -454,9 +454,9 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             code = CodeableConcept(
                 coding = listOf(
                     Coding(
-                        system = "http://snomed.info/sct",
-                        code = "procedure snomed",
-                        display = "?????"
+                        system = CodingSystemEnum.SCT.codingSystem,
+                        code = sctCode,
+                        display = sctDisplay
                     )
                 )
             ),
@@ -494,7 +494,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         ).apply {
             id = IdGeneratorFactory.getIdGenerator("uuid").generateId()
             meta = Meta(
-                profile = listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-messageheader")
+                profile = listOf(MetaProfileEnum.BE_MESSAGEHEADER.metaProfile)
             )
 
             destination = listOf(
@@ -542,7 +542,10 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         numberOfSessionForAnnex2: Float?,
         insuranceRef: String?,
         pathologyCode: String?,
-        pathologyStartDate: DateTime?
+        pathologyStartDate: DateTime?,
+        sctCode: String?,
+        sctDisplay: String?,
+        subTypeCode: String?
     ): JsonObject? {
         val uuidGenerator = IdGeneratorFactory.getIdGenerator("uuid")
         val practitionerRole1UUID = uuidGenerator.generateId()
@@ -556,8 +559,8 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             id = "Bundle1"
             meta = Meta(
                 profile = when (requestType) {
-                    EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST -> listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementconsult")
-                    else -> listOf("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-eagreementdemand")
+                    EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST -> listOf(MetaProfileEnum.BE_AGREEMENTCONSULT.metaProfile)
+                    else -> listOf(MetaProfileEnum.BE_AGREEMENTDEMAND.metaProfile)
                 }
             )
             type = "message"
@@ -671,20 +674,13 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(practitionerRole2)
         }
 
-        /*if (orgNihii != null && organizationType != null) {
+        if (orgNihii != null && organizationType != null) {
             val organization = JsonObject()
             organization.addProperty("fullUrl" , "urn:uuid:"+uuidGenerator.generateId())
             organization.add("resource", JsonParser().parse(mapper.writeValueAsString(getOrganization("1", orgNihii, organizationType))).asJsonObject)
             gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(organization)
-        }*/
+        }
 
-        //Ask
-        /*if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK) {
-            val askParameter = JsonObject()
-            askParameter.addProperty("fullUrl" , "urn:uuid:"+uuidGenerator.generateId())
-            askParameter.add("resource", JsonParser().parse(mapper.writeValueAsString(getParameters("1", arrayOf("ask"), agreementType!!, agreementStartDate, agreementEndDate, hcpNihii, hcpFirstName, hcpLastName, patientSsin, patientIo, patientIoMembership))).asJsonObject)
-            gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(askParameter)
-        }*/
         //Parameters 1
         if (requestType == EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST) {
             val parameter1 = JsonObject()
@@ -703,7 +699,8 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                             hcpLastName,
                             patientSsin,
                             patientIo,
-                            patientIoMembership
+                            patientIoMembership,
+                            subTypeCode
                         )
                     )
                 ).asJsonObject
@@ -714,35 +711,27 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE) {
             val serviceRequest1 = JsonObject()
             serviceRequest1.addProperty("fullUrl" , "urn:uuid:" + uuidGenerator.generateId())
-            serviceRequest1.add("resource", JsonParser().parse(mapper.writeValueAsString(getServiceRequest("1", "", "QW5uZXhlIGlubGluZSwgYmFzZTY0ZWQ=", "1", numberOfSessionForAnnex1!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership))).asJsonObject)
+            serviceRequest1.add("resource", JsonParser().parse(mapper.writeValueAsString(getServiceRequest("1", "", annex1!!, "1", numberOfSessionForAnnex1!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, sctCode, sctDisplay))).asJsonObject)
             serviceRequest1.getAsJsonObject("resource").getAsJsonObject("ServiceRequest").add("contained", JsonParser().parse(mapper.writeValueAsString( Binary(
                 contentType = "application/pdf",
-                data = "QW5uZXhlIGlubGluZSwgYmFzZTY0ZWQ=",
+                data = annex1,
                 id = "annexSR1"
             ))).asJsonObject)
             serviceRequest1.getAsJsonObject("resource").getAsJsonObject("ServiceRequest").getAsJsonObject("quantityQuantity").addProperty("value", numberOfSessionForAnnex1.toInt())
             gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(serviceRequest1)
         }
-        //Service request 2
-        /*if (requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE || requestType == EagreementServiceImpl.RequestTypeEnum.ASK) {
-            val serviceRequest2 = JsonObject()
-            serviceRequest2.addProperty("fullUrl" , "urn:uuid:"+uuidGenerator.generateId())
-            serviceRequest2.add("resource", JsonParser().parse(mapper.writeValueAsString(getServiceRequest("2", "BE8779879789", "ceci devrait etre un pdf", "2", numberOfSessionForAnnex2!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership))).asJsonObject)
-            gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(serviceRequest2)
-        }*/
 
         //Claim 1
         if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE || requestType == EagreementServiceImpl.RequestTypeEnum.CANCEL || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND || requestType == EagreementServiceImpl.RequestTypeEnum.COMPLETE_AGREEMENT) {
             val claim = this.getClaim(
                 requestType,
                 claimId = "1",
-                claimStatus = "active",
                 subTypeCode = agreementType!!,
                 agreementStartDate = DateTime(),
                 insuranceRef = insuranceRef!!,
-                pathologyCode = pathologyCode!!,
+                pathologyCode = pathologyCode,
                 pathologyStartDate = pathologyStartDate,
-                providerType = ""
+                provider = "PractitionerRole/PractitionerRole1"
             )
             val parameter = JsonObject()
             parameter.addProperty("fullUrl" , "urn:uuid:"+uuidGenerator.generateId())

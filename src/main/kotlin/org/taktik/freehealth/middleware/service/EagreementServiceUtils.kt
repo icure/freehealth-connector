@@ -28,11 +28,10 @@ interface EagreementServiceUtils {
     fun getClaim(
         requestType: EagreementServiceImpl.RequestTypeEnum,
         claimId: String,
-        claimStatus: String,
         subTypeCode: String,
         agreementStartDate: DateTime,
         insuranceRef: String,
-        pathologyCode: String,
+        pathologyCode: String?,
         pathologyStartDate: DateTime?,
         providerType: String
     ): Claim?
@@ -42,7 +41,7 @@ interface EagreementServiceUtils {
 
     fun getPatient(patientFirstName: String, patientLastName: String, gender: String, patientSsin: String?, io: String ?, ioMembership: String?): Patient?
 
-    fun getServiceRequest(serviceRequestId: String, prescriptionId: String, data: String, annexId: String, quantity: Float, patientFirstName: String, patientLastName: String, gender: String, patientSsin: String?, io: String?, ioMembership: String?): ServiceRequest?
+    fun getServiceRequest(serviceRequestId: String, prescriptionId: String, data: String, annexId: String, quantity: Float, patientFirstName: String, patientLastName: String, gender: String, patientSsin: String?, io: String?, ioMembership: String?, sctCode: String?, sctDisplay: String?): ServiceRequest?
 
     fun getContained(data: String, containedId: String): List<Binary>?
 
@@ -55,7 +54,9 @@ interface EagreementServiceUtils {
                       patientGender: String?,
                       patientSsin: String?,
                       io: String?,
-                      ioMembership: String?): Parameters?
+                      ioMembership: String?,
+                      subTypeCode: String?
+    ): Parameters?
 
     fun getParameter(parameterName: String,
                      agreementTypes: String?,
@@ -66,20 +67,21 @@ interface EagreementServiceUtils {
                      patientGender: String?,
                      patientSsin: String?,
                      io: String?,
-                     ioMembership: String?
+                     ioMembership: String?,
+                     subTypeCode: String?
     ): ParametersParameter?
 
     fun getInsurance(requestType: EagreementServiceImpl.RequestTypeEnum, insuranceRef: String, display: String): ClaimInsurance?
 
     fun getBillablePeriod(startDate: DateTime): Period?
 
-    fun getServicedDateItem(requestType: EagreementServiceImpl.RequestTypeEnum, pathologyDate: DateTime, pathologyCode: String, sequenceNumber: Int): ClaimItem?
+    fun getServicedDateItem(requestType: EagreementServiceImpl.RequestTypeEnum, pathologyDate: DateTime, pathologyCode: String?, sequenceNumber: Int): ClaimItem?
 
     fun getCodeItem(code: String): ClaimItem?
 
     fun getAdditionalNotes(additionalNotes: String): ClaimSupportingInfo?
 
-    fun getPrescriptionInfos(quantity: Int, document: String, documentId: String): ServiceRequest?
+    fun getPrescriptionInfos(quantity: Int, document: String, documentId: String, sctCode: String?, sctDisplay: String?): ServiceRequest?
 
     fun getMessageHeader(messageFocusReference: String, messageEventSystem: String, messageEventsCode: String, practitionerRole1UUID: String): MessageHeader?
 
@@ -112,7 +114,10 @@ interface EagreementServiceUtils {
         numberOfSessionForAnnex2: Float?,
         insuranceRef: String?,
         pathologyCode: String?,
-        pathologyStartDate: DateTime?
+        pathologyStartDate: DateTime?,
+        sctCode: String?,
+        sctDisplay: String?,
+        subTypeCode: String?
     ): JsonObject?
 
 }
