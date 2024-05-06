@@ -1450,8 +1450,22 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                         eAttestErrors.values.filter {
                             it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
                         }
-                    elements.forEach { it.value = textContent }
-                    result.addAll(elements)
+                    if(elements.isNotEmpty())
+                    {
+                        elements.forEach { it.value = textContent }
+                        result.addAll(elements);
+                    }
+                    else
+                    {
+                        result.add(
+                            MycarenetError(
+                                code = ec,
+                                path = curratedUrl,
+                                msgFr = "Erreur générique, xpath invalide",
+                                msgNl = "Onbekend foutmelding, xpath ongeldig"
+                            )
+                        )
+                    }
                 } else {
                     result.add(
                         MycarenetError(
