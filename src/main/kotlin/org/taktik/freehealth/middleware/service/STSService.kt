@@ -26,6 +26,7 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
 import org.taktik.freehealth.middleware.dto.CertificateInfo
+import org.taktik.freehealth.middleware.dto.MergeKeystoresResponseDto
 import java.security.KeyStore
 import java.util.UUID
 
@@ -50,5 +51,5 @@ interface STSService {
     fun checkTokenValid(tokenId: UUID): Boolean
     fun getKeystoreInfo(keystoreId: UUID, passPhrase: String, quality: String?): CertificateInfo
     fun isAcceptance(): Boolean
-    fun mergeKeystores(newKeystore: String, oldKeystore: String, newPassword: String, oldPassword: String): ByteArray
+    fun mergeKeystores(newKeystore: String, oldKeystore: String, newPassword: String, oldPassword: String): MergeKeystoresResponseDto
 }
