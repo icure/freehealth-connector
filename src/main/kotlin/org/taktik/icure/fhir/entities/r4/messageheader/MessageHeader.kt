@@ -5,6 +5,7 @@ package org.taktik.icure.fhir.entities.r4.messageheader
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import kotlin.String
@@ -29,6 +30,7 @@ import org.taktik.icure.fhir.entities.r4.reference.Reference
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonDeserialize(using= JsonDeserializer.None::class)
+@JsonPropertyOrder("id", "meta", "eventCoding", "destination", "sender", "source", "focus")
 class MessageHeader(
   /**
    * The source of the decision
