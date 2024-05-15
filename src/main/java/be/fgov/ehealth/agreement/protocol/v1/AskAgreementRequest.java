@@ -9,7 +9,4 @@ import javax.xml.bind.annotation.XmlRootElement;
 )
 public class AskAgreementRequest extends SendRequestType {
    private static final long serialVersionUID = 1L;
-
-   public AskAgreementRequest() {
-   }
 }
