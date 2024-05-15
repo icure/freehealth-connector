@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
-import org.taktik.connector.business.recipe.utils.KmehrValidator
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.domain.recipe.Medication
 import org.taktik.freehealth.middleware.domain.recipe.Prescription
@@ -20,10 +19,8 @@ import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Medications
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Medications.Companion.medicinalProductP1
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Medications.Companion.substanceProductP0
 import org.taktik.icure.be.ehealth.logic.recipe.impl.RecipeTestUtils.Medications.Companion.substanceProductP1
-import java.io.ByteArrayOutputStream
 import java.time.LocalDateTime
 import java.util.UUID
-import javax.xml.bind.JAXBContext
 
 /**
  * @author Bernard Paulus on 3/04/17.
@@ -95,7 +92,23 @@ class CreatePrescriptionTest {
         //InsurabilityInfo infos = generalInsurabilityLogic.getGeneralInsurabity(niss, null, null, "T@kt1k1Cur3", "/Users/aduchate/ehealth/keystore", "SSIN=79121430944 20121128-151901.acc-p12");
 
         val type = recipeService.inferPrescriptionType(medications, null)
-        val infos = recipeService.createPrescription(keystoreId!!, tokenId!!, passPhrase!!, "persphysician", hcp.nihii!!, patient, hcp, true, medications, type, null, null, "1.0", LocalDateTime.now(), lang = "fr")
+        val infos = recipeService.createPrescription(
+            keystoreId!!,
+            tokenId!!,
+            passPhrase!!,
+            "persphysician",
+            hcp.nihii!!,
+            patient,
+            hcp,
+            true,
+            medications,
+            type,
+            null,
+            null,
+            "1.0",
+            LocalDateTime.now(),
+            lang = "fr"
+        )
         return infos
     }
 

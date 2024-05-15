@@ -74,9 +74,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                 if (affCode.startsWith("3")) {
                     if (Arrays.asList("304", "305", "309", "311", "315", "317", "319", "322", "323", "325").contains(firstCode)) "300"
                     else "306"
-                } else
-                    if (affCode.startsWith("4")) "400"
-                    else firstCode
+                } else firstCode
             }
         } else {
             if (affCode.startsWith("3")) {
@@ -85,9 +83,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                 }else{
                     firstCode
                 }
-            } else
-                if (affCode.startsWith("4")) "400"
-                else firstCode
+            } else firstCode
         }
     }
 
@@ -256,6 +252,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("7", sendingNumber)
         ws.write("13", invoiceContent)
         ws.write("14", sender.nihii.toString().padEnd(11, '0'))
+        if(!sender.isMedicalHouse && sender.professionCode != null) ws.write("18", sender.professionCode)
         ws.write("22", invoicingYear)
         ws.write("23", invoicingMonth)
         ws.write("25", formattedCreationDate)
@@ -311,7 +308,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         //Silly rules for this field
         var affCode = insuranceCode
 
-        if (affCode.startsWith("2") || affCode.startsWith("5")) {
+        if (affCode.startsWith("2") || affCode.startsWith("4") || affCode.startsWith("5")) {
             affCode = "000"
         }
 
@@ -403,12 +400,12 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("13",990)
         if (sender.isMedicalHouse) ws.write("14", sender.nihii)
         if (!sender.isMedicalHouse) ws.write("15", icd.doctorIdentificationNumber)
-        if (sender.isMedicalHouse && icd.codeNomenclature == 109594L) ws.write("15", sender.nihii)
+        if (sender.isMedicalHouse && (icd.codeNomenclature == 109594L || icd.codeNomenclature == 400396L)) ws.write("15", sender.nihii)
         //ws.write("16", if (sender.isMedicalHouse) 0 else if (icd.gnotionNihii == null || icd.gnotionNihii?.let { it.isEmpty() } == true) 1 else 4)
         ws.write("16",
             when {
                 isDentist -> 1
-                sender.isMedicalHouse && icd.codeNomenclature != 109594L -> 0
+                sender.isMedicalHouse && icd.codeNomenclature != 109594L && icd.codeNomenclature != 400396L -> 0
                 icd.gnotionNihii?.isNotEmpty() == true -> 4
                 icd.internshipNihii?.isNotEmpty() == true -> 5
                 else -> 1

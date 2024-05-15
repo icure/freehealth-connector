@@ -765,7 +765,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                            Math.round((it.doctorSupplement ?: 0.0) * 100)
                                .toInt()
                         }.let {
-                           if (it !== 0) ItemType().apply {
+                           ItemType().apply {
                                ids.add(IDKMEHR().apply {
                                    s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                    (itemId++).toString()
@@ -785,7 +785,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                            }
                                    }
                                }
-                           } else null
+                           }
                         },
                         ItemType().apply {
                            ids.add(IDKMEHR().apply {
@@ -947,7 +947,10 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 })
                                 cost = CostType().apply {
                                     decimal =
-                                        BigDecimal.valueOf((code.reimbursement ?: 0.0) + (code.reglementarySupplement ?: 0.0)).setScale(2, RoundingMode.CEILING)
+                                        BigDecimal.valueOf(
+                                            Math.round(
+                                                ((code.reimbursement ?: 0.0) + (code.reglementarySupplement ?: 0.0)) * 100)
+                                                .toLong()).divide(BigDecimal(100L)).setScale(2, RoundingMode.CEILING)
                                     unit = UnitType().apply {
                                         cd =
                                             CDUNIT().apply {

@@ -12,11 +12,18 @@ import be.fgov.ehealth.recipe.protocol.v4.GetPrescriptionStatusRequest
 import be.fgov.ehealth.recipe.protocol.v4.GetValidationPropertiesRequest
 import be.fgov.ehealth.recipe.protocol.v4.ListFeedbacksRequest
 import be.fgov.ehealth.recipe.protocol.v4.ListOpenRidsRequest
+import be.fgov.ehealth.recipe.protocol.v4.ListPrescriptionsRequest
+import be.fgov.ehealth.recipe.protocol.v4.ListPrescriptionsResult
 import be.fgov.ehealth.recipe.protocol.v4.ListRidsHistoryRequest
 import be.fgov.ehealth.recipe.protocol.v4.PutFeedbackFlagRequest
 import be.fgov.ehealth.recipe.protocol.v4.PutVisionForPrescriberRequest
 import be.fgov.ehealth.recipe.protocol.v4.RevokePrescriptionRequest
 import be.fgov.ehealth.recipe.protocol.v4.SendNotificationRequest
+import be.recipe.services.core.Between
+import be.recipe.services.core.Page
+import be.recipe.services.core.PrescriptionStatus
+import be.recipe.services.core.VisionOtherPrescribers
+import be.recipe.services.core.VisionType
 import be.recipe.services.prescriber.CreatePrescriptionParam
 import be.recipe.services.prescriber.CreatePrescriptionResult
 import be.recipe.services.prescriber.GetPrescriptionForPrescriberParam
@@ -27,6 +34,7 @@ import be.recipe.services.prescriber.ListFeedbacksParam
 import be.recipe.services.prescriber.ListFeedbacksResult
 import be.recipe.services.prescriber.ListOpenRidsParam
 import be.recipe.services.prescriber.ListOpenRidsResult
+import be.recipe.services.prescriber.ListPrescriptionsParam
 import be.recipe.services.prescriber.ListRidsHistoryParam
 import be.recipe.services.prescriber.ListRidsHistoryResult
 import be.recipe.services.prescriber.PutVisionParam
@@ -43,6 +51,8 @@ import com.sun.xml.internal.ws.client.ClientTransportException
 import org.apache.commons.lang3.StringUtils
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
+import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
+import org.taktik.connector.business.domain.kmehr.v20190301.makeXMLGregorianCalendarFromFuzzyLong
 import org.taktik.connector.business.recipe.common.AbstractIntegrationModule
 import org.taktik.connector.business.recipe.prescriber.domain.ListFeedbackItem
 import org.taktik.connector.business.recipe.prescriber.services.RecipePrescriberServiceV4Impl
@@ -67,12 +77,15 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.MarshallerHelper
+import org.taktik.freehealth.middleware.domain.recipe.Prescription
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
 import org.xml.sax.SAXException
 import java.io.ByteArrayInputStream
 import java.io.IOException
+import java.math.BigInteger
+import java.math.BigInteger.ZERO
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -83,6 +96,7 @@ import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathExpressionException
 import javax.xml.xpath.XPathFactory
+import kotlin.collections.HashMap
 
 
 class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotService: KeyDepotService) :
@@ -204,6 +218,7 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
         expirationDate: LocalDateTime,
         prescription: ByteArray,
         visibility: String?,
+        visionOthers: VisionOtherPrescribers?,
         vendorName: String?,
         packageVersion: String?
     ): String = try {
@@ -236,7 +251,7 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
             this.patientId = patientSsin
             this.expirationDate = expDateAsString
             this.vision = visibility
-            this.prescriberId = nihii
+            this.visionOtherPrescribers = visionOthers
         }
         val request = CreatePrescriptionRequest().apply {
             this.securedCreatePrescriptionRequest = createSecuredContentType(
@@ -318,9 +333,11 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
     }
 
     @Throws(IntegrationModuleException::class)
-    private fun performValidation(prescription: ByteArray,
-                                  prescriptionType: String,
-                                  expirationDateFromRequest: String) {
+    private fun performValidation(
+        prescription: ByteArray,
+        prescriptionType: String,
+        expirationDateFromRequest: String
+    ) {
         val errors = ArrayList<String>()
         try {
             kmehrHelper.assertValidKmehrPrescription(prescription, prescriptionType)
@@ -416,7 +433,8 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
         }.feedbacks.map {
             ListFeedbackItem(it).apply {
                 setContent(try {
-                    unsealFeedback(getCrypto(credential), it.content)?.let { it -> IOUtils.decompress(it) } ?: it.content
+                    unsealFeedback(getCrypto(credential), it.content)?.let { it -> IOUtils.decompress(it) }
+                        ?: it.content
                 } catch (t: Throwable) {
                     this.linkedException = t; it.content
                 })
@@ -508,11 +526,135 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
         Exceptionutils.errorHandler(t)
     }
 
+    override fun listPrescriptions(
+        samlToken: SAMLToken,
+        credential: KeyStoreCredential,
+        patientSsin: String,
+        prescriberId: String?,
+        from: Long?,
+        toInclusive: Long?,
+        statuses: List<PrescriptionStatus>?,
+        expiringFrom: Long?,
+        expiringToInclusive: Long?,
+        pageYear: Int?,
+        pageMonth: Int?,
+        pageNumber: Long?,
+        vendorName: String?,
+        packageVersion: String?
+    ): org.taktik.freehealth.middleware.dto.recipe.ListPrescriptionsResult = try {
+        val helper = MarshallerHelper(ListPrescriptionsParam::class.java, ListPrescriptionsParam::class.java)
+
+        val param = ListPrescriptionsParam().apply {
+            this.patientId = patientSsin
+            this.symmKey = recipeSymmKey.encoded
+            this.between = if (from != null || toInclusive != null) {
+                Between().apply {
+                    this.from = makeXMLGregorianCalendarFromFuzzyLong(from)
+                    this.toInclusive = makeXMLGregorianCalendarFromFuzzyLong(toInclusive)
+                }
+            } else null
+            this.status = statuses?.takeIf { it.isNotEmpty() }?.let { ListPrescriptionsParam.Status(statuses) }
+            this.expiringBetween = if (expiringFrom != null || expiringToInclusive != null) {
+                Between().apply {
+                    this.from = makeXMLGregorianCalendarFromFuzzyLong(expiringFrom)
+                    this.toInclusive = makeXMLGregorianCalendarFromFuzzyLong(expiringToInclusive)
+                }
+            } else null
+            this.prescriberId = prescriberId
+            this.page = if (pageYear != null || pageMonth != null || pageNumber != null) {
+                Page().apply {
+                    this.month = pageMonth ?: 1
+                    this.year = pageYear ?: 2000
+                    this.pageNumber = pageNumber?.let { BigInteger.valueOf(it) }
+                }
+            } else null
+        }
+        val request = ListPrescriptionsRequest().apply {
+            this.securedListPrescriptionsRequest = createSecuredContentType(
+                sealRequest(
+                    getCrypto(credential),
+                    etkHelper.recipe_ETK[0] as EncryptionToken,
+                    helper.toXMLByteArray(param)
+                )
+            )
+            this.programId = "${vendorName ?: "freehealth-connector"}/${packageVersion ?: ""}"
+            this.issueInstant = DateTime()
+            this.id = "id" + UUID.randomUUID().toString()
+        }
+        val kmehrUnmarshaller = MarshallerHelper(
+            Kmehrmessage::class.java,
+            Any::class.java
+        )
+        val kgssMap = HashMap<String, Optional<KeyResult>>()
+        try {
+            recipePrescriberServiceV4.listPrescriptions(samlToken, credential, request).let { response ->
+                MarshallerHelper(
+                    ListPrescriptionsResult::class.java,
+                    Any::class.java
+                ).unsealWithSymmKey(response.securedListPrescriptionsResponse.securedContent, recipeSymmKey)
+                    .also { checkStatus(it) }
+            }.let {
+                org.taktik.freehealth.middleware.dto.recipe.ListPrescriptionsResult(
+                    status = it.status,
+                    id = it.id,
+                    partial = it.partial?.let { partial ->
+                        org.taktik.freehealth.middleware.dto.recipe.Partial(
+                            prescriptions = partial.prescriptions.map {
+                                Prescription(
+                                    creationDate = it.date.toGregorianCalendar().time,
+                                    encryptionKeyId = it.encryptionKey,
+                                    rid = it.rid,
+                                    prescriberId = it.prescriber?.id,
+                                    visionByOthers = it.visionOtherPrescribers?.value(),
+                                    status = it.status?.value(),
+                                    validUntil = it.validUntil?.toGregorianCalendar()?.time,
+                                    decryptedContent = it.encryptedContent?.let { ec ->
+                                        try {
+                                            (kgssMap[it.encryptionKey] ?: getKeyFromKgss(
+                                                credential,
+                                                samlToken,
+                                                it.encryptionKey.also { log.info("Getting kgss key for {}", it) },
+                                                stsService.getHolderOfKeysEtk(credential, prescriberId)!!.encoded
+                                            ).also { _ -> log.info("Done getting kgss key for {}", it.encryptionKey) } .let { k ->
+                                                val wrapped = k?.let { Optional.of(it) } ?: Optional.empty()
+                                                kgssMap[it.encryptionKey] = wrapped
+                                                wrapped
+                                            }).orElse(null)?.let { key ->
+                                                // unseal WS response
+                                                IOUtils.decompress(
+                                                    getCrypto(credential).unseal(
+                                                        Crypto.SigningPolicySelector.WITH_NON_REPUDIATION,
+                                                        key,
+                                                        ec
+                                                    ).contentAsByte
+                                                ).let { kmehrUnmarshaller.toObject(it) }
+                                            }
+                                        } catch (t: Throwable) {
+                                            null
+                                        }
+                                    }
+                                )
+                            },
+                            hasHidden = partial.isHasHidden,
+                            hasMoreResults = partial.isHasMoreResults
+                        )
+                    }
+                )
+            }
+        } catch (cte: ClientTransportException) {
+            throw IntegrationModuleException(I18nHelper.getLabel("error.connection.executor"), cte)
+        }
+    } catch (t: Throwable) {
+        Exceptionutils.errorHandler(t)
+    }
+
+
     override fun setVision(
         samlToken: SAMLToken,
         credential: KeyStoreCredential,
         rid: String,
         vision: String,
+        visionOthers: VisionOtherPrescribers?,
         vendorName: String?,
         packageVersion: String?
     ): PutVisionResult = try {
@@ -524,6 +666,8 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
             this.rid = rid
             this.vision = vision
             this.symmKey = recipeSymmKey.encoded
+            this.visionOtherPrescribers = visionOthers
+            this.type = VisionType.PRESCRIBER
         }
 
         val request = PutVisionForPrescriberRequest().apply {
@@ -583,7 +727,8 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
             MarshallerHelper(
                 UpdateFeedbackFlagResult::class.java,
                 UpdateFeedbackFlagResult::class.java
-            ).unsealWithSymmKey(response.securedPutFeedbackFlagResponse.securedContent, recipeSymmKey).also { checkStatus(it) }
+            ).unsealWithSymmKey(response.securedPutFeedbackFlagResponse.securedContent, recipeSymmKey)
+                .also { checkStatus(it) }
         }
     } catch (t: Throwable) {
         Exceptionutils.errorHandler(t)
@@ -735,7 +880,9 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
         samlToken: SAMLToken, credential: KeyStoreCredential,
         notificationText: ByteArray,
         patientId: String,
-        executorId: String
+        executorId: String,
+        vendorName: String?,
+        packageVersion: String?
     ) {
         try {
             val helper = MarshallerHelper(Any::class.java, SendNotificationParam::class.java)
@@ -754,7 +901,7 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
                 request.securedSendNotificationRequest = this.createSecuredContentType(
                     this.sealRequest(getCrypto(credential), etkRecipes[0], helper.toXMLByteArray(param))
                 )
-                request.programId = PropertyHandler.getInstance().getProperty("programIdentification")
+                request.programId = "${vendorName ?: "freehealth-connector"}/${packageVersion ?: ""}"
                 request.issueInstant = DateTime()
                 request.id = "id" + UUID.randomUUID().toString()
                 try {
