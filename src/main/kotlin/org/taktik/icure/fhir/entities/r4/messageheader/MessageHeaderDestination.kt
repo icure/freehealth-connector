@@ -5,6 +5,7 @@ package org.taktik.icure.fhir.entities.r4.messageheader
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import kotlin.String
 import kotlin.collections.List
 import org.taktik.icure.fhir.entities.r4.backboneelement.BackboneElement
@@ -18,6 +19,7 @@ import org.taktik.icure.fhir.entities.r4.reference.Reference
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonPropertyOrder("name", "endpoint")
 class MessageHeaderDestination(
   /**
    * Actual destination address or id

@@ -138,7 +138,8 @@ task genJaxb {
 // end::wsdl[]
 
 dependencies {
-	ktlint "com.github.shyiko:ktlint:0.22.0"
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    ktlint "com.github.shyiko:ktlint:0.22.0"
 
 	compile("com.taktik.boot:spring-boot-starter-micrometer:2.1-90-gcc5c980239")
 	compile('org.springframework.boot:spring-boot-starter-jetty')
@@ -198,7 +199,10 @@ dependencies {
 	implementation 'org.webjars:bootstrap:3.3.7'
 	implementation 'org.webjars:jquery:3.1.1-1'
 
-	//Hibernate
+	//JSONtoXML
+	implementation 'org.json:json:20211205'
+
+  	//Hibernate
 	compile group:'org.hibernate', name: 'hibernate-core', version: '4.3.10.Final'
 	compile group:'com.h2database', name: 'h2', version: '1.4.187'
 

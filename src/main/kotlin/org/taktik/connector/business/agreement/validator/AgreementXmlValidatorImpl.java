@@ -1,4 +1,4 @@
-package org.taktik.connector.business.mycarenet.agreement.validator;
+package org.taktik.connector.business.agreement.validator;
 
 import be.fgov.ehealth.agreement.protocol.v1.AskAgreementRequest;
 import be.fgov.ehealth.agreement.protocol.v1.AskAgreementResponse;
@@ -9,8 +9,8 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.CommonInputType;
 import be.fgov.ehealth.mycarenet.commons.core.v3.OriginType;
 import be.fgov.ehealth.mycarenet.commons.core.v3.RequestType;
 import be.fgov.ehealth.mycarenet.commons.core.v3.RoutingType;
-import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendRequestType;
-import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendResponseType;
+import be.fgov.ehealth.mycarenet.commons.protocol.v4.SendRequestType;
+import be.fgov.ehealth.mycarenet.commons.protocol.v4.SendResponseType;
 import org.taktik.connector.technical.validator.impl.XMLValidatorImpl;
 
 public class AgreementXmlValidatorImpl extends XMLValidatorImpl {

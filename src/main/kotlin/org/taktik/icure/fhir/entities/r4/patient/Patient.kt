@@ -5,6 +5,7 @@ package org.taktik.icure.fhir.entities.r4.patient
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import kotlin.Boolean
@@ -33,6 +34,7 @@ import org.taktik.icure.fhir.entities.r4.reference.Reference
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonDeserialize(using= JsonDeserializer.None::class)
+@JsonPropertyOrder("id", "meta", "identifier", "name")
 class Patient(
   /**
    * Whether this patient's record is in active use
