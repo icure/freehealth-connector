@@ -3,6 +3,9 @@
 //
 package org.taktik.icure.fhir.entities.r4
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import org.taktik.icure.fhir.deserializer.FhirQuantityDeserializer
+import org.taktik.icure.fhir.deserializer.FhirResourceDeserializer
 import kotlin.Float
 import kotlin.String
 
@@ -13,6 +16,7 @@ import kotlin.String
  * include amounts that are not precisely quantified, including amounts involving arbitrary units and
  * floating currencies.
  */
+@JsonDeserialize(using = FhirQuantityDeserializer::class)
 interface Quantity : Element {
   /**
    * Coded form of the unit
