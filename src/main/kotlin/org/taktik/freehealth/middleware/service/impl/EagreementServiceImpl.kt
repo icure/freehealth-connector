@@ -6,7 +6,6 @@ import be.fgov.ehealth.agreement.protocol.v1.*
 import be.fgov.ehealth.agreement.protocol.v1.ObjectFactory
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
 import be.fgov.ehealth.mycarenet.commons.core.v3.*
-import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendResponseType
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationError
@@ -22,10 +21,10 @@ import org.json.XML
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
+import org.taktik.connector.business.agreement.domain.Agreement
 import org.taktik.connector.business.agreement.exception.AgreementBusinessConnectorException
 import org.taktik.connector.business.domain.agreement.AgreementResponse
 import org.taktik.connector.business.mycarenet.attest.domain.InputReference
-import org.taktik.connector.business.mycarenetcommons.builders.util.BlobUtil
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
@@ -109,7 +108,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         return error
     }
 
-
     override fun askAgreement(
         keystoreId: UUID,
         tokenId: UUID,
@@ -142,6 +140,57 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         numberOfSessionForAnnex2: Float?,
         sctCode: String?,
         sctDisplay: String?
+    ): AgreementResponse?
+    {
+        val requestBundleJSON = createRequestBundle(
+            requestType,
+            messageEventSystem,
+            messageEventCode,
+            patientFirstName,
+            patientLastName,
+            patientGender,
+            patientSsin,
+            patientIo,
+            patientIoMembership,
+            pathologyStartDate,
+            pathologyCode,
+            insuranceRef,
+            hcpNihii,
+            hcpFirstName,
+            hcpLastName,
+            orgNihii,
+            organizationType,
+            annex1,
+            annex2,
+            agreementStartDate,
+            agreementEndDate,
+            agreementType,
+            numberOfSessionForAnnex1,
+            numberOfSessionForAnnex2,
+            sctCode,
+            sctDisplay
+        )
+
+        val xmlString = getXmlBytesOfRequestBundle(requestBundleJSON)
+
+        val agreement = Agreement();
+        agreement.patientSsin = patientSsin
+        agreement.patientIo = patientIo
+        agreement.hcpQuality = hcpQuality
+        agreement.hcpNihii = hcpNihii
+        agreement.hcpSsin = hcpSsin
+        agreement.hcpFirstName = hcpFirstName
+        agreement.hcpLastName = hcpLastName
+        agreement.agreementXmlString = xmlString
+
+        return askAgreement(keystoreId, tokenId, passPhrase, agreement)
+    }
+
+    override fun askAgreement(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        agreement: Agreement
     ): AgreementResponse? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -153,35 +202,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
 
         return extractEtk(credential)?.let {
-            val requestBundleJSON = createRequestBundle(
-                requestType,
-                messageEventSystem,
-                messageEventCode,
-                patientFirstName,
-                patientLastName,
-                patientGender,
-                patientSsin,
-                patientIo,
-                patientIoMembership,
-                pathologyStartDate,
-                pathologyCode,
-                insuranceRef,
-                hcpNihii,
-                hcpFirstName,
-                hcpLastName,
-                orgNihii,
-                organizationType,
-                annex1,
-                annex2,
-                agreementStartDate,
-                agreementEndDate,
-                agreementType,
-                numberOfSessionForAnnex1,
-                numberOfSessionForAnnex2,
-                sctCode,
-                sctDisplay
-
-            )
 
             var askAgreementRequest = AskAgreementRequest();
             askAgreementRequest.apply {
@@ -190,10 +210,8 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 val businessContent = BusinessContent().apply { id = detailId }
                 encryptedKnownContent.businessContent = businessContent
 
-                val xmlString = convertJsonObjectToXml(requestBundleJSON!!)
-                val requestXml = transformXml(xmlString)
+                val byteArray = agreement.agreementXmlString!!.toByteArray(Charsets.UTF_8)
 
-                val byteArray = requestXml.toByteArray(Charsets.UTF_8)
                 businessContent.value = byteArray
 
                 log.info("Request is: " + businessContent.value.toString(Charsets.UTF_8))
@@ -238,15 +256,15 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                         careProvider = CareProviderType().apply {
                             nihii =
                                 NihiiType().apply {
-                                    quality = hcpQuality;
-                                    value = ValueRefString().apply { value = hcpNihii }
+                                    quality = agreement.hcpQuality!!;
+                                    value = ValueRefString().apply { value = agreement.hcpNihii!! }
                                 }
                             physicalPerson = IdType().apply {
-                                name = ValueRefString().apply { value = "$hcpFirstName $hcpLastName" }
-                                ssin = ValueRefString().apply { value = hcpSsin }
+                                name = ValueRefString().apply { value = "${agreement.hcpFirstName!!} ${agreement.hcpLastName!!}" }
+                                ssin = ValueRefString().apply { value = agreement.hcpSsin!! }
                                 nihii = NihiiType().apply {
-                                    quality = hcpQuality;
-                                    value = ValueRefString().apply { value = hcpNihii }
+                                    quality = agreement.hcpQuality!!;
+                                    value = ValueRefString().apply { value = agreement.hcpNihii!! }
                                 }
                             }
                         }
@@ -254,12 +272,11 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 }
                 routing = RoutingType().apply {
                     careReceiver = CareReceiverIdType().apply {
-                        patientSsin?.let {
-                            ssin = patientSsin
+                        agreement.patientSsin?.let {
+                            ssin = agreement.patientSsin
                         }
-                        patientIoMembership?.let {
-                            mutuality = patientIo
-                            regNrWithMut = patientIoMembership
+                        agreement.patientIo?.let {
+                            mutuality = agreement.patientIo
                         }
                     }
                     referenceDate = DateTime()
@@ -310,10 +327,11 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 res.mycarenetConversation = MycarenetConversation().apply {
                     soapRequest = agreementResponse.soapRequest?.writeTo(this.soapRequestOutputStream())?.toString()
                     soapResponse = agreementResponse.soapResponse?.writeTo(this.soapResponseOutputStream())?.toString()
-                    transactionRequest = ConnectorXmlUtils.toString(askAgreementRequest)
-                    transactionResponse = responseJSON.toString()
+                    transactionRequest = agreement.agreementXmlString
+                    transactionResponse = responseXML
                 }
-                res.content = responseJSON.toString().toByteArray(Charsets.UTF_8)
+                res.content = responseXML.toByteArray(Charsets.UTF_8)
+                res.xades = xades;
                 // TODO call that method but it's not fully implemented yest
                 // res.errors = extractErrors(responseJSON).toList()
                 return res;
@@ -349,6 +367,49 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         agreementEndDate: DateTime?,
         agreementType: String?
     ): AgreementResponse? {
+        val requestBundleJSON = createConsultAgreementBundle(
+            requestType,
+            messageEventSystem,
+            messageEventCode,
+            patientFirstName,
+            patientLastName,
+            patientGender,
+            patientSsin,
+            patientIo,
+            patientIoMembership,
+            insuranceRef,
+            hcpNihii,
+            hcpFirstName,
+            hcpLastName,
+            subTypeCode,
+            orgNihii,
+            organizationType,
+            agreementStartDate,
+            agreementEndDate,
+            agreementType
+        )
+
+        val xmlString = getXmlBytesOfRequestBundle(requestBundleJSON)
+
+        val agreement = Agreement();
+        agreement.patientSsin = patientSsin
+        agreement.patientIo = patientIo
+        agreement.hcpQuality = hcpQuality
+        agreement.hcpNihii = hcpNihii
+        agreement.hcpSsin = hcpSsin
+        agreement.hcpFirstName = hcpFirstName
+        agreement.hcpLastName = hcpLastName
+        agreement.agreementXmlString = xmlString
+
+        return consultAgreementList(keystoreId, tokenId, passPhrase, agreement)
+    }
+
+    override fun consultAgreementList(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        agreement: Agreement
+    ): AgreementResponse? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Agreement operations")
@@ -358,29 +419,9 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
 
-        return extractEtk(credential)?.let {
-            val requestBundleJSON = createConsultAgreementBundle(
-                requestType,
-                messageEventSystem,
-                messageEventCode,
-                patientFirstName,
-                patientLastName,
-                patientGender,
-                patientSsin,
-                patientIo,
-                patientIoMembership,
-                insuranceRef,
-                hcpNihii,
-                hcpFirstName,
-                hcpLastName,
-                subTypeCode,
-                orgNihii,
-                organizationType,
-                agreementStartDate,
-                agreementEndDate,
-                agreementType
-            )
+        val byteArray = agreement.agreementXmlString!!.toByteArray(Charsets.UTF_8)
 
+        return extractEtk(credential)?.let {
             var consultAgreementList = ConsultAgreementRequest()
             consultAgreementList.apply {
                 val encryptedKnownContent = EncryptedKnownContent()
@@ -388,10 +429,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 val businessContent = BusinessContent().apply { id = detailId }
                 encryptedKnownContent.businessContent = businessContent
 
-                val xmlString = convertJsonObjectToXml(requestBundleJSON!!)
-                val requestXml = transformXml(xmlString)
-
-                val byteArray = requestXml.toByteArray(Charsets.UTF_8)
                 businessContent.value = byteArray
 
                 log.info("Request is: " + businessContent.value.toString(Charsets.UTF_8))
@@ -436,15 +473,15 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                         careProvider = CareProviderType().apply {
                             nihii =
                                 NihiiType().apply {
-                                    quality = hcpQuality;
-                                    value = ValueRefString().apply { value = hcpNihii }
+                                    quality = agreement.hcpQuality!!;
+                                    value = ValueRefString().apply { value = agreement.hcpNihii!! }
                                 }
                             physicalPerson = IdType().apply {
-                                name = ValueRefString().apply { value = "$hcpFirstName $hcpLastName" }
-                                ssin = ValueRefString().apply { value = hcpSsin }
+                                name = ValueRefString().apply { value = "${agreement.hcpFirstName!!} ${agreement.hcpLastName!!}" }
+                                ssin = ValueRefString().apply { value = agreement.hcpSsin!! }
                                 nihii = NihiiType().apply {
-                                    quality = hcpQuality;
-                                    value = ValueRefString().apply { value = hcpNihii }
+                                    quality = agreement.hcpQuality!!;
+                                    value = ValueRefString().apply { value = agreement.hcpNihii!! }
                                 }
                             }
                         }
@@ -452,12 +489,11 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 }
                 routing = RoutingType().apply {
                     careReceiver = CareReceiverIdType().apply {
-                        patientSsin?.let {
-                            ssin = patientSsin
+                        agreement.patientSsin?.let {
+                            ssin = agreement.patientSsin
                         }
-                        patientIoMembership?.let {
-                            mutuality = patientIo
-                            regNrWithMut = patientIoMembership
+                        agreement.patientIo?.let {
+                            mutuality = agreement.patientIo
                         }
                     }
                     referenceDate = DateTime()
@@ -508,10 +544,11 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 res.mycarenetConversation = MycarenetConversation().apply {
                     soapRequest = consultAgreementResponse.soapRequest?.writeTo(this.soapRequestOutputStream())?.toString()
                     soapResponse = consultAgreementResponse.soapResponse?.writeTo(this.soapResponseOutputStream())?.toString()
-                    transactionRequest = ConnectorXmlUtils.toString(consultAgreementResponse)
-                    transactionResponse = responseJSON.toString()
+                    transactionRequest = agreement.agreementXmlString
+                    transactionResponse = responseXML
                 }
-                res.content = responseJSON.toString().toByteArray(Charsets.UTF_8)
+                res.content = responseXML.toByteArray(Charsets.UTF_8)
+                res.xades = xades
 
                 // TODO call that method but it's not fully implemented yest
                 // res.errors = extractErrors(responseJSON).toList()
@@ -521,6 +558,13 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
             }
 
         }
+    }
+
+    private fun getXmlBytesOfRequestBundle(requestBundleJSON: JsonObject?): String {
+        val xmlString = convertJsonObjectToXml(requestBundleJSON!!)
+        val requestXml = transformXml(xmlString)
+
+        return requestXml
     }
 
     fun transformElement(element: Element, doc: Document) {

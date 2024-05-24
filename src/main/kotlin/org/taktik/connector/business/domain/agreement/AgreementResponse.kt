@@ -19,4 +19,6 @@ class AgreementResponse(
     var isAcknowledged: Boolean = false,
     var warnings: List<MycarenetError>? = null,
     var errors: List<MycarenetError>? = null,
-    var content: ByteArray? = null) : Serializable
+    var content: ByteArray? = null,
+    var xades: ByteArray? = null) : Serializable
+

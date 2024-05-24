@@ -4,15 +4,10 @@ import ma.glasnost.orika.MapperFacade
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import org.taktik.connector.business.agreement.domain.Agreement
 import org.taktik.connector.business.domain.agreement.AgreementResponse
+import org.taktik.freehealth.middleware.dto.eattest.Eattest
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EagreementService
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
@@ -108,6 +103,35 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             numberOfSessionForAnnex2 = numberOfSessionForAnnex2,
             sctCode = sctCode,
             sctDisplay = sctDisplay
+        )
+    }
+
+    @PostMapping("/sendAsk", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun sendAsk(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestBody agreement: Agreement
+    ): AgreementResponse? {
+        return eagreementService.askAgreement(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            agreement = agreement
+        )
+    }
+    @PostMapping("/sendConsult", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun sendConsult(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestBody agreement: Agreement
+    ): AgreementResponse? {
+        return eagreementService.consultAgreementList(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            agreement = agreement
         )
     }
 

@@ -2,11 +2,28 @@ package org.taktik.freehealth.middleware.service
 
 import be.fgov.ehealth.agreement.protocol.v1.ConsultAgreementResponse
 import org.joda.time.DateTime
+import org.taktik.connector.business.agreement.domain.Agreement
 import org.taktik.connector.business.domain.agreement.AgreementResponse
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
 import java.util.*
 
 interface EagreementService {
+
+    /**
+     * @name askAgreement
+     * @goal Request new agreement
+     * @goal Argue a request being processed
+     * @goal Extend an existing agreement
+     * @goal Cancel request in the event of an error
+     * @goal Complete existing ask agreement
+     * */
+    fun askAgreement(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        agreement: Agreement
+    ): AgreementResponse?
+
     /**
      * @name askAgreement
      * @goal Request new agreement
@@ -80,4 +97,14 @@ interface EagreementService {
         agreementType: String?
     ): AgreementResponse?
 
+    /**
+     * @name consultAgreement
+     * @goal Consult the request for agreement of a patient
+     * */
+  fun consultAgreementList(
+      keystoreId: UUID,
+      tokenId: UUID,
+      passPhrase: String,
+      agreement: Agreement
+  ): AgreementResponse?
 }
