@@ -36,6 +36,7 @@ import org.taktik.connector.business.ehbox.v3.builders.impl.ConsultationMessageB
 import org.taktik.connector.business.ehbox.v3.builders.impl.SendMessageBuilderImpl
 import org.taktik.connector.business.ehbox.v3.exception.EhboxCryptoException
 import org.taktik.connector.business.ehbox.v3.validator.impl.EhboxReplyValidatorImpl
+import org.taktik.connector.technical.exception.RetryNextEndpointException
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
@@ -171,6 +172,8 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
             freehealthEhboxService.sendMessage(samlToken, request).let { sendMessageResponse ->
                 if (sendMessageResponse.status?.code == "100") MessageOperationResponse(success= true, messageId = sendMessageResponse.id) else MessageOperationResponse(false, Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")))
             }
+        } catch (e: RetryNextEndpointException) {
+            MessageOperationResponse(false, Error("error.timeout",  e.message))
         } catch (e: TechnicalConnectorException) {
             (e.cause as? SOAPFaultException)?.let {
                 val be = parseFault(it.fault)?.details?.details?.firstOrNull()
