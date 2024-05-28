@@ -483,8 +483,10 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("5", FuzzyValues.getLocalDateTime(icd.dateCode!!)!!.format(dtf))
         ws.write("8a", noSIS)
         ws.write("15", icd.doctorIdentificationNumber)
-        if (isDentist) {
-            ws.write("17", icd.relatedCode ?: 0)
+        if (isDentist && icd.relatedCode !== null) {
+            val relatedCode = icd.relatedCode.toString();
+            ws.write("17", relatedCode.take(3))
+            ws.write("18", relatedCode.takeLast(3))
         }
         else {
             ws.write("17", 0)
