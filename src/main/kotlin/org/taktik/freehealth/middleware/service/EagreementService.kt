@@ -3,6 +3,7 @@ package org.taktik.freehealth.middleware.service
 import be.fgov.ehealth.agreement.protocol.v1.ConsultAgreementResponse
 import org.joda.time.DateTime
 import org.taktik.connector.business.agreement.domain.Agreement
+import org.taktik.connector.business.agreement.domain.AgreementMessage
 import org.taktik.connector.business.domain.agreement.AgreementResponse
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
 import java.util.*
@@ -107,4 +108,26 @@ interface EagreementService {
       passPhrase: String,
       agreement: Agreement
   ): AgreementResponse?
+
+  fun getEAgreementMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        limit: Int
+    ): List<AgreementMessage>
+
+  fun confirmMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        references: List<String>
+    ): Boolean
 }

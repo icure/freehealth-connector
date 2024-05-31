@@ -135,6 +135,50 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         )
     }
 
+    @GetMapping("/getMessages/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun getAgreementMessages(
+        @PathVariable nihii: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam ssin: String,
+        @RequestParam firstName: String,
+        @RequestParam lastName: String,
+        @RequestParam limit: Int?
+    ) =
+        eagreementService.getEAgreementMessages(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpSsin = ssin,
+            hcpNihii = nihii,
+            hcpFirstName = firstName,
+            hcpLastName = lastName,
+            limit = limit ?: Integer.MAX_VALUE
+        )
+
+    @PutMapping("/confirm/msgs/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun confirmMessages(
+        @PathVariable nihii: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam ssin: String,
+        @RequestParam firstName: String,
+        @RequestParam lastName: String,
+        @RequestBody references: List<String>
+    ) =
+        eagreementService.confirmMessages(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpNihii = nihii,
+            hcpSsin = ssin,
+            hcpFirstName = firstName,
+            hcpLastName = lastName,
+            references = references
+        )
+
     @PostMapping("/consultList", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun consultList(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,

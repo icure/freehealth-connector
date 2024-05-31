@@ -2,6 +2,10 @@ package org.taktik.freehealth.middleware.service.impl
 
 import be.cin.encrypted.BusinessContent
 import be.cin.encrypted.EncryptedKnownContent
+import be.cin.mycarenet.esb.common.v2.CommonInput
+import be.cin.mycarenet.esb.common.v2.OrigineType
+import be.cin.nip.async.generic.Confirm
+import be.cin.nip.async.generic.GetResponse
 import be.fgov.ehealth.agreement.protocol.v1.*
 import be.fgov.ehealth.agreement.protocol.v1.ObjectFactory
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
@@ -22,17 +26,22 @@ import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.agreement.domain.Agreement
+import org.taktik.connector.business.agreement.domain.AgreementMessage
 import org.taktik.connector.business.agreement.exception.AgreementBusinessConnectorException
 import org.taktik.connector.business.domain.agreement.AgreementResponse
+import org.taktik.connector.business.genericasync.builders.BuilderFactory
+import org.taktik.connector.business.genericasync.service.impl.GenAsyncServiceImpl
 import org.taktik.connector.business.mycarenet.attest.domain.InputReference
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.business.mycarenetdomaincommons.util.PropertyUtil
+import org.taktik.connector.business.mycarenetdomaincommons.util.WsAddressingUtil
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.exception.SoaErrorException
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
+import org.taktik.connector.technical.handler.domain.WsAddressingHeader
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.service.etee.CryptoFactory
@@ -41,10 +50,7 @@ import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.sts.security.Credential
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
-import org.taktik.connector.technical.utils.CertificateParser
-import org.taktik.connector.technical.utils.ConnectorXmlUtils
-import org.taktik.connector.technical.utils.IdentifierType
-import org.taktik.connector.technical.utils.MarshallerHelper
+import org.taktik.connector.technical.utils.*
 import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
@@ -56,7 +62,10 @@ import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
+import java.io.IOException
 import java.io.StringWriter
+import java.net.URI
+import java.net.URISyntaxException
 import java.util.*
 import java.util.function.Consumer
 import javax.xml.bind.JAXBContext
@@ -66,6 +75,7 @@ import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMResult
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
+import javax.xml.ws.soap.SOAPFaultException
 
 
 @Service
@@ -74,6 +84,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
 
     private val keyDepotManager = KeyDepotManagerImpl.getInstance(keyDepotService)
     private val config = ConfigFactory.getConfigValidator(emptyList())
+    private val genAsyncService = GenAsyncServiceImpl("eagreement")
 
     val agreementServiceUtils: EagreementServiceUtilsImpl = EagreementServiceUtilsImpl();
 
@@ -107,6 +118,183 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         error.errors = Arrays.asList(MycarenetError(code = e.errorCode, msgFr = e.message, msgNl = e.message))
         return error
     }
+
+    override fun getEAgreementMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        limit: Int
+    ): List<AgreementMessage> {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for EAgreement operations")
+
+        requireNotNull(keystoreId) { "Keystore id cannot be null" }
+        requireNotNull(tokenId) { "Token id cannot be null" }
+
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+        val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
+
+        val token = extractEtk(credential)
+
+        val inputReference = "" + System.currentTimeMillis()
+        val requestObjectBuilder = try {
+            BuilderFactory.getRequestObjectBuilder("eagreement")
+        } catch (e: Exception) {
+            throw IllegalArgumentException(e)
+        }
+
+        val responseObjectBuilder = try {
+            BuilderFactory.getResponseObjectBuilder()
+        } catch (e: Exception) {
+            throw IllegalArgumentException(e)
+        }
+
+        val ci = CommonInput().apply {
+            request = be.cin.mycarenet.esb.common.v2.RequestType().apply {
+                isIsTest = config.getProperty("endpoint.eagreement")?.contains("-acpt") ?: false
+            }
+            origin = buildOriginType(samlToken.quality, hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
+            this.inputReference = inputReference
+        }
+
+        val header = try {
+            WsAddressingHeader(URI("urn:be:cin:nip:async:generic:get:query")).apply {
+                faultTo = "http://www.w3.org/2005/08/addressing/anonymous"
+                replyTo = "http://www.w3.org/2005/08/addressing/anonymous"
+                messageID = URI("" + UUID.randomUUID())
+            }
+        } catch (e: URISyntaxException) {
+            throw IllegalStateException(e)
+        }
+
+        var batchSize = Math.min(64, limit)
+        var retries = 8
+
+        val agreementMessages = ArrayList<AgreementMessage>()
+
+        while (retries-- > 0) {
+            val msgQuery = requestObjectBuilder.createMsgQuery(batchSize, true, "eAgreement-response")
+            val query = requestObjectBuilder.createQuery(batchSize, true)
+
+            val getResponse: GetResponse
+            try {
+                getResponse =
+                    genAsyncService.getRequest(samlToken, requestObjectBuilder.buildGetRequest(ci.origin, msgQuery, query, token?.encoded), header)
+            } catch (e: TechnicalConnectorException) {
+                if ((e.message?.contains("SocketTimeout") == true) && batchSize > 1) {
+                    batchSize /= 4
+                    continue
+                }
+                throw IllegalStateException(e)
+            } catch (e: SOAPFaultException) {
+                if (e.message?.contains("Not enough time") == true) {
+                    Thread.sleep(30000)
+                    continue
+                }
+                throw IllegalStateException(e)
+            }
+
+            val processedGetResponse = responseObjectBuilder.processResponse(getResponse, ByteArray::class.java , "eagreement", credential, hokPrivateKeys)
+
+            agreementMessages += processedGetResponse.msgResponses.map { r ->
+                val msgResponse = r.msgResponse;
+                AgreementMessage().apply {
+                    id = msgResponse.detail.id
+                    name = msgResponse.detail.messageName
+
+                    commonOutput = CommonOutput().apply {
+                        this.inputReference = msgResponse.commonOutput.inputReference
+                        this.nipReference = msgResponse.commonOutput.nipReference
+                        this.outputReference = msgResponse.commonOutput.outputReference
+                    }
+                    try {
+                        detail = r.businessResponse as ByteArray?
+
+                        xades = msgResponse.xadesT.value
+                        reference = msgResponse.detail.reference
+                    } catch (e: IOException) {
+                    }
+                }
+            }
+
+            break
+        }
+        return agreementMessages
+    }
+
+    override fun confirmMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        references: List<String>
+    ): Boolean {
+        if (references.isEmpty()) {
+            return true
+        }
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for EAgreement operations")
+
+        val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
+        val confirm = Confirm();
+        confirm.origin = buildOriginType(samlToken.quality, hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
+        confirm.msgRefValues.addAll(references)
+
+        genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
+
+        return true
+    }
+
+    private fun buildOriginType(quality: String, nihii: String, ssin: String, firstName: String, lastName: String): OrigineType =
+        OrigineType().apply {
+            val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+            val packageInfo = McnConfigUtil.retrievePackageInfo("eagreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
+
+            `package` = be.cin.mycarenet.esb.common.v2.PackageType().apply {
+                name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = packageInfo.packageName }
+                license = be.cin.mycarenet.esb.common.v2.LicenseType().apply {
+                    this.username = packageInfo.userName
+                    this.password = packageInfo.password
+                }
+            }
+            careProvider = be.cin.mycarenet.esb.common.v2.CareProviderType().apply {
+                if (quality == "guardpost" || quality == "medicalhouse") {
+                    this.nihii = be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                        this.quality = quality
+                        this.value = be.cin.mycarenet.esb.common.v2.ValueRefString()
+                            .apply { value = nihii.padEnd(11, '0') }
+                    }
+                    this.organization = be.cin.mycarenet.esb.common.v2.IdType().apply {
+                        this.nihii = be.cin.mycarenet.esb.common.v2.NihiiType()
+                            .apply { value = be.cin.mycarenet.esb.common.v2.ValueRefString()
+                                .apply { value = nihii.padEnd(11, '0') } }
+                        this.ssin = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = ssin }
+                        this.name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = "$firstName $lastName" }
+                    }
+                } else {
+                    this.nihii = be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                        this.quality = quality
+                        this.value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = nihii }
+                    }
+                    this.physicalPerson = be.cin.mycarenet.esb.common.v2.IdType().apply {
+                        this.nihii = be.cin.mycarenet.esb.common.v2.NihiiType()
+                            .apply { value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = nihii } }
+                        this.ssin = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = ssin }
+                        this.name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = "$firstName $lastName" }
+                    }
+                }
+            }
+        }
 
     override fun askAgreement(
         keystoreId: UUID,
@@ -202,7 +390,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
 
         return extractEtk(credential)?.let {
-
             var askAgreementRequest = AskAgreementRequest();
             askAgreementRequest.apply {
                 val encryptedKnownContent = EncryptedKnownContent()
@@ -218,7 +405,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 val xmlByteArray = handleEncryption(encryptedKnownContent, credential, crypto, detailId)
 
                 val blob =
-                    BlobBuilderFactory.getBlobBuilder("agreement")
+                    BlobBuilderFactory.getBlobBuilder("eagreement")
                         .build(
                             xmlByteArray,
                             "none",
@@ -231,13 +418,13 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 blob.messageName = "eAgreement-ask"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-                val packageInfo = McnConfigUtil.retrievePackageInfo("agreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
+                val packageInfo = McnConfigUtil.retrievePackageInfo("eagreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 
                 commonInput = CommonInputType().apply {
                     request =
                         RequestType()
                             .apply {
-                                isIsTest = config.getProperty("endpoint.agreement")?.contains("-acpt") ?: false
+                                isIsTest = config.getProperty("endpoint.eagreement")?.contains("-acpt") ?: false
                             }
                     inputReference = InputReference().inputReference
                     origin = OriginType().apply {
@@ -248,7 +435,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                             }
                             name = ValueRefString().apply { value = packageInfo.packageName }
                         }
-                        config.getProperty("mycarenet.${PropertyUtil.retrieveProjectNameToUse("agreement", "mycarenet.")}.site.id")?.let {
+                        config.getProperty("mycarenet.${PropertyUtil.retrieveProjectNameToUse("eagreement", "mycarenet.")}.site.id")?.let {
                             if (it.isNotBlank()) {
                                 siteID = ValueRefString().apply { value = it }
                             }
@@ -284,7 +471,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 issueInstant = DateTime()
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
                 this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
-                // xades = BlobUtil.generateXades(credential, detail, "agreement")
+                // xades = BlobUtil.generateXades(credential, detail, "eagreement")
             }
 
             try {
@@ -435,7 +622,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 val xmlByteArray = handleEncryption(encryptedKnownContent, credential, crypto, detailId)
 
                 val blob =
-                    BlobBuilderFactory.getBlobBuilder("agreement")
+                    BlobBuilderFactory.getBlobBuilder("eagreement")
                         .build(
                             xmlByteArray,
                             "none",
@@ -448,13 +635,13 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 blob.messageName = "eAgreement-ask"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-                val packageInfo = McnConfigUtil.retrievePackageInfo("agreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
+                val packageInfo = McnConfigUtil.retrievePackageInfo("eagreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 
                 commonInput = CommonInputType().apply {
                     request =
                         RequestType()
                             .apply {
-                                isIsTest = config.getProperty("endpoint.agreement")?.contains("-acpt") ?: false
+                                isIsTest = config.getProperty("endpoint.eagreement")?.contains("-acpt") ?: false
                             }
                     inputReference = InputReference().inputReference
                     origin = OriginType().apply {
@@ -465,7 +652,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                             }
                             name = ValueRefString().apply { value = packageInfo.packageName }
                         }
-                        config.getProperty("mycarenet.${PropertyUtil.retrieveProjectNameToUse("agreement", "mycarenet.")}.site.id")?.let {
+                        config.getProperty("mycarenet.${PropertyUtil.retrieveProjectNameToUse("eagreement", "mycarenet.")}.site.id")?.let {
                             if (it.isNotBlank()) {
                                 siteID = ValueRefString().apply { value = it }
                             }
@@ -501,7 +688,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 issueInstant = DateTime()
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
                 this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
-                //xades = BlobUtil.generateXades(credential, detail, "agreement")
+                //xades = BlobUtil.generateXades(credential, detail, "eagreement")
             }
 
             try {
