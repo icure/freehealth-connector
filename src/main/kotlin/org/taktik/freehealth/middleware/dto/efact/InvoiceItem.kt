@@ -44,7 +44,7 @@ class InvoiceItem {
     var sideCode: InvoicingSideCode? = null
     var timeOfDay: InvoicingTimeOfDay? = null
 
-    var override3rdPayerCode: Int? = null
+    var override3rdPayerCode: String? = null
     var gnotionNihii: String? = null
 
     var derogationMaxNumber: InvoicingDerogationMaxNumberCode? = null

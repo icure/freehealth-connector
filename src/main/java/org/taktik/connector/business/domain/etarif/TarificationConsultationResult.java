@@ -95,10 +95,10 @@ public class TarificationConsultationResult implements Serializable {
 						}
 					}
 					// Justification
-					if (cd.getValue().equals("justification") && item.getContents().size() > 0) {
+					if (cd.getValue().equals("justification") && !item.getContents().isEmpty()) {
 						List<CDCONTENT> contentsCds = item.getContents().get(0).getCds();
-						if (contentsCds != null && contentsCds.size() > 0) {
-							if (contentsCds.get(0).getValue().length()>0 && contentsCds.get(0).getValue().matches("[0-9]+")) { codeResult.setJustification(Integer.parseInt(contentsCds.get(0).getValue())); }
+						if (contentsCds != null && !contentsCds.isEmpty()) {
+							if (!contentsCds.get(0).getValue().isEmpty()) { codeResult.setJustification(contentsCds.get(0).getValue()); }
 						}
 					}
 				}
@@ -280,7 +280,7 @@ public class TarificationConsultationResult implements Serializable {
 		private Payment reimbursement;
 		private Payment patientFee;
 		private String contract;
-		private int justification;
+		private String justification;
 
 		public String getCode() {
 			return code;
@@ -322,11 +322,11 @@ public class TarificationConsultationResult implements Serializable {
 			this.contract = contract;
 		}
 
-		public int getJustification() {
+		public String getJustification() {
 			return justification;
 		}
 
-		public void setJustification(int justification) {
+		public void setJustification(String justification) {
 			this.justification = justification;
 		}
 	}
