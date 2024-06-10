@@ -99,6 +99,7 @@ import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
+import org.taktik.freehealth.middleware.exception.UnauthorizedException
 import org.taktik.freehealth.middleware.service.MemberDataService
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.icure.cin.saml.extensions.AttributeQueryList
@@ -243,13 +244,13 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
         val ci = CommonInput().apply {
             request = be.cin.mycarenet.esb.common.v2.RequestType().apply {
-                isIsTest = istest!!
+                isIsTest = istest
             }
             origin = OrigineType().apply {
                 `package` = be.cin.mycarenet.esb.common.v2.PackageType().apply {
                     license = be.cin.mycarenet.esb.common.v2.LicenseType().apply {
-                        username = principal?.mcnLicense ?: config.getProperty("mycarenet.license.username")
-                        password = principal?.mcnPassword ?: config.getProperty("mycarenet.license.password")
+                        username = principal?.mcnLicense ?: throw UnauthorizedException("No MCN license found")
+                        password = principal.mcnPassword ?: throw UnauthorizedException("No MCN license found")
                     }
                     name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = packageInfo.packageName }
                 }
@@ -535,8 +536,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
             `package` = be.cin.mycarenet.esb.common.v2.PackageType().apply {
                 name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = config.getProperty("genericasync.dmg.package.name") }
                 license = be.cin.mycarenet.esb.common.v2.LicenseType().apply {
-                    username = principal?.mcnLicense ?: config.getProperty("mycarenet.license.username")
-                    password = principal?.mcnPassword ?: config.getProperty("mycarenet.license.password")
+                    username = principal?.mcnLicense ?: throw UnauthorizedException("No MCN license found")
+                    password = principal.mcnPassword ?: throw UnauthorizedException("No MCN license found")
                 }
             }
             careProvider = be.cin.mycarenet.esb.common.v2.CareProviderType().apply {
