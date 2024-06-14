@@ -216,7 +216,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                     try {
                         detail = r.businessResponse as ByteArray?
 
-                        xades = msgResponse.xadesT.value
+                        xades = r.rawDecryptedBlob.xades
                         reference = msgResponse.detail.reference
                     } catch (e: IOException) {
                     }
