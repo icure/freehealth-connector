@@ -320,23 +320,28 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         )
     }
 
-    override fun getParameters(parameterId: String,
-                               agreementTypes: String,
-                               startDate: DateTime?,
-                               endDate: DateTime?,
-                               patientFirstName: String?,
-                               patientLastName: String?,
-                               patientGender: String?,
-                               patientSsin: String?,
-                               io: String?,
-                               ioMembership: String?,
-                               subTypeCode: String?
+    override fun getParameters(
+        parameterId: String,
+        agreementTypes: String?,
+        startDate: DateTime?,
+        endDate: DateTime?,
+        patientFirstName: String?,
+        patientLastName: String?,
+        patientGender: String?,
+        patientSsin: String?,
+        io: String?,
+        ioMembership: String?,
+        subTypeCode: String?
     ): Parameters {
         val param = mutableListOf<ParametersParameter>();
         param.add(getParameter("resourceType", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
         param.add(getParameter("patient", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
         param.add(getParameter("use", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
         param.add(getParameter("subType", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
+
+        if (startDate != null || endDate != null){
+            param.add(getParameter("preAuthPeriod", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
+        }
         return Parameters().apply {
             id = "Parameters$parameterId"
             parameter = param
@@ -355,6 +360,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                               ioMembership: String?,
                               subTypeCode: String?
     ): ParametersParameter{
+        val formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
         return ParametersParameter().apply {
             name = parameterName
             when{
@@ -368,8 +374,13 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                     code = subTypeCode
                 }
                 parameterName == "preAuthPeriod" -> valuePeriod = Period().apply {
-                    start = startDate.toString()
-                    end = endDate.toString()
+                    if(startDate != null){
+                        start = startDate?.let { formatter.print(it) }
+                    }
+
+                   if(endDate != null){
+                       end = endDate?.let { formatter.print(it) }
+                   }
                 }
             }
         }
@@ -691,7 +702,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                     mapper.writeValueAsString(
                         getParameters(
                             "1",
-                            agreementType!!,
+                            agreementType,
                             agreementStartDate,
                             agreementEndDate,
                             hcpNihii,

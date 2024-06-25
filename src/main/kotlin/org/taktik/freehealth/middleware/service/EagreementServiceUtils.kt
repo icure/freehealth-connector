@@ -46,7 +46,7 @@ interface EagreementServiceUtils {
     fun getContained(data: String, containedId: String): List<Binary>?
 
     fun getParameters(parameterId: String,
-                      agreementTypes: String,
+                      agreementTypes: String?,
                       startDate: DateTime?,
                       endDate: DateTime?,
                       patientFirstName: String?,
