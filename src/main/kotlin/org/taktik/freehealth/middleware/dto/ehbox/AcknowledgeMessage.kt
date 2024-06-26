@@ -27,6 +27,7 @@ import org.taktik.freehealth.middleware.dto.common.Document
 class AcknowledgeMessage(
     id: String? = null,
     publicationId: String? = null,
+    contentType: String? = null,
     sender: Addressee? = null,
     mandatee: Addressee? = null,
     destinations: List<Addressee>? = null,
@@ -46,6 +47,7 @@ class AcknowledgeMessage(
 ) : Message(
     id = id,
     publicationId = publicationId,
+    contentType = contentType,
     sender = sender,
     mandatee = mandatee,
     destinations = destinations,

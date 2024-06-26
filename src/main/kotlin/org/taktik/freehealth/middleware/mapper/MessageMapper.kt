@@ -40,6 +40,7 @@ fun <T> DocumentMessage<T>.toDocumentMessage(): org.taktik.freehealth.middleware
     org.taktik.freehealth.middleware.dto.ehbox.DocumentMessage(
         id = id,
         publicationId = publicationId,
+        contentType = contentType,
         sender = sender?.toAddresseeDto(),
         mandatee = mandatee?.toAddresseeDto(),
         destinations = getDestinations().map { it.toAddresseeDto() },
@@ -67,6 +68,7 @@ fun <T> NewsMessage<T>.toNewsMessage(): org.taktik.freehealth.middleware.dto.ehb
     org.taktik.freehealth.middleware.dto.ehbox.NewsMessage(
         id = id,
         publicationId = publicationId,
+        contentType = contentType,
         sender = sender?.toAddresseeDto(),
         mandatee = mandatee?.toAddresseeDto(),
         destinations = getDestinations().map { it.toAddresseeDto() },
@@ -94,6 +96,7 @@ fun <T> AcknowledgeMessage<T>.toAcknowledgeMessage(): org.taktik.freehealth.midd
     org.taktik.freehealth.middleware.dto.ehbox.AcknowledgeMessage(
         id = id,
         publicationId = publicationId,
+        contentType = contentType,
         sender = sender?.toAddresseeDto(),
         mandatee = mandatee?.toAddresseeDto(),
         destinations = getDestinations().map { it.toAddresseeDto() },
@@ -138,6 +141,7 @@ fun <T> ErrorMessage<T>.toErrorMessage(): org.taktik.freehealth.middleware.dto.e
     org.taktik.freehealth.middleware.dto.ehbox.ErrorMessage(
         id = id,
         publicationId = publicationId,
+        contentType = contentType,
         sender = sender?.toAddresseeDto(),
         mandatee = mandatee?.toAddresseeDto(),
         destinations = getDestinations().map { it.toAddresseeDto() },
