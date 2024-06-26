@@ -34,6 +34,7 @@ import java.util.HashMap
 abstract class Message<T> : Serializable {
     var id: String? = null
     var publicationId: String? = null
+    var contentType: String? = null
     var sender: Addressee? = null
 
     @Deprecated("")

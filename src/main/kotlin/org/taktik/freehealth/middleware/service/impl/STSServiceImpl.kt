@@ -25,6 +25,7 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.hazelcast.core.IMap
 import org.apache.commons.logging.LogFactory
+import org.apache.log4j.MDC
 import org.joda.time.DateTime
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -39,6 +40,7 @@ import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.sts.SAMLTokenFactory
 import org.taktik.connector.technical.service.sts.domain.SAMLAttribute
 import org.taktik.connector.technical.service.sts.domain.SAMLAttributeDesignator
+import org.taktik.connector.technical.service.sts.impl.STSServiceImpl
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.service.sts.utils.SAMLConverter
@@ -615,7 +617,9 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
     override fun uploadKeystore(file: MultipartFile): UUID {
         val keystoreId = UUID.nameUUIDFromBytes(file.bytes)
         keystoresMap[keystoreId] = file.bytes
+        MDC.put("keystoreId", keystoreId)
         log.info("uploadKeystore(MultipartFile): keystoresMap size: ${keystoresMap.size}")
+        MDC.clear()
 
         return keystoreId
     }
@@ -623,7 +627,9 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
     override fun uploadKeystore(data: ByteArray): UUID {
         val keystoreId = UUID.nameUUIDFromBytes(data)
         keystoresMap[keystoreId] = data
+        MDC.put("keystoreId", keystoreId)
         log.info("uploadKeystore(ByteArray): keystoresMap size: ${keystoresMap.size}")
+        MDC.clear()
 
         return keystoreId
     }

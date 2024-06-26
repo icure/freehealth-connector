@@ -26,6 +26,7 @@ import org.taktik.freehealth.middleware.dto.common.Document
 class NewsMessage(
     id: String? = null,
     publicationId: String? = null,
+    contentType: String? = null,
     sender: Addressee? = null,
     mandatee: Addressee? = null,
     destinations: List<Addressee>? = null,
@@ -52,6 +53,7 @@ class NewsMessage(
 ) : DocumentMessage(
     id = id,
     publicationId = publicationId,
+    contentType = contentType,
     sender = sender,
     mandatee = mandatee,
     destinations = destinations,

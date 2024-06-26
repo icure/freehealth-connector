@@ -26,6 +26,7 @@ import java.io.Serializable
 abstract class Message(
     val id: String? = null,
     val publicationId: String? = null,
+    val contentType: String? = null,
     val sender: Addressee? = null,
     val mandatee: Addressee? = null,
     val destinations: List<Addressee>? = null,

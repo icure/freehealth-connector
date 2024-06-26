@@ -182,6 +182,7 @@ abstract class AbstractConsultationBuilder<T>() {
         message.original = responseMsg
         message.id = id
         message.publicationId = publicationId
+        message.contentType = content.contentType
 
         return message
     }
