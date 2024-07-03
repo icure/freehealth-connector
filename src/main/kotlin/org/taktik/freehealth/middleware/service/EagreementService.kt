@@ -30,7 +30,6 @@ interface EagreementService {
         patientIoMembership: String?,
         pathologyStartDate: DateTime?,
         pathologyCode: String?,
-        insuranceRef: String?,
         hcpNihii: String,
         hcpSsin: String,
         hcpFirstName: String,

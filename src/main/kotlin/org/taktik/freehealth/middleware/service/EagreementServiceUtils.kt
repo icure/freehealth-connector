@@ -30,7 +30,7 @@ interface EagreementServiceUtils {
         claimId: String,
         subTypeCode: String,
         agreementStartDate: DateTime,
-        insuranceRef: String,
+        insuranceRef: String?,
         pathologyCode: String?,
         pathologyStartDate: DateTime?,
         providerType: String
