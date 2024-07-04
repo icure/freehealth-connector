@@ -18,6 +18,10 @@ import org.taktik.icure.fhir.entities.r4.extension.Extension
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 class Period(
+    /**
+     * Starting time with inclusive boundary
+     */
+    var start: String? = null,
   /**
    * End time with inclusive boundary, if not ongoing
    */
@@ -26,9 +30,5 @@ class Period(
   /**
    * Unique id for inter-element referencing
    */
-  override var id: String? = null,
-  /**
-   * Starting time with inclusive boundary
-   */
-  var start: String? = null
+  override var id: String? = null
 ) : Element

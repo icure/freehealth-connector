@@ -30,7 +30,7 @@ interface EagreementServiceUtils {
         claimId: String,
         subTypeCode: String,
         agreementStartDate: DateTime,
-        insuranceRef: String,
+        insuranceRef: String?,
         pathologyCode: String?,
         pathologyStartDate: DateTime?,
         providerType: String
@@ -46,7 +46,7 @@ interface EagreementServiceUtils {
     fun getContained(data: String, containedId: String): List<Binary>?
 
     fun getParameters(parameterId: String,
-                      agreementTypes: String,
+                      agreementTypes: String?,
                       startDate: DateTime?,
                       endDate: DateTime?,
                       patientFirstName: String?,
