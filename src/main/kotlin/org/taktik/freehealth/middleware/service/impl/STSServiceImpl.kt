@@ -40,7 +40,6 @@ import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.sts.SAMLTokenFactory
 import org.taktik.connector.technical.service.sts.domain.SAMLAttribute
 import org.taktik.connector.technical.service.sts.domain.SAMLAttributeDesignator
-import org.taktik.connector.technical.service.sts.impl.STSServiceImpl
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.service.sts.utils.SAMLConverter
@@ -57,7 +56,9 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.StringReader
 import java.io.StringWriter
+import java.security.Key
 import java.security.KeyStore
+import java.security.cert.Certificate
 import java.time.Instant
 import java.util.*
 import java.util.concurrent.ExecutionException
@@ -694,8 +695,10 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 continue;
             }
 
-            val cert = sourceKeystore.getCertificate(alias)
-            targetKeystore.setCertificateEntry(alias, cert)
+            val privateKey: Key = sourceKeystore.getKey(alias, oldPassword.toCharArray())
+            val certificateChain: Array<Certificate> = sourceKeystore.getCertificateChain(alias)
+
+            targetKeystore.setKeyEntry(alias, privateKey, newPassword.toCharArray(), certificateChain)
         }
 
         val output = ByteArrayOutputStream()
