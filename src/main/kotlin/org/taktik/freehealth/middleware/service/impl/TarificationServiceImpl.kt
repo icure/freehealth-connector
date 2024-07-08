@@ -76,7 +76,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                               guardPostNihii: String?,
                               guardPostSsin: String?,
                               anatomy: String?,
-                              relatedService: String?,
+                              relatedServices: List<String?>,
                               codes: List<String>): TarificationConsultationResult {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -151,7 +151,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                             cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "encounterdatetime" })
                             contents.add(ContentType().apply { date = csDT })
                         })
-                        headingsAndItemsAndTexts.addAll(codes.map { code ->
+                        headingsAndItemsAndTexts.addAll(codes.mapIndexed { index, code ->
                             ItemType().apply {
                                 ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (h++).toString() })
                                 cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "claim" })
@@ -164,7 +164,8 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                                             cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_ISO_3950; sv = "1.0"; value = anatomy })
                                         })
                                     }
-                                    if (relatedService != null) {
+                                    val relatedService = relatedServices[index]
+                                    if (!relatedService.isNullOrEmpty()) {
                                         contents.add(ContentType().apply {
                                             cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_NIHDI_RELATEDSERVICE; sv = "1.0"; value = relatedService })
                                         })

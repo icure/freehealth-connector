@@ -67,7 +67,7 @@ class TarificationController(val tarificationService: TarificationService, val m
         @RequestParam(required = false) guardPostNihii: String?,
         @RequestParam(required = false) guardPostSsin: String?,
         @RequestParam(required = false) anatomy: String?,
-        @RequestParam(required = false) relatedService: String?,
+        @RequestParam(required = false) relatedServices: List<String?>,
         @RequestBody codes: List<String>
     ) = try { tarificationService.consultTarif(
         keystoreId = keystoreId,
@@ -89,7 +89,7 @@ class TarificationController(val tarificationService: TarificationService, val m
         guardPostNihii = guardPostNihii,
         guardPostSsin = guardPostSsin,
         anatomy = anatomy,
-        relatedService =  relatedService).let { mapper.map(it, TarificationConsultationResult::class.java) } }
+        relatedServices =  relatedServices).let { mapper.map(it, TarificationConsultationResult::class.java) } }
     catch (e: javax.xml.ws.soap.SOAPFaultException) {
          TarificationConsultationResult().apply {
              errors = extractError(e).toMutableList()

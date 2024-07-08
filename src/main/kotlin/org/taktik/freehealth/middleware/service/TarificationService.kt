@@ -23,6 +23,6 @@ interface TarificationService {
                      guardPostNihii: String?,
                      guardPostSsin: String?,
                      anatomy: String?,
-                     relatedService: String?,
+                     relatedServices: List<String?>,
                      codes: List<String>): TarificationConsultationResult
 }
