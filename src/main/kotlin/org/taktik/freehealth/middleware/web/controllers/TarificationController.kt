@@ -89,12 +89,12 @@ class TarificationController(val tarificationService: TarificationService, val m
         traineeSupervisorLastName = traineeSupervisorLastName,
         guardPostNihii = guardPostNihii,
         guardPostSsin = guardPostSsin,
-        anatomies = anatomy?.split(',').also {
-            if (it?.isNotEmpty() == true && it.size != codes.size) throw IllegalArgumentException("Anatomy length must match codes length.")
-        } ?: codes.map { null },
-        relatedServices = relatedService?.split(',').also {
-            if (it?.isNotEmpty() == true && it.size != codes.size) throw IllegalArgumentException("Related services length must match codes length.")
-        } ?: codes.map { null }).let { mapper.map(it, TarificationConsultationResult::class.java) } }
+        anatomies = if (anatomy?.contains(',') == true) anatomy.split(',').also {
+            if (it.size != codes.size) throw IllegalArgumentException("Anatomy length must match codes length.")
+        } else codes.map { anatomy },
+        relatedServices = if (relatedService?.contains(',') == true) relatedService.split(',').also {
+            if (it.size != codes.size) throw IllegalArgumentException("Related services length must match codes length.")
+        } else codes.map { relatedService }).let { mapper.map(it, TarificationConsultationResult::class.java) } }
     catch (e: javax.xml.ws.soap.SOAPFaultException) {
          TarificationConsultationResult().apply {
              errors = extractError(e).toMutableList()
