@@ -160,7 +160,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                                 })
                                 if (isDentist) {
                                     val anatomy = anatomies[index]
-                                    if (anatomy != null) {
+                                    if (!anatomy.isNullOrEmpty()) {
                                         contents.add(ContentType().apply {
                                             cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_ISO_3950; sv = "1.0"; value = anatomy })
                                         })
