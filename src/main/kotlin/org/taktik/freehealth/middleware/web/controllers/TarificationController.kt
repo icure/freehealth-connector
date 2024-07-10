@@ -67,9 +67,10 @@ class TarificationController(val tarificationService: TarificationService, val m
         @RequestParam(required = false) guardPostNihii: String?,
         @RequestParam(required = false) guardPostSsin: String?,
         @RequestParam(required = false) anatomy: String?,
-        @RequestParam(required = false) relatedServices: List<String?>,
+        @RequestParam(required = false) relatedService: String?,
         @RequestBody codes: List<String>
-    ) = try { tarificationService.consultTarif(
+    ) = try {
+        tarificationService.consultTarif(
         keystoreId = keystoreId,
         tokenId = tokenId,
         hcpFirstName = hcpFirstName,
@@ -88,8 +89,12 @@ class TarificationController(val tarificationService: TarificationService, val m
         traineeSupervisorLastName = traineeSupervisorLastName,
         guardPostNihii = guardPostNihii,
         guardPostSsin = guardPostSsin,
-        anatomy = anatomy,
-        relatedServices =  relatedServices).let { mapper.map(it, TarificationConsultationResult::class.java) } }
+        anatomies = anatomy?.split(',').also {
+            if (it?.isNotEmpty() == true && it.size != codes.size) throw IllegalArgumentException("Anatomy length must match codes length.")
+        } ?: codes.map { null },
+        relatedServices = relatedService?.split(',').also {
+            if (it?.isNotEmpty() == true && it.size != codes.size) throw IllegalArgumentException("Related services length must match codes length.")
+        } ?: codes.map { null }).let { mapper.map(it, TarificationConsultationResult::class.java) } }
     catch (e: javax.xml.ws.soap.SOAPFaultException) {
          TarificationConsultationResult().apply {
              errors = extractError(e).toMutableList()

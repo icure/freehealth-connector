@@ -75,7 +75,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                               traineeSupervisorLastName: String?,
                               guardPostNihii: String?,
                               guardPostSsin: String?,
-                              anatomy: String?,
+                              anatomies: List<String?>,
                               relatedServices: List<String?>,
                               codes: List<String>): TarificationConsultationResult {
         val samlToken =
@@ -159,6 +159,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                                     cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_NIHDI; sv = "1.0"; value = code })
                                 })
                                 if (isDentist) {
+                                    val anatomy = anatomies[index]
                                     if (anatomy != null) {
                                         contents.add(ContentType().apply {
                                             cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_ISO_3950; sv = "1.0"; value = anatomy })
