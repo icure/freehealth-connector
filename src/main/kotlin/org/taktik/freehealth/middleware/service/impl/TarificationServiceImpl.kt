@@ -331,16 +331,18 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                         base = "/${nodeDescr(node.parentNode)}$base"
                         node = node.parentNode
                     }
-                    var elements =
+                    val initialElements = ConsultTarifErrors.values.filter {
+                        it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*${it.regex}.*")))
+                    }
+
+                    val elements = if (initialElements.isEmpty()) {
+                        // IOs sometimes are overeager to provide us with precise xpath. Let's try again while truncating after the item
+                        val truncatedBase = base.replace(Regex("(.+/item.+?)/.*"), "$1")
                         ConsultTarifErrors.values.filter {
-                            it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
+                            it.path == truncatedBase && it.code == ec && (it.regex == null || url.matches(Regex(".*${it.regex}.*")))
                         }
-                    if (elements.isEmpty()) {
-                        //IOs sometimes are overeager to provide us with precise xpath. Let's try again while truncating after the item
-                        base = base.replace(Regex("(.+/item.+?)/.*"), "$1")
-                        elements = ConsultTarifErrors.values.filter {
-                            it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
-                        }
+                    } else {
+                        initialElements
                     }
 
                     elements.forEach { it.value = textContent }
