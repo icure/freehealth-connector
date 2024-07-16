@@ -280,7 +280,7 @@ public class TarificationConsultationResult implements Serializable {
 		private Payment reimbursement;
 		private Payment patientFee;
 		private String contract;
-		private String justification;
+		private String justification = "O";
 
 		public String getCode() {
 			return code;
