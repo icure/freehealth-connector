@@ -33,7 +33,8 @@ enum class InvoicingPercentNorm private constructor(val code: Int) {
     Ah1n1(4),
     HalfPriceSecondAct(5),
     InvoiceException(6),
-    ForInformation(7);
+    ForInformation(7),
+    PseudoCodeProthesis(9);
 
 
     companion object {
