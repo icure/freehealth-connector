@@ -42,6 +42,7 @@ import org.taktik.freehealth.middleware.format.efact.BelgianInsuranceInvoicingFo
 import org.taktik.freehealth.middleware.format.efact.BelgianInsuranceInvoicingFormatWriter
 import org.taktik.freehealth.middleware.service.EfactService
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.middleware.web.UserAgentInterceptorFilter
 import java.io.IOException
 import java.io.StringReader
 import java.io.StringWriter
@@ -536,12 +537,15 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
     private fun buildOriginType(quality: String, nihii: String, ssin: String, firstName: String, lastName: String): OrigineType =
         OrigineType().apply {
             val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+            val userAgent = UserAgentInterceptorFilter.getUserAgent();
+            val productName = userAgent?.split("/")?.get(0) ?: "";
+            val packageInfo = McnConfigUtil.retrievePackageInfo("eagreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName, productName, quality)
 
             `package` = PackageType().apply {
                 name = ValueRefString().apply { value = config.getProperty("genericasync.invoicing.package.name") }
                 license = LicenseType().apply {
-                    this.username = principal?.mcnLicense ?: config.getProperty("mycarenet.license.username")
-                    this.password = principal?.mcnPassword ?: config.getProperty("mycarenet.license.password")
+                    this.username = packageInfo.userName
+                    this.password = packageInfo.password
                 }
             }
             careProvider = CareProviderType().apply {
