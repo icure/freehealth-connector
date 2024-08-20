@@ -58,6 +58,8 @@ import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EagreementService
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.middleware.web.UserAgentInterceptorFilter
+import org.taktik.freehealth.middleware.web.UserAgentInterceptorFilter.Companion.getUserAgent
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -258,7 +260,9 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
     private fun buildOriginType(quality: String, nihii: String, ssin: String, firstName: String, lastName: String): OrigineType =
         OrigineType().apply {
             val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-            val packageInfo = McnConfigUtil.retrievePackageInfo("eagreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
+            val userAgent = getUserAgent();
+            val productName = userAgent?.split("/")?.get(0) ?: "";
+            val packageInfo = McnConfigUtil.retrievePackageInfo("eagreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName, productName, quality)
 
             `package` = be.cin.mycarenet.esb.common.v2.PackageType().apply {
                 name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = packageInfo.packageName }
@@ -418,7 +422,9 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 blob.messageName = "eAgreement-ask"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-                val packageInfo = McnConfigUtil.retrievePackageInfo("eagreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
+                val userAgent = getUserAgent();
+                val productName = userAgent?.split("/")?.get(0) ?: "";
+                val packageInfo = McnConfigUtil.retrievePackageInfo("eagreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName, productName, samlToken.quality)
 
                 commonInput = CommonInputType().apply {
                     request =
@@ -632,10 +638,12 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                             "3.0",
                             "encryptedForKnownBED"
                         )
-                blob.messageName = "eAgreement-ask"
+                blob.messageName = "eAgreement-consult"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-                val packageInfo = McnConfigUtil.retrievePackageInfo("eagreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
+                val userAgent = getUserAgent();
+                val productName = userAgent?.split("/")?.get(0) ?: "";
+                val packageInfo = McnConfigUtil.retrievePackageInfo("eagreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName, productName, samlToken.quality)
 
                 commonInput = CommonInputType().apply {
                     request =

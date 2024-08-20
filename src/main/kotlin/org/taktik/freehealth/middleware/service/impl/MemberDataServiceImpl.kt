@@ -101,6 +101,7 @@ import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.MemberDataService
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.middleware.web.UserAgentInterceptorFilter
 import org.taktik.icure.cin.saml.extensions.AttributeQueryList
 import org.taktik.icure.cin.saml.extensions.ExtensionsType
 import org.taktik.icure.cin.saml.extensions.Facet
@@ -185,7 +186,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-        val packageInfo = McnConfigUtil.retrievePackageInfo("genins", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
+        val userAgent = UserAgentInterceptorFilter.getUserAgent();
+        val productName = userAgent?.split("/")?.get(0) ?: "";
+        val packageInfo = McnConfigUtil.retrievePackageInfo("genins", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName, productName, samlToken.quality)
 
         val postHeader = WsAddressingHeader(URI("urn:be:cin:nip:async:generic:post:msg")).apply {
             faultTo = "http://www.w3.org/2005/08/addressing/anonymous"
@@ -595,7 +598,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         assert(patientSsin != null || io != null && ioMembership != null)
 
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-        val packageInfo = McnConfigUtil.retrievePackageInfo("genins", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
+        val userAgent = UserAgentInterceptorFilter.getUserAgent();
+        val productName = userAgent?.split("/")?.get(0) ?: "";
+        val packageInfo = McnConfigUtil.retrievePackageInfo("genins", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName, productName, samlToken.quality)
 
         log.debug("getMemberData called with principal " + (principal?._id
             ?: "<ANONYMOUS>") + " and license " + (principal?.mcnLicense ?: "<DEFAULT>"))

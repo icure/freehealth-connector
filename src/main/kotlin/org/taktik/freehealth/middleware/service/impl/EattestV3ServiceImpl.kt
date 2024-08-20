@@ -82,6 +82,7 @@ import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EattestV3Service
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.middleware.web.UserAgentInterceptorFilter
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -211,7 +212,9 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                 blob.messageName = "E-ATTEST-CANCEL"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
+                val userAgent = UserAgentInterceptorFilter.getUserAgent();
+                val productName = userAgent?.split("/")?.get(0) ?: "";
+                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName, productName, samlToken.quality)
 
                 this.commonInput = CommonInputType().apply {
                     request =
@@ -422,7 +425,9 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                 blob.messageName = "E-ATTEST"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
+                val userAgent = UserAgentInterceptorFilter.getUserAgent();
+                val productName = userAgent?.split("/")?.get(0) ?: "";
+                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName, productName, samlToken.quality)
 
                 this.commonInput = CommonInputType().apply {
                     request =

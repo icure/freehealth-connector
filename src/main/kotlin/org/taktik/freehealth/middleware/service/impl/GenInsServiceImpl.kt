@@ -50,6 +50,7 @@ import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.mapper.toInsurabilityInfoDto
 import org.taktik.freehealth.middleware.service.GenInsService
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.middleware.web.UserAgentInterceptorFilter
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
@@ -124,7 +125,9 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
         assert(patientSsin != null || io != null && ioMembership != null)
 
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-        val packageInfo = McnConfigUtil.retrievePackageInfo("genins", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
+        val userAgent = UserAgentInterceptorFilter.getUserAgent();
+        val productName = userAgent?.split("/")?.get(0) ?: "";
+        val packageInfo = McnConfigUtil.retrievePackageInfo("genins", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName, productName, samlToken.quality)
 
         log.debug("getGeneralInsurability called with principal "+(principal?:"<ANONYMOUS>")+" and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
 
