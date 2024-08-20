@@ -28,6 +28,7 @@ import java.util.HashMap
 open class DocumentMessage(
     id: String? = null,
     publicationId: String? = null,
+    contentType: String? = null,
     sender: Addressee? = null,
     mandatee: Addressee? = null,
     destinations: List<Addressee>? = null,
@@ -54,6 +55,7 @@ open class DocumentMessage(
 ) : Message(
     id = id,
     publicationId = publicationId,
+    contentType = contentType,
     sender = sender,
     mandatee = mandatee,
     destinations = destinations,

@@ -25,6 +25,7 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.hazelcast.core.IMap
 import org.apache.commons.logging.LogFactory
+import org.apache.log4j.MDC
 import org.joda.time.DateTime
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -55,7 +56,9 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.StringReader
 import java.io.StringWriter
+import java.security.Key
 import java.security.KeyStore
+import java.security.cert.Certificate
 import java.time.Instant
 import java.util.*
 import java.util.concurrent.ExecutionException
@@ -615,7 +618,9 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
     override fun uploadKeystore(file: MultipartFile): UUID {
         val keystoreId = UUID.nameUUIDFromBytes(file.bytes)
         keystoresMap[keystoreId] = file.bytes
+        MDC.put("keystoreId", keystoreId)
         log.info("uploadKeystore(MultipartFile): keystoresMap size: ${keystoresMap.size}")
+        MDC.clear()
 
         return keystoreId
     }
@@ -623,7 +628,9 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
     override fun uploadKeystore(data: ByteArray): UUID {
         val keystoreId = UUID.nameUUIDFromBytes(data)
         keystoresMap[keystoreId] = data
+        MDC.put("keystoreId", keystoreId)
         log.info("uploadKeystore(ByteArray): keystoresMap size: ${keystoresMap.size}")
+        MDC.clear()
 
         return keystoreId
     }
@@ -688,8 +695,10 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 continue;
             }
 
-            val cert = sourceKeystore.getCertificate(alias)
-            targetKeystore.setCertificateEntry(alias, cert)
+            val privateKey: Key = sourceKeystore.getKey(alias, oldPassword.toCharArray())
+            val certificateChain: Array<Certificate> = sourceKeystore.getCertificateChain(alias)
+
+            targetKeystore.setKeyEntry(alias, privateKey, newPassword.toCharArray(), certificateChain)
         }
 
         val output = ByteArrayOutputStream()
