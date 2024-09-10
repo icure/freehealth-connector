@@ -40,6 +40,7 @@ import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.sts.SAMLTokenFactory
 import org.taktik.connector.technical.service.sts.domain.SAMLAttribute
 import org.taktik.connector.technical.service.sts.domain.SAMLAttributeDesignator
+import org.taktik.connector.technical.service.sts.impl.STSServiceImpl
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.service.sts.utils.SAMLConverter
@@ -47,6 +48,7 @@ import org.taktik.connector.technical.service.sts.utils.SAMLHelper
 import org.taktik.connector.technical.utils.CertificateParser
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
 import org.taktik.freehealth.middleware.dto.CertificateInfo
+import org.taktik.freehealth.middleware.dto.MergeKeystoresResponseDto
 import org.taktik.freehealth.middleware.exception.MissingKeystoreException
 import org.taktik.freehealth.middleware.pkcs11.remote.RemoteKeystore
 import org.taktik.freehealth.middleware.service.RemoteKeystoreService
@@ -385,6 +387,10 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 SAMLAttributeDesignator(
                     "urn:be:fgov:person:ssin:ehealth:1.0:fpsph:physiotherapist:boolean",
                     "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin:usersession:boolean",
+                "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
             "midwife" -> listOf(
@@ -440,6 +446,32 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                     "urn:be:fgov:certified-namespace:ehealth"
                 )
 
+            )
+            "reeducation" -> listOf(
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:reeducation:nihii-number",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:reeducation:nihii-number",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:reeducation:nihii-number:recognisedreeducation:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:reeducation:nihii-number:recognisedreeducation:boolean",
+                    "urn:be:fgov:certifiednamespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:reeducation:nihii-number:recognisedreeducation:nihii11",
+                    "urn:be:fgov:certifiednamespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:recognisedorganization:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                )
             )
             else -> throw IllegalArgumentException("unsupported quality")
         } + extraDesignators.map { SAMLAttributeDesignator(it.second, it.first) }
@@ -564,10 +596,9 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 SamlTokenResult(randomUUID, samlToken, now, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis, quality)
             tokensMap[randomUUID] = samlTokenResult
             log.info("requestToken: tokensMap size: ${tokensMap.size}")
-
             samlTokenResult
         } catch (e: TechnicalConnectorException) {
-            log.info("requestToken: STS token request failure: ${e.errorCode} : ${e.message} : ${e.stackTrace}")
+            log.error("requestToken: STS token request failure: ${e.errorCode} : ${e.message} : ${e.stackTrace}")
             currentToken // FIXME: should throw if no currentToken
         }
     }
@@ -584,7 +615,8 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val result = tokensMap[tokenId]?.let {
             (it.token?.length ?: 0) > 0 && (it.validity ?: 0) > Instant.now().toEpochMilli()
         } ?: false
-        log.info("checkTokenValid: result $result tokenmap size: ${tokensMap.size}")
+
+        log.debug("checkTokenValid: result $result tokenmap size: ${tokensMap.size}")
 
         return result;
     }
@@ -609,7 +641,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 arrayOfNulls<Any>(0)
             )
         } catch (e: java.lang.IllegalStateException) {
-            log.info("Invalid certificate: ${parser.id} : ${parser.identifier} : ${parser.application} - nihii/ssin: ${nihiiOrSsin
+            log.error("Invalid certificate: ${parser.id} : ${parser.identifier} : ${parser.application} - nihii/ssin: ${nihiiOrSsin
                 ?: ""}")
             null
         }
@@ -621,7 +653,6 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         MDC.put("keystoreId", keystoreId)
         log.info("uploadKeystore(MultipartFile): keystoresMap size: ${keystoresMap.size}")
         MDC.clear()
-
         return keystoreId
     }
 
@@ -631,7 +662,6 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         MDC.put("keystoreId", keystoreId)
         log.info("uploadKeystore(ByteArray): keystoresMap size: ${keystoresMap.size}")
         MDC.clear()
-
         return keystoreId
     }
 
@@ -649,11 +679,11 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
 
     override fun checkIfKeystoreExist(keystoreId: UUID): Boolean {
         val result = keystoresMap.get(keystoreId) != null
-        log.info("checkIfKeystoreExist: result: $result keystoresMap size: ${keystoresMap.size}");
+        log.debug("checkIfKeystoreExist: result: $result keystoresMap size: ${keystoresMap.size}");
         return result;
     }
 
-    override fun mergeKeystores(newKeystore: String, oldKeystore: String, newPassword: String, oldPassword: String): ByteArray {
+    override fun mergeKeystores(newKeystore: String, oldKeystore: String, newPassword: String, oldPassword: String): MergeKeystoresResponseDto  {
         val newKeystoreBytes: ByteArray = try {
             Base64.getDecoder().decode(newKeystore)
         } catch (exception: IllegalArgumentException) {
@@ -704,7 +734,8 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val output = ByteArrayOutputStream()
         targetKeystore.store(output, newPassword.toCharArray())
 
-        return output.toByteArray()
+        val retval = Base64.getEncoder().encodeToString(output.toByteArray())
+        return MergeKeystoresResponseDto(mergedCertificate = retval)
     }
 
     fun determineIOExceptionMessage(exception: IOException, keystoreName: String): ResponseStatusException {
