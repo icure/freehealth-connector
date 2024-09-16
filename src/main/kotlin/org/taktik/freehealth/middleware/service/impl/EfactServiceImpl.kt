@@ -191,7 +191,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
                 }
                 rn =
-                    iv.writeRecordFooter(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, recordCodes, recordAmount, recordFee, recordSup, batch.magneticInvoice, invoice.admissionDate, invoice.locationNihii, invoice.locationService)
+                    iv.writeRecordFooter(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.reason!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, recordCodes, recordAmount, recordFee, recordSup, batch.magneticInvoice, invoice.admissionDate, invoice.locationNihii, invoice.locationService)
                 recordsCountPerOA[0]++
                 metadata.recordsCount++
 
@@ -653,8 +653,8 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             `package` = PackageType().apply {
                 name = ValueRefString().apply { value = config.getProperty(if(isMediprima) "genericasync.invoicing-mediprima.package.name" else "genericasync.invoicing.package.name") }
                 license = LicenseType().apply {
-                    this.username = principal?.mcnLicense ?: config.getProperty("mycarenet.license.username")
-                    this.password = principal?.mcnPassword ?: config.getProperty("mycarenet.license.password")
+                    this.username = principal?.mcnLicense ?: config.getProperty("mycarenet.license." + quality + ".username")
+                    this.password = principal?.mcnPassword ?: config.getProperty("mycarenet.license." + quality + ".password")
                 }
             }
             careProvider = CareProviderType().apply {
