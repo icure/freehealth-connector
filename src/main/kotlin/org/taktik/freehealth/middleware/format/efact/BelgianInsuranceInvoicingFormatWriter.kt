@@ -332,6 +332,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         val destCode = getDestCode(insuranceCode, sender)
         val relatedDestCode = if (relatedInvoiceIoCode != null) getDestCode(relatedInvoiceIoCode, sender) else null
 
+       val paymentApproval = this.getInsurabilityParameters(patient, InsuranceParameter.paymentapproval);
+
         ws.write("18", destCode)
         ws.write("20", startOfCoveragePeriod)
         ws.write("24", invoiceNumber)
@@ -342,6 +344,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("34", relatedBatchSendNumber)
         ws.write("37", relatedDestCode)
         ws.write("41", relatedBatchYearMonth)
+        ws.write("42", (if (sender.isSpecialist && paymentApproval != null) paymentApproval + "0".repeat(12) + "2" else "0").padEnd(48,'0'))
         ws.write("47", (if (magneticInvoice!!) formattedCreationDate else "00000000"))
 
         ws.writeFieldsWithCheckSum()
@@ -538,6 +541,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
     fun writeRecordFooter(recordNumber: Int,
                           sender: InvoiceSender,
                           invoiceNumber: Long?,
+                          treatmentReason: InvoicingTreatmentReasonCode,
                           invoiceRef: String,
                           patient: Patient,
                           insuranceCode: String,
@@ -582,6 +586,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("10", 3)
         ws.write("14", sender.nihii.toString().padEnd(11, '0'))
         ws.write("15", "+00000000000")
+        ws.write("17", treatmentReason.code)
 
         //Silly rules for this field
         val destCode = getDestCode(insuranceCode, sender)
