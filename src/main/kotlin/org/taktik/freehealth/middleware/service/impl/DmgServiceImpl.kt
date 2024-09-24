@@ -1126,7 +1126,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             patient?.let {
                 lastName = it.familyname
                 firstName = it.firstnames.joinToString(" ")
-                it.sex?.let { sex = it.cd.value.value() }
+                it.sex?.let { sex = it?.cd?.value?.value() }
                 it.birthdate?.let { birthday = it.date.toDate() }
                 it.ids.find { it.s == IDPATIENTschemes.ID_PATIENT || it.s == IDPATIENTschemes.INSS }
                     ?.let { inss = it.value }
