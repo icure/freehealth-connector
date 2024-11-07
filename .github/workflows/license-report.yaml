@@ -1,4 +1,7 @@
 on:
+  push:
+    branches:
+      - 'ci/fix-license-report-probe'
   pull_request:
     types:
       - closed
@@ -16,7 +19,7 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v2
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'adopt'
 
       - name: Creating licenses report
