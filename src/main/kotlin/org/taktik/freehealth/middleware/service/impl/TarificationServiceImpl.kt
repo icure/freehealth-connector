@@ -75,8 +75,8 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                               traineeSupervisorLastName: String?,
                               guardPostNihii: String?,
                               guardPostSsin: String?,
-                              anatomy: String?,
-                              relatedService: String?,
+                              anatomies: List<String?>,
+                              relatedServices: List<String?>,
                               codes: List<String>): TarificationConsultationResult {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -151,7 +151,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                             cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "encounterdatetime" })
                             contents.add(ContentType().apply { date = csDT })
                         })
-                        headingsAndItemsAndTexts.addAll(codes.map { code ->
+                        headingsAndItemsAndTexts.addAll(codes.mapIndexed { index, code ->
                             ItemType().apply {
                                 ids.add(IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = (h++).toString() })
                                 cds.add(CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "claim" })
@@ -159,12 +159,14 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                                     cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_NIHDI; sv = "1.0"; value = code })
                                 })
                                 if (isDentist) {
-                                    if (anatomy != null) {
+                                    val anatomy = anatomies[index]
+                                    if (!anatomy.isNullOrEmpty()) {
                                         contents.add(ContentType().apply {
                                             cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_ISO_3950; sv = "1.0"; value = anatomy })
                                         })
                                     }
-                                    if (relatedService != null) {
+                                    val relatedService = relatedServices[index]
+                                    if (!relatedService.isNullOrEmpty()) {
                                         contents.add(ContentType().apply {
                                             cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_NIHDI_RELATEDSERVICE; sv = "1.0"; value = relatedService })
                                         })
@@ -331,16 +333,18 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                         base = "/${nodeDescr(node.parentNode)}$base"
                         node = node.parentNode
                     }
-                    val elements =
+                    val initialElements = ConsultTarifErrors.values.filter {
+                        it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*${it.regex}.*")))
+                    }
+
+                    val elements = if (initialElements.isEmpty()) {
+                        // IOs sometimes are overeager to provide us with precise xpath. Let's try again while truncating after the item
+                        val truncatedBase = base.replace(Regex("(.+/item.+?)/.*"), "$1")
                         ConsultTarifErrors.values.filter {
-                            it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
+                            it.path == truncatedBase && it.code == ec && (it.regex == null || url.matches(Regex(".*${it.regex}.*")))
                         }
-                    if (elements.isEmpty()) {
-                        //IOs sometimes are overeager to provide us with precise xpath. Let's try again while truncating after the item
-                        base = base.replace(Regex("(.+/item.+?)/.*"), "$1")
-                        ConsultTarifErrors.values.filter {
-                            it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
-                        }
+                    } else {
+                        initialElements
                     }
 
                     elements.forEach { it.value = textContent }

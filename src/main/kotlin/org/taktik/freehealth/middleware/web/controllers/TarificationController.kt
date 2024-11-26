@@ -69,7 +69,8 @@ class TarificationController(val tarificationService: TarificationService, val m
         @RequestParam(required = false) anatomy: String?,
         @RequestParam(required = false) relatedService: String?,
         @RequestBody codes: List<String>
-    ) = try { tarificationService.consultTarif(
+    ) = try {
+        tarificationService.consultTarif(
         keystoreId = keystoreId,
         tokenId = tokenId,
         hcpFirstName = hcpFirstName,
@@ -88,8 +89,12 @@ class TarificationController(val tarificationService: TarificationService, val m
         traineeSupervisorLastName = traineeSupervisorLastName,
         guardPostNihii = guardPostNihii,
         guardPostSsin = guardPostSsin,
-        anatomy = anatomy,
-        relatedService =  relatedService).let { mapper.map(it, TarificationConsultationResult::class.java) } }
+        anatomies = if (anatomy?.contains(',') == true) anatomy.split(',').also {
+            if (it.size != codes.size) throw IllegalArgumentException("Anatomy length must match codes length.")
+        } else codes.map { anatomy },
+        relatedServices = if (relatedService?.contains(',') == true) relatedService.split(',').also {
+            if (it.size != codes.size) throw IllegalArgumentException("Related services length must match codes length.")
+        } else codes.map { relatedService }).let { mapper.map(it, TarificationConsultationResult::class.java) } }
     catch (e: javax.xml.ws.soap.SOAPFaultException) {
          TarificationConsultationResult().apply {
              errors = extractError(e).toMutableList()

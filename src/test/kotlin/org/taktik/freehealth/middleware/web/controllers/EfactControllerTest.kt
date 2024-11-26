@@ -229,7 +229,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         }
 
     private fun createInvoiceItem(codeNomenclature: Long,
-                                  override3rdPayerCode: Int,
+                                  override3rdPayerCode: String,
                                   reimbursedAmount: Int,
                                   patientFee: Int,
                                   doctorSupplement: Int,
@@ -369,7 +369,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         println("***** Scenario 2 - Mutuality $mutualityCode - NISS: $niss *****")
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 2, "FHCA01.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 2).apply {
-            invoices.firstOrNull()?.items?.add(createInvoiceItem(102793, 0,1920, 200, 0, null, Date()))
+            invoices.firstOrNull()?.items?.add(createInvoiceItem(102793, "0", 1920, 200, 0, null, Date()))
         }
     }
 
@@ -384,7 +384,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
 
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 3, "FHCA02.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 3).apply {
-            invoices.firstOrNull()?.items?.add(createInvoiceItem(101075L, 0, 1920, 200, 0, null, Date()))
+            invoices.firstOrNull()?.items?.add(createInvoiceItem(101075L, "0", 1920, 200, 0, null, Date()))
         }
     }
 
@@ -399,7 +399,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 4, "FHCA03.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 4).apply {
             invoices.firstOrNull()
-                ?.items?.add(createInvoiceItem(101032, 0, 1920, 200, 0, null, DateTime().minusYears(2).toDate()))
+                ?.items?.add(createInvoiceItem(101032, "0", 1920, 200, 0, null, DateTime().minusYears(2).toDate()))
         }
     }
 
@@ -444,7 +444,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
 
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 6, "FHCA05.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 6).apply {
-            invoices.firstOrNull()?.items?.add(createInvoiceItem(101032,0,  1920, 200, 0, null, DateTime().toDate()))
+            invoices.firstOrNull()?.items?.add(createInvoiceItem(101032, "0",  1920, 200, 0, null, DateTime().toDate()))
         }
     }
 
@@ -458,7 +458,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         println("***** Scenario 7 - Mutuality $mutualityCode - NISS: $niss *****")
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 7, "FHCA06.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 7).apply {
-            invoices.firstOrNull()?.items?.add(createInvoiceItem(101032,0,  1920, 200, 0, null, DateTime().toDate()))
+            invoices.firstOrNull()?.items?.add(createInvoiceItem(101032, "0",  1920, 200, 0, null, DateTime().toDate()))
         }
     }
 
@@ -503,7 +503,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         val patientWithInss = getPatient(restTemplate, port, niss, keystoreId, tokenId, passPhrase) ?: return null
 
         return createBatch(mutualityCode.toLong() * 1000 + sendNumber + 9, "FHCA08.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 9).apply {
-            invoices.firstOrNull()?.items?.add(createInvoiceItem(101032, 0, 1820, 200, 0, null, DateTime().toDate()))
+            invoices.firstOrNull()?.items?.add(createInvoiceItem(101032, "0", 1820, 200, 0, null, DateTime().toDate()))
         }
     }
 
@@ -873,7 +873,7 @@ abstract class EfactAbstractTest : EhealthTest() {
         return createBatchFlatRate(mutualityCode.toLong() * 1000 + sendNumber + 19, "FHCAFF.$mutualityCode", mutualityCode, patientWithInss, sendNumber + 19).apply {
             invoices.firstOrNull()?.items?.add(createInvoiceItem(
                 java.lang.Long.valueOf("109616"),
-                0,
+                "0",
                 ((15.10) * 100).roundToInt(),
                 ((.0) * 100).roundToInt(),
                 0, null,

@@ -35,8 +35,13 @@ open class Prescription(
     var creationDate: Date,
     var encryptionKeyId: String,
     var rid: String,
-    var isFeedbackAllowed: Boolean = false,
+    var isFeedbackAllowed: Boolean? = null,
     var patientId: String? = null,
     var notificationWasSent: Boolean? = null,
-    var requestXml: String? = null
+    var requestXml: String? = null,
+    var prescriberId: String? = null,
+    var visionByOthers: String? = null,
+    var status: String? = null,
+    var validUntil: Date? = null,
+    var decryptedContent: Kmehrmessage? = null
 ) : Serializable

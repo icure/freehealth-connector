@@ -57,7 +57,7 @@ object Record50Description : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "28", "ReferenceDeLetablissement", "itemReference", "A", pos, 25)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "29", "DentTraitee", "tooth", "N", pos, 2)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "30,31", "SigneMontantSupplementPartie1et2", null, "A", pos, 10)
-        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "32", "ExceptionTiersPayant", "thirdPartyException", "N", pos, 1)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "32", "ExceptionTiersPayant", "thirdPartyException", "A", pos, 1)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "33", "CodeFacturationInterventionPersonnelleOuSupplement", null, "N", pos, 1)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "34", "MembreTraite", "treatedMember", "N", pos, 1)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "35", "PrestataireConventionne", null, "N", pos, 1)

@@ -22,7 +22,6 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeformularyreferenceType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipegalenicformType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipequantityType
-import org.taktik.connector.business.recipe.utils.KmehrValidator
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.domain.recipe.CompoundPrescription
@@ -249,7 +248,23 @@ class RecipeStories {
 
     private fun createPrescription(prescription: PrescriptionExample, notification: String? = null, feedbackRequested: Boolean = false): Prescription {
         val executorId = null
-        val createdPrescription = recipeService.createPrescription(keystoreId!!, tokenId!!, passPhrase!!, "persphysican", nihii!!, prescription.patient, prescription.hcp, feedbackRequested, prescription.medications, recipeService.inferPrescriptionType(prescription.medications, null), notification, executorId, "1.0", prescription.deliveryDate, lang = "fr")
+        val createdPrescription = recipeService.createPrescription(
+            keystoreId!!,
+            tokenId!!,
+            passPhrase!!,
+            "persphysican",
+            nihii!!,
+            prescription.patient,
+            prescription.hcp,
+            feedbackRequested,
+            prescription.medications,
+            recipeService.inferPrescriptionType(prescription.medications, null),
+            notification,
+            executorId,
+            "1.0",
+            prescription.deliveryDate,
+            lang = "fr"
+        )
         return createdPrescription
     }
 

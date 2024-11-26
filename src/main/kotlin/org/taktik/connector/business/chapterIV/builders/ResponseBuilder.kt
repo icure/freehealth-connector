@@ -11,6 +11,7 @@ import be.fgov.ehealth.commons.protocol.v1.ResponseType
 import be.fgov.ehealth.medicalagreement.core.v1.Kmehrresponse
 import java.io.Serializable
 import org.bouncycastle.tsp.TimeStampResponse
+import org.bouncycastle.tsp.TimeStampToken
 
 interface ResponseBuilder : Serializable {
 
@@ -23,7 +24,7 @@ interface ResponseBuilder : Serializable {
                                                                             ignoreWarnings: Boolean): ChapterIVKmehrResponseWithTimeStampInfo
 
     @Throws(TechnicalConnectorException::class)
-    fun convertToTimeStampResponse(bytes: ByteArray): TimeStampResponse
+    fun convertToTimeStampToken(bytes: ByteArray): TimeStampToken
 
     @Throws(ChapterIVBusinessConnectorException::class)
     fun convertToKmehrResKmehrresponse(bytes: ByteArray): Kmehrresponse?

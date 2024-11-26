@@ -20,6 +20,9 @@
 
 package org.taktik.freehealth.middleware.service
 
+import be.fgov.ehealth.recipe.protocol.v4.ListPrescriptionsResult
+import be.recipe.services.core.PrescriptionStatus
+import be.recipe.services.core.VisionOtherPrescribers
 import be.recipe.services.prescriber.GetPrescriptionStatusResult
 import be.recipe.services.prescriber.ListRidsHistoryResult
 import be.recipe.services.prescriber.PutVisionResult
@@ -32,6 +35,7 @@ import org.taktik.freehealth.middleware.domain.recipe.Prescription
 import org.taktik.freehealth.middleware.domain.recipe.PrescriptionFullWithFeedback
 import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.HealthcareParty
+import org.taktik.freehealth.middleware.dto.recipe.ListStructuredPrescriptionsResult
 import org.taktik.icure.be.ehealth.logic.recipe.impl.KmehrPrescriptionConfig
 import java.time.LocalDateTime
 import java.util.UUID
@@ -65,6 +69,7 @@ interface RecipeV4Service {
         vendorEmail: String? = null,
         vendorPhone: String? = null,
         vision: String? = null,
+        visionOthers: VisionOtherPrescribers? = null,
         expirationDate: LocalDateTime? = null,
         lang: String?
     ): Prescription
@@ -74,13 +79,17 @@ interface RecipeV4Service {
         tokenId: UUID,
         passPhrase: String,
         hcpNihii: String,
-        patientId: String
+        patientId: String,
+        vendorName: String?,
+        packageVersion: String?
     ): List<Prescription>
 
     fun listFeedbacks(
         keystoreId: UUID,
         tokenId: UUID,
-        passPhrase: String
+        passPhrase: String,
+        vendorName: String?,
+        packageVersion: String?
     ): List<Feedback>
 
     fun revokePrescription(
@@ -89,7 +98,9 @@ interface RecipeV4Service {
         passPhrase: String,
         hcpNihii: String,
         rid: String,
-        reason: String
+        reason: String,
+        vendorName: String?,
+        packageVersion: String?
     )
 
     fun getPrescriptionStatus(
@@ -97,7 +108,9 @@ interface RecipeV4Service {
         tokenId: UUID,
         passPhrase: String,
         hcpNihii: String,
-        rid: String
+        rid: String,
+        vendorName: String?,
+        packageVersion: String?
     ): GetPrescriptionStatusResult
 
     fun sendNotification(
@@ -108,7 +121,9 @@ interface RecipeV4Service {
         patientId: String,
         executorId: String,
         rid: String,
-        text: String
+        text: String,
+        vendorName: String?,
+        packageVersion: String?
     )
 
     fun setVision(
@@ -116,7 +131,10 @@ interface RecipeV4Service {
         tokenId: UUID,
         passPhrase: String,
         rid: String,
-        vision: String
+        vision: String,
+        visionOthers: VisionOtherPrescribers?,
+        vendorName: String?,
+        packageVersion: String?
     ): PutVisionResult
 
     fun listRidsHistory(
@@ -125,7 +143,9 @@ interface RecipeV4Service {
         passPhrase: String,
         patientSsin: String,
         rid: String,
-        reason: String
+        reason: String,
+        vendorName: String?,
+        packageVersion: String?
     ): ListRidsHistoryResult
 
     fun updateFeedbackFlag(
@@ -134,7 +154,9 @@ interface RecipeV4Service {
         passPhrase: String,
         hcpNihii: String,
         rid: String,
-        feedbackAllowed: Boolean
+        feedbackAllowed: Boolean,
+        vendorName: String?,
+        packageVersion: String?
     ): UpdateFeedbackFlagResult
 
     fun getGalToAdministrationUnit(galId: String): Code?
@@ -144,7 +166,9 @@ interface RecipeV4Service {
         tokenId: UUID,
         passPhrase: String,
         hcpNihii: String,
-        rid: String
+        rid: String,
+        vendorName: String?,
+        packageVersion: String?
     ): RecipeKmehrmessageType?
 
     fun inferPrescriptionType(medications: List<Medication>, prescriptionType: String?): String
@@ -157,4 +181,23 @@ interface RecipeV4Service {
         hcpQuality: String,
         expirationDate: LocalDateTime?
     ): org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
+
+    fun listPrescriptions(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        patientId: String,
+        prescriberId: String?,
+        from: Long?,
+        toInclusive: Long?,
+        statuses: List<PrescriptionStatus>?,
+        expiringFrom: Long?,
+        expiringToInclusive: Long?,
+        pageYear: Int?,
+        pageMonth: Int?,
+        pageNumber: Long?,
+        vendorName: String?,
+        packageVersion: String?
+    ): ListStructuredPrescriptionsResult
 }

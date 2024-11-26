@@ -94,7 +94,6 @@ class EagreementServiceUtilsTest {
             EagreementServiceImpl.RequestTypeEnum.ASK,
             "1",
             "active",
-            "physiotherapy-fb",
             DateTime.now(),
             "InsuranceRef123",
             "PathologyCode123",
@@ -222,7 +221,9 @@ class EagreementServiceUtilsTest {
             "male",
             "78457845896",
             "109",
-            "45464116491BE"
+            "45464116491BE",
+            null,
+            null
         )
 
         println("Result: "+ObjectMapper().registerModule(KotlinModule()).writeValueAsString(serviceRequest))
@@ -292,7 +293,8 @@ class EagreementServiceUtilsTest {
             patientGender,
             patientSsin,
             io,
-            ioMembership
+            ioMembership,
+            null
         )
 
         println("Result: "+ObjectMapper().registerModule(KotlinModule()).writeValueAsString(parameters))
@@ -325,7 +327,8 @@ class EagreementServiceUtilsTest {
             patientGender,
             patientSsin,
             io,
-            ioMembership
+            ioMembership,
+            null
         )
 
         println("Result: "+ObjectMapper().registerModule(KotlinModule()).writeValueAsString(parameter))
@@ -437,11 +440,9 @@ class EagreementServiceUtilsTest {
     @Test
     fun getMessageHeader() {
         val claim = agreementServiceUtils.getClaim(
-
             EagreementServiceImpl.RequestTypeEnum.ASK,
             "1",
             "active",
-            "physiotherapy-fb",
             DateTime.now(),
             "InsuranceRef123",
             "PathologyCode123",
@@ -466,7 +467,6 @@ class EagreementServiceUtilsTest {
             EagreementServiceImpl.RequestTypeEnum.ASK,
             "1",
             "active",
-            "physiotherapy-fb",
             DateTime.now(),
             "InsuranceRef123",
             "PathologyCode123",
@@ -501,6 +501,9 @@ class EagreementServiceUtilsTest {
             null,
             null,
             "",
+            null,
+            null,
+            null,
             null
             );
         println("Result: "+ObjectMapper().registerModule(KotlinModule()).writeValueAsString(bundle))

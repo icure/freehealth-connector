@@ -153,7 +153,9 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 }
             }
             if(requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) item = listOf(getServicedDateItem(requestType, pathologyStartDate!!, pathologyCode, 1))
-            insurance = listOf(getInsurance(requestType, insuranceRef, "use of mandatory insurance coverage, no further details provided here."))
+            if(!insuranceRef.isNullOrEmpty()){
+                insurance = listOf(getInsurance(requestType, insuranceRef, "use of mandatory insurance coverage, no further details provided here."))
+            }
         }
     }
 
@@ -274,8 +276,19 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             )
             status = "active"
             intent = "order"
-            category = listOf(
-                CodeableConcept().apply {
+            if(!sctCode.isNullOrEmpty() && !sctDisplay.isNullOrEmpty()){
+                category = listOf(
+                    CodeableConcept().apply {
+                        coding = listOf(
+                            Coding(
+                                system = CodingSystemEnum.SCT.codingSystem,
+                                code = sctCode,
+                                display = sctDisplay
+                            )
+                        )
+                    }
+                )
+                code = CodeableConcept().apply {
                     coding = listOf(
                         Coding(
                             system = CodingSystemEnum.SCT.codingSystem,
@@ -284,16 +297,8 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                         )
                     )
                 }
-            )
-            code = CodeableConcept().apply {
-                coding = listOf(
-                    Coding(
-                        system = CodingSystemEnum.SCT.codingSystem,
-                        code = sctCode,
-                        display = sctDisplay
-                    )
-                )
             }
+
             quantityQuantity = Count().apply {
                 value = quantity
             }
@@ -336,6 +341,10 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         param.add(getParameter("patient", startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
         param.add(getParameter("use", startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
         param.add(getParameter("subType", startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
+
+        if (startDate != null || endDate != null){
+            param.add(getParameter("preAuthPeriod", startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
+        }
         return Parameters().apply {
             id = "Parameters$parameterId"
             parameter = param
@@ -353,6 +362,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                               ioMembership: String?,
                               subTypeCode: String?
     ): ParametersParameter{
+        val formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
         return ParametersParameter().apply {
             name = parameterName
             when{
@@ -366,8 +376,13 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                     code = subTypeCode
                 }
                 parameterName == "preAuthPeriod" -> valuePeriod = Period().apply {
-                    start = startDate.toString()
-                    end = endDate.toString()
+                    if(startDate != null){
+                        start = startDate?.let { formatter.print(it) }
+                    }
+
+                   if(endDate != null){
+                       end = endDate?.let { formatter.print(it) }
+                   }
                 }
             }
         }

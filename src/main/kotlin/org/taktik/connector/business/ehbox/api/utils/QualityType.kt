@@ -111,6 +111,7 @@ class QualityType private constructor(val quality: String, val identifierType: I
         val PSYCH_HOUSE_NIHII: QualityType
         val READAPTATION_BACHELOR_NIHII: QualityType
         val READAPTATION_BACHELOR_SSIN: QualityType
+        val REEDUCATION_NIHII: QualityType
         val RETIREMENT_NIHII: QualityType
         val SOCIAL_WORKER_NIHII: QualityType
         val SOCIAL_WORKER_SSIN: QualityType
@@ -254,6 +255,7 @@ class QualityType private constructor(val quality: String, val identifierType: I
             PSYCH_HOUSE_NIHII = QualityType("PSYCH_HOUSE", IdentifierType.NIHII_PSYCH_HOUSE)
             READAPTATION_BACHELOR_NIHII = QualityType("READAPTATION_BACHELOR", IdentifierType.NIHII)
             READAPTATION_BACHELOR_SSIN = QualityType("READAPTATION_BACHELOR", IdentifierType.SSIN)
+            REEDUCATION_NIHII = QualityType("REEDUCATION", IdentifierType.NIHII_REEDUCATION)
             RETIREMENT_NIHII = QualityType("RETIREMENT", IdentifierType.NIHII_RETIREMENT)
             SOCIAL_WORKER_NIHII = QualityType("SOCIAL_WORKER", IdentifierType.NIHII)
             SOCIAL_WORKER_SSIN = QualityType("SOCIAL_WORKER", IdentifierType.SSIN)

@@ -1,6 +1,5 @@
 package org.taktik.freehealth.middleware.service
 
-import be.fgov.ehealth.agreement.protocol.v1.ConsultAgreementResponse
 import org.joda.time.DateTime
 import org.taktik.connector.business.domain.agreement.AgreementResponse
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
@@ -67,12 +66,12 @@ interface EagreementService {
         patientSsin: String?,
         patientIo: String?,
         patientIoMembership: String?,
-        insuranceRef: String?,
         hcpNihii: String,
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
         subTypeCode: String,
+        insuranceRef: String?,
         orgNihii: String?,
         organizationType: String?,
         agreementStartDate: DateTime?,
