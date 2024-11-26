@@ -318,7 +318,6 @@ class EagreementServiceUtilsTest {
 
         val parameter = agreementServiceUtils.getParameter(
             parameterName,
-            agreementTypes,
             startDate,
             endDate,
             patientFirstName,

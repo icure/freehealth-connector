@@ -126,7 +126,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         claimId: String,
         subTypeCode: String,
         agreementStartDate: DateTime,
-        insuranceRef: String,
+        insuranceRef: String?,
         pathologyCode: String?,
         pathologyStartDate: DateTime?,
         provider: String
@@ -321,7 +321,6 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
     }
 
     override fun getParameters(parameterId: String,
-                               agreementTypes: String,
                                startDate: DateTime?,
                                endDate: DateTime?,
                                patientFirstName: String?,
@@ -333,10 +332,10 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                                subTypeCode: String?
     ): Parameters {
         val param = mutableListOf<ParametersParameter>();
-        param.add(getParameter("resourceType", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
-        param.add(getParameter("patient", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
-        param.add(getParameter("use", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
-        param.add(getParameter("subType", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
+        param.add(getParameter("resourceType", startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
+        param.add(getParameter("patient", startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
+        param.add(getParameter("use", startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
+        param.add(getParameter("subType", startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
         return Parameters().apply {
             id = "Parameters$parameterId"
             parameter = param
@@ -344,7 +343,6 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
     }
 
     override fun getParameter(parameterName: String,
-                              agreementTypes: String?,
                               startDate: DateTime?,
                               endDate: DateTime?,
                               patientFirstName: String?,
@@ -375,7 +373,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         }
     }
 
-    override fun getInsurance(requestType: EagreementServiceImpl.RequestTypeEnum, insuranceRef: String, display: String): ClaimInsurance{
+    override fun getInsurance(requestType: EagreementServiceImpl.RequestTypeEnum, insuranceRef: String?, display: String): ClaimInsurance{
         return ClaimInsurance(
             sequence = 1,
             focal = true,
@@ -383,7 +381,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 display = display
             )
         ).apply {
-            if(requestType != EagreementServiceImpl.RequestTypeEnum.ASK) preAuthRef = listOf(insuranceRef)
+            if(requestType != EagreementServiceImpl.RequestTypeEnum.ASK && insuranceRef != null) preAuthRef = listOf(insuranceRef)
         }
     }
 
@@ -691,7 +689,6 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                     mapper.writeValueAsString(
                         getParameters(
                             "1",
-                            agreementType!!,
                             agreementStartDate,
                             agreementEndDate,
                             hcpNihii,
@@ -728,7 +725,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 claimId = "1",
                 subTypeCode = agreementType!!,
                 agreementStartDate = DateTime(),
-                insuranceRef = insuranceRef!!,
+                insuranceRef = insuranceRef,
                 pathologyCode = pathologyCode,
                 pathologyStartDate = pathologyStartDate,
                 provider = "PractitionerRole/PractitionerRole1"
