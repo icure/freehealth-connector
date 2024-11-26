@@ -291,7 +291,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 log.info("Response is: " + decryptedKnownContent.businessContent.value.toString(Charsets.UTF_8))
 
                 val responseXML = decryptedKnownContent.businessContent.value.toString(Charsets.UTF_8)
-                val responseJSON = XML.toJSONObject(responseXML)
 
                 // val errors = responseJSON.getJSONObject("Bundle").getJSONArray("entry")
 
@@ -309,9 +308,9 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                     soapRequest = agreementResponse.soapRequest?.writeTo(this.soapRequestOutputStream())?.toString()
                     soapResponse = agreementResponse.soapResponse?.writeTo(this.soapResponseOutputStream())?.toString()
                     transactionRequest = ConnectorXmlUtils.toString(askAgreementRequest)
-                    transactionResponse = responseJSON.toString()
+                    transactionResponse = responseXML
                 }
-                res.content = responseJSON.toString().toByteArray(Charsets.UTF_8)
+                res.content = responseXML.toByteArray(Charsets.UTF_8)
                 // TODO call that method but it's not fully implemented yest
                 // res.errors = extractErrors(responseJSON).toList()
                 return res;
@@ -489,7 +488,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 log.info("Response is: " + decryptedKnownContent.businessContent.value.toString(Charsets.UTF_8))
 
                 val responseXML = decryptedKnownContent.businessContent.value.toString(Charsets.UTF_8)
-                val responseJSON = XML.toJSONObject(responseXML)
 
                 // val errors = responseJSON.getJSONObject("Bundle").getJSONArray("entry")
 
@@ -507,9 +505,9 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                     soapRequest = consultAgreementResponse.soapRequest?.writeTo(this.soapRequestOutputStream())?.toString()
                     soapResponse = consultAgreementResponse.soapResponse?.writeTo(this.soapResponseOutputStream())?.toString()
                     transactionRequest = ConnectorXmlUtils.toString(consultAgreementResponse)
-                    transactionResponse = responseJSON.toString()
+                    transactionResponse = responseXML
                 }
-                res.content = responseJSON.toString().toByteArray(Charsets.UTF_8)
+                res.content = responseXML.toByteArray(Charsets.UTF_8)
 
                 // TODO call that method but it's not fully implemented yest
                 // res.errors = extractErrors(responseJSON).toList()
