@@ -414,7 +414,6 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                     "urn:be:fgov:ehealth:1.0:certificateholder:recognisedorganization:boolean",
                     "urn:be:fgov:certified-namespace:ehealth"
                 )
-
             )
             "enterprise" -> listOf(
                 SAMLAttributeDesignator(
