@@ -60,4 +60,5 @@ class InvoiceItem {
 
     var internshipNihii: String? = null
     var anatomy : String? = null
+    var productLabel: String? = null
 }

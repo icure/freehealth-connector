@@ -44,10 +44,10 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpNihii: String,
-        @RequestParam hcpSsin: String,
-        @RequestParam hcpFirstName: String,
+        @RequestParam hcpSsin: String,        @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpCbe: String,
+        @RequestParam hcpQuality: String,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
@@ -61,6 +61,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam(required = false) guardPostSsin: String?,
         @RequestParam(required = false) guardPostName: String?,
         @RequestParam(required = false) attemptNbr: Int?,
+        @RequestParam(required = false) decisionReference: String?,
         @RequestBody attest: Eattest
     ) = eattestService.sendAttestV3(
         keystoreId,
@@ -70,6 +71,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         hcpFirstName,
         hcpLastName,
         hcpCbe,
+        hcpQuality,
         treatmentReason,
         traineeSupervisorSsin,
         traineeSupervisorNihii,
@@ -85,6 +87,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         patientGender,
         date,
         attemptNbr,
+        decisionReference,
         attest
     )
 
@@ -99,6 +102,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpCbe: String,
+        @RequestParam hcpQuality: String,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
@@ -112,6 +116,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam(required = false) guardPostSsin: String?,
         @RequestParam(required = false) guardPostName: String?,
         @RequestParam(required = false) attemptNbr: Int?,
+        @RequestParam(required = false) decisionReference: String?,
         @RequestBody attest: Eattest
     ): SendAttestResult? = eattestService.sendAttestV3(
         keystoreId,
@@ -121,6 +126,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         hcpFirstName,
         hcpLastName,
         hcpCbe,
+        hcpQuality,
         treatmentReason,
         traineeSupervisorSsin,
         traineeSupervisorNihii,
@@ -136,6 +142,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         patientGender,
         date,
         attemptNbr,
+        decisionReference,
         attest
     )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
 
