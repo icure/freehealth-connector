@@ -9,6 +9,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.freehealth.middleware.service.EagreementServiceUtils
+import org.taktik.freehealth.middleware.web.controllers.EagreementController
 import org.taktik.icure.fhir.entities.r4.Meta
 import org.taktik.icure.fhir.entities.r4.attachment.Attachment
 import org.taktik.icure.fhir.entities.r4.binary.Binary
@@ -129,7 +130,8 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         insuranceRef: String?,
         pathologyCode: String?,
         pathologyStartDate: DateTime?,
-        provider: String
+        provider: String,
+        attachments: List<EagreementController.Attachment>?
     ): Claim {
         return Claim(
             patient = Reference().apply { reference = "Patient/Patient1" },
@@ -152,10 +154,17 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                     reference = "ServiceRequest/ServiceRequest1"
                 }
             }
-            if(requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) item = listOf(getServicedDateItem(requestType, pathologyStartDate!!, pathologyCode, 1))
-            if(!insuranceRef.isNullOrEmpty()){
-                insurance = listOf(getInsurance(requestType, insuranceRef, "use of mandatory insurance coverage, no further details provided here."))
+            if (attachments != null) {
+                val supportingInfoList = mutableListOf<ClaimSupportingInfo>()
+                var sequenceNumber = 1
+                for (attachment in attachments!!) {
+                    supportingInfoList.add(getSupportingInfo(sequenceNumber, "attachment", attachment.type, null, null, attachment.data, attachment.type, "application/pdf"))
+                    sequenceNumber += 1
+                }
+                supportingInfo = supportingInfoList
             }
+            insurance = listOf(getInsurance(requestType, insuranceRef, "use of mandatory insurance coverage, no further details provided here."))
+            if(requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) item = listOf(getServicedDateItem(requestType, pathologyStartDate!!, pathologyCode, 1))
         }
     }
 
@@ -558,7 +567,8 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         pathologyStartDate: DateTime?,
         sctCode: String?,
         sctDisplay: String?,
-        subTypeCode: String?
+        subTypeCode: String?,
+        attachments: List<EagreementController.Attachment>?
     ): JsonObject? {
         val uuidGenerator = IdGeneratorFactory.getIdGenerator("uuid")
         val practitionerRole1UUID = uuidGenerator.generateId()
@@ -743,7 +753,8 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 insuranceRef = insuranceRef,
                 pathologyCode = pathologyCode,
                 pathologyStartDate = pathologyStartDate,
-                provider = "PractitionerRole/PractitionerRole1"
+                provider = "PractitionerRole/PractitionerRole1",
+                attachments = attachments
             )
             val parameter = JsonObject()
             parameter.addProperty("fullUrl" , "urn:uuid:"+uuidGenerator.generateId())

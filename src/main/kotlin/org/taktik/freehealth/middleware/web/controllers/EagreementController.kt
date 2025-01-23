@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -16,6 +17,7 @@ import org.taktik.connector.business.domain.agreement.AgreementResponse
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EagreementService
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
+import org.w3._2005._05.xmlmime.Base64Binary
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 
@@ -40,6 +42,11 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
     @ResponseBody
     fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String =
         ex.message ?: "unknown reason"
+
+    data class Attachment(
+        val type: String,
+        val data: String
+    )
 
     @PostMapping("/askAgreement", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun askAgreement(
@@ -70,7 +77,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) agreementEndDate: Int?,
         @RequestParam(required = false) agreementType: String?,
         @RequestParam(required = false) numberOfSessionForAnnex1: Float?,
-        @RequestParam(required = false) numberOfSessionForAnnex2: Float?
+        @RequestParam(required = false) numberOfSessionForAnnex2: Float?,
+        @RequestBody(required = false) attachments: List<Attachment>?
     ): AgreementResponse? {
         val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
         return eagreementService.askAgreement(
@@ -104,7 +112,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             numberOfSessionForAnnex1 = numberOfSessionForAnnex1,
             numberOfSessionForAnnex2 = numberOfSessionForAnnex2,
             sctCode = sctCode,
-            sctDisplay = sctDisplay
+            sctDisplay = sctDisplay,
+            attachments = attachments
         )
     }
 
@@ -215,7 +224,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             numberOfSessionForAnnex1 = null,
             numberOfSessionForAnnex2 = null,
             sctCode = null,
-            sctDisplay = null
+            sctDisplay = null,
+            attachments = null
         )
     }
 
@@ -249,7 +259,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) agreementEndDate: Int?,
         @RequestParam(required = false) agreementType: String?,
         @RequestParam(required = false) numberOfSessionForAnnex1: Float?,
-        @RequestParam(required = false) numberOfSessionForAnnex2: Float?
+        @RequestParam(required = false) numberOfSessionForAnnex2: Float?,
+        @RequestBody(required = false) attachments: List<Attachment>?
     ): AgreementResponse? {
         val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
         return eagreementService.askAgreement(
@@ -283,7 +294,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             numberOfSessionForAnnex1 = numberOfSessionForAnnex1,
             numberOfSessionForAnnex2 = numberOfSessionForAnnex2,
             sctCode = sctCode,
-            sctDisplay = sctDisplay
+            sctDisplay = sctDisplay,
+            attachments = attachments
         )
     }
 
@@ -313,7 +325,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) annex2: String?,
         @RequestParam(required = false) agreementType: String?,
         @RequestParam(required = false) numberOfSessionForAnnex1: Float?,
-        @RequestParam(required = false) numberOfSessionForAnnex2: Float?
+        @RequestParam(required = false) numberOfSessionForAnnex2: Float?,
+        @RequestBody(required = false) attachments: List<Attachment>?
     ): AgreementResponse? {
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
@@ -346,7 +359,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             numberOfSessionForAnnex1 = numberOfSessionForAnnex1,
             numberOfSessionForAnnex2 = numberOfSessionForAnnex2,
             sctCode = sctCode,
-            sctDisplay = sctDisplay
+            sctDisplay = sctDisplay,
+            attachments = attachments
         )
     }
 
@@ -376,7 +390,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) annex2: String?,
         @RequestParam(required = false) agreementType: String?,
         @RequestParam(required = false) numberOfSessionForAnnex1: Float?,
-        @RequestParam(required = false) numberOfSessionForAnnex2: Float?
+        @RequestParam(required = false) numberOfSessionForAnnex2: Float?,
+        @RequestBody(required = false) attachments: List<Attachment>?
     ): AgreementResponse? {
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
@@ -409,7 +424,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             numberOfSessionForAnnex1 = numberOfSessionForAnnex1,
             numberOfSessionForAnnex2 = numberOfSessionForAnnex2,
             sctCode = sctCode,
-            sctDisplay = sctDisplay
+            sctDisplay = sctDisplay,
+            attachments = attachments
         )
     }
 }

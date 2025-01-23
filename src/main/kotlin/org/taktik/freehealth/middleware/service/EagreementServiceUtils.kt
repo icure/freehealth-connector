@@ -3,6 +3,7 @@ package org.taktik.freehealth.middleware.service
 import com.google.gson.JsonObject
 import org.joda.time.DateTime
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
+import org.taktik.freehealth.middleware.web.controllers.EagreementController
 import org.taktik.icure.fhir.entities.r4.binary.Binary
 import org.taktik.icure.fhir.entities.r4.claim.Claim
 import org.taktik.icure.fhir.entities.r4.claim.ClaimInsurance
@@ -33,7 +34,8 @@ interface EagreementServiceUtils {
         insuranceRef: String?,
         pathologyCode: String?,
         pathologyStartDate: DateTime?,
-        providerType: String
+        providerType: String,
+        attachments: List<EagreementController.Attachment>?
     ): Claim?
 
     fun getSupportingInfo(sequenceNumber: Int, claimInformationCategory: String, annexTypeCode: String?, valueReference: String?, valueString: String?, valueAttachmentData: String?, valueAttachmentTitle: String?, valueAttachmentContentType: String?): ClaimSupportingInfo?
@@ -115,7 +117,8 @@ interface EagreementServiceUtils {
         pathologyStartDate: DateTime?,
         sctCode: String?,
         sctDisplay: String?,
-        subTypeCode: String?
+        subTypeCode: String?,
+        attachments: List<EagreementController.Attachment>?
     ): JsonObject?
 
 }

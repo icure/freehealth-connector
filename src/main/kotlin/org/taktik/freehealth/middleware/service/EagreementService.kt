@@ -3,6 +3,7 @@ package org.taktik.freehealth.middleware.service
 import org.joda.time.DateTime
 import org.taktik.connector.business.domain.agreement.AgreementResponse
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
+import org.taktik.freehealth.middleware.web.controllers.EagreementController
 import java.util.*
 
 interface EagreementService {
@@ -45,7 +46,8 @@ interface EagreementService {
         numberOfSessionForAnnex1: Float?,
         numberOfSessionForAnnex2: Float?,
         sctCode: String?,
-        sctDisplay: String?
+        sctDisplay: String?,
+        attachments: List<EagreementController.Attachment>?
     ): AgreementResponse?
 
     /**
