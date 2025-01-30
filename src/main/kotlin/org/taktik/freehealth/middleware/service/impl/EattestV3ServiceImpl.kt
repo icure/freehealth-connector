@@ -395,7 +395,6 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
             val kmehrMarshallHelper =
                 MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java)
             val requestXml = kmehrMarshallHelper.toXMLByteArray(sendTransactionRequest)
-            log.debug(MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8));
             val sendAttestationRequest = be.fgov.ehealth.mycarenet.attest.protocol.v3.SendAttestationRequest().apply {
                 val encryptedKnownContent = EncryptedKnownContent()
                 encryptedKnownContent.replyToEtk = it.encoded
