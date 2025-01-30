@@ -71,7 +71,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         hcpFirstName,
         hcpLastName,
         hcpCbe,
-        hcpQuality,
+        hcpQuality ?: "persphysician",
         treatmentReason,
         traineeSupervisorSsin,
         traineeSupervisorNihii,
