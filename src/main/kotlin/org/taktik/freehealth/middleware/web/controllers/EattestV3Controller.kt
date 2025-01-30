@@ -103,7 +103,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpCbe: String,
-        @RequestParam hcpQuality: String,
+        @RequestParam(required = false) hcpQuality: String?,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
