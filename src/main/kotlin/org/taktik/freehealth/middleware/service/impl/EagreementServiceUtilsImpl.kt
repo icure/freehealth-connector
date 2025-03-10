@@ -550,9 +550,9 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         hcpNihii: String,
         hcpFirstName: String,
         hcpLastName: String,
-        hcp2Nihii: String?,
-        hcp2FirstName: String?,
-        hcp2LastName: String?,
+        prescriberNihii: String?,
+        prescriberFirstName: String?,
+        prescriberLastName: String?,
         orgNihii: String?,
         organizationType: String?,
         prescription1: String?,
@@ -630,7 +630,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(practitioner1)
         }
 
-        if (hcp2Nihii != null && hcp2FirstName != null && hcp2LastName != null) {
+        if (prescriberNihii != null && prescriberFirstName != null && prescriberLastName != null) {
             val practitioner2 = JsonObject()
             practitioner2.addProperty("fullUrl", "urn:uuid:" + uuidGenerator.generateId())
             practitioner2.add(
@@ -639,9 +639,9 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                     mapper.writeValueAsString(
                         getPractitioner(
                             "2",
-                            hcp2Nihii,
-                            hcp2FirstName,
-                            hcp2LastName
+                            prescriberNihii,
+                            prescriberFirstName,
+                            prescriberLastName
                         )
                     )
                 ).asJsonObject
@@ -687,7 +687,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(practitionerRole1)
         }
 
-        if (hcp2Nihii != null) {
+        if (prescriberNihii != null) {
             val practitionerRole2 = JsonObject()
             practitionerRole2.addProperty("fullUrl", "urn:uuid:" + uuidGenerator.generateId())
             practitionerRole2.add(

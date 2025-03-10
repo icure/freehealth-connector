@@ -130,6 +130,9 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
+        prescriberNihii: String?,
+        prescriberFirstName: String?,
+        prescriberLastName: String?,
         orgNihii: String?,
         organizationType: String?,
         prescription1: String?,
@@ -153,36 +156,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
 
         return extractEtk(credential)?.let {
-            val requestBundleJSON = createRequestBundle(
-                requestType,
-                messageEventSystem,
-                messageEventCode,
-                patientFirstName,
-                patientLastName,
-                patientGender,
-                patientSsin,
-                patientIo,
-                patientIoMembership,
-                pathologyStartDate,
-                pathologyCode,
-                insuranceRef,
-                hcpNihii,
-                hcpFirstName,
-                hcpLastName,
-                orgNihii,
-                organizationType,
-                prescription1,
-                prescription2,
-                agreementStartDate,
-                agreementEndDate,
-                agreementType,
-                numberOfSessionForPrescription1,
-                numberOfSessionForPrescription2,
-                sctCode,
-                sctDisplay,
-                attachments
-
-            )
+            val requestBundleJSON = this.agreementServiceUtils.getBundleJSON(requestType, "Claim/Claim1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, prescriberNihii, prescriberFirstName, prescriberLastName, orgNihii, organizationType, prescription1, prescription2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForPrescription1, numberOfSessionForPrescription2, insuranceRef, pathologyCode, pathologyStartDate, sctCode, sctDisplay, null, attachments) ?: throw IllegalArgumentException("Cannot load fhir")
 
             var askAgreementRequest = AskAgreementRequest();
             askAgreementRequest.apply {
@@ -381,8 +355,8 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 agreementType
             )
 
-            var consultAgreementList = ConsultAgreementRequest()
-            consultAgreementList.apply {
+            var consultAgreementRequest = ConsultAgreementRequest()
+            consultAgreementRequest.apply {
                 val encryptedKnownContent = EncryptedKnownContent()
                 encryptedKnownContent.replyToEtk = it.encoded
                 val businessContent = BusinessContent().apply { id = detailId }
@@ -408,7 +382,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                             "3.0",
                             "encryptedForKnownBED"
                         )
-                blob.messageName = "eAgreement-ask"
+                blob.messageName = "eAgreement-consult"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
                 val packageInfo = McnConfigUtil.retrievePackageInfo("agreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
@@ -469,7 +443,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
             }
 
             try {
-                val consultAgreementResponse: ConsultAgreementResponse? = freehealthAgreementService.consultAgreement(samlToken, ObjectFactory().createConsultAgreementRequest(consultAgreementList).value)
+                val consultAgreementResponse: ConsultAgreementResponse? = freehealthAgreementService.consultAgreement(samlToken, ObjectFactory().createConsultAgreementRequest(consultAgreementRequest).value)
 
                 val blobType = consultAgreementResponse?.`return`?.detail
                 val blob = BlobMapper.mapBlobfromBlobType(blobType!!)
@@ -596,46 +570,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         }
         // Retourner une chaîne vide pour tout autre cas (ce qui ne devrait normalement pas arriver)
         return ""
-    }
-
-
-    fun createRequestBundle(
-        requestType: RequestTypeEnum,
-        messageEventSystem: MessageEventSystemEnum,
-        messageEventCode: String,
-        patientFirstName: String,
-        patientLastName: String,
-        patientGender: String,
-        patientSsin: String?,
-        patientIo: String?,
-        patientIoMembership: String?,
-        pathologyStartDate: DateTime?,
-        pathologyCode: String?,
-        insuranceRef: String?,
-        hcpNihii: String,
-        hcpFirstName: String,
-        hcpLastName: String,
-        orgNihii: String?,
-        organizationType: String?,
-        prescription1: String?,
-        prescription2: String?,
-        agreementStartDate: DateTime?,
-        agreementEndDate: DateTime?,
-        agreementType: String?,
-        numberOfSessionForPrescription1: Float?,
-        numberOfSessionForPrescription2: Float?,
-        sctCode: String?,
-        sctDisplay: String?,
-        attachments: List<EagreementController.Attachment>?
-    ): JsonObject?{
-        when (requestType) {
-            RequestTypeEnum.ASK -> return return this.agreementServiceUtils.getBundleJSON(requestType, "Claim/Claim1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, "14375992004", "Robin", "Hormaux", orgNihii, organizationType, prescription1, prescription2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForPrescription1, numberOfSessionForPrescription2, insuranceRef, pathologyCode, pathologyStartDate, sctCode, sctDisplay, null, attachments) ?: throw IllegalArgumentException("Cannot load fhir")
-            RequestTypeEnum.ARGUE -> return return this.agreementServiceUtils.getBundleJSON(requestType, "Claim/Claim1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, "14375992004", "Robin", "Hormaux", orgNihii, organizationType, prescription1, prescription2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForPrescription1, numberOfSessionForPrescription2, insuranceRef, pathologyCode, pathologyStartDate, sctCode, sctDisplay, null, attachments) ?: throw IllegalArgumentException("Cannot load fhir")
-            RequestTypeEnum.CANCEL -> return return this.agreementServiceUtils.getBundleJSON(requestType, "Claim/Claim1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, "14375992004", "Robin", "Hormaux", orgNihii, organizationType, prescription1, prescription2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForPrescription1, numberOfSessionForPrescription2, insuranceRef, pathologyCode, pathologyStartDate, sctCode, sctDisplay, null, attachments) ?: throw IllegalArgumentException("Cannot load fhir")
-            RequestTypeEnum.COMPLETE_AGREEMENT -> return return this.agreementServiceUtils.getBundleJSON(requestType, "Claim/Claim1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, "14375992004", "Robin", "Hormaux", orgNihii, organizationType, prescription1, prescription2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForPrescription1, numberOfSessionForPrescription2, insuranceRef, pathologyCode, pathologyStartDate, sctCode, sctDisplay, null, attachments) ?: throw IllegalArgumentException("Cannot load fhir")
-            RequestTypeEnum.EXTEND -> return this.agreementServiceUtils.getBundleJSON(requestType, "Claim/Claim1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, "14375992004", "Robin", "Hormaux", orgNihii, organizationType, prescription1, prescription2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForPrescription1, numberOfSessionForPrescription2, insuranceRef, pathologyCode, pathologyStartDate, sctCode, sctDisplay, null, attachments) ?: throw IllegalArgumentException("Cannot load fhir")
-            else -> throw IllegalArgumentException("Request type not supported")
-        }
     }
 
     fun createConsultAgreementBundle(
