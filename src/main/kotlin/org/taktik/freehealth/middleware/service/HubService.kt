@@ -114,6 +114,7 @@ interface HubService {
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        therLinkType: String?,
         hcpLastName: String,
         hcpFirstName: String,
         hcpNihii: String,

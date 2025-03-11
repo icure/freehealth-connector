@@ -25,3 +25,13 @@ org.taktik.icure.keystore2.nihii=...
 org.taktik.icure.keystore2.password=...
 org.taktik.icure.keystore2.name=...
 ```
+
+### Howto use recip-e
+
+#### Create a new prescription
+
+In order to create a new prescription, you need to call the following endpoint:
+
+```
+POST /api/prescriptions
+```
