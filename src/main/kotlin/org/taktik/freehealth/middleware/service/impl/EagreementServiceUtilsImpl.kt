@@ -149,7 +149,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             if(requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) billablePeriod = getBillablePeriod(agreementStartDate!!)
             created = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"))
             enterer = Reference().apply { reference = "PractitionerRole/PractitionerRole1"}
-            if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK) {
+            if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.COMPLETE_AGREEMENT || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) {
                 referral = Reference().apply {
                     reference = "ServiceRequest/ServiceRequest1"
                 }
@@ -730,7 +730,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(parameter1)
         }
         //Service Request 1
-        if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE) {
+        if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.COMPLETE_AGREEMENT || requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE) {
             val serviceRequest1 = JsonObject()
             serviceRequest1.addProperty("fullUrl" , "urn:uuid:" + uuidGenerator.generateId())
             serviceRequest1.add("resource", JsonParser().parse(mapper.writeValueAsString(getServiceRequest("1", "", prescription1!!, "1", numberOfSessionForPrescription1!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, sctCode, sctDisplay))).asJsonObject)
