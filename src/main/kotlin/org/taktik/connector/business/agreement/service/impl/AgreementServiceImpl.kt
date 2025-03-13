@@ -44,10 +44,10 @@ class AgreementServiceImpl : AgreementService, ModuleBootstrapHook {
     }
 
     @Throws(TechnicalConnectorException::class)
-    override fun consultAgreement(samlToken: SAMLToken?, consultAgreementRequest: ConsultAgreementRequest?): ConsultAgreementResponse? {
+    override fun consultAgreement(samlToken: SAMLToken, consultAgreementRequest: ConsultAgreementRequest?): ConsultAgreementResponse? {
         try {
             val service = ServiceFactory.getAgreementPort(samlToken)
-            service.setPayload(consultAgreementRequest)
+            service.setPayload(consultAgreementRequest as Any)
             service.setSoapAction("urn:be:fgov:ehealth:mycarenet:agreement:protocol:v1:ConsultAgreement")
             val start = System.currentTimeMillis()
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
