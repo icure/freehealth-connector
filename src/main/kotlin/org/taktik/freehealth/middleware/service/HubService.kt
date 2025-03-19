@@ -29,7 +29,6 @@ import org.taktik.freehealth.middleware.dto.hub.HcPartyConsentDto
 import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.domain.hub.PutTransactionResponse
 import org.taktik.freehealth.middleware.dto.hub.TransactionSummaryDto
-import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*
 
@@ -334,7 +333,8 @@ interface HubService {
         hubPackageId: String?
     ): RevokeAccessRightResponse
 
-    fun revokeTherapeuticLink(endpoint: String,
+    fun revokeTherapeuticLink(
+        endpoint: String,
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
@@ -346,7 +346,9 @@ interface HubService {
         patientSsin: String,
         patientEidCardNumber: String?,
         patientIsiCardNumber: String?,
-        hubPackageId: String?): RevokeTherapeuticLinkResponse
+        hubPackageId: String?,
+        therLinkType: String?
+    ): RevokeTherapeuticLinkResponse
 
     fun revokePatientConsent(endpoint: String,
         keystoreId: UUID,

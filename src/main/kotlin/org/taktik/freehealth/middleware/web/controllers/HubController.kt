@@ -37,7 +37,6 @@ import org.taktik.freehealth.middleware.dto.hub.PutTransactionResponseDto
 import org.taktik.freehealth.middleware.dto.therlink.TherapeuticLinkMessageDto
 import org.taktik.freehealth.middleware.service.HubService
 import org.taktik.freehealth.utils.FuzzyValues
-import java.time.Instant
 import java.util.*
 
 @RestController
@@ -271,8 +270,9 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @PathVariable patientSsin: String,
         @RequestParam(required = false) hubPackageId: String?,
         @RequestParam(required = false) patientEidCardNumber: String?,
-        @RequestParam(required = false) patientIsiCardNumber: String?
-                             ) = hubService.revokeTherapeuticLink(
+        @RequestParam(required = false) patientIsiCardNumber: String?,
+        @RequestParam(required = false) therLinkType: String?
+        ) = hubService.revokeTherapeuticLink(
         endpoint = endpoint,
         keystoreId = keystoreId,
         tokenId = tokenId,
@@ -285,7 +285,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         hcpZip = hcpZip,
         patientSsin = patientSsin,
         patientEidCardNumber = patientEidCardNumber,
-        patientIsiCardNumber = patientIsiCardNumber
+        patientIsiCardNumber = patientIsiCardNumber,
+        therLinkType = therLinkType
                                                                  )
 
     @GetMapping("/therlink/{hcpNihii}/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -304,7 +305,7 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestParam(required = false) therLinkType: String?,
         @RequestParam(required = false) from: Long?,
         @RequestParam(required = false) to: Long?
-    ): TherapeuticLinkMessageDto = hubService.getTherapeuticLinks(
+    ): TherapeuticLinkMessageDto? = hubService.getTherapeuticLinks(
         endpoint = endpoint,
         keystoreId = keystoreId,
         tokenId = tokenId,
