@@ -323,7 +323,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         hcpFirstName: String,
         hcpLastName: String,
         hcpCbe: String,
-        hcpQuality: String,
+        hcpQuality: String?,
         treatmentReason: String?,
         traineeSupervisorSsin: String?,
         traineeSupervisorNihii: String?,
@@ -341,6 +341,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         attemptNbr: Int?,
         decisionReference: String?,
         attest: Eattest): SendAttestResultWithResponse? {
+        val derivedHcpQuality = hcpQuality ?: guardPostNihii?.let {"guardpost"} ?: "doctor"
 
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -364,7 +365,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         calendar.time = now.toDate()
         val refDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar)
         refDateTime.timezone = DatatypeConstants.FIELD_UNDEFINED
-        val requestAuthorNihii = if(hcpQuality == "guardpost") guardPostNihii else hcpNihii
+        val requestAuthorNihii = if(derivedHcpQuality == "guardpost") guardPostNihii else hcpNihii
 
         return extractEtk(credential)?.let {
             val sendTransactionRequest =
@@ -375,7 +376,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                     hcpFirstName,
                     hcpLastName,
                     hcpCbe,
-                    hcpQuality,
+                    derivedHcpQuality,
                     patientSsin,
                     patientFirstName,
                     patientLastName,
@@ -436,7 +437,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             name = ValueRefString().apply { value = packageInfo.packageName }
                         }
                         careProvider = CareProviderType().apply {
-                            if (hcpQuality == "guardpost") {
+                            if (derivedHcpQuality == "guardpost") {
                                 nihii =
                                     NihiiType().apply {
                                         quality = "guardpost"; value =
@@ -455,7 +456,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             } else {
                                 nihii =
                                     NihiiType().apply {
-                                        quality = hcpQuality; value =
+                                        quality = derivedHcpQuality; value =
                                         ValueRefString().apply { value = hcpNihii }
                                     }
                                 physicalPerson = IdType().apply {
@@ -463,7 +464,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                     ssin = ValueRefString().apply { value = hcpSsin }
                                     nihii =
                                         NihiiType().apply {
-                                            quality = hcpQuality; value =
+                                            quality = derivedHcpQuality; value =
                                             ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
                                         }
                                 }
