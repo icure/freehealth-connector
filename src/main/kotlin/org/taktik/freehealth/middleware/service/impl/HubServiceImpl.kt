@@ -703,6 +703,17 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                                 this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl =
                                 sl; this.value = value
                             }
+                        author = AuthorType().apply {
+                            hcparties.add(HcpartyType().apply {
+                                cds.add(CDHCPARTY().apply {
+                                    this.s = CDHCPARTYschemes.CD_HCPARTY; this.sv = "1.1"; this.value = "hub"
+                                })
+                                ids.add(IDHCPARTY().apply {
+                                    this.s = IDHCPARTYschemes.ID_HCPARTY; this.sv = "1.0"; this.value = "1990000035"
+                                })
+                                name = "RSW"
+                            })
+                        }
                     }
                 }
             }
