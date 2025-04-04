@@ -680,7 +680,6 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Hub operations")
-        //set to 1990000035 when sl === RSWID, to 1990000036 when sl === RSBID, to 1990000037 when sl === RSCID
         val hubId = when (sl) {
             "RSWID" -> "1990000035"
             "RSBID" -> "1990000728"
