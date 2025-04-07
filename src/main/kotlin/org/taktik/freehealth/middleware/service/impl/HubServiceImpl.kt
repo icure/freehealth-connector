@@ -67,7 +67,6 @@ import org.taktik.freehealth.utils.hcpTypeFromSamlToken
 import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*
-import kotlin.collections.HashSet
 
 @Service
 class HubServiceImpl(private val stsService: STSService, private val keyDepotService: KeyDepotService, val mapper: MapperFacade) : HubService {
@@ -281,6 +280,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        therLinkType: String?,
         hcpLastName: String,
         hcpFirstName: String,
         hcpNihii: String,
@@ -308,7 +308,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                         cd = CDTHERAPEUTICLINK().apply {
                             s = CDTHERAPEUTICLINKschemes.CD_THERAPEUTICLINKTYPE
                             sv = "1.0"
-                            value = "gpconsultation"
+                            value = therLinkType ?: "gpconsultation"
                         }
                         hcparty = HCPartyIdType().apply {
                             ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =  hcpNihii })
@@ -351,8 +351,9 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         patientSsin: String,
         patientEidCardNumber: String?,
         patientIsiCardNumber: String?,
-        hubPackageId: String?
-                                        ): RevokeTherapeuticLinkResponse {
+        hubPackageId: String?,
+        therLinkType: String?
+    ): RevokeTherapeuticLinkResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Hub operations")
@@ -369,7 +370,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                     cd = CDTHERAPEUTICLINK().apply {
                         s = CDTHERAPEUTICLINKschemes.CD_THERAPEUTICLINKTYPE
                         sv = "1.0"
-                        value = "gpconsultation"
+                        value = therLinkType ?: "gpconsultation"
                     }
                     hcparty = HCPartyIdType().apply {
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =  hcpNihii })
@@ -392,7 +393,6 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                                     IDPATIENTschemes.ISI_CARDNO; this.sv = "1.0"; this.value = patientIsiCardNumber
                             })
                         }
-
                     }
                 }
             })
@@ -890,7 +890,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                                     this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl =
                                     sl; this.value = value
                                 }
-                            
+
                             if(StringUtils.isNotEmpty(externalHubId)) {
                                 author = AuthorType().apply {
                                     hcparties.add(HcpartyType().apply {
