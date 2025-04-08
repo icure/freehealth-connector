@@ -158,7 +158,11 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 val supportingInfoList = mutableListOf<ClaimSupportingInfo>()
                 var sequenceNumber = 1
                 for (attachment in attachments!!) {
-                    supportingInfoList.add(getSupportingInfo(sequenceNumber, "attachment", attachment.type, null, null, attachment.data, attachment.type, "application/pdf"))
+                    if (attachment.type == "info") {
+                        supportingInfoList.add(getSupportingInfo(sequenceNumber, "info", null, null, attachment.data, null, null, null))
+                    } else {
+                        supportingInfoList.add(getSupportingInfo(sequenceNumber, "attachment", attachment.type, null, null, attachment.data, attachment.type, "application/pdf"))
+                    }
                     sequenceNumber += 1
                 }
                 supportingInfo = supportingInfoList
