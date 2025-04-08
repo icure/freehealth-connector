@@ -323,6 +323,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         hcpFirstName: String,
         hcpLastName: String,
         hcpCbe: String,
+        hcpQuality: String?,
         treatmentReason: String?,
         traineeSupervisorSsin: String?,
         traineeSupervisorNihii: String?,
@@ -338,7 +339,9 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         patientGender: String,
         referenceDate: Long?,
         attemptNbr: Int?,
+        decisionReference: String?,
         attest: Eattest): SendAttestResultWithResponse? {
+        val derivedHcpQuality = hcpQuality ?: guardPostNihii?.let {"guardpost"} ?: "doctor"
 
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -362,7 +365,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         calendar.time = now.toDate()
         val refDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar)
         refDateTime.timezone = DatatypeConstants.FIELD_UNDEFINED
-        val requestAuthorNihii = guardPostNihii ?: hcpNihii
+        val requestAuthorNihii = if(derivedHcpQuality == "guardpost") guardPostNihii else hcpNihii
 
         return extractEtk(credential)?.let {
             val sendTransactionRequest =
@@ -373,6 +376,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                     hcpFirstName,
                     hcpLastName,
                     hcpCbe,
+                    derivedHcpQuality,
                     patientSsin,
                     patientFirstName,
                     patientLastName,
@@ -386,12 +390,12 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                     guardPostSsin,
                     guardPostName,
                     attest,
-                    referenceDate
+                    referenceDate,
+                    decisionReference
                                                         )
             val kmehrMarshallHelper =
                 MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java)
             val requestXml = kmehrMarshallHelper.toXMLByteArray(sendTransactionRequest)
-
             val sendAttestationRequest = be.fgov.ehealth.mycarenet.attest.protocol.v3.SendAttestationRequest().apply {
                 val encryptedKnownContent = EncryptedKnownContent()
                 encryptedKnownContent.replyToEtk = it.encoded
@@ -433,26 +437,11 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             name = ValueRefString().apply { value = packageInfo.packageName }
                         }
                         careProvider = CareProviderType().apply {
-                            if (guardPostNihii?.isEmpty() != false) {
-                                nihii =
-                                    NihiiType().apply {
-                                        quality = "doctor"; value =
-                                        ValueRefString().apply { value = hcpNihii }
-                                    }
-                                physicalPerson = IdType().apply {
-                                    name = ValueRefString().apply { value = "$hcpFirstName $hcpLastName" }
-                                    ssin = ValueRefString().apply { value = hcpSsin }
-                                    nihii =
-                                        NihiiType().apply {
-                                            quality = "doctor"; value =
-                                            ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
-                                        }
-                                }
-                            } else {
+                            if (derivedHcpQuality == "guardpost") {
                                 nihii =
                                     NihiiType().apply {
                                         quality = "guardpost"; value =
-                                        ValueRefString().apply { value = requestAuthorNihii.padEnd(11, '0') }
+                                        ValueRefString().apply { value = requestAuthorNihii!!.padEnd(11, '0') }
                                     }
 
                                 guardPostNihii?.let {
@@ -460,9 +449,24 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                         name = ValueRefString().apply { value = guardPostName }
                                         nihii = NihiiType().apply {
                                             quality = "guardpost"; value =
-                                            ValueRefString().apply { value = requestAuthorNihii.padEnd(11, '0') }
+                                            ValueRefString().apply { value = requestAuthorNihii!!.padEnd(11, '0') }
                                         }
                                     }
+                                }
+                            } else {
+                                nihii =
+                                    NihiiType().apply {
+                                        quality = derivedHcpQuality; value =
+                                        ValueRefString().apply { value = hcpNihii }
+                                    }
+                                physicalPerson = IdType().apply {
+                                    name = ValueRefString().apply { value = "$hcpFirstName $hcpLastName" }
+                                    ssin = ValueRefString().apply { value = hcpSsin }
+                                    nihii =
+                                        NihiiType().apply {
+                                            quality = derivedHcpQuality; value =
+                                            ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                                        }
                                 }
                             }
                         }
@@ -574,6 +578,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         hcpFirstName: String,
         hcpLastName: String,
         hcpCbe: String,
+        hcpQuality: String,
         patientSsin: String,
         patientFirstName: String,
         patientLastName: String,
@@ -587,36 +592,37 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         guardPostSsin: String?,
         guardPostName: String?,
         attest: Eattest,
-        referenceDate: Long?) : SendTransactionRequest {
+        referenceDate: Long?,
+        decisionReference: String?) : SendTransactionRequest {
 
         val refDateTime = dateTime(referenceDate) ?: now
         val theDayBeforeRefDate = refDateTime.plusDays(-1)
 
-        val requestAuthorNihii = guardPostNihii ?: hcpNihii
-        val requestAuthorSsin = guardPostSsin ?: hcpSsin
-        val requestAuthorCdHcParty = if (guardPostNihii?.isEmpty() != false) "persphysician" else "guardpost"
+        val requestAuthorNihii = if(hcpQuality == "guardpost") guardPostNihii else hcpNihii
+        val requestAuthorSsin = if(hcpQuality == "guardpost") guardPostSsin else hcpSsin
+        val requestAuthorCdHcParty = getRequestAuthorCdHcParty(hcpQuality);
 
         return SendTransactionRequest().apply {
             messageProtocoleSchemaVersion = BigDecimal("1.34")
             request = RequestType().apply {
                 id =
                     IDKMEHR().apply {
-                        s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = requestAuthorNihii.padEnd(11, '0') + "." +
+                        s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = requestAuthorNihii!!.padEnd(11, '0') + "." +
                         refDateTime.toString("yyyyMMddHHmmss")
                     }
                 author = AuthorType().apply {
                     hcparties.add(HcpartyType().apply {
-                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = requestAuthorNihii.padEnd(11, '0') })
+                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = requestAuthorNihii!!.padEnd(11, '0') })
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = requestAuthorSsin })
                         cds.add(CDHCPARTY().apply {
                             s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
                             requestAuthorCdHcParty
                         })
-                        if (guardPostNihii?.isEmpty() != false) {
+                        if (hcpQuality == "guardpost") {
+                            name = guardPostName
+                        } else {
                             firstname = hcpFirstName
                             familyname = hcpLastName
-                        } else {
-                            name = guardPostName
                         }
                     })
                 }
@@ -636,18 +642,18 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                         hcparties.add(HcpartyType().apply {
                             ids.add(IDHCPARTY().apply {
                                 s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =
-                                requestAuthorNihii.padEnd(11, '0')
+                                requestAuthorNihii!!.padEnd(11, '0')
                             })
                             ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = requestAuthorSsin })
                             cds.add(CDHCPARTY().apply {
                                 s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
                                 requestAuthorCdHcParty
                             })
-                            if (guardPostNihii?.isEmpty() != false) {
+                            if (hcpQuality == "guardpost") {
+                                name = guardPostName
+                            } else {
                                 firstname = hcpFirstName
                                 familyname = hcpLastName
-                            } else {
-                                name = guardPostName
                             }
                         })
                     }
@@ -698,7 +704,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 })
                                 cds.add(CDHCPARTY().apply {
                                     s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
-                                    "persphysician"
+                                    if(requestAuthorCdHcParty == "guardpost") "persphysician" else requestAuthorCdHcParty
                                 })
                                 firstname = traineeSupervisorFirstName
                                 familyname = traineeSupervisorLastName
@@ -716,7 +722,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 })
                                 cds.add(CDHCPARTY().apply {
                                     s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.16"; value =
-                                    "persphysician"
+                                    if(requestAuthorCdHcParty == "guardpost") "persphysician" else requestAuthorCdHcParty
                                 })
                                 firstname = hcpFirstName
                                 familyname = hcpLastName
@@ -803,6 +809,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                })
                            })
                         },
+
                         treatmentReason?.let { ItemType().apply {
                             ids.add(IDKMEHR().apply {
                                 s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
@@ -831,7 +838,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             })
                             cds.add(CDHCPARTY().apply {
                                 s = CDHCPARTYschemes.CD_HCPARTY; sv =
-                                "1.16"; value = "persphysician"
+                                "1.16"; value =  if(requestAuthorCdHcParty == "guardpost") "persphysician" else requestAuthorCdHcParty
                             })
                             firstname = hcpFirstName
                             familyname = hcpLastName
@@ -848,7 +855,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             })
                             cds.add(CDHCPARTY().apply {
                                 s = CDHCPARTYschemes.CD_HCPARTY; sv =
-                                "1.16"; value = "persphysician"
+                                "1.16"; value =  if(requestAuthorCdHcParty == "guardpost") "persphysician" else requestAuthorCdHcParty
                             })
                             firstname = traineeSupervisorFirstName
                             familyname = traineeSupervisorLastName
@@ -978,6 +985,22 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                                 "EUR"
                                             }
                                     }
+                                }
+                            },decisionReference?.let {
+                                ItemType().apply {
+                                    ids.add(IDKMEHR().apply {
+                                        s = IDKMEHRschemes.ID_KMEHR; sv = "1.0";
+                                        value = (itemId++).toString()
+                                    })
+                                    cds.add(CDITEM().apply { s = CD_ITEM_MYCARENET; sv = "1.6"; value = "decisionreference" })
+                                    contents.addAll(listOf(ContentType().apply {
+                                        cds.add(CDCONTENT().apply {
+                                            s = CDCONTENTschemes.LOCAL;
+                                            sv = "1.0";
+                                            sl = "OAreferencesystemname";
+                                            value = decisionReference.toString();
+                                        })
+                                    }))
                                 }
                             }, code.location?.let { loc ->
                                 ItemType().apply {
@@ -1520,6 +1543,18 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         } else {
             log.error(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND.message)
             throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_ETK_NOTFOUND)
+        }
+    }
+
+    private fun getRequestAuthorCdHcParty(hcpQuality: String): String{
+        if (hcpQuality == "doctor"){
+            return "persphysician"
+        }else if(hcpQuality == "guardpost") {
+            return "guardpost"
+        }else if(hcpQuality == "physiotherapist"){
+            return "persphysiotherapist"
+        }else{
+            return "persphysician"
         }
     }
 }

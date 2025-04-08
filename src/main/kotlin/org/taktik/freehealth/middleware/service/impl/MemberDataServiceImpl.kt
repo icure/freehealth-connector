@@ -781,6 +781,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 hcpQuality == "optician" ||
                 hcpQuality == "podologist" ||
                 hcpQuality == "dietician" ||
+                hcpQuality == "clinicalpsychologist" ||
                 hcpQuality == "hospital" ||
                 hcpQuality == "groupofnurses" ||
                 hcpQuality == "labo" ||
@@ -790,7 +791,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 hcpQuality == "groupofdoctors" ||
                 hcpQuality == "psychiatrichouse" ||
                 hcpQuality == "guardpost" ||
-                hcpQuality == "ambulanceservice"
+                hcpQuality == "ambulanceservice" ||
+                hcpQuality == "reeducation"
         ) { "hcpQuality is invalid" }
     }
 
