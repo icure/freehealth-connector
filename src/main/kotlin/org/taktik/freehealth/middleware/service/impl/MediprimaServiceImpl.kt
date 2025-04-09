@@ -1,6 +1,8 @@
 package org.taktik.freehealth.middleware.service.impl
 
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
+import be.fgov.ehealth.mediprima.protocol.v2.BySsinType
+import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedDataType
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponse
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
 import ma.glasnost.orika.MapperFacade
@@ -45,16 +47,14 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Genins operations")
 
-        val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-
-        log.debug("consultCaremedData called with principal " + (principal?._id
-            ?: "<ANONYMOUS>") + " and license " + (principal?.mcnLicense ?: "<DEFAULT>"))
-
-
         val consultCaremedRequest = be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionRequestType().apply {
-            this.issueInstant = XMLGregorianCalendarImpl(DateTime.now().toGregorianCalendar())
-            this.selectionCriteria.bySsin.ssin = patientSsin
-            this.selectionCriteria.bySsin.referenceDate =  DatatypeFactory.newInstance().newXMLGregorianCalendar()
+            issueInstant = XMLGregorianCalendarImpl(DateTime.now().toGregorianCalendar())
+            selectionCriteria = ConsultCarmedDataType().apply {
+                bySsin = BySsinType().apply {
+                    this.ssin = patientSsin
+                    this.referenceDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(referenceDate.toString())
+                }
+            }
         }
 
         this.mediprimaService.consultMediprima(samlToken, consultCaremedRequest, "urn:be:fgov:ehealth:mediprima:consultCarmedIntervention").let { response ->
