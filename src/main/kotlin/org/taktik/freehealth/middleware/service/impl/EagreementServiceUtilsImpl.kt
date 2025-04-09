@@ -158,7 +158,11 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 val supportingInfoList = mutableListOf<ClaimSupportingInfo>()
                 var sequenceNumber = 1
                 for (attachment in attachments!!) {
-                    supportingInfoList.add(getSupportingInfo(sequenceNumber, "attachment", attachment.type, null, null, attachment.data, attachment.type, "application/pdf"))
+                    if (attachment.type == "info") {
+                        supportingInfoList.add(getSupportingInfo(sequenceNumber, "info", null, null, attachment.data, null, null, null))
+                    } else {
+                        supportingInfoList.add(getSupportingInfo(sequenceNumber, "attachment", attachment.type, null, null, attachment.data, attachment.type, "application/pdf"))
+                    }
                     sequenceNumber += 1
                 }
                 supportingInfo = supportingInfoList
@@ -730,7 +734,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(parameter1)
         }
         //Service Request 1
-        if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.COMPLETE_AGREEMENT || requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE) {
+        if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.COMPLETE_AGREEMENT || requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) {
             val serviceRequest1 = JsonObject()
             serviceRequest1.addProperty("fullUrl" , "urn:uuid:" + uuidGenerator.generateId())
             serviceRequest1.add("resource", JsonParser().parse(mapper.writeValueAsString(getServiceRequest("1", "", prescription1!!, "1", numberOfSessionForPrescription1!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, sctCode, sctDisplay))).asJsonObject)
