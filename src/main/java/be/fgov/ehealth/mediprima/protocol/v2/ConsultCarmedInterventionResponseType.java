@@ -4,14 +4,15 @@ package be.fgov.ehealth.mediprima.protocol.v2;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
  * <p>Classe Java pour ConsultCarmedInterventionResponseType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="ConsultCarmedInterventionResponseType">
  *   &lt;complexContent>
@@ -24,14 +25,18 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ConsultCarmedInterventionResponseType", namespace = "urn:be:fgov:ehealth:mediprima:protocol:v2", propOrder = {
     "selectionCriteria",
     "result"
 })
+@XmlRootElement(
+    name = "ConsultCarmedInterventionResponse",
+    namespace = "urn:be:fgov:ehealth:mediprima:protocol:v2"
+)
 public class ConsultCarmedInterventionResponseType
     extends StatusResponseType
 {
@@ -43,11 +48,11 @@ public class ConsultCarmedInterventionResponseType
 
     /**
      * Obtient la valeur de la propriété selectionCriteria.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ConsultCarmedDataType }
-     *     
+     *
      */
     public ConsultCarmedDataType getSelectionCriteria() {
         return selectionCriteria;
@@ -55,11 +60,11 @@ public class ConsultCarmedInterventionResponseType
 
     /**
      * Définit la valeur de la propriété selectionCriteria.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ConsultCarmedDataType }
-     *     
+     *
      */
     public void setSelectionCriteria(ConsultCarmedDataType value) {
         this.selectionCriteria = value;
@@ -67,11 +72,11 @@ public class ConsultCarmedInterventionResponseType
 
     /**
      * Obtient la valeur de la propriété result.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CarmedAttributedListType }
-     *     
+     *
      */
     public CarmedAttributedListType getResult() {
         return result;
@@ -79,11 +84,11 @@ public class ConsultCarmedInterventionResponseType
 
     /**
      * Définit la valeur de la propriété result.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CarmedAttributedListType }
-     *     
+     *
      */
     public void setResult(CarmedAttributedListType value) {
         this.result = value;

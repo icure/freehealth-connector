@@ -29,7 +29,7 @@ class MediprimaServiceImpl: MediprimaService {
             mediprimaResponse.soapRequest = xmlResponse.request
             mediprimaResponse.soapResponse = xmlResponse.soapMessage
 
-            mediprimaResponse
+            return mediprimaResponse
         }catch (soapException: SOAPException) {
             throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, soapException, *arrayOf<Any?>(soapException.message))
         }
