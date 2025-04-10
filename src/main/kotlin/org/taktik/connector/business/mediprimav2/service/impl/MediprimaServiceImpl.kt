@@ -34,5 +34,4 @@ class MediprimaServiceImpl: MediprimaService {
             throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, soapException, *arrayOf<Any?>(soapException.message))
         }
     }
-
 }
