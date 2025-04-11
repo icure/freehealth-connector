@@ -462,6 +462,25 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                     "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
+            "podologist" -> listOf(
+                    SAMLAttributeDesignator(
+                        "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin",
+                        "urn:be:fgov:identification-namespace"
+                    ),
+                    SAMLAttributeDesignator("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace"),
+                    SAMLAttributeDesignator(
+                        "urn:be:fgov:person:ssin:ehealth:1.0:nihii:podologist:nihii11",
+                        "urn:be:fgov:certified-namespace:ehealth"
+                    ),
+                    SAMLAttributeDesignator(
+                        "urn:be:fgov:person:ssin:ehealth:1.0:givenname",
+                        "urn:be:fgov:certified-namespace:ehealth"
+                    ),
+                    SAMLAttributeDesignator(
+                        "urn:be:fgov:person:ssin:ehealth:1.0:surname",
+                        "urn:be:fgov:certified-namespace:ehealth"
+                    )
+                )
             "midwife" -> listOf(
                 SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin",
