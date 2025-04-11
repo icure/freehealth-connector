@@ -680,6 +680,18 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Hub operations")
+        val hubId = when (sl) {
+            "RSWID" -> "1990000035"
+            "RSBID" -> "1990000728"
+            "vitalinkuri" -> "1990001916"
+            else -> throw IllegalArgumentException("Invalid sl value: $sl")
+        }
+        val hubName = when (sl) {
+            "RSWID" -> "RSW"
+            "RSBID" -> "Abrumet"
+            "vitalinkuri" -> "Vitalink"
+            else -> throw IllegalArgumentException("Invalid sl value: $sl")
+        }
         val revokeresp =
             freehealthHubService.revokeTransaction(
             endpoint,
@@ -703,6 +715,17 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                                 this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl =
                                 sl; this.value = value
                             }
+                        author = AuthorType().apply {
+                            hcparties.add(HcpartyType().apply {
+                                cds.add(CDHCPARTY().apply {
+                                    this.s = CDHCPARTYschemes.CD_HCPARTY; this.sv = "1.1"; this.value = "hub"
+                                })
+                                ids.add(IDHCPARTY().apply {
+                                    this.s = IDHCPARTYschemes.ID_HCPARTY; this.sv = "1.0"; this.value = hubId
+                                })
+                                name = hubName
+                            })
+                        }
                     }
                 }
             }
