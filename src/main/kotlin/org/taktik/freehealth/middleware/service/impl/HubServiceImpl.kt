@@ -855,7 +855,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             TransactionSummaryDto().apply {
                 author = mapper.map(it.author, AuthorDto::class.java)
                 ids = it.ids.map { KmehrId().apply { s = it?.s?.value(); sv = it?.sv; sl = it?.sl; value = it?.value } }
-                cds = it.cds.map { KmehrCd().apply { s = it?.s?.value(); sv = it?.sv; sl = it?.sl; value = it?.value } }
+                cds = it.cds.map { KmehrCd().apply { s = it?.s?.value(); sv = it?.sv; sl = it?.sl; value = it?.value; dn = it?.dn } }
                 date = it.date.millis
                 time = it.time.millis
                 recorddatetime = it.recorddatetime.millis
