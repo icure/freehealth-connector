@@ -17,7 +17,6 @@ import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang.StringUtils
 import org.joda.time.DateTime
 import org.json.JSONObject
-import org.json.XML
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
@@ -242,7 +241,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 issueInstant = DateTime()
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
                 this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
-                // xades = BlobUtil.generateXades(credential, detail, "agreement")
             }
 
             try {
@@ -269,8 +267,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
 
                 val responseXML = decryptedKnownContent.businessContent.value.toString(Charsets.UTF_8)
 
-                // val errors = responseJSON.getJSONObject("Bundle").getJSONArray("entry")
-
                 var commonOutput =
                     CommonOutput(
                         agreementResponse?.`return`?.commonOutput?.inputReference,
@@ -282,14 +278,13 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 res.isAcknowledged = true
                 res.commonOutput = commonOutput
                 res.mycarenetConversation = MycarenetConversation().apply {
-                    soapRequest = agreementResponse.soapRequest?.writeTo(this.soapRequestOutputStream())?.toString()
-                    soapResponse = agreementResponse.soapResponse?.writeTo(this.soapResponseOutputStream())?.toString()
                     transactionRequest = ConnectorXmlUtils.toString(askAgreementRequest)
                     transactionResponse = responseXML
+                    agreementResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    agreementResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 }
                 res.content = responseXML.toByteArray(Charsets.UTF_8)
-                // TODO call that method but it's not fully implemented yest
-                // res.errors = extractErrors(responseJSON).toList()
+                res.xades = xades
                 return res;
             } catch (e: SoaErrorException) {
                 throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, e, e.message)
@@ -439,7 +434,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 issueInstant = DateTime()
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
                 this.id = IdGeneratorFactory.getIdGenerator("xsid").generateId()
-                //xades = BlobUtil.generateXades(credential, detail, "agreement")
             }
 
             try {
@@ -466,8 +460,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
 
                 val responseXML = decryptedKnownContent.businessContent.value.toString(Charsets.UTF_8)
 
-                // val errors = responseJSON.getJSONObject("Bundle").getJSONArray("entry")
-
                 var commonOutput =
                     CommonOutput(
                         consultAgreementResponse?.`return`?.commonOutput?.inputReference,
@@ -479,15 +471,13 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 res.isAcknowledged = true
                 res.commonOutput = commonOutput
                 res.mycarenetConversation = MycarenetConversation().apply {
-                    soapRequest = consultAgreementResponse.soapRequest?.writeTo(this.soapRequestOutputStream())?.toString()
-                    soapResponse = consultAgreementResponse.soapResponse?.writeTo(this.soapResponseOutputStream())?.toString()
                     transactionRequest = ConnectorXmlUtils.toString(consultAgreementResponse)
                     transactionResponse = responseXML
+                    consultAgreementResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    consultAgreementResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
                 }
                 res.content = responseXML.toByteArray(Charsets.UTF_8)
-
-                // TODO call that method but it's not fully implemented yest
-                // res.errors = extractErrors(responseJSON).toList()
+                res.xades = xades
                 return res;
             } catch (e: SoaErrorException) {
                 throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, e, e.message)
@@ -663,7 +653,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
             result.textContent = Base64.encodeBase64String(ConnectorXmlUtils.toByteArray(signature))
             result
         })
-        val encryptedKnowContent = builder.sign(credential, content.toByteArray(charset("UTF-8")), options)
+        val encryptedKnownContent = builder.sign(credential, content.toByteArray(charset("UTF-8")), options)
         return crypto.seal(
             Crypto.SigningPolicySelector.WITH_NON_REPUDIATION,
             KeyDepotManagerImpl.getInstance(keyDepotService).getEtkSet(
@@ -673,7 +663,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 null,
                 false
             ),
-            encryptedKnowContent
+            encryptedKnownContent
         )
     }
 
