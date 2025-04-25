@@ -298,8 +298,8 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                     mycarenetConversation = MycarenetConversation().apply {
                         this.transactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse).toString(Charsets.UTF_8)
                         this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
-                        cancelAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                        cancelAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+                        cancelAttestationResponse.soapResponse?.writeTo(this.soapResponseOutputStream())
+                        cancelAttestationResponse.soapRequest?.writeTo(this.soapRequestOutputStream())
                     },
                     kmehrMessage = blob.content,
                     timestamp = now.toString("yyyyMMddHHmmss")
@@ -313,8 +313,8 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(sendTransactionResponse).toString(Charsets.UTF_8)
                     this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
-                    cancelAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                    cancelAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+                    cancelAttestationResponse.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    cancelAttestationResponse.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
                 kmehrMessage = blob.content,
                 timestamp = now.toString("yyyyMMddHHmmss")
@@ -425,8 +425,8 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                 blob.messageName = "E-ATTEST"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-                val userAgent = UserAgentInterceptorFilter.getUserAgent();
-                val productName = userAgent?.split("/")?.get(0) ?: "";
+                val userAgent = UserAgentInterceptorFilter.getUserAgent()
+                val productName = userAgent?.split("/")?.get(0) ?: ""
                 val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName, productName, samlToken.quality)
 
                 this.commonInput = CommonInputType().apply {
@@ -466,7 +466,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                         ValueRefString().apply { value = requestAuthorNihii.padEnd(11, '0') }
                                     }
 
-                                guardPostNihii?.let {
+                                guardPostNihii.let {
                                     organization = IdType().apply {
                                         name = ValueRefString().apply { value = guardPostName }
                                         nihii = NihiiType().apply {
@@ -544,10 +544,10 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                     mycarenetConversation = MycarenetConversation().apply {
                         this.transactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse).toString(Charsets.UTF_8)
                         this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
-                        sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                        sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+                        sendAttestationResponse.soapResponse?.writeTo(this.soapResponseOutputStream())
+                        sendAttestationResponse.soapRequest?.writeTo(this.soapRequestOutputStream())
                     },
-                    kmehrMessage = encryptedKnownContent?.businessContent?.value,
+                    kmehrMessage = encryptedKnownContent.businessContent?.value,
                     timestamp = now.toString("yyyyMMddHHmmss")
                                             )
             } ?: SendAttestResultWithResponse(
@@ -559,10 +559,10 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse).toString(Charsets.UTF_8)
                     this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)
-                    sendAttestationResponse?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                    sendAttestationResponse?.soapRequest?.writeTo(this.soapRequestOutputStream())
+                    sendAttestationResponse.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    sendAttestationResponse.soapRequest?.writeTo(this.soapRequestOutputStream())
                 },
-                kmehrMessage = encryptedKnownContent?.businessContent?.value,
+                kmehrMessage = encryptedKnownContent.businessContent?.value,
                 timestamp = now.toString("yyyyMMddHHmmss")
                                              )
         }
@@ -608,8 +608,8 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         val requestAuthorSsin = guardPostSsin ?: hcpSsin
         val requestAuthorCdHcParty = if (guardPostNihii?.isEmpty() != false) hcpMcnQuality else "guardpost"
 
-        val totalPatientPaid = totalPatientPaid(attest);
-        val totalDoctorSupplement = totalDoctorSupplement(attest);
+        val totalPatientPaid = totalPatientPaid(attest)
+        val totalDoctorSupplement = totalDoctorSupplement(attest)
 
         return SendTransactionRequest().apply {
             messageProtocoleSchemaVersion = BigDecimal("1.34")
@@ -813,21 +813,27 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                })
                            })
                         },
-                        treatmentReason?.let { ItemType().apply {
-                            ids.add(IDKMEHR().apply {
-                                s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
-                                (itemId++).toString()
-                            })
-                            cds.add(CDITEM().apply {
-                                s = CD_ITEM_MYCARENET; sv = "1.6"; value =
-                                "treatmentreason"
-                            })
-                            contents.add(ContentType().apply {
-                                cds.add(CDCONTENT().apply {
-                                    s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl = "NIHDI-TREATMENT-REASON"; value = treatmentReason;
-                                })
-                            })
-                        } }
+                        treatmentReason?.let {
+                            if(it != "0000"){
+                                ItemType().apply {
+                                    ids.add(IDKMEHR().apply {
+                                        s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                        (itemId++).toString()
+                                    })
+                                    cds.add(CDITEM().apply {
+                                        s = CD_ITEM_MYCARENET; sv = "1.6"; value =
+                                        "treatmentreason"
+                                    })
+                                    contents.add(ContentType().apply {
+                                        cds.add(CDCONTENT().apply {
+                                            s = LOCAL; sv = "1.0"; sl = "NIHDI-TREATMENT-REASON"; value = treatmentReason
+                                        })
+                                    })
+                                }
+                            }else{
+                                null
+                            }
+                        }
                             ).filterNotNull())
                     }).plus(attest.codes.map { code ->
                         val author = HcpartyType().apply {
@@ -902,7 +908,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                     ContentType().apply {
                                         cds.add(CDCONTENT().apply {
                                             s =
-                                                CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                                LOCAL; sv = "1.0"; sl =
                                             "NIHDI-CLAIM-NORM"; value = code.norm.toString()
                                         })
                                     },
@@ -916,20 +922,28 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                         }
                                     },
                                     code.side?.let {
-                                        ContentType().apply {
-                                            cds.add(CDCONTENT().apply {
-                                                s = CDCONTENTschemes.LOCAL;
-                                                sv = "1.0";
-                                                sl = "NIHDI-TREATED-LIMB";
-                                                value = code.side!!.code.toString();
-                                            })
+                                        if (code.side!!.code.toString() != "0") {
+                                            ContentType().apply {
+                                                cds.add(CDCONTENT().apply {
+                                                    s = LOCAL;
+                                                    sv = "1.0";
+                                                    sl = "NIHDI-TREATED-LIMB";
+                                                    value = code.side!!.code.toString();
+                                                })
+                                            }
+                                        } else {
+                                            null // Return null to filter it out
                                         }
                                     },
                                     code.justification?.let {
-                                        ContentType().apply {
-                                            cds.add(CDCONTENT().apply {
-                                                s = LOCAL; sl = "NIHDI-CLAIM-EXEMPTION"; sv = "1.0"; value = it
-                                            })
+                                        if (it != "00") {
+                                            ContentType().apply {
+                                                cds.add(CDCONTENT().apply {
+                                                    s = LOCAL; sl = "NIHDI-CLAIM-EXEMPTION"; sv = "1.0"; value = it
+                                                })
+                                            }
+                                        }else{
+                                            null
                                         }
                                     }).filterNotNull())
                                 quantity = QuantityType().apply { decimal = BigDecimal(code.quantity) }
@@ -957,10 +971,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 })
                                 cost = CostType().apply {
                                     decimal =
-                                        BigDecimal.valueOf(
-                                            Math.round(
-                                                ((code.reimbursement ?: 0.0) + (code.reglementarySupplement ?: 0.0)) * 100)
-                                                .toLong()).divide(BigDecimal(100L)).setScale(2, RoundingMode.CEILING)
+                                        BigDecimal.valueOf(code.patientPaid ?: 0.0).setScale(2, RoundingMode.CEILING)
                                     unit = UnitType().apply {
                                         cd =
                                             CDUNIT().apply {
@@ -1019,7 +1030,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                        code.locationService?.let { svc ->
                                            ContentType().apply {
                                                this.cds.add(CDCONTENT().apply {
-                                                   s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                                   s = LOCAL; sv = "1.0"; sl =
                                                    "NIHDI-SERVICE-CD"; value = svc.toString()
                                                })
                                            }
@@ -1059,11 +1070,15 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                                                    ?: theDayBeforeRefDate
                                                            },
                                                            code.requestorNorm?.let { norm ->
-                                                               ContentType().apply {
-                                                                   this.cds.add(CDCONTENT().apply {
-                                                                       s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
-                                                                       "NIHDI-REQUESTOR-NORM"; value = norm.toString()
-                                                                   })
+                                                               if (norm.toString() != "0"){
+                                                                   ContentType().apply {
+                                                                       this.cds.add(CDCONTENT().apply {
+                                                                           s = LOCAL; sv = "1.0"; sl =
+                                                                           "NIHDI-REQUESTOR-NORM"; value = norm.toString()
+                                                                       })
+                                                                   }
+                                                               }else{
+                                                                   null
                                                                }
                                                            }).filterNotNull())
                                 }
@@ -1149,14 +1164,14 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                                            ContentType().apply {
                                                                cds.add(CDCONTENT().apply {
                                                                    s =
-                                                                       CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                                                       LOCAL; sv = "1.0"; sl =
                                                                    "NIHDI-ID-DOC-INPUT-TYPE"; value =
                                                                    cr.inputType
                                                                })
                                                            cr.manualInputReason?.let {
                                                                    cds.add(CDCONTENT().apply {
                                                                        s =
-                                                                           CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                                                           LOCAL; sv = "1.0"; sl =
                                                    "NIHDI-ID-DOC-MANUAL-INPUT-JUSTIFICATION"; value =
                                                                        it.toString()
                                                                    })
@@ -1164,14 +1179,14 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                                             cr.vignetteReason?.let {
                                                                     cds.add(CDCONTENT().apply {
                                                                         s =
-                                                                            CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                                                            LOCAL; sv = "1.0"; sl =
                                                                         "NIHDI-ID-DOC-VIGNETTE-USE-JUSTIFICATION"; value =
                                                                         it.toString()
                                                                     })
                                                                 }
                                                                cds.add(CDCONTENT().apply {
                                                                    s =
-                                                                       CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                                                       LOCAL; sv = "1.0"; sl =
                                                                    "NIHDI-ID-DOC-MEDIA-TYPE"; value =
                                                                    cr.mediaType
                                                                })
@@ -1197,7 +1212,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                         })
                                         contents.add(ContentType().apply {
                                             ids.add(IDKMEHR().apply {
-                                                s = IDKMEHRschemes.LOCAL ; sv = "1.0"; sl = "OAreferencesystemname"; value = it;
+                                                s = IDKMEHRschemes.LOCAL ; sv = "1.0"; sl = "OAreferencesystemname"; value = it
                                             })
                                         })
                                     }
@@ -1379,7 +1394,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 },
                                 ContentType().apply {
                                     cds.add(CDCONTENT().apply {
-                                        s = CDCONTENTschemes.LOCAL; sl = "NIHDI-CANCELLATION-REASON"; sv = "1.0";  value = reason
+                                        s = LOCAL; sl = "NIHDI-CANCELLATION-REASON"; sv = "1.0";  value = reason
                                     })
                                 }))
                         }))
@@ -1390,20 +1405,20 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
     }
 
     private fun patientPaid(code: Eattest.EattestCode) : BigDecimal {
-        return BigDecimal.valueOf(code.patientPaid ?: ((code.reimbursement ?: 0.0) + (code.reglementarySupplement ?: 0.0))).setScale(2, RoundingMode.CEILING);
+        return BigDecimal.valueOf(code.patientPaid ?: ((code.reimbursement ?: 0.0) + (code.reglementarySupplement ?: 0.0))).setScale(2, RoundingMode.CEILING)
     }
 
     private fun totalPatientPaid(attest: Eattest) : BigDecimal {
         return if (attest.patientPaid != null) {
             BigDecimal.valueOf(Math.round(
                 ((attest.patientPaid ?: 0.0) * 100)
-            ).toInt().toLong()).divide(BigDecimal(100L)).setScale(2, RoundingMode.CEILING);
+            ).toInt().toLong()).divide(BigDecimal(100L)).setScale(2, RoundingMode.CEILING)
         } else {
             BigDecimal.valueOf(attest.codes.sumBy {
                 Math.round(
                     ((it.reimbursement ?: 0.0) + (it.reglementarySupplement ?: 0.0)) * 100
                 ).toInt()
-            }.toLong()).divide(BigDecimal(100L)).setScale(2, RoundingMode.CEILING);
+            }.toLong()).divide(BigDecimal(100L)).setScale(2, RoundingMode.CEILING)
         }
     }
 
@@ -1465,7 +1480,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                     if(elements.isNotEmpty())
                     {
                         elements.forEach { it.value = textContent }
-                        result.addAll(elements);
+                        result.addAll(elements)
                     }
                     else
                     {
@@ -1504,7 +1519,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
     }
 
     private fun nodeDescr(node: Node): String {
-        val localName = node.localName ?: node.nodeName?.replace(Regex(".+?:(.+)"), "$1") ?: "unknown"
+        val localName = node.localName ?: node.nodeName.replace(Regex(".+?:(.+)"), "$1") ?: "unknown"
         val xpath = xPathFactory.newXPath()
         xpath.namespaceContext = object : NamespaceContext {
             override fun getNamespaceURI(prefix: String?) = "http://www.ehealth.fgov.be/standards/kmehr/schema/v1"
@@ -1516,7 +1531,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
             localName == "transaction" -> "transaction[${xpath.evaluate("ns1:cd[@S=\"CD-TRANSACTION-MYCARENET\"]", node)}]"
             localName == "item" -> "item[${xpath.evaluate("ns1:cd[@S=\"CD-ITEM-MYCARENET\" or @S=\"CD-ITEM\"]", node)}]"
             localName == "cd" && node is Element -> {
-                if (node.getAttribute("SL")?.isNotEmpty() == true) "cd[${node.getAttribute("SL")}]" else "cd[${node.getAttribute("S")}]"
+                if (node.getAttribute("SL").isNotEmpty() == true) "cd[${node.getAttribute("SL")}]" else "cd[${node.getAttribute("S")}]"
             }
             else -> localName
         }
