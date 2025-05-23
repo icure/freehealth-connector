@@ -5,6 +5,7 @@ import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedDataType
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionRequestType
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponse
 import ma.glasnost.orika.MapperFacade
+import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.mediprimav2.service.impl.MediprimaServiceImpl
@@ -17,12 +18,15 @@ import org.taktik.freehealth.middleware.service.STSService
 import java.io.StringWriter
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.*
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Marshaller
 import javax.xml.datatype.DatatypeConstants
 import javax.xml.datatype.DatatypeFactory
 import javax.xml.datatype.XMLGregorianCalendar
+import kotlin.time.Clock
 
 @Service
 class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepotService, val mapper: MapperFacade) : MediprimaService {
@@ -55,7 +59,7 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
         val issueInstant: XMLGregorianCalendar = datatypeFactory.newXMLGregorianCalendar(now)
         val referenceDate: XMLGregorianCalendar = datatypeFactory.newXMLGregorianCalendar(now)
         val consultCaremedRequestType: ConsultCarmedInterventionRequestType = ConsultCarmedInterventionRequestType().apply {
-            this.issueInstant = issueInstant
+            this.issueInstant = DateTime.now()
             this.id = detailId
             this.selectionCriteria = ConsultCarmedDataType().apply {
                 this.bySsin = BySsinType().apply {

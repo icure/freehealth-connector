@@ -1,11 +1,14 @@
 
 package be.fgov.ehealth.mediprima.protocol.v2;
 
+import be.fgov.ehealth.commons.protocol.v2.RequestType;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.io.Serializable;
 
 
 /**
@@ -27,19 +30,24 @@ import javax.xml.bind.annotation.XmlType;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ConsultCarmedInterventionRequestType", namespace = "urn:be:fgov:ehealth:mediprima:protocol:v2", propOrder = {
-    "selectionCriteria"
-})
 @XmlRootElement(
-    name = "ConsultCarmedInterventionRequest",
-    namespace = "urn:be:fgov:ehealth:mediprima:protocol:v2"
+        name = "ConsultCarmedInterventionRequest"
+)
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(
+        name = "ConsultCarmedInterventionRequestType",
+        propOrder = { "selectionCriteria" }
 )
 public class ConsultCarmedInterventionRequestType
-    extends RequestType
+    extends RequestType implements Serializable
 {
 
-    @XmlElement(name = "SelectionCriteria", required = true)
+    private static final long serialVersionUID = 1L;
+
+    @XmlElement(
+            name = "SelectionCriteria",
+            required = true
+    )
     protected ConsultCarmedDataType selectionCriteria;
 
     /**
