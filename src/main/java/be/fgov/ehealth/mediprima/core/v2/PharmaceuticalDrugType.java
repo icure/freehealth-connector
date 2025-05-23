@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PharmaceuticalDrugType", namespace = "urn:be:fgov:ehealth:mediprima:core:v2", propOrder = {
+@XmlType(name = "PharmaceuticalDrugType", propOrder = {
     "pharmacyList"
 })
 public class PharmaceuticalDrugType
