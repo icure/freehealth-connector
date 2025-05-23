@@ -1,7 +1,7 @@
 package org.taktik.freehealth.middleware.service.impl
 
-import be.fgov.ehealth.mediprima.protocol.v2.BySsinType
-import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedDataType
+import be.fgov.ehealth.mediprima.core.v2.BySsinType
+import be.fgov.ehealth.mediprima.core.v2.ConsultCarmedDataType
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionRequestType
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponse
 import ma.glasnost.orika.MapperFacade
@@ -17,16 +17,14 @@ import org.taktik.freehealth.middleware.service.MediprimaService
 import org.taktik.freehealth.middleware.service.STSService
 import java.io.StringWriter
 import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
 import java.util.*
 import javax.xml.bind.JAXBContext
+import javax.xml.bind.JAXBElement
 import javax.xml.bind.Marshaller
 import javax.xml.datatype.DatatypeConstants
 import javax.xml.datatype.DatatypeFactory
 import javax.xml.datatype.XMLGregorianCalendar
-import kotlin.time.Clock
+import javax.xml.namespace.QName
 
 @Service
 class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepotService, val mapper: MapperFacade) : MediprimaService {
@@ -56,10 +54,10 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
             time = Date()
         }
         val detailId = "R" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
-        val issueInstant: XMLGregorianCalendar = datatypeFactory.newXMLGregorianCalendar(now)
+        val issueInstant: DateTime = DateTime.now()
         val referenceDate: XMLGregorianCalendar = datatypeFactory.newXMLGregorianCalendar(now)
         val consultCaremedRequestType: ConsultCarmedInterventionRequestType = ConsultCarmedInterventionRequestType().apply {
-            this.issueInstant = DateTime.now()
+            this.issueInstant = issueInstant
             this.id = detailId
             this.selectionCriteria = ConsultCarmedDataType().apply {
                 this.bySsin = BySsinType().apply {
@@ -68,7 +66,12 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
                 }
             }
         }
-        println("Request is: " +marshalToString(consultCaremedRequestType))
+        try {
+            println("Request is: " + marshalToString(consultCaremedRequestType))
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+
 
         this.mediprimaService.consultMediprima(samlToken, consultCaremedRequestType, "urn:be:fgov:ehealth:mediprima:consultCarmedIntervention").let { response ->
             val result = ConsultCarmedInterventionResponse()
@@ -82,11 +85,14 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
     fun marshalToString(request: Any): String {
         val jaxbContext = JAXBContext.newInstance(request.javaClass)
         val marshaller = jaxbContext.createMarshaller()
-
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true) // Indente le XML
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
 
         val writer = StringWriter()
-        marshaller.marshal(request, writer)
+
+        val qName = QName("urn:be:fgov:ehealth:mediprima:protocol:v2", "ConsultCarmedInterventionRequest")
+        val jaxbElement = JAXBElement(qName, request.javaClass, request)
+
+        marshaller.marshal(jaxbElement, writer)
         return writer.toString()
     }
 

@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Classe Java pour ConsultCarmedDataType complex type.
- *
+ * 
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- *
+ * 
  * <pre>
  * &lt;complexType name="ConsultCarmedDataType">
  *   &lt;complexContent>
@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ConsultCarmedDataType", namespace = "urn:be:fgov:ehealth:mediprima:core:v2", propOrder = {
+@XmlType(name = "ConsultCarmedDataType", propOrder = {
     "bySsin"
 })
 public class ConsultCarmedDataType {
@@ -37,11 +37,11 @@ public class ConsultCarmedDataType {
 
     /**
      * Obtient la valeur de la propriété bySsin.
-     *
+     * 
      * @return
      *     possible object is
      *     {@link BySsinType }
-     *
+     *     
      */
     public BySsinType getBySsin() {
         return bySsin;
@@ -49,11 +49,11 @@ public class ConsultCarmedDataType {
 
     /**
      * Définit la valeur de la propriété bySsin.
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link BySsinType }
-     *
+     *     
      */
     public void setBySsin(BySsinType value) {
         this.bySsin = value;

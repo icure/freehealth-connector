@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "MedicalCardRegistryMessageType", namespace = "urn:be:fgov:ehealth:mediprima:core:v2", propOrder = {
+@XmlType(name = "MedicalCardRegistryMessageType", propOrder = {
     "reasonCode",
     "source",
     "communication"

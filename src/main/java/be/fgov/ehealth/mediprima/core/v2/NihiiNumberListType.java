@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "NihiiNumberListType", namespace = "urn:be:fgov:ehealth:mediprima:core:v2", propOrder = {
+@XmlType(name = "NihiiNumberListType", propOrder = {
     "nihiiNumber"
 })
 @XmlSeeAlso({

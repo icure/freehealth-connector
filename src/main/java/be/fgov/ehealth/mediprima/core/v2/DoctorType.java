@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DoctorType", namespace = "urn:be:fgov:ehealth:mediprima:core:v2", propOrder = {
+@XmlType(name = "DoctorType", propOrder = {
     "healthCareProviderList"
 })
 public class DoctorType

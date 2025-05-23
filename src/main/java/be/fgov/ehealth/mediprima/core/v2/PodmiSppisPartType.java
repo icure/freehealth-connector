@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PodmiSppisPartType", namespace = "urn:be:fgov:ehealth:mediprima:core:v2", propOrder = {
+@XmlType(name = "PodmiSppisPartType", propOrder = {
     "hospitalizationPart",
     "ambulatoryCarePart",
     "otherPart"

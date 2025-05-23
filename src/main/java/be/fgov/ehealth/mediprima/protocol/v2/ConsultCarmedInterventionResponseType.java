@@ -1,11 +1,11 @@
 
 package be.fgov.ehealth.mediprima.protocol.v2;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import be.fgov.ehealth.commons.protocol.v2.StatusResponseType;
+import be.fgov.ehealth.mediprima.core.v2.CarmedAttributedListType;
+import be.fgov.ehealth.mediprima.core.v2.ConsultCarmedDataType;
+
+import javax.xml.bind.annotation.*;
 
 
 /**
@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
  *
  *
  */
+@XmlRootElement(
+        name = "ConsultCarmedInterventionResponseType",
+        namespace = "urn:be:fgov:ehealth:mediprima:protocol:v2"
+)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ConsultCarmedInterventionResponseType", namespace = "urn:be:fgov:ehealth:mediprima:protocol:v2", propOrder = {
+@XmlType(name = "ConsultCarmedInterventionResponseType", propOrder = {
     "selectionCriteria",
     "result"
 })
-@XmlRootElement(
-    name = "ConsultCarmedInterventionResponse",
-    namespace = "urn:be:fgov:ehealth:mediprima:protocol:v2"
-)
 public class ConsultCarmedInterventionResponseType
     extends StatusResponseType
 {

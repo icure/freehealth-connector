@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "MedicalCoverCommonInformationType", namespace = "urn:be:fgov:ehealth:mediprima:core:v2", propOrder = {
+@XmlType(name = "MedicalCoverCommonInformationType", propOrder = {
     "validityPeriod",
     "pswcSupport",
     "amountPatientPartMax",

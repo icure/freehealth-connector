@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "MiscellaneousType", namespace = "urn:be:fgov:ehealth:mediprima:core:v2")
+@XmlType(name = "MiscellaneousType")
 public class MiscellaneousType
     extends MedicalCoverCommonInformationType
 {
