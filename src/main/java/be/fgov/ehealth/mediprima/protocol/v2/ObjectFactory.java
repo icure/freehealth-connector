@@ -436,7 +436,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link ConsultCarmedInterventionResponseType }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "urn:be:fgov:ehealth:mediprima:protocol:v2", name = "ConsultCarmedInterventionResponse")
+    @XmlElementDecl(name = "ConsultCarmedInterventionResponse")
     public JAXBElement<ConsultCarmedInterventionResponseType> createConsultCarmedInterventionResponse(ConsultCarmedInterventionResponseType value) {
         return new JAXBElement<ConsultCarmedInterventionResponseType>(_ConsultCarmedInterventionResponse_QNAME, ConsultCarmedInterventionResponseType.class, null, value);
     }
@@ -445,7 +445,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link StatusType }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "urn:be:fgov:ehealth:commons:core:v2", name = "Status")
+    @XmlElementDecl(name = "Status")
     public JAXBElement<StatusType> createStatus(StatusType value) {
         return new JAXBElement<StatusType>(_Status_QNAME, StatusType.class, null, value);
     }
@@ -454,7 +454,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link StatusDetailType }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "urn:be:fgov:ehealth:commons:core:v2", name = "StatusDetail")
+    @XmlElementDecl(name = "StatusDetail")
     public JAXBElement<StatusDetailType> createStatusDetail(StatusDetailType value) {
         return new JAXBElement<StatusDetailType>(_StatusDetail_QNAME, StatusDetailType.class, null, value);
     }
@@ -472,7 +472,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link IdType }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "urn:be:fgov:ehealth:commons:core:v2", name = "Id")
+    @XmlElementDecl(name = "Id")
     public JAXBElement<IdType> createId(IdType value) {
         return new JAXBElement<IdType>(_Id_QNAME, IdType.class, null, value);
     }
@@ -481,7 +481,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link AuthorType }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "urn:be:fgov:ehealth:commons:core:v2", name = "Author")
+    @XmlElementDecl(name = "Author")
     public JAXBElement<AuthorType> createAuthor(AuthorType value) {
         return new JAXBElement<AuthorType>(_Author_QNAME, AuthorType.class, null, value);
     }
@@ -490,7 +490,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link ActorType }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "urn:be:fgov:ehealth:commons:core:v2", name = "Patient")
+    @XmlElementDecl(name = "Patient")
     public JAXBElement<ActorType> createPatient(ActorType value) {
         return new JAXBElement<ActorType>(_Patient_QNAME, ActorType.class, null, value);
     }
@@ -508,7 +508,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link ActorType }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "urn:be:fgov:ehealth:commons:core:v2", name = "HcParty")
+    @XmlElementDecl(name = "HcParty")
     public JAXBElement<ActorType> createHcParty(ActorType value) {
         return new JAXBElement<ActorType>(_HcParty_QNAME, ActorType.class, null, value);
     }
@@ -517,7 +517,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "urn:be:fgov:ehealth:commons:core:v2", name = "StatusMessage")
+    @XmlElementDecl(name = "StatusMessage")
     public JAXBElement<String> createStatusMessage(String value) {
         return new JAXBElement<String>(_StatusMessage_QNAME, String.class, null, value);
     }
@@ -526,7 +526,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link ConsultCarmedInterventionRequestType }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "urn:be:fgov:ehealth:mediprima:protocol:v2", name = "ConsultCarmedInterventionRequest")
+    @XmlElementDecl(name = "ConsultCarmedInterventionRequest")
     public JAXBElement<ConsultCarmedInterventionRequestType> createConsultCarmedInterventionRequest(ConsultCarmedInterventionRequestType value) {
         return new JAXBElement<ConsultCarmedInterventionRequestType>(_ConsultCarmedInterventionRequest_QNAME, ConsultCarmedInterventionRequestType.class, null, value);
     }
@@ -535,7 +535,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link StatusCodeType }{@code >}}
      *
      */
-    @XmlElementDecl(namespace = "urn:be:fgov:ehealth:commons:core:v2", name = "StatusCode")
+    @XmlElementDecl(name = "StatusCode")
     public JAXBElement<StatusCodeType> createStatusCode(StatusCodeType value) {
         return new JAXBElement<StatusCodeType>(_StatusCode_QNAME, StatusCodeType.class, null, value);
     }
