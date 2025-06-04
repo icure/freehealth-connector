@@ -8,8 +8,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.soap.SOAPMessage;
 
 @XmlRootElement(
-        name = "ConsultCarmedInterventionResponse",
-        namespace = "urn:be:fgov:ehealth:mediprima:protocol:v2"
+        name = "ConsultCarmedInterventionResponse"
 )
 public class ConsultCarmedInterventionResponse extends ResponseType implements SoapConversationLogger {
     private static final long serialVersionUID = 1L;

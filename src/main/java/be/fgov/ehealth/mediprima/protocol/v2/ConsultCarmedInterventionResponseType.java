@@ -29,8 +29,7 @@ import javax.xml.bind.annotation.*;
  *
  */
 @XmlRootElement(
-        name = "ConsultCarmedInterventionResponseType",
-        namespace = "urn:be:fgov:ehealth:mediprima:protocol:v2"
+        name = "ConsultCarmedInterventionResponseType"
 )
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ConsultCarmedInterventionResponseType", propOrder = {

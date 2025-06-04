@@ -79,6 +79,9 @@ public abstract class AbstractWsSender {
          executeHandlers(chain, request);
          conn = scf.createConnection();
          SOAPMessage message = request.getMessage();
+         ByteArrayOutputStream bos = new ByteArrayOutputStream();
+         message.writeTo(bos);
+         System.out.println(bos);
          SOAPMessageContext reply = createSOAPMessageCtx(conn.call(message, generateEndpoint(request)));
          reply.putAll(genericRequest.getRequestMap());
          reply.put("javax.xml.ws.handler.message.outbound", false);
