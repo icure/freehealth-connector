@@ -25,7 +25,7 @@ org.taktik.icure.keystore2.nihii=...
 org.taktik.icure.keystore2.password=...
 org.taktik.icure.keystore2.name=...
 ```
-## Howto use the Freehealth Connector
+## How to use the Freehealth Connector
 
 ### Obtaining a token
 
@@ -63,4 +63,4 @@ curl "https://fhcprd.icure.cloud/recipe/v4?hcpQuality=persphysician&hcpNihii=$NI
 
 The endpoints are documented in the OpenAPI format and can be accessed at:
 
-```https://fhcacc.icure.cloud/api/index.html```
+```https://fhcprd.icure.cloud/api/index.html```
