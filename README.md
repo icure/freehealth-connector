@@ -64,11 +64,3 @@ curl "https://fhcprd.icure.cloud/recipe/v4?hcpQuality=persphysician&hcpNihii=$NI
 The endpoints are documented in the OpenAPI format and can be accessed at:
 
 ```https://fhcacc.icure.cloud/api/index.html```
-
-#### Create a new prescription
-
-In order to create a new prescription, you need to call the following endpoint:
-
-```
-POST /api/prescriptions
-```
