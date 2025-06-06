@@ -3,7 +3,6 @@ package org.taktik.freehealth.middleware.service.impl
 import be.fgov.ehealth.mediprima.core.v2.BySsinType
 import be.fgov.ehealth.mediprima.core.v2.ConsultCarmedDataType
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionRequestType
-import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponse
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponseType
 import ma.glasnost.orika.MapperFacade
 import org.joda.time.DateTime
@@ -12,12 +11,13 @@ import org.springframework.stereotype.Service
 import org.taktik.connector.business.mediprimav2.service.impl.MediprimaServiceImpl
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
-import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.MediprimaService
 import org.taktik.freehealth.middleware.service.STSService
 import java.io.StringWriter
 import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.*
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.JAXBElement
@@ -31,7 +31,6 @@ import javax.xml.namespace.QName
 class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepotService, val mapper: MapperFacade) : MediprimaService {
 
     private val log = LoggerFactory.getLogger(this.javaClass)
-    private val keyDepotManager = KeyDepotManagerImpl.getInstance(keyDepotService)
     private val mediprimaService = MediprimaServiceImpl()
 
     override fun consultCaremedData(
@@ -50,20 +49,29 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Mediprima operations")
-        val datatypeFactory: DatatypeFactory = DatatypeFactory.newInstance()
-        val now: GregorianCalendar = GregorianCalendar(TimeZone.getTimeZone("Europe/Brussels")).apply {
-            time = Date()
-        }
+        val zone = ZoneId.of("Europe/Brussels")
+        val zdt: ZonedDateTime = referenceDate.atZone(zone)
+        val year = zdt.year
+        val month = zdt.monthValue
+        val day = zdt.dayOfMonth
+
+        val datatypeFactory = DatatypeFactory.newInstance()
+        val refXgc: XMLGregorianCalendar = datatypeFactory.newXMLGregorianCalendarDate(
+            year,
+            month,
+            day,
+            DatatypeConstants.FIELD_UNDEFINED  // on ne précise pas de zone pour la date seule
+        )
+
         val detailId = "R" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
         val issueInstant: DateTime = DateTime.now()
-        val referenceDate: XMLGregorianCalendar = datatypeFactory.newXMLGregorianCalendar(now)
         val consultCaremedRequestType: ConsultCarmedInterventionRequestType = ConsultCarmedInterventionRequestType().apply {
             this.issueInstant = issueInstant
             this.id = detailId
             this.selectionCriteria = ConsultCarmedDataType().apply {
                 this.bySsin = BySsinType().apply {
                     this.ssin = patientSsin
-                    this.referenceDate = normalizeToDateOnly(referenceDate)//DatatypeFactory.newInstance().newXMLGregorianCalendar(referenceDate.toString())
+                    this.referenceDate = refXgc
                 }
             }
         }
@@ -75,18 +83,7 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
             val sw = StringWriter()
             marshaller.marshal(response, sw)
-            //println(sw.toString())
-            val consultCarmedInterventionResponse: ConsultCarmedInterventionResponse = ConsultCarmedInterventionResponse().apply {
-                this.response = result
-                this.mycarenetConversation.apply {
-                    this.soapResponse = sw.toString()
-                    this.soapRequest = marshalToString(consultCaremedRequestType)
-                }
-            }
-            //result.upstreamTiming = response.upstreamTiming
-            //result.soapRequest = response.soapRequest
-            //result.soapResponse = response.soapResponse
-            //println(result.soapResponse.toString())
+            println(sw.toString())
             return result
         }
     }
