@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 internal val timezone: String = "Europe/Brussels"
@@ -34,9 +35,9 @@ class MediprimaController(val mediprimaService: org.taktik.freehealth.middleware
         @RequestParam (required = false) endDate: Long?,
         @RequestParam (required = false) referenceDate: Long?
     ): ConsultCarmedInterventionResponseType? {
-        val instantStartDate: Instant = startDate?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(timezone)).toInstant()
-        val instantEndDate: Instant = endDate?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(timezone)).toInstant()
-        val instantReferenceDate: Instant = referenceDate?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(timezone)).toInstant()
+        val instantStartDate: Instant = toInstantFromLongWithFormatter(startDate)!!
+        val instantEndDate: Instant = toInstantFromLongWithFormatter(endDate)!!
+        val instantReferenceDate: Instant = toInstantFromLongWithFormatter(referenceDate)!!
 
         return mediprimaService.consultCaremedData(
             keystoreId = keystoreId,
@@ -51,5 +52,14 @@ class MediprimaController(val mediprimaService: org.taktik.freehealth.middleware
             endDate = instantEndDate,
             referenceDate = instantReferenceDate
         )
+    }
+
+    fun toInstantFromLongWithFormatter(dateLong: Long?): Instant? {
+        return dateLong?.let { value ->
+            val text = value.toString()
+            val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+            val localDate = LocalDate.parse(text, formatter)
+            localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()
+        }
     }
 }
