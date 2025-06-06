@@ -83,7 +83,7 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
             val sw = StringWriter()
             marshaller.marshal(response, sw)
-            println(sw.toString())
+            //println(sw.toString())
             return result
         }
     }
@@ -100,16 +100,6 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
 
         marshaller.marshal(jaxbElement, writer)
         return writer.toString()
-    }
-
-    fun normalizeToDateOnly(date: XMLGregorianCalendar): XMLGregorianCalendar {
-        date.hour = DatatypeConstants.FIELD_UNDEFINED
-        date.minute = DatatypeConstants.FIELD_UNDEFINED
-        date.second = DatatypeConstants.FIELD_UNDEFINED
-        date.millisecond = DatatypeConstants.FIELD_UNDEFINED
-        date.timezone = DatatypeConstants.FIELD_UNDEFINED
-
-        return date
     }
 
 }
