@@ -30,6 +30,5 @@ class MediprimaControllerTest: EhealthTest()  {
         val response = this.restTemplate.exchange("http://localhost:$port/mediprima/consultMediprima/${"95060180934"}?hcpQuality=${"doctor"}&hcpNihii=$nihii6&hcpSsin=$ssin6&hcpName=$name6" +
                 "&passPhrase=$passPhrase&startDate=20250409&endDate=20250409&referenceDate=20250409",
             HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
-        println("Result: "+ ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
     }
 }

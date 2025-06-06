@@ -4,6 +4,7 @@ import be.fgov.ehealth.mediprima.core.v2.BySsinType
 import be.fgov.ehealth.mediprima.core.v2.ConsultCarmedDataType
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionRequestType
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponse
+import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponseType
 import ma.glasnost.orika.MapperFacade
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
@@ -45,7 +46,7 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
         startDate: Instant,
         endDate: Instant,
         referenceDate: Instant
-    ): ConsultCarmedInterventionResponse? {
+    ): ConsultCarmedInterventionResponseType? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Mediprima operations")
@@ -66,18 +67,26 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
                 }
             }
         }
-        try {
-            println("Request is: " + marshalToString(consultCaremedRequestType))
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
 
-
-        this.mediprimaService.consultMediprima(samlToken, consultCaremedRequestType, "urn:be:fgov:ehealth:mediprima:consultCarmedIntervention").let { response ->
-            val result = ConsultCarmedInterventionResponse()
-            result.upstreamTiming = response.upstreamTiming
-            result.soapRequest = response.soapRequest
-            result.soapResponse = response.soapResponse
+        this.mediprimaService.consultMediprima(samlToken, consultCaremedRequestType, "urn:be:fgov:ehealth:mediprima:protocol:v2:consultCarmedIntervention").let { response ->
+            val result = ConsultCarmedInterventionResponseType()
+            val jaxbContext = JAXBContext.newInstance(ConsultCarmedInterventionResponseType::class.java)
+            val marshaller: Marshaller = jaxbContext.createMarshaller()
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
+            val sw = StringWriter()
+            marshaller.marshal(response, sw)
+            //println(sw.toString())
+            val consultCarmedInterventionResponse: ConsultCarmedInterventionResponse = ConsultCarmedInterventionResponse().apply {
+                this.response = result
+                this.mycarenetConversation.apply {
+                    this.soapResponse = sw.toString()
+                    this.soapRequest = marshalToString(consultCaremedRequestType)
+                }
+            }
+            //result.upstreamTiming = response.upstreamTiming
+            //result.soapRequest = response.soapRequest
+            //result.soapResponse = response.soapResponse
+            //println(result.soapResponse.toString())
             return result
         }
     }
