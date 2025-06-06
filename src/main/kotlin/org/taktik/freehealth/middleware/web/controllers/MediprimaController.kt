@@ -1,6 +1,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponse
+import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponseType
 import ma.glasnost.orika.MapperFacade
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PathVariable
@@ -32,7 +33,7 @@ class MediprimaController(val mediprimaService: org.taktik.freehealth.middleware
         @RequestParam (required = false) startDate: Long?,
         @RequestParam (required = false) endDate: Long?,
         @RequestParam (required = false) referenceDate: Long?
-    ): ConsultCarmedInterventionResponse? {
+    ): ConsultCarmedInterventionResponseType? {
         val instantStartDate: Instant = startDate?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(timezone)).toInstant()
         val instantEndDate: Instant = endDate?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(timezone)).toInstant()
         val instantReferenceDate: Instant = referenceDate?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(timezone)).toInstant()

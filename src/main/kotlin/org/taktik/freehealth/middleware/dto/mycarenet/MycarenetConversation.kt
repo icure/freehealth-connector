@@ -28,5 +28,4 @@ class MycarenetConversation(
     fun soapResponseOutputStream(): OutputStream {
         return soapResponseBos ?: ByteArrayOutputStream(10000).apply { this@MycarenetConversation.soapResponseBos = this }
     }
-
 }

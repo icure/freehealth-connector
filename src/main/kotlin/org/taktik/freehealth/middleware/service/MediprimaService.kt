@@ -1,6 +1,7 @@
 package org.taktik.freehealth.middleware.service
 
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponse
+import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponseType
 import java.time.Instant
 import java.util.*
 
@@ -17,5 +18,5 @@ interface MediprimaService {
         startDate: Instant,
         endDate: Instant,
         referenceDate: Instant
-    ): ConsultCarmedInterventionResponse?
+    ): ConsultCarmedInterventionResponseType?
 }

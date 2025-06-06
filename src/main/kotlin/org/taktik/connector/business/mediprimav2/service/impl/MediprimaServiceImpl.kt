@@ -1,7 +1,6 @@
 package org.taktik.connector.business.mediprimav2.service.impl
 
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionRequestType
-import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponse
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponseType
 import org.taktik.connector.business.mediprimav2.service.MediprimaService
 import org.taktik.connector.business.mediprimav2.service.ServiceFactory
@@ -16,19 +15,12 @@ class MediprimaServiceImpl: MediprimaService {
         token: SAMLToken,
         request: ConsultCarmedInterventionRequestType,
         soapAction: String
-    ): ConsultCarmedInterventionResponse{
+    ): ConsultCarmedInterventionResponseType{
         return try {
             val service = ServiceFactory.getMediprimaConsultationService(token, soapAction)
             service.setPayload(request as Any?)
-            val start = System.currentTimeMillis()
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
-            val stop = System.currentTimeMillis()
-            val mediprimaResponse = xmlResponse.asObject(ConsultCarmedInterventionResponseType::class.java) as ConsultCarmedInterventionResponse
-
-            mediprimaResponse.upstreamTiming = (stop - start).toInt();
-            mediprimaResponse.soapRequest = xmlResponse.request
-            mediprimaResponse.soapResponse = xmlResponse.soapMessage
-
+            val mediprimaResponse = xmlResponse.asObject(ConsultCarmedInterventionResponseType::class.java)
             return mediprimaResponse
         }catch (soapException: SOAPException) {
             throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, soapException, *arrayOf<Any?>(soapException.message))
