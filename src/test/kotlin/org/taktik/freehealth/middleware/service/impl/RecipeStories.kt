@@ -59,6 +59,8 @@ class RecipeStories {
 
     private var hcp: HealthcareParty = RecipeTestUtils.createHealthcareParty()
     private val patient = RecipeTestUtils.createPatient()
+    private val vendorName = ""
+    private val packageVersion = ""
 
     init {
         System.setProperty("spring.output.ansi.enabled", "always")
@@ -243,7 +245,7 @@ class RecipeStories {
     // clean API functions
 
     private fun getPrescription(rid: String): RecipeKmehrmessageType? {
-        return recipeService.getPrescriptionMessage(keystoreId!!, tokenId!!, passPhrase!!, nihii!!, rid)
+        return recipeService.getPrescriptionMessage(keystoreId!!, tokenId!!, passPhrase!!, nihii!!, rid, vendorName, packageVersion)
     }
 
     private fun createPrescription(prescription: PrescriptionExample, notification: String? = null, feedbackRequested: Boolean = false): Prescription {
@@ -269,23 +271,23 @@ class RecipeStories {
     }
 
     private fun listOpenPrescriptionsByPatient(patientSsin: String): List<Prescription> {
-        return recipeService.listOpenPrescriptions(keystoreId!!, tokenId!!, passPhrase!!, nihii!!, patientSsin)
+        return recipeService.listOpenPrescriptions(keystoreId!!, tokenId!!, passPhrase!!, nihii!!, patientSsin, vendorName, packageVersion)
     }
 
     private fun sendNotification(patientSsin: String, prescriptionId: String, pharmacyId: String, notificationTest: String) {
-        recipeService.sendNotification(keystoreId!!, tokenId!!, passPhrase!!, nihii!!, patientSsin, pharmacyId, prescriptionId, notificationTest)
+        recipeService.sendNotification(keystoreId!!, tokenId!!, passPhrase!!, nihii!!, patientSsin, pharmacyId, prescriptionId, notificationTest, vendorName, packageVersion)
     }
 
     fun listFeedbacks(): List<Feedback> {
-        return recipeService.listFeedbacks(keystoreId!!, tokenId!!, passPhrase!!)
+        return recipeService.listFeedbacks(keystoreId!!, tokenId!!, passPhrase!!, vendorName, packageVersion)
     }
 
     private fun updateFeedbackFlag(rid: String, feedbackFlag: Boolean) {
-        recipeService.updateFeedbackFlag(keystoreId!!, tokenId!!, passPhrase!!, nihii!!, rid, feedbackFlag)
+        recipeService.updateFeedbackFlag(keystoreId!!, tokenId!!, passPhrase!!, nihii!!, rid, feedbackFlag, vendorName, packageVersion)
     }
 
     private fun revokePrescription(rid: String) {
-        recipeService.revokePrescription(keystoreId!!, tokenId!!, passPhrase!!, nihii!!, rid, "I want to revoke this prescription")
+        recipeService.revokePrescription(keystoreId!!, tokenId!!, passPhrase!!, nihii!!, rid, "I want to revoke this prescription", vendorName, packageVersion)
     }
 
     // special assertion functions
