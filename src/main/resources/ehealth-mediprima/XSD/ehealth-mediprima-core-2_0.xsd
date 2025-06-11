@@ -6,7 +6,7 @@
  Implementation-Title: xsd-mediprima-consultation
  Specification-Version: 2.0
  Implementation-Version: 2.0.1
- Build-Time: 20190514-1534
+ Build-Time: 20190514-1534 
  </xs:appinfo>
  </xs:annotation>
   <!--eHealth core element -->
@@ -143,7 +143,7 @@
       <xs:element name="AgreementNumber" type="xs:string" minOccurs="0">
         <xs:annotation>
           <xs:documentation>Agreement number assigned by MediPrima to the healthcare provider for a valid consultation of electronic decision support.
-It expresses the guarantee of being reimbursed on medical costs.
+It expresses the guarantee of being reimbursed on medical costs. 
 This information must be copied in the invoice sent to the HZIV/CAAMI.
           </xs:documentation>
         </xs:annotation>
