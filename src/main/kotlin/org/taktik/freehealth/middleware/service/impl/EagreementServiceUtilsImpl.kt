@@ -9,6 +9,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.freehealth.middleware.service.EagreementServiceUtils
+import org.taktik.freehealth.middleware.web.controllers.EagreementController
 import org.taktik.icure.fhir.entities.r4.Meta
 import org.taktik.icure.fhir.entities.r4.attachment.Attachment
 import org.taktik.icure.fhir.entities.r4.binary.Binary
@@ -129,7 +130,8 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         insuranceRef: String?,
         pathologyCode: String?,
         pathologyStartDate: DateTime?,
-        provider: String
+        provider: String,
+        attachments: List<EagreementController.Attachment>?
     ): Claim {
         return Claim(
             patient = Reference().apply { reference = "Patient/Patient1" },
@@ -147,15 +149,26 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             if(requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) billablePeriod = getBillablePeriod(agreementStartDate!!)
             created = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"))
             enterer = Reference().apply { reference = "PractitionerRole/PractitionerRole1"}
-            if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK) {
+            if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.COMPLETE_AGREEMENT || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) {
                 referral = Reference().apply {
                     reference = "ServiceRequest/ServiceRequest1"
                 }
             }
-            if(requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) item = listOf(getServicedDateItem(requestType, pathologyStartDate!!, pathologyCode, 1))
-            if(!insuranceRef.isNullOrEmpty()){
-                insurance = listOf(getInsurance(requestType, insuranceRef, "use of mandatory insurance coverage, no further details provided here."))
+            if (attachments != null) {
+                val supportingInfoList = mutableListOf<ClaimSupportingInfo>()
+                var sequenceNumber = 1
+                for (attachment in attachments!!) {
+                    if (attachment.type == "info") {
+                        supportingInfoList.add(getSupportingInfo(sequenceNumber, "info", null, null, attachment.data, null, null, null))
+                    } else {
+                        supportingInfoList.add(getSupportingInfo(sequenceNumber, "attachment", attachment.type, null, null, attachment.data, attachment.type, "application/pdf"))
+                    }
+                    sequenceNumber += 1
+                }
+                supportingInfo = supportingInfoList
             }
+            insurance = listOf(getInsurance(requestType, insuranceRef, "use of mandatory insurance coverage, no further details provided here."))
+            if(requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) item = listOf(getServicedDateItem(requestType, pathologyStartDate!!, pathologyCode, 1))
         }
     }
 
@@ -325,27 +338,25 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         )
     }
 
-    override fun getParameters(
-        parameterId: String,
-        agreementTypes: String?,
-        startDate: DateTime?,
-        endDate: DateTime?,
-        patientFirstName: String?,
-        patientLastName: String?,
-        patientGender: String?,
-        patientSsin: String?,
-        io: String?,
-        ioMembership: String?,
-        subTypeCode: String?
+    override fun getParameters(parameterId: String,
+                               startDate: DateTime?,
+                               endDate: DateTime?,
+                               patientFirstName: String?,
+                               patientLastName: String?,
+                               patientGender: String?,
+                               patientSsin: String?,
+                               io: String?,
+                               ioMembership: String?,
+                               subTypeCode: String?
     ): Parameters {
         val param = mutableListOf<ParametersParameter>();
-        param.add(getParameter("resourceType", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
-        param.add(getParameter("patient", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
-        param.add(getParameter("use", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
-        param.add(getParameter("subType", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
+        param.add(getParameter("resourceType", startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
+        param.add(getParameter("patient", startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
+        param.add(getParameter("use", startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
+        param.add(getParameter("subType", startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
 
         if (startDate != null || endDate != null){
-            param.add(getParameter("preAuthPeriod", agreementTypes, startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
+            param.add(getParameter("preAuthPeriod", startDate, endDate, patientFirstName, patientLastName, patientGender, patientSsin, io, ioMembership, subTypeCode))
         }
         return Parameters().apply {
             id = "Parameters$parameterId"
@@ -354,7 +365,6 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
     }
 
     override fun getParameter(parameterName: String,
-                              agreementTypes: String?,
                               startDate: DateTime?,
                               endDate: DateTime?,
                               patientFirstName: String?,
@@ -391,7 +401,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         }
     }
 
-    override fun getInsurance(requestType: EagreementServiceImpl.RequestTypeEnum, insuranceRef: String, display: String): ClaimInsurance{
+    override fun getInsurance(requestType: EagreementServiceImpl.RequestTypeEnum, insuranceRef: String?, display: String): ClaimInsurance{
         return ClaimInsurance(
             sequence = 1,
             focal = true,
@@ -399,7 +409,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 display = display
             )
         ).apply {
-            if(requestType != EagreementServiceImpl.RequestTypeEnum.ASK) preAuthRef = listOf(insuranceRef)
+            if(requestType != EagreementServiceImpl.RequestTypeEnum.ASK && insuranceRef != null) preAuthRef = listOf(insuranceRef)
         }
     }
 
@@ -544,24 +554,25 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         hcpNihii: String,
         hcpFirstName: String,
         hcpLastName: String,
-        hcp2Nihii: String?,
-        hcp2FirstName: String?,
-        hcp2LastName: String?,
+        prescriberNihii: String?,
+        prescriberFirstName: String?,
+        prescriberLastName: String?,
         orgNihii: String?,
         organizationType: String?,
-        annex1: String?,
-        annex2: String?,
+        prescription1: String?,
+        prescription2: String?,
         agreementStartDate: DateTime?,
         agreementEndDate: DateTime?,
         agreementType: String?,
-        numberOfSessionForAnnex1: Float?,
-        numberOfSessionForAnnex2: Float?,
+        numberOfSessionForPrescription1: Float?,
+        numberOfSessionForPrescription2: Float?,
         insuranceRef: String?,
         pathologyCode: String?,
         pathologyStartDate: DateTime?,
         sctCode: String?,
         sctDisplay: String?,
-        subTypeCode: String?
+        subTypeCode: String?,
+        attachments: List<EagreementController.Attachment>?
     ): JsonObject? {
         val uuidGenerator = IdGeneratorFactory.getIdGenerator("uuid")
         val practitionerRole1UUID = uuidGenerator.generateId()
@@ -623,7 +634,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(practitioner1)
         }
 
-        if (hcp2Nihii != null && hcp2FirstName != null && hcp2LastName != null) {
+        if (prescriberNihii != null && prescriberFirstName != null && prescriberLastName != null) {
             val practitioner2 = JsonObject()
             practitioner2.addProperty("fullUrl", "urn:uuid:" + uuidGenerator.generateId())
             practitioner2.add(
@@ -632,9 +643,9 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                     mapper.writeValueAsString(
                         getPractitioner(
                             "2",
-                            hcp2Nihii,
-                            hcp2FirstName,
-                            hcp2LastName
+                            prescriberNihii,
+                            prescriberFirstName,
+                            prescriberLastName
                         )
                     )
                 ).asJsonObject
@@ -680,7 +691,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(practitionerRole1)
         }
 
-        if (hcp2Nihii != null) {
+        if (prescriberNihii != null) {
             val practitionerRole2 = JsonObject()
             practitionerRole2.addProperty("fullUrl", "urn:uuid:" + uuidGenerator.generateId())
             practitionerRole2.add(
@@ -707,7 +718,6 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                     mapper.writeValueAsString(
                         getParameters(
                             "1",
-                            agreementType,
                             agreementStartDate,
                             agreementEndDate,
                             hcpNihii,
@@ -724,16 +734,16 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(parameter1)
         }
         //Service Request 1
-        if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE) {
+        if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.COMPLETE_AGREEMENT || requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) {
             val serviceRequest1 = JsonObject()
             serviceRequest1.addProperty("fullUrl" , "urn:uuid:" + uuidGenerator.generateId())
-            serviceRequest1.add("resource", JsonParser().parse(mapper.writeValueAsString(getServiceRequest("1", "", annex1!!, "1", numberOfSessionForAnnex1!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, sctCode, sctDisplay))).asJsonObject)
+            serviceRequest1.add("resource", JsonParser().parse(mapper.writeValueAsString(getServiceRequest("1", "", prescription1!!, "1", numberOfSessionForPrescription1!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, sctCode, sctDisplay))).asJsonObject)
             serviceRequest1.getAsJsonObject("resource").getAsJsonObject("ServiceRequest").add("contained", JsonParser().parse(mapper.writeValueAsString( Binary(
                 contentType = "application/pdf",
-                data = annex1,
+                data = prescription1,
                 id = "annexSR1"
             ))).asJsonObject)
-            serviceRequest1.getAsJsonObject("resource").getAsJsonObject("ServiceRequest").getAsJsonObject("quantityQuantity").addProperty("value", numberOfSessionForAnnex1.toInt())
+            serviceRequest1.getAsJsonObject("resource").getAsJsonObject("ServiceRequest").getAsJsonObject("quantityQuantity").addProperty("value", numberOfSessionForPrescription1.toInt())
             gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(serviceRequest1)
         }
 
@@ -747,7 +757,8 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 insuranceRef = insuranceRef,
                 pathologyCode = pathologyCode,
                 pathologyStartDate = pathologyStartDate,
-                provider = "PractitionerRole/PractitionerRole1"
+                provider = "PractitionerRole/PractitionerRole1",
+                attachments = attachments
             )
             val parameter = JsonObject()
             parameter.addProperty("fullUrl" , "urn:uuid:"+uuidGenerator.generateId())

@@ -7,7 +7,7 @@
  Implementation-Title: xsd-mediprima-consultation
  Specification-Version: 2.0
  Implementation-Version: 2.0.1
- Build-Time: 20190514-1534 
+ Build-Time: 20190514-1534
  </xs:appinfo>
  </xs:annotation>
   <!-- core elements and types -->

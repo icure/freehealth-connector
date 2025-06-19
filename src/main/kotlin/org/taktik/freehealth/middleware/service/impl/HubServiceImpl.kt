@@ -67,7 +67,6 @@ import org.taktik.freehealth.utils.hcpTypeFromSamlToken
 import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*
-import kotlin.collections.HashSet
 
 @Service
 class HubServiceImpl(private val stsService: STSService, private val keyDepotService: KeyDepotService, val mapper: MapperFacade) : HubService {
@@ -281,6 +280,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        therLinkType: String?,
         hcpLastName: String,
         hcpFirstName: String,
         hcpNihii: String,
@@ -308,7 +308,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                         cd = CDTHERAPEUTICLINK().apply {
                             s = CDTHERAPEUTICLINKschemes.CD_THERAPEUTICLINKTYPE
                             sv = "1.0"
-                            value = "gpconsultation"
+                            value = therLinkType ?: "gpconsultation"
                         }
                         hcparty = HCPartyIdType().apply {
                             ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =  hcpNihii })
@@ -351,8 +351,9 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         patientSsin: String,
         patientEidCardNumber: String?,
         patientIsiCardNumber: String?,
-        hubPackageId: String?
-                                        ): RevokeTherapeuticLinkResponse {
+        hubPackageId: String?,
+        therLinkType: String?
+    ): RevokeTherapeuticLinkResponse {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Hub operations")
@@ -369,7 +370,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                     cd = CDTHERAPEUTICLINK().apply {
                         s = CDTHERAPEUTICLINKschemes.CD_THERAPEUTICLINKTYPE
                         sv = "1.0"
-                        value = "gpconsultation"
+                        value = therLinkType ?: "gpconsultation"
                     }
                     hcparty = HCPartyIdType().apply {
                         ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value =  hcpNihii })
@@ -392,7 +393,6 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                                     IDPATIENTschemes.ISI_CARDNO; this.sv = "1.0"; this.value = patientIsiCardNumber
                             })
                         }
-
                     }
                 }
             })
@@ -680,6 +680,18 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Hub operations")
+        val hubId = when (sl) {
+            "RSWID" -> "1990000035"
+            "RSBID" -> "1990000728"
+            "vitalinkuri" -> "1990001916"
+            else -> throw IllegalArgumentException("Invalid sl value: $sl")
+        }
+        val hubName = when (sl) {
+            "RSWID" -> "RSW"
+            "RSBID" -> "Abrumet"
+            "vitalinkuri" -> "Vitalink"
+            else -> throw IllegalArgumentException("Invalid sl value: $sl")
+        }
         val revokeresp =
             freehealthHubService.revokeTransaction(
             endpoint,
@@ -703,6 +715,17 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                                 this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl =
                                 sl; this.value = value
                             }
+                        author = AuthorType().apply {
+                            hcparties.add(HcpartyType().apply {
+                                cds.add(CDHCPARTY().apply {
+                                    this.s = CDHCPARTYschemes.CD_HCPARTY; this.sv = "1.1"; this.value = "hub"
+                                })
+                                ids.add(IDHCPARTY().apply {
+                                    this.s = IDHCPARTYschemes.ID_HCPARTY; this.sv = "1.0"; this.value = hubId
+                                })
+                                name = hubName
+                            })
+                        }
                     }
                 }
             }
@@ -832,7 +855,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
             TransactionSummaryDto().apply {
                 author = mapper.map(it.author, AuthorDto::class.java)
                 ids = it.ids.map { KmehrId().apply { s = it?.s?.value(); sv = it?.sv; sl = it?.sl; value = it?.value } }
-                cds = it.cds.map { KmehrCd().apply { s = it?.s?.value(); sv = it?.sv; sl = it?.sl; value = it?.value } }
+                cds = it.cds.map { KmehrCd().apply { s = it?.s?.value(); sv = it?.sv; sl = it?.sl; value = it?.value; dn = it?.dn } }
                 date = it.date.millis
                 time = it.time.millis
                 recorddatetime = it.recorddatetime.millis
@@ -890,7 +913,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                                     this.s = IDKMEHRschemes.LOCAL; this.sv = sv; this.sl =
                                     sl; this.value = value
                                 }
-                            
+
                             if(StringUtils.isNotEmpty(externalHubId)) {
                                 author = AuthorType().apply {
                                     hcparties.add(HcpartyType().apply {

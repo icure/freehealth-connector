@@ -18,6 +18,9 @@ buildscript {
 	repositories {
 		mavenCentral()
 		maven {
+			url = "https://repo.ehealth.fgov.be/artifactory/maven2"
+		}
+		maven {
 			url = "https://maven.taktik.be/content/groups/public"
 		}
 	}
@@ -93,6 +96,9 @@ repositories {
 	maven {
 		url = "https://maven.taktik.be/content/groups/public"
 	}
+	maven {
+		url = "https://repo.ehealth.fgov.be/artifactory/maven2"
+	}
 	flatDir {
 		dirs 'libs'
 	}
@@ -162,12 +168,12 @@ dependencies {
 	}
 	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
 	compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-	compile group: 'org.bouncycastle', name: 'bcmail-jdk15on', version: '1.54'
-	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.54'
-	compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.54'
+	compile group: 'org.bouncycastle', name: 'bcmail-jdk15on', version: '1.70'
+	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
+	compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.70'
 	compile('be.fedict.commons-eid:commons-eid-client:0.6.6')
 	compile('be.fedict.commons-eid:commons-eid-jca:0.6.6')
-	compile('be.fgov.ehealth.etee:etee-crypto-lib:2.1.1')
+	compile('be.fgov.ehealth.etee:etee-crypto-lib:2.3.0')
 	compile('org.apache.commons:commons-text:1.1')
 	compile('org.apache.commons:commons-collections4:4.0')
 	compile('org.apache.commons:commons-compress:1.10')

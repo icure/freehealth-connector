@@ -362,6 +362,125 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
+            "logopedist" -> listOf(
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace"),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:professional:logopedist:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:nihii:logopedist:nihii11",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:givenname",
+                "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:surname",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:fpsph:logopedist:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                )
+            )
+            "dietician" -> listOf(
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace"),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:professional:dietician:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:nihii:dietician:nihii11",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:givenname",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:surname",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:fpsph:dietician:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                )
+            )
+            "clinicalpsychologist" -> listOf(
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace"),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:professional:clinicalpsychologist:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:nihii:clinicalpsychologist:nihii11",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:givenname",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:surname",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:fpsph:clinicalpsychologist:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                )
+            )
+            "optician" -> listOf(
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace"),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:nihii:optician:nihii11",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:givenname",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:person:ssin:ehealth:1.0:surname",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                )
+            )
+            "podologist" -> listOf(
+                    SAMLAttributeDesignator(
+                        "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin",
+                        "urn:be:fgov:identification-namespace"
+                    ),
+                    SAMLAttributeDesignator("urn:be:fgov:person:ssin", "urn:be:fgov:identification-namespace"),
+                    SAMLAttributeDesignator(
+                        "urn:be:fgov:person:ssin:ehealth:1.0:nihii:podologist:nihii11",
+                        "urn:be:fgov:certified-namespace:ehealth"
+                    ),
+                    SAMLAttributeDesignator(
+                        "urn:be:fgov:person:ssin:ehealth:1.0:givenname",
+                        "urn:be:fgov:certified-namespace:ehealth"
+                    ),
+                    SAMLAttributeDesignator(
+                        "urn:be:fgov:person:ssin:ehealth:1.0:surname",
+                        "urn:be:fgov:certified-namespace:ehealth"
+                    )
+                )
             "midwife" -> listOf(
                 SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:certificateholder:person:ssin",
@@ -514,7 +633,38 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                     "urn:be:fgov:ehealth:1.0:certificateholder:recognisedorganization:boolean",
                     "urn:be:fgov:certified-namespace:ehealth"
                 )
-
+            )
+            "enterprise" -> listOf(
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:enterprise:cbe-number",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:enterprise:cbe-number:ehealth:1.0:cbe_daas_authorized:boolean",
+                    "urn:be:fgov:certifiednamespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:recognisedorganization:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:kbo-bce:organization:cbe-number",
+                    "urn:be:fgov:identification-namespace"
+                )
+            )
+            "ehp" -> listOf(
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:organization:ehp-number",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:organization:ehp-number",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:organization:ehp-number:recognisedehp:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                )
             )
             else -> throw IllegalArgumentException("unsupported quality")
         } + extraDesignators.map { SAMLAttributeDesignator(it.second, it.first) }
@@ -588,6 +738,25 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 ),
                 SAMLAttribute(
                     "urn:be:fgov:ehealth:1.0:certificateholder:reeducation:nihii-number",
+                    "urn:be:fgov:identification-namespace",
+                    nihiiOrSsin
+                )
+            )
+            "enterprise" -> listOf(
+                SAMLAttribute(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:enterprise:cbe-number",
+                    "urn:be:fgov:identification-namespace",
+                    nihiiOrSsin
+                )
+            )
+            "ehp" -> listOf(
+                SAMLAttribute(
+                    "urn:be:fgov:ehealth:1.0:organization:ehp-number",
+                    "urn:be:fgov:identification-namespace",
+                    nihiiOrSsin
+                ),
+                SAMLAttribute(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:organization:ehp-number",
                     "urn:be:fgov:identification-namespace",
                     nihiiOrSsin
                 )
