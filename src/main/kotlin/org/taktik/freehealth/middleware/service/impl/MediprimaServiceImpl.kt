@@ -147,7 +147,7 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
             val sw = StringWriter()
             marshaller.marshal(response, sw)
-            //println(sw.toString())
+            println(sw.toString())
             return result
         }
     }
@@ -173,7 +173,7 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
                 ?: throw MissingTokenException("Cannot obtain token for Tarif operations")
 
         try {
-            val isTest = config.getProperty("endpoint.mcn.tarification").contains("-acpt")
+            val isTest = config.getProperty("endpoint.etar.mediprima").contains("-acpt")
             val now = DateTime().withMillisOfSecond(0).withZone(null)
             val kmehrUUID = now.toString("YYYYddhhmmssSS")
             val requestAuthorNihii = (hcpNihii).padEnd(11, '0')
@@ -351,6 +351,13 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
             }
 
             result.errors = errors
+
+
+            val xml = MarshallerHelper(TarificationMediprimaConsultationResult::class.java, TarificationMediprimaConsultationResult::class.java)
+                .toXMLByteArray(result)
+                .toString(Charsets.UTF_8)
+
+            println(xml)
 
             return result
         } catch (e: ConnectorException) {
