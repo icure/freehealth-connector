@@ -27,7 +27,6 @@ class MediprimaControllerTest: EhealthTest()  {
     @Autowired
     private val restTemplate: TestRestTemplate? = null
 
-    private val tarificationNisses = listOf("66092552676", "97000080964", "95060180934", "01102248542", "79020561139", "95061847255", "09010240155", "97091669156", "92093065750", "85000132773", "74032853407")
 
     @Test
     fun consultCaremedData() {
@@ -39,11 +38,10 @@ class MediprimaControllerTest: EhealthTest()  {
     }
 
     @Test
-    fun consultTarif() {
+    fun consultTarif_sc1() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin6!!, password6!!)
 
-        tarificationNisses.map{
-            val url = "http://localhost:$port/mediprima/consultTarificationMediprima/$it?hcpFirstName=${"Maxime"}&hcpLastName=${"Mennechet"}&hcpNihii=$nihii6&hcpSsin=$ssin6&passPhrase=$passPhrase&date=20250618"
+            val url = "http://localhost:$port/mediprima/consultTarificationMediprima/66092552676?hcpFirstName=${"Maxime"}&hcpLastName=${"Mennechet"}&hcpNihii=$nihii6&hcpSsin=$ssin6&passPhrase=$passPhrase&date=20250318"
             val codes = listOf("101032")
 
             val headers = createHeaders(null, null, keystoreId, tokenId, passPhrase).apply {
@@ -62,6 +60,355 @@ class MediprimaControllerTest: EhealthTest()  {
             )
 
             println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+    }
+
+    @Test
+    fun consultTarif_sc2() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin6!!, password6!!)
+
+        val url = "http://localhost:$port/mediprima/consultTarificationMediprima/66092552676?hcpFirstName=${"Maxime"}&hcpLastName=${"Mennechet"}&hcpNihii=$nihii6&hcpSsin=$ssin6&passPhrase=$passPhrase&date=20250618"
+        val codes = listOf("101075")
+
+        val headers = createHeaders(null, null, keystoreId, tokenId, passPhrase).apply {
+            contentType = MediaType.APPLICATION_JSON
         }
+
+        // Crée la requête avec les codes dans le body
+        val entity = HttpEntity(codes, headers)
+
+        // Envoie la requête
+        val response = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            entity,
+            String::class.java
+        )
+
+        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+    }
+
+    @Test
+    fun consultTarif_sc3() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin6!!, password6!!)
+
+        val url = "http://localhost:$port/mediprima/consultTarificationMediprima/66092552676?hcpFirstName=${"Maxime"}&hcpLastName=${"Mennechet"}&hcpNihii=$nihii6&hcpSsin=$ssin6&passPhrase=$passPhrase&date=20250618"
+        val codes = listOf("560011")
+
+        val headers = createHeaders(null, null, keystoreId, tokenId, passPhrase).apply {
+            contentType = MediaType.APPLICATION_JSON
+        }
+
+        // Crée la requête avec les codes dans le body
+        val entity = HttpEntity(codes, headers)
+
+        // Envoie la requête
+        val response = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            entity,
+            String::class.java
+        )
+
+        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+    }
+
+    @Test
+    fun consultTarif_sc4() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin6!!, password6!!)
+
+        val url = "http://localhost:$port/mediprima/consultTarificationMediprima/66092552676?hcpFirstName=${"Maxime"}&hcpLastName=${"Mennechet"}&hcpNihii=$nihii6&hcpSsin=$ssin6&passPhrase=$passPhrase&date=20250618"
+        val codes = listOf("102034")
+
+        val headers = createHeaders(null, null, keystoreId, tokenId, passPhrase).apply {
+            contentType = MediaType.APPLICATION_JSON
+        }
+
+        // Crée la requête avec les codes dans le body
+        val entity = HttpEntity(codes, headers)
+
+        // Envoie la requête
+        val response = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            entity,
+            String::class.java
+        )
+
+        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+    }
+
+    @Test
+    fun consultTarif_sc5() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin6!!, password6!!)
+
+        val url = "http://localhost:$port/mediprima/consultTarificationMediprima/66092552676?hcpFirstName=${"Maxime"}&hcpLastName=${"Mennechet"}&hcpNihii=$nihii6&hcpSsin=$ssin6&passPhrase=$passPhrase&date=20250318"
+        val codes = listOf("101032")
+
+        val headers = createHeaders(null, null, keystoreId, tokenId, passPhrase).apply {
+            contentType = MediaType.APPLICATION_JSON
+        }
+
+        // Crée la requête avec les codes dans le body
+        val entity = HttpEntity(codes, headers)
+
+        // Envoie la requête
+        val response = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            entity,
+            String::class.java
+        )
+
+        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+    }
+
+    @Test
+    fun consultTarif_sc6() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin6!!, password6!!)
+
+        val url = "http://localhost:$port/mediprima/consultTarificationMediprima/66092552676?hcpFirstName=${"Maxime"}&hcpLastName=${"Mennechet"}&hcpNihii=$nihii6&hcpSsin=$ssin6&passPhrase=$passPhrase&date=20250718"
+        val codes = listOf("101032")
+
+        val headers = createHeaders(null, null, keystoreId, tokenId, passPhrase).apply {
+            contentType = MediaType.APPLICATION_JSON
+        }
+
+        // Crée la requête avec les codes dans le body
+        val entity = HttpEntity(codes, headers)
+
+        // Envoie la requête
+        val response = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            entity,
+            String::class.java
+        )
+
+        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+    }
+
+    @Test
+    fun consultTarif_sc7() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin6!!, password6!!)
+
+        val url = "http://localhost:$port/mediprima/consultTarificationMediprima/66092552676?hcpFirstName=${"Maxime"}&hcpLastName=${"Mennechet"}&hcpNihii=$nihii6&hcpSsin=$ssin6&passPhrase=$passPhrase&date=20250618"
+        val codes = listOf("101032")
+
+        val headers = createHeaders(null, null, keystoreId, tokenId, passPhrase).apply {
+            contentType = MediaType.APPLICATION_JSON
+        }
+
+        // Crée la requête avec les codes dans le body
+        val entity = HttpEntity(codes, headers)
+
+        // Envoie la requête
+        val response = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            entity,
+            String::class.java
+        )
+
+        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+    }
+
+    @Test
+    fun consultTarif_sc8() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin6!!, password6!!)
+
+        val url = "http://localhost:$port/mediprima/consultTarificationMediprima/97000080964?hcpFirstName=${"Maxime"}&hcpLastName=${"Mennechet"}&hcpNihii=$nihii6&hcpSsin=$ssin6&passPhrase=$passPhrase&date=20250618"
+        val codes = listOf("101032")
+
+        val headers = createHeaders(null, null, keystoreId, tokenId, passPhrase).apply {
+            contentType = MediaType.APPLICATION_JSON
+        }
+
+        // Crée la requête avec les codes dans le body
+        val entity = HttpEntity(codes, headers)
+
+        // Envoie la requête
+        val response = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            entity,
+            String::class.java
+        )
+
+        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+    }
+
+    @Test
+    fun consultTarif_sc9() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin6!!, password6!!)
+
+        val url = "http://localhost:$port/mediprima/consultTarificationMediprima/01102248542?hcpFirstName=${"Maxime"}&hcpLastName=${"Mennechet"}&hcpNihii=$nihii6&hcpSsin=$ssin6&passPhrase=$passPhrase&date=20250618"
+        val codes = listOf("101032")
+
+        val headers = createHeaders(null, null, keystoreId, tokenId, passPhrase).apply {
+            contentType = MediaType.APPLICATION_JSON
+        }
+
+        // Crée la requête avec les codes dans le body
+        val entity = HttpEntity(codes, headers)
+
+        // Envoie la requête
+        val response = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            entity,
+            String::class.java
+        )
+
+        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+    }
+
+    @Test
+    fun consultTarif_sc10() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin6!!, password6!!)
+
+        val url = "http://localhost:$port/mediprima/consultTarificationMediprima/79020561139?hcpFirstName=${"Maxime"}&hcpLastName=${"Mennechet"}&hcpNihii=$nihii6&hcpSsin=$ssin6&passPhrase=$passPhrase&date=20250618"
+        val codes = listOf("101032")
+
+        val headers = createHeaders(null, null, keystoreId, tokenId, passPhrase).apply {
+            contentType = MediaType.APPLICATION_JSON
+        }
+
+        // Crée la requête avec les codes dans le body
+        val entity = HttpEntity(codes, headers)
+
+        // Envoie la requête
+        val response = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            entity,
+            String::class.java
+        )
+
+        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+    }
+
+    @Test
+    fun consultTarif_sc11() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin6!!, password6!!)
+
+        val url = "http://localhost:$port/mediprima/consultTarificationMediprima/92093065750?hcpFirstName=${"Maxime"}&hcpLastName=${"Mennechet"}&hcpNihii=$nihii6&hcpSsin=$ssin6&passPhrase=$passPhrase&date=20250618"
+        val codes = listOf("101032")
+
+        val headers = createHeaders(null, null, keystoreId, tokenId, passPhrase).apply {
+            contentType = MediaType.APPLICATION_JSON
+        }
+
+        // Crée la requête avec les codes dans le body
+        val entity = HttpEntity(codes, headers)
+
+        // Envoie la requête
+        val response = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            entity,
+            String::class.java
+        )
+
+        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+    }
+
+    @Test
+    fun consultTarif_sc12() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin6!!, password6!!)
+
+        val url = "http://localhost:$port/mediprima/consultTarificationMediprima/95061847255?hcpFirstName=${"Maxime"}&hcpLastName=${"Mennechet"}&hcpNihii=$nihii6&hcpSsin=$ssin6&passPhrase=$passPhrase&date=20250618"
+        val codes = listOf("101032")
+
+        val headers = createHeaders(null, null, keystoreId, tokenId, passPhrase).apply {
+            contentType = MediaType.APPLICATION_JSON
+        }
+
+        // Crée la requête avec les codes dans le body
+        val entity = HttpEntity(codes, headers)
+
+        // Envoie la requête
+        val response = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            entity,
+            String::class.java
+        )
+
+        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+    }
+
+    @Test
+    fun consultTarif_sc13() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin6!!, password6!!)
+
+        val url = "http://localhost:$port/mediprima/consultTarificationMediprima/09010240155?hcpFirstName=${"Maxime"}&hcpLastName=${"Mennechet"}&hcpNihii=$nihii6&hcpSsin=$ssin6&passPhrase=$passPhrase&date=20250618"
+        val codes = listOf("101032")
+
+        val headers = createHeaders(null, null, keystoreId, tokenId, passPhrase).apply {
+            contentType = MediaType.APPLICATION_JSON
+        }
+
+        // Crée la requête avec les codes dans le body
+        val entity = HttpEntity(codes, headers)
+
+        // Envoie la requête
+        val response = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            entity,
+            String::class.java
+        )
+
+        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+    }
+
+    @Test
+    fun consultTarif_sc14() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin6!!, password6!!)
+
+        val url = "http://localhost:$port/mediprima/consultTarificationMediprima/97091669156?hcpFirstName=${"Maxime"}&hcpLastName=${"Mennechet"}&hcpNihii=$nihii6&hcpSsin=$ssin6&passPhrase=$passPhrase&date=20250618"
+        val codes = listOf("101032")
+
+        val headers = createHeaders(null, null, keystoreId, tokenId, passPhrase).apply {
+            contentType = MediaType.APPLICATION_JSON
+        }
+
+        // Crée la requête avec les codes dans le body
+        val entity = HttpEntity(codes, headers)
+
+        // Envoie la requête
+        val response = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            entity,
+            String::class.java
+        )
+
+        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+    }
+
+    @Test
+    fun consultTarif_sc15() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin6!!, password6!!)
+
+        val url = "http://localhost:$port/mediprima/consultTarificationMediprima/09010240155?hcpFirstName=${"Maxime"}&hcpLastName=${"Mennechet"}&hcpNihii=$nihii6&hcpSsin=$ssin6&passPhrase=$passPhrase&date=20250618"
+        val codes = listOf("101032", "475075")
+
+        val headers = createHeaders(null, null, keystoreId, tokenId, passPhrase).apply {
+            contentType = MediaType.APPLICATION_JSON
+        }
+
+        // Crée la requête avec les codes dans le body
+        val entity = HttpEntity(codes, headers)
+
+        // Envoie la requête
+        val response = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            entity,
+            String::class.java
+        )
+
+        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
     }
 }
