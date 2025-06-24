@@ -1,10 +1,8 @@
 #!/bin/bash
 
-echo "Let's start the java app"
+echo "Let's start the java application"
 echo "$FHC_STAGE"
 
 pwd
 
-java -Dorg.taktik.connector.technical.config.location=/prod/org.taktik.connector.technical.properties -jar build/libs/freehealth-connector-53.0.53c4570716.jar
-
-#java -Dorg.taktik.connector.technical.config.location=/acpt/org.taktik.connector.technical.properties -jar build/libs/freehealth-connector-53.0.53c4570716.jar
+java -Dorg.taktik.connector.technical.config.location=/acpt/org.taktik.connector.technical.properties -jar build/libs/freehealth-connector-0.3.620-047d03ce5b-dirty.jar
