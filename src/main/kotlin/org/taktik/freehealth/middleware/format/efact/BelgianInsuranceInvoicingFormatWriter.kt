@@ -26,6 +26,7 @@ import org.taktik.freehealth.middleware.format.StringUtils
 import org.taktik.freehealth.middleware.format.WriterSession
 import org.taktik.freehealth.middleware.format.efact.segments.Record10Description
 import org.taktik.freehealth.middleware.format.efact.segments.Record20Description
+import org.taktik.freehealth.middleware.format.efact.segments.Record25Description
 import org.taktik.freehealth.middleware.format.efact.segments.Record50Description
 import org.taktik.freehealth.middleware.format.efact.segments.Record51Description
 import org.taktik.freehealth.middleware.format.efact.segments.Record52Description
@@ -346,6 +347,33 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
 
         ws.writeFieldsWithCheckSum()
 
+        return recordNumber+1
+    }
+
+    @Throws(IOException::class)
+    fun writeMediprimaRecord(
+        recordNumber: Int,
+        patient: Patient,
+        urgencyMedicalAssistance: Int,
+    ): Int{
+        val ws = WriterSession(writer, Record25Description)
+
+
+        ws.write("2", recordNumber)
+        ws.write("7", "690")
+        ws.write("8", if (patient.ssin != null) patient.ssin!!.replace("[^0-9]".toRegex(), "") else "")
+        ws.write("9", if (patient.gender == null || patient.gender == Gender.male) 1 else 2)
+        ws.write("12", urgencyMedicalAssistance)
+        ws.write("18", "690")
+        ws.write("24,25", "")
+        ws.write("27", "")
+        ws.write("28", "")
+        ws.write("32", "")
+        ws.write("38", "")
+        ws.write("56 ,57 ,58", "")
+        ws.write("59", "")
+
+        ws.writeFieldsWithCheckSum()
         return recordNumber+1
     }
 
