@@ -354,7 +354,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
     fun writeMediprimaRecord(
         recordNumber: Int,
         patient: Patient,
-        urgencyMedicalAssistance: Int
+        urgencyMedicalAssistance: Int,
     ): Int{
         val ws = WriterSession(writer, Record25Description)
 
