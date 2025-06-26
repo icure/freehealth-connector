@@ -33,6 +33,7 @@ import be.fgov.ehealth.standards.kmehr.schema.v1.ContentType
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
 import be.fgov.ehealth.standards.kmehr.schema.v1.ItemType
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import ma.glasnost.orika.MapperFacade
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
@@ -173,7 +174,7 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
                 ?: throw MissingTokenException("Cannot obtain token for Tarif operations")
 
         try {
-            val isTest = config.getProperty("endpoint.etar.mediprima").contains("-acpt")
+            val isTest = config.getProperty("endpoint.mcn.tarification.mediprima").contains("-acpt")
             val now = DateTime().withMillisOfSecond(0).withZone(null)
             val kmehrUUID = now.toString("YYYYddhhmmssSS")
             val requestAuthorNihii = (hcpNihii).padEnd(11, '0')
@@ -302,7 +303,7 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
                 this.detail = SendRequestMapper.mapBlobToBlobType(blob)
             }
 
-            var consultTarificationResponse = freehealthTarificationService.consultTarification(samlToken, request)
+            var consultTarificationResponse = freehealthTarificationService.consultTarificationMediPrima(samlToken, request)
 
             val detail = consultTarificationResponse.getReturn().detail
             val content = BlobBuilderFactory.getBlobBuilder("mcn.tarification").checkAndRetrieveContent(SendRequestMapper.mapBlobTypeToBlob(detail))
@@ -338,8 +339,10 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
             }
 
             val kmehrmessage = commonInputResponse.kmehrmessage
+
+
             if (kmehrmessage != null && kmehrmessage!!.folders != null && kmehrmessage!!.folders.size > 0) {
-                result.patient.niss = patientSsin
+               // result.patient.niss = patientSsin
 
                 val folder = kmehrmessage!!.folders.get(0)
                 if (folder.patient != null) {
