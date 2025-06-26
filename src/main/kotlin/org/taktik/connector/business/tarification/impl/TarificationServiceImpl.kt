@@ -33,6 +33,28 @@ class TarificationServiceImpl : TarificationService, ConfigurationModuleBootstra
 
     }
 
+    override fun consultTarificationMediPrima(
+        token: SAMLToken,
+        request: TarificationConsultationRequest
+    ): TarificationConsultationResponse {
+        try {
+            val service = ServiceFactory.getTarificationSessionForMediPrima(token)
+            service.setPayload(request as Any)
+            val start = System.currentTimeMillis()
+            val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            val stop = System.currentTimeMillis()
+            val tarificationConsultationResponse = xmlResponse.asObject(TarificationConsultationResponse::class.java) as TarificationConsultationResponse
+
+            tarificationConsultationResponse.upstreamTiming = (stop - start).toInt()
+            tarificationConsultationResponse.soapRequest = xmlResponse.request
+            tarificationConsultationResponse.soapResponse = xmlResponse.soapMessage
+
+            return tarificationConsultationResponse
+        } catch (ex: SOAPException) {
+            throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
+        }
+    }
+
     override fun bootstrap() {
         JaxbContextFactory.initJaxbContext(TarificationConsultationRequest::class.java)
         JaxbContextFactory.initJaxbContext(TarificationConsultationResponse::class.java)
