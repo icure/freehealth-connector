@@ -282,8 +282,10 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
                                 be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
                                     .apply { this.value = config.getProperty("mcn.registration.package.name") }
                             this.license = be.fgov.ehealth.mycarenet.commons.core.v2.LicenseType().apply {
-                                this.username = "phymedispring"
-                                this.password = "phy9CL52ry"
+                                this.username = principal?.mcnLicense
+                                    ?: config.getProperty("mycarenet.license.username")
+                                this.password = principal?.mcnPassword
+                                    ?: config.getProperty("mycarenet.license.password")
                             }
                         }
 
@@ -330,6 +332,7 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
                         .toString(Charsets.UTF_8)
                 }
                 this.commonOutput = commonOutput
+                this.patient = TarificationMediprimaConsultationResult.Patient()
             }
 
             val errors = commonInputResponse.acknowledge.errors?.flatMap { e ->
@@ -342,11 +345,14 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
 
 
             if (kmehrmessage != null && kmehrmessage!!.folders != null && kmehrmessage!!.folders.size > 0) {
-               // result.patient.niss = patientSsin
-
                 val folder = kmehrmessage!!.folders.get(0)
                 if (folder.patient != null) {
-                    //result.fill(folder.patient)
+                    result.patient.apply {
+                        this.niss = folder.patient!!.ids.find { it.s == IDPATIENTschemes.ID_PATIENT }?.value
+                        this.sex = folder.patient!!.sex.cd.value.toString()
+                        this.lastName = folder.patient!!.familyname
+                        this.firstName = folder.patient!!.firstnames[0]
+                    }
                 }
                 if (folder.transactions != null) {
                     result.fill(folder.transactions)

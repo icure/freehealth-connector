@@ -4,6 +4,7 @@ import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENT;
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes;
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEM;
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes;
+import be.fgov.ehealth.standards.kmehr.dt.v1.TextType;
 import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR;
 import be.fgov.ehealth.standards.kmehr.schema.v1.*;
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput;
@@ -19,9 +20,18 @@ public class TarificationMediprimaConsultationResult {
     private CommonOutput commonOutput;
     private MycarenetConversation mycarenetConversation;
     private Patient patient;
+    private Author author;
 
     private List<CodeResult> codeResults = new ArrayList<>();
     private List<MycarenetError> errors = new ArrayList<>();
+
+    public Author getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
 
     public CommonOutput getCommonOutput() {
         return commonOutput;
@@ -457,17 +467,53 @@ public class TarificationMediprimaConsultationResult {
 
                     //pswc
                     if(cd.getValue().equals("pswc")) {
-                        codeResult.setPswc(new TarificationMediprimaConsultationResult.Pswc());
+                        Pswc pswc = new Pswc();
+                        for (ContentType content : item.getContents()) {
+                            for (IDKMEHR id : content.getIds()) {
+                                if ("ID-CBE".equals(id.getS().value())) {
+                                    pswc.setCbe(id.getValue());
+                                }
+                            }
+
+                            for (TextType text : content.getTexts()) {
+                                if ("fr".equalsIgnoreCase(text.getL())) {
+                                    pswc.setContent_fr(text.getValue());
+                                } else if ("nl".equalsIgnoreCase(text.getL())) {
+                                    pswc.setContent_nl(text.getValue());
+                                }
+                            }
+                        }
+                        codeResult.setPswc(pswc);
                     }
 
                     //mediprima number
-                    if(cd.getValue().equals("mediprimanumber")) {
-
+                    if (cd.getValue().equals("mediprimanumber")) {
+                        for (IDKMEHR id : item.getIds()) {
+                            if ("ID-MEDIPRIMA".equals(id.getSL())) {
+                                MediprimaNumber number = new MediprimaNumber();
+                                number.setNumber(id.getValue());
+                                number.setVersion(id.getSV());
+                                codeResult.setMediprimaNumber(number);
+                            }
+                        }
                     }
 
                     // umc
                     if (cd.getValue().equals("umc")) {
+                        for (ContentType content : item.getContents()) {
+                            if (content.isBoolean() != null) {
+                                codeResult.setUmc(content.isBoolean());
+                            }
+                        }
+                    }
 
+                    //Encounter date time
+                    if(cd.getValue().equals("encounterdatetime")){
+                        for (ContentType content : item.getContents()) {
+                            if (content.getDate() != null) {
+                                codeResult.setEncouterDateTime(content.getDate().toGregorianCalendar().getTime());
+                            }
+                        }
                     }
 
                     // Codes
