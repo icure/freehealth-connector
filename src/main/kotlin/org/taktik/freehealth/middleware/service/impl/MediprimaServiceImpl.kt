@@ -153,7 +153,7 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
             val sw = StringWriter()
             marshaller.marshal(response, sw)
-            println(sw.toString())
+            //println(sw.toString())
             return result
         }
     }
