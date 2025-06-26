@@ -49,7 +49,8 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
-            batch = batch
+            batch = batch,
+            isMediprima = false
         )
 
     @PostMapping("/flat", produces = [MediaType.TEXT_PLAIN_VALUE])
@@ -58,7 +59,8 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
                     ) =
         efactService.makeFlatFile(
             batch = batch,
-            isTest = false
+            isTest = false,
+            isMediprima = false
                                  )
 
     @PostMapping("/flatcore", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -67,7 +69,8 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
                     ) =
         efactService.makeFlatFileCoreWithMetadata(
             batch = batch,
-            isTest = false
+            isTest = false,
+            isMediprima = false
                                  )
 
     @PostMapping("/flat/test", produces = [MediaType.TEXT_PLAIN_VALUE])
@@ -76,7 +79,8 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
                         ) =
         efactService.makeFlatFile(
             batch = batch,
-            isTest = true
+            isTest = true,
+            isMediprima = false
                                  )
 
     @GetMapping("/{nihii}/{language}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
