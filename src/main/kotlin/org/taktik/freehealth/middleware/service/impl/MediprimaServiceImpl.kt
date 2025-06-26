@@ -142,7 +142,12 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
         }
 
         this.mediprimaService.consultMediprima(samlToken, consultCaremedRequestType, "urn:be:fgov:ehealth:mediprima:protocol:v2:consultCarmedIntervention").let { response ->
-            val result = ConsultCarmedInterventionResponseType()
+            val result = ConsultCarmedInterventionResponseType().apply {
+                this.id = detailId
+                this.issueInstant = issueInstant
+                this.selectionCriteria = consultCaremedRequestType.selectionCriteria
+                this.result = response.result
+            }
             val jaxbContext = JAXBContext.newInstance(ConsultCarmedInterventionResponseType::class.java)
             val marshaller: Marshaller = jaxbContext.createMarshaller()
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
