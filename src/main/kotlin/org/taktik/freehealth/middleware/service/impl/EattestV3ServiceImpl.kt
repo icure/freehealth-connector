@@ -337,6 +337,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
+        isPatientRcam: Boolean,
         referenceDate: Long?,
         attemptNbr: Int?,
         decisionReference: String?,
@@ -477,6 +478,9 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                 this.routing = RoutingType().apply {
                     careReceiver = CareReceiverIdType().apply {
                         ssin = patientSsin
+                        if(isPatientRcam){
+                            mutuality = "rcam"
+                        }
                     }
                     this.referenceDate = refDateTime
                 }

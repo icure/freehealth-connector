@@ -47,6 +47,7 @@ interface EattestV3Service {
         patientFirstName:String,
         patientLastName:String,
         patientGender:String,
+        isPatientRcam: Boolean,
         referenceDate: Long?,
         attemptNbr: Int?,
         decisionReference: String?,
