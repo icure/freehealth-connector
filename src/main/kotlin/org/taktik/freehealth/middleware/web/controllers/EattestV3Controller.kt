@@ -109,7 +109,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
-        @RequestParam isPatientRcam: Boolean = false,
+        @RequestParam@RequestParam(required = false): Boolean?,
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) treatmentReason: String?,
         @RequestParam(required = false) traineeSupervisorSsin: String?,
