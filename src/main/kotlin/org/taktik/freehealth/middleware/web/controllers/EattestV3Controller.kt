@@ -87,7 +87,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         patientFirstName,
         patientLastName,
         patientGender,
-        isPatientRcam,
+        isPatientRcam ?: false,
         date,
         attemptNbr,
         decisionReference,
