@@ -29,6 +29,7 @@ class MediprimaController(
     val mediprimaService: MediprimaService,
     val mapper: MapperFacade
 ) {
+    internal val mcnTimezone: String = "Europe/Brussels"
     private val ConsultTarifErrors =
         Gson().fromJson(
             this.javaClass.getResourceAsStream("/be/errors/ConsultTarifErrors.json").reader(Charsets.UTF_8),
@@ -49,9 +50,9 @@ class MediprimaController(
         @RequestParam (required = false) endDate: Long?,
         @RequestParam (required = false) referenceDate: Long?
     ): ConsultCarmedInterventionResponseType? {
-        val instantStartDate: Instant = toInstantFromLongWithFormatter(startDate)!!
-        val instantEndDate: Instant = toInstantFromLongWithFormatter(endDate)!!
-        val instantReferenceDate: Instant = toInstantFromLongWithFormatter(referenceDate)!!
+        val instantStartDate: Instant = startDate?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
+        val instantEndDate: Instant = endDate?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
+        val instantReferenceDate: Instant = referenceDate?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
 
         return mediprimaService.consultCaremedData(
             keystoreId = keystoreId,
