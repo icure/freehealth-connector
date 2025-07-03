@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.connector.business.domain.etarif.TarificationMediprimaConsultationResult
+import org.taktik.freehealth.middleware.domain.mediprima.MediprimaMdaResponse
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.service.MediprimaService
 import java.time.Instant
@@ -49,7 +50,7 @@ class MediprimaController(
         @RequestParam (required = false) startDate: Long?,
         @RequestParam (required = false) endDate: Long?,
         @RequestParam (required = false) referenceDate: Long?
-    ): ConsultCarmedInterventionResponseType? {
+    ): MediprimaMdaResponse? {
         val instantStartDate: Instant = startDate?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
         val instantEndDate: Instant = endDate?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
         val instantReferenceDate: Instant = referenceDate?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
