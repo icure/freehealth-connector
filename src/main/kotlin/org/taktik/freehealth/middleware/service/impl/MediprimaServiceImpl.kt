@@ -1,7 +1,9 @@
 package org.taktik.freehealth.middleware.service.impl
 
 import be.fgov.ehealth.mediprima.core.v2.BySsinType
+import be.fgov.ehealth.mediprima.core.v2.CbssStatusType
 import be.fgov.ehealth.mediprima.core.v2.ConsultCarmedDataType
+import be.fgov.ehealth.mediprima.core.v2.MedicalCardRegistryStatusType
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionRequestType
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponseType
 import be.fgov.ehealth.messageservices.core.v1.PatientType
@@ -11,6 +13,7 @@ import be.fgov.ehealth.messageservices.core.v1.RetrieveTransactionResponse
 import be.fgov.ehealth.messageservices.core.v1.SelectRetrieveTransactionType
 import be.fgov.ehealth.messageservices.core.v1.TransactionType
 import be.fgov.ehealth.mycarenet.commons.protocol.v2.TarificationConsultationRequest
+import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationRequest
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENT
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENTschemes
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDERRORMYCARENETschemes
@@ -53,16 +56,20 @@ import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
+import org.taktik.freehealth.middleware.domain.mediprima.MediprimaMdaResponse
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.MediprimaService
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.protocol.Response
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
+import org.xml.sax.InputSource
 import java.io.ByteArrayInputStream
+import java.io.StringReader
 import java.io.StringWriter
 import java.io.UnsupportedEncodingException
 import java.math.BigDecimal
@@ -110,7 +117,7 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
         startDate: Instant,
         endDate: Instant,
         referenceDate: Instant
-    ): ConsultCarmedInterventionResponseType? {
+    ): MediprimaMdaResponse? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Mediprima operations")
@@ -147,15 +154,45 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
                 this.issueInstant = issueInstant
                 this.selectionCriteria = consultCaremedRequestType.selectionCriteria
                 this.result = response.result
+                this.status = response.status
+                this.inResponseTo = response.inResponseTo
             }
+
+            val cbssStatus = response.status?.statusDetail?.anies
+                ?.filterIsInstance<Element>()
+                ?.firstOrNull { it.localName == "CbssStatus" }
+                ?.let { unmarshalElement(it, CbssStatusType::class.java) }
+
+            val medicalStatus = response.status?.statusDetail?.anies
+                ?.filterIsInstance<Element>()
+                ?.firstOrNull { it.localName == "MedicalCardRegistryStatus" }
+                ?.let { unmarshalElement(it, MedicalCardRegistryStatusType::class.java) }
+
             val jaxbContext = JAXBContext.newInstance(ConsultCarmedInterventionResponseType::class.java)
             val marshaller: Marshaller = jaxbContext.createMarshaller()
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
             val sw = StringWriter()
             marshaller.marshal(response, sw)
-            //println(sw.toString())
-            return result
+            return MediprimaMdaResponse().apply {
+                this.status = response.status.statusCode.value
+                this.response = result
+                this.medicalStatus = medicalStatus
+                this.cbssStatus = cbssStatus
+                this.mycarenetConversation = MycarenetConversation().apply {
+                    this.soapRequest = null
+                    this.soapResponse = null
+                    this.transactionResponse =  MarshallerHelper(ConsultCarmedInterventionResponseType::class.java, ConsultCarmedInterventionResponseType::class.java).toXMLByteArray(response).toString(Charsets.UTF_8)
+                    this.transactionRequest =  MarshallerHelper(ConsultCarmedInterventionRequestType::class.java, ConsultCarmedInterventionRequestType::class.java).toXMLByteArray(consultCaremedRequestType).toString(Charsets.UTF_8)
+                }
+            }
         }
+    }
+
+    fun <T> unmarshalElement(element: Element, clazz: Class<T>): T {
+        val context = JAXBContext.newInstance(clazz)
+        val unmarshaller = context.createUnmarshaller()
+        val jaxbElement = unmarshaller.unmarshal(element, clazz)
+        return jaxbElement.value
     }
 
     override fun consultTarif(
