@@ -6,4 +6,5 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken
 
 interface TarificationService {
     fun consultTarification(token: SAMLToken, request: TarificationConsultationRequest): TarificationConsultationResponse
+    fun consultTarificationMediPrima(token: SAMLToken, request: TarificationConsultationRequest): TarificationConsultationResponse
 }
