@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-import org.taktik.connector.business.domain.agreement.AgreementResponse
+import org.taktik.connector.business.domain.agreement.EAgreementResponse
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EagreementService
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
@@ -78,7 +78,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) numberOfSessionForPrescription1: Float?,
         @RequestParam(required = false) numberOfSessionForPrescription2: Float?,
         @RequestBody(required = false) attachments: List<Attachment>?
-    ): AgreementResponse? {
+    ): EAgreementResponse? {
         val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
@@ -143,7 +143,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) agreementStartDate: Int?,
         @RequestParam(required = false) agreementEndDate: Int?,
         @RequestParam(required = false) agreementType: String?
-    ): AgreementResponse? {
+    ): EAgreementResponse? {
         val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
         return eagreementService.consultAgreementList(
             keystoreId = keystoreId,
@@ -194,7 +194,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) orgNihii: String?,
         @RequestParam(required = false) organizationType: String?,
         @RequestParam(required = false) agreementType: String?
-    ): AgreementResponse? {
+    ): EAgreementResponse? {
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -266,7 +266,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) numberOfSessionForPrescription1: Float?,
         @RequestParam(required = false) numberOfSessionForPrescription2: Float?,
         @RequestBody(required = false) attachments: List<Attachment>?
-    ): AgreementResponse? {
+    ): EAgreementResponse? {
         val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
@@ -336,7 +336,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) numberOfSessionForPrescription1: Float?,
         @RequestParam(required = false) numberOfSessionForPrescription2: Float?,
         @RequestBody(required = false) attachments: List<Attachment>?
-    ): AgreementResponse? {
+    ): EAgreementResponse? {
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -405,7 +405,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) numberOfSessionForPrescription1: Float?,
         @RequestParam(required = false) numberOfSessionForPrescription2: Float?,
         @RequestBody(required = false) attachments: List<Attachment>?
-    ): AgreementResponse? {
+    ): EAgreementResponse? {
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,

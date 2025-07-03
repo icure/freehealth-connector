@@ -4,7 +4,6 @@ import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import java.io.Serializable
-import java.util.ArrayList
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,7 +12,7 @@ import java.util.ArrayList
  * Time: 15:07
  * To change this template use File | Settings | File Templates.
  */
-class AgreementResponse(
+class EAgreementResponse(
     var commonOutput: CommonOutput? = null,
     var mycarenetConversation: MycarenetConversation? = null,
     var isAcknowledged: Boolean = false,
