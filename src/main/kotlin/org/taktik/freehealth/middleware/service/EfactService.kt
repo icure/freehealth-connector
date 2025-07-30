@@ -10,7 +10,7 @@ import java.util.UUID
 
 interface EfactService {
 
-    fun sendBatch(keystoreId: UUID, tokenId: UUID, passPhrase: String, batch: InvoicesBatch, isMediprima: Boolean): EfactSendResponse
+    fun sendBatch(keystoreId: UUID, tokenId: UUID, passPhrase: String, batch: InvoicesBatch): EfactSendResponse
     fun loadMessages(keystoreId: UUID,
                      tokenId: UUID,
                      passPhrase: String,
