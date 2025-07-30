@@ -153,7 +153,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                     iv.writeRecordHeader(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.reason!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, invoice.ignorePrescriptionDate, invoice.hospitalisedPatient, invoice.creditNote, invoice.relatedBatchSendNumber, invoice.relatedBatchYearMonth, invoice.relatedInvoiceIoCode, invoice.relatedInvoiceNumber, batch.magneticInvoice, invoice.startOfCoveragePeriod, invoice.admissionDate, invoice.locationNihii, invoice.locationService)
                 recordsCountPerOA[0]++
                 if(isMediprima){
-                    rn = iv.writeMediprimaRecord(rn, invoice.patient!!, 0)
+                    rn = iv.writeMediprimaRecord(rn, batch.sender!!, invoice.patient!!, invoice.invoiceNumber!!, invoice.invoiceRef!!, false)
                 }
                 metadata.recordsCount++
                 for (it in invoice.items) {
@@ -223,7 +223,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         return batch
     }
 
-    override fun sendBatch(keystoreId: UUID, tokenId: UUID, passPhrase: String, batch: InvoicesBatch, isMediprima: Boolean): EfactSendResponse {
+    override fun sendBatch(keystoreId: UUID, tokenId: UUID, passPhrase: String, batch: InvoicesBatch): EfactSendResponse {
         requireNotNull(keystoreId) { "Keystore id cannot be null" }
         requireNotNull(tokenId) { "Token id cannot be null" }
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase) ?: throw IllegalArgumentException("Cannot obtain token for Efact operations")
@@ -236,6 +236,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
         val fed = sanitizedBatch.ioFederationCode
         val inputReference = "" + DecimalFormat("00000000000000").format(sanitizedBatch.numericalRef ?: 0)
+        val isMediprima = batch.ioFederationCode === "690"
         val content = makeFlatFile(sanitizedBatch, isTest, isMediprima)
 
         val requestObjectBuilder = try {

@@ -353,8 +353,11 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
     @Throws(IOException::class)
     fun writeMediprimaRecord(
         recordNumber: Int,
+        sender: InvoiceSender,
         patient: Patient,
-        urgencyMedicalAssistance: Int
+        invoiceNumber: Long?,
+        invoiceRef: String?,
+        urgencyMedicalAssistance: Boolean
     ): Int{
         val ws = WriterSession(writer, Record25Description)
 
@@ -363,12 +366,14 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("7", "690")
         ws.write("8", if (patient.ssin != null) patient.ssin!!.replace("[^0-9]".toRegex(), "") else "")
         ws.write("9", if (patient.gender == null || patient.gender == Gender.male) 1 else 2)
-        ws.write("12", urgencyMedicalAssistance)
+        ws.write("12", if (urgencyMedicalAssistance) 1 else 0)
+        ws.write("14", sender.nihii.toString().padEnd(11, '0'))
+        ws.write("15", "")
         ws.write("18", "690")
-        ws.write("24,25", "")
+        ws.write("24,25", invoiceNumber!!)
         ws.write("27", "")
-        ws.write("28", "")
-        ws.write("32", "")
+        ws.write("28", invoiceRef!!)
+        ws.write("32", "1")
         ws.write("38", "")
         ws.write("56 ,57 ,58", "")
         ws.write("59", "")

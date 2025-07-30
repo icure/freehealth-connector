@@ -49,8 +49,7 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
-            batch = batch,
-            isMediprima = false
+            batch = batch
         )
 
     @PostMapping("/flat", produces = [MediaType.TEXT_PLAIN_VALUE])
