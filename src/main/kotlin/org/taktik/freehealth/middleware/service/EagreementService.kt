@@ -1,12 +1,31 @@
 package org.taktik.freehealth.middleware.service
 
 import org.joda.time.DateTime
+import org.taktik.connector.business.agreement.domain.Agreement
+import org.taktik.connector.business.agreement.domain.AgreementMessage
+import org.taktik.connector.business.domain.agreement.AgreementResponse
 import org.taktik.connector.business.domain.agreement.EAgreementResponse
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
 import org.taktik.freehealth.middleware.web.controllers.EagreementController
 import java.util.*
 
 interface EagreementService {
+
+    /**
+     * @name askAgreement
+     * @goal Request new agreement
+     * @goal Argue a request being processed
+     * @goal Extend an existing agreement
+     * @goal Cancel request in the event of an error
+     * @goal Complete existing ask agreement
+     * */
+    fun askAgreement(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        agreement: Agreement
+    ): AgreementResponse?
+
     /**
      * @name askAgreement
      * @goal Request new agreement
@@ -71,20 +90,6 @@ interface EagreementService {
         patientSsin: String?,
         patientIo: String?,
         patientIoMembership: String?,
-        hcpNihii: String,
-        hcpSsin: String,
-        hcpFirstName: String,
-        hcpLastName: String,
-        subTypeCode: String,
-        insuranceRef: String?,
-        orgNihii: String?,
-        organizationType: String?,
-        agreementStartDate: DateTime?,
-        agreementEndDate: DateTime?,
-        agreementType: String?
-    ): EAgreementResponse?
-
-}
         insuranceRef: String,
         hcpNihii: String,
         hcpSsin: String,
@@ -97,6 +102,7 @@ interface EagreementService {
         agreementEndDate: DateTime?,
         agreementType: String?
     ): AgreementResponse?
+
 
     /**
      * @name consultAgreement

@@ -14,4 +14,3 @@ interface AgreementService {
     @Throws(TechnicalConnectorException::class)
     fun consultAgreement(samlToken: SAMLToken, consultAgreementRequest: ConsultAgreementRequest?): ConsultAgreementResponse?
 }
-}

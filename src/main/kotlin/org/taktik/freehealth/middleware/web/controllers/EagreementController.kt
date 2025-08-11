@@ -1,18 +1,22 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import ma.glasnost.orika.MapperFacade
+import org.joda.time.format.DateTimeFormat
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import org.taktik.connector.business.agreement.domain.Agreement
+import org.taktik.connector.business.agreement.domain.AgreementMessage
 import org.taktik.connector.business.domain.agreement.AgreementResponse
+import org.taktik.connector.business.domain.agreement.EAgreementResponse
 import org.taktik.freehealth.middleware.dto.eattest.Eattest
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EagreementService
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
 import java.util.*
 import javax.servlet.http.HttpServletRequest
+import javax.xml.ws.soap.SOAPFaultException
 
 @RestController
 @RequestMapping("/eagreement")
@@ -31,10 +35,15 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
     fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
 
     @ResponseStatus(HttpStatus.BAD_GATEWAY)
-    @ExceptionHandler(javax.xml.ws.soap.SOAPFaultException::class)
+    @ExceptionHandler(SOAPFaultException::class)
     @ResponseBody
-    fun handleBadRequest(req: HttpServletRequest, ex: javax.xml.ws.soap.SOAPFaultException): String =
+    fun handleBadRequest(req: HttpServletRequest, ex: SOAPFaultException): String =
         ex.message ?: "unknown reason"
+
+    data class Attachment(
+        val type: String,
+        val data: String
+    )
 
     @PostMapping("/askAgreement", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun askAgreement(
@@ -43,18 +52,17 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpQuality: String,
         @RequestParam hcpNihii: String,
-        @RequestParam hcpName: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
+        @RequestParam prescriberNihii: String,
+        @RequestParam prescriberFirstName: String,
+        @RequestParam prescriberLastName: String,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
-        @RequestParam messageEventSystem: String,
-        @RequestParam messageEventCode: String,
         @RequestParam pathologyStartDate: Int,
         @RequestParam pathologyCode: String,
-        @RequestParam insuranceRef: String,
         @RequestParam sctCode: String,
         @RequestParam(required = false) sctDisplay: String?,
         @RequestParam(required = false) patientSsin: String?,
@@ -62,15 +70,14 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) patientIoMembership: String?,
         @RequestParam(required = false) orgNihii: String?,
         @RequestParam(required = false) organizationType: String?,
-        @RequestParam(required = false) annex1: String?,
-        @RequestParam(required = false) annex2: String?,
         @RequestParam(required = false) agreementStartDate: Int?,
         @RequestParam(required = false) agreementEndDate: Int?,
         @RequestParam(required = false) agreementType: String?,
-        @RequestParam(required = false) numberOfSessionForAnnex1: Float?,
-        @RequestParam(required = false) numberOfSessionForAnnex2: Float?
-    ): AgreementResponse? {
-        val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
+        @RequestParam(required = false) numberOfSessionForPrescription1: Float?,
+        @RequestParam(required = false) numberOfSessionForPrescription2: Float?,
+        @RequestBody(required = false) attachments: List<Attachment>?
+    ): EAgreementResponse? {
+        val formatter = DateTimeFormat.forPattern("yyyyMMdd")
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -87,22 +94,26 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             patientIoMembership = patientIoMembership,
             pathologyStartDate = formatter.parseDateTime(pathologyStartDate.toString()),
             pathologyCode = pathologyCode,
-            insuranceRef = insuranceRef,
+            insuranceRef = null,
             hcpNihii = hcpNihii,
             hcpSsin = hcpSsin,
             hcpFirstName = hcpFirstName,
             hcpLastName = hcpLastName,
+            prescriberNihii = prescriberNihii,
+            prescriberFirstName = prescriberFirstName,
+            prescriberLastName = prescriberLastName,
             orgNihii = orgNihii,
             organizationType = organizationType,
-            annex1 = annex1,
-            annex2 = annex2,
-            agreementStartDate = formatter.parseDateTime(agreementStartDate.toString()),
-            agreementEndDate = formatter.parseDateTime(agreementEndDate.toString()),
+            prescription1 = attachments?.find { it.type == "prescription1" }?.data,
+            prescription2 = attachments?.find { it.type == "prescription2" }?.data,
+            agreementStartDate = if (agreementStartDate != null ) formatter.parseDateTime(agreementStartDate.toString()) else null,
+            agreementEndDate = if (agreementEndDate != null) formatter.parseDateTime(agreementEndDate.toString()) else null,
             agreementType = agreementType,
-            numberOfSessionForAnnex1 = numberOfSessionForAnnex1,
-            numberOfSessionForAnnex2 = numberOfSessionForAnnex2,
+            numberOfSessionForPrescription1 = numberOfSessionForPrescription1,
+            numberOfSessionForPrescription2 = numberOfSessionForPrescription2,
             sctCode = sctCode,
-            sctDisplay = sctDisplay
+            sctDisplay = sctDisplay,
+            attachments = attachments?.filter { it.type != "prescription1" && it.type != "prescription2" }
         )
     }
 
@@ -145,7 +156,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam firstName: String,
         @RequestParam lastName: String,
         @RequestParam limit: Int?
-    ) =
+    ): List<AgreementMessage> =
         eagreementService.getEAgreementMessages(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -206,7 +217,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) agreementEndDate: Int?,
         @RequestParam(required = false) agreementType: String?
     ): AgreementResponse? {
-        val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
+        val formatter = DateTimeFormat.forPattern("yyyyMMdd")
         return eagreementService.consultAgreementList(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -249,8 +260,6 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
-        @RequestParam messageEventSystem: String,
-        @RequestParam messageEventCode: String,
         @RequestParam insuranceRef: String,
         @RequestParam(required = false) patientSsin: String?,
         @RequestParam(required = false) patientIo: String?,
@@ -258,7 +267,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) orgNihii: String?,
         @RequestParam(required = false) organizationType: String?,
         @RequestParam(required = false) agreementType: String?
-    ): AgreementResponse? {
+    ): EAgreementResponse? {
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -274,23 +283,27 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             patientIo = patientIo,
             patientIoMembership = patientIoMembership,
             insuranceRef = insuranceRef,
+            pathologyStartDate = null,
+            pathologyCode = null,
             hcpNihii = hcpNihii,
             hcpSsin = hcpSsin,
             hcpFirstName = hcpFirstName,
             hcpLastName = hcpLastName,
+            prescriberNihii = null,
+            prescriberFirstName = null,
+            prescriberLastName = null,
             orgNihii = orgNihii,
             organizationType = organizationType,
-            agreementType = agreementType,
-            agreementEndDate = null,
+            prescription1 = null,
+            prescription2 = null,
             agreementStartDate = null,
-            annex1 = null,
-            annex2 = null,
-            pathologyCode = null,
-            pathologyStartDate = null,
-            numberOfSessionForAnnex1 = null,
-            numberOfSessionForAnnex2 = null,
+            agreementEndDate = null,
+            agreementType = agreementType,
+            numberOfSessionForPrescription1 = null,
+            numberOfSessionForPrescription2 = null,
             sctCode = null,
-            sctDisplay = null
+            sctDisplay = null,
+            attachments = null
         )
     }
 
@@ -301,33 +314,32 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpQuality: String,
         @RequestParam hcpNihii: String,
-        @RequestParam hcpName: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
+        @RequestParam prescriberNihii: String,
+        @RequestParam prescriberFirstName: String,
+        @RequestParam prescriberLastName: String,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
-        @RequestParam messageEventSystem: String,
-        @RequestParam messageEventCode: String,
         @RequestParam pathologyStartDate: Int,
         @RequestParam pathologyCode: String,
         @RequestParam insuranceRef: String,
-        @RequestParam sctCode: String,
+        @RequestParam(required = false) sctCode: String?,
         @RequestParam(required = false) sctDisplay: String?,
         @RequestParam(required = false) patientSsin: String?,
         @RequestParam(required = false) patientIo: String?,
         @RequestParam(required = false) patientIoMembership: String?,
         @RequestParam(required = false) orgNihii: String?,
         @RequestParam(required = false) organizationType: String?,
-        @RequestParam(required = false) annex1: String?,
-        @RequestParam(required = false) annex2: String?,
         @RequestParam(required = false) agreementStartDate: Int?,
         @RequestParam(required = false) agreementEndDate: Int?,
         @RequestParam(required = false) agreementType: String?,
-        @RequestParam(required = false) numberOfSessionForAnnex1: Float?,
-        @RequestParam(required = false) numberOfSessionForAnnex2: Float?
-    ): AgreementResponse? {
+        @RequestParam(required = false) numberOfSessionForPrescription1: Float?,
+        @RequestParam(required = false) numberOfSessionForPrescription2: Float?,
+        @RequestBody(required = false) attachments: List<Attachment>?
+    ): EAgreementResponse? {
         val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
@@ -350,17 +362,21 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             hcpSsin = hcpSsin,
             hcpFirstName = hcpFirstName,
             hcpLastName = hcpLastName,
+            prescriberNihii = prescriberNihii,
+            prescriberFirstName = prescriberFirstName,
+            prescriberLastName = prescriberLastName,
             orgNihii = orgNihii,
             organizationType = organizationType,
-            annex1 = annex1,
-            annex2 = annex2,
-            agreementStartDate = formatter.parseDateTime(agreementStartDate.toString()),
-            agreementEndDate = formatter.parseDateTime(agreementEndDate.toString()),
+            prescription1 = attachments?.find { it.type == "prescription1" }?.data,
+            prescription2 = attachments?.find { it.type == "prescription2" }?.data,
+            agreementStartDate = if (agreementStartDate != null ) formatter.parseDateTime(agreementStartDate.toString()) else null,
+            agreementEndDate = if (agreementEndDate != null) formatter.parseDateTime(agreementEndDate.toString()) else null,
             agreementType = agreementType,
-            numberOfSessionForAnnex1 = numberOfSessionForAnnex1,
-            numberOfSessionForAnnex2 = numberOfSessionForAnnex2,
+            numberOfSessionForPrescription1 = numberOfSessionForPrescription1,
+            numberOfSessionForPrescription2 = numberOfSessionForPrescription2,
             sctCode = sctCode,
-            sctDisplay = sctDisplay
+            sctDisplay = sctDisplay,
+            attachments = attachments?.filter { it.type != "prescription1" && it.type != "prescription2" }
         )
     }
 
@@ -375,25 +391,25 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
+        @RequestParam prescriberNihii: String,
+        @RequestParam prescriberFirstName: String,
+        @RequestParam prescriberLastName: String,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
-        @RequestParam messageEventSystem: String,
-        @RequestParam messageEventCode: String,
         @RequestParam insuranceRef: String,
-        @RequestParam sctCode: String,
+        @RequestParam(required = false) sctCode: String?,
         @RequestParam(required = false) sctDisplay: String?,
         @RequestParam(required = false) patientSsin: String?,
         @RequestParam(required = false) patientIo: String?,
         @RequestParam(required = false) patientIoMembership: String?,
         @RequestParam(required = false) orgNihii: String?,
         @RequestParam(required = false) organizationType: String?,
-        @RequestParam(required = false) annex1: String?,
-        @RequestParam(required = false) annex2: String?,
         @RequestParam(required = false) agreementType: String?,
-        @RequestParam(required = false) numberOfSessionForAnnex1: Float?,
-        @RequestParam(required = false) numberOfSessionForAnnex2: Float?
-    ): AgreementResponse? {
+        @RequestParam(required = false) numberOfSessionForPrescription1: Float?,
+        @RequestParam(required = false) numberOfSessionForPrescription2: Float?,
+        @RequestBody(required = false) attachments: List<Attachment>?
+    ): EAgreementResponse? {
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -415,17 +431,21 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             hcpSsin = hcpSsin,
             hcpFirstName = hcpFirstName,
             hcpLastName = hcpLastName,
+            prescriberNihii = prescriberNihii,
+            prescriberFirstName = prescriberFirstName,
+            prescriberLastName = prescriberLastName,
             orgNihii = orgNihii,
             organizationType = organizationType,
-            annex1 = annex1,
-            annex2 = annex2,
+            prescription1 = attachments?.find { it.type == "prescription1" }?.data,
+            prescription2 = attachments?.find { it.type == "prescription2" }?.data,
             agreementStartDate = null,
             agreementEndDate = null,
             agreementType = agreementType,
-            numberOfSessionForAnnex1 = numberOfSessionForAnnex1,
-            numberOfSessionForAnnex2 = numberOfSessionForAnnex2,
+            numberOfSessionForPrescription1 = numberOfSessionForPrescription1,
+            numberOfSessionForPrescription2 = numberOfSessionForPrescription2,
             sctCode = sctCode,
-            sctDisplay = sctDisplay
+            sctDisplay = sctDisplay,
+            attachments = attachments?.filter { it.type != "prescription1" && it.type != "prescription2" }
         )
     }
 
@@ -440,25 +460,25 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
+        @RequestParam prescriberNihii: String,
+        @RequestParam prescriberFirstName: String,
+        @RequestParam prescriberLastName: String,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
-        @RequestParam messageEventSystem: String,
-        @RequestParam messageEventCode: String,
         @RequestParam insuranceRef: String,
-        @RequestParam sctCode: String,
+        @RequestParam(required = false) sctCode: String?,
         @RequestParam(required = false) sctDisplay: String?,
         @RequestParam(required = false) patientSsin: String?,
         @RequestParam(required = false) patientIo: String?,
         @RequestParam(required = false) patientIoMembership: String?,
         @RequestParam(required = false) orgNihii: String?,
         @RequestParam(required = false) organizationType: String?,
-        @RequestParam(required = false) annex1: String?,
-        @RequestParam(required = false) annex2: String?,
         @RequestParam(required = false) agreementType: String?,
-        @RequestParam(required = false) numberOfSessionForAnnex1: Float?,
-        @RequestParam(required = false) numberOfSessionForAnnex2: Float?
-    ): AgreementResponse? {
+        @RequestParam(required = false) numberOfSessionForPrescription1: Float?,
+        @RequestParam(required = false) numberOfSessionForPrescription2: Float?,
+        @RequestBody(required = false) attachments: List<Attachment>?
+    ): EAgreementResponse? {
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -480,17 +500,21 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             hcpSsin = hcpSsin,
             hcpFirstName = hcpFirstName,
             hcpLastName = hcpLastName,
+            prescriberNihii = prescriberNihii,
+            prescriberFirstName = prescriberFirstName,
+            prescriberLastName = prescriberLastName,
             orgNihii = orgNihii,
             organizationType = organizationType,
-            annex1 = annex1,
-            annex2 = annex2,
+            prescription1 = attachments?.find { it.type == "prescription1" }?.data,
+            prescription2 = attachments?.find { it.type == "prescription2" }?.data,
             agreementStartDate = null,
             agreementEndDate = null,
             agreementType = agreementType,
-            numberOfSessionForAnnex1 = numberOfSessionForAnnex1,
-            numberOfSessionForAnnex2 = numberOfSessionForAnnex2,
+            numberOfSessionForPrescription1 = numberOfSessionForPrescription1,
+            numberOfSessionForPrescription2 = numberOfSessionForPrescription2,
             sctCode = sctCode,
-            sctDisplay = sctDisplay
+            sctDisplay = sctDisplay,
+            attachments = attachments?.filter { it.type != "prescription1" && it.type != "prescription2" }
         )
     }
 }

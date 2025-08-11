@@ -47,8 +47,6 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
-        @RequestParam hcpQuality: String,
-        @RequestParam hcpMcnQuality: String,
         @RequestParam hcpCbe: String,
         @RequestParam(required = false) hcpQuality: String?,
         @RequestParam patientFirstName: String,
@@ -74,8 +72,6 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         hcpSsin,
         hcpFirstName,
         hcpLastName,
-        hcpQuality,
-        hcpMcnQuality,
         hcpCbe,
         hcpQuality,
         treatmentReason,
@@ -108,8 +104,6 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
-        @RequestParam hcpQuality: String,
-        @RequestParam hcpMcnQuality: String,
         @RequestParam hcpCbe: String,
         @RequestParam(required = false) hcpQuality: String?,
         @RequestParam patientFirstName: String,
@@ -135,8 +129,6 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         hcpSsin,
         hcpFirstName,
         hcpLastName,
-        hcpQuality,
-        hcpMcnQuality,
         hcpCbe,
         hcpQuality,
         treatmentReason,
@@ -169,8 +161,6 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
-        @RequestParam hcpQuality: String,
-        @RequestParam hcpMcnQuality: String,
         @RequestParam hcpCbe: String,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
@@ -183,7 +173,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
         @RequestParam(required = false) traineeSupervisorLastName: String?
-                  ): SendAttestResult? =
+    ): SendAttestResult? =
         eattestService.cancelAttest(
             keystoreId,
             tokenId,
@@ -191,8 +181,6 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
             hcpSsin,
             hcpFirstName,
             hcpLastName,
-            hcpQuality,
-            hcpMcnQuality,
             hcpCbe,
             traineeSupervisorSsin,
             traineeSupervisorNihii,
@@ -207,7 +195,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
             eAttestRef,
             reason,
             attemptNbr
-       )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
+        )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
 
     @DeleteMapping("/send/{patientSsin}/verbose")
     fun cancelAttestWithResponse(
@@ -219,8 +207,6 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
-        @RequestParam hcpQuality: String,
-        @RequestParam hcpMcnQuality: String,
         @RequestParam hcpCbe: String,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
@@ -233,7 +219,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
         @RequestParam(required = false) traineeSupervisorLastName: String?
-                    ) =
+    ) =
         eattestService.cancelAttest(
             keystoreId,
             tokenId,
@@ -241,8 +227,6 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
             hcpSsin,
             hcpFirstName,
             hcpLastName,
-            hcpQuality,
-            hcpMcnQuality,
             hcpCbe,
             traineeSupervisorSsin,
             traineeSupervisorNihii,
@@ -257,5 +241,5 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
             eAttestRef,
             reason,
             attemptNbr
-                                   )
+        )
 }

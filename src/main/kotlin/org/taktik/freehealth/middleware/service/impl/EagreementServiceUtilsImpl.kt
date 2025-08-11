@@ -672,7 +672,6 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 ).asJsonObject
             )
             gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(patient)
-            gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(practitionerRole2)
         }
 
         if (hcpNihii != null) {

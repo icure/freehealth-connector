@@ -21,6 +21,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import com.nimbusds.oauth2.sdk.TokenResponse
+import io.swagger.annotations.ApiOperation
 import org.apache.log4j.MDC
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
