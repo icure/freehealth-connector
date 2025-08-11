@@ -50,9 +50,11 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam hcpQuality: String,
         @RequestParam hcpMcnQuality: String,
         @RequestParam hcpCbe: String,
+        @RequestParam(required = false) hcpQuality: String?,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
+        @RequestParam(required = false) isPatientRcam: Boolean?,
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) treatmentReason: String?,
         @RequestParam(required = false) traineeSupervisorSsin: String?,
@@ -63,6 +65,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam(required = false) guardPostSsin: String?,
         @RequestParam(required = false) guardPostName: String?,
         @RequestParam(required = false) attemptNbr: Int?,
+        @RequestParam(required = false) decisionReference: String?,
         @RequestBody attest: Eattest
     ) = eattestService.sendAttestV3(
         keystoreId,
@@ -74,6 +77,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         hcpQuality,
         hcpMcnQuality,
         hcpCbe,
+        hcpQuality,
         treatmentReason,
         traineeSupervisorSsin,
         traineeSupervisorNihii,
@@ -87,8 +91,10 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         patientFirstName,
         patientLastName,
         patientGender,
+        isPatientRcam ?: false,
         date,
         attemptNbr,
+        decisionReference,
         attest
     )
 
@@ -105,9 +111,11 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam hcpQuality: String,
         @RequestParam hcpMcnQuality: String,
         @RequestParam hcpCbe: String,
+        @RequestParam(required = false) hcpQuality: String?,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
+        @RequestParam(required = false) isPatientRcam: Boolean?,
         @RequestParam(required = false) date: Long?,
         @RequestParam(required = false) treatmentReason: String?,
         @RequestParam(required = false) traineeSupervisorSsin: String?,
@@ -118,6 +126,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam(required = false) guardPostSsin: String?,
         @RequestParam(required = false) guardPostName: String?,
         @RequestParam(required = false) attemptNbr: Int?,
+        @RequestParam(required = false) decisionReference: String?,
         @RequestBody attest: Eattest
     ): SendAttestResult? = eattestService.sendAttestV3(
         keystoreId,
@@ -129,6 +138,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         hcpQuality,
         hcpMcnQuality,
         hcpCbe,
+        hcpQuality,
         treatmentReason,
         traineeSupervisorSsin,
         traineeSupervisorNihii,
@@ -142,8 +152,10 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         patientFirstName,
         patientLastName,
         patientGender,
+        isPatientRcam ?: false,
         date,
         attemptNbr,
+        decisionReference,
         attest
     )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
 

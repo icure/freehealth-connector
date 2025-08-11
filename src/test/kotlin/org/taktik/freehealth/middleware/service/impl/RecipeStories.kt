@@ -59,8 +59,8 @@
 //
 //    private var hcp: HealthcareParty = RecipeTestUtils.createHealthcareParty()
 //    private val patient = RecipeTestUtils.createPatient()
-//
-//    init {
+//    private val vendorName = ""
+//    private val packageVersion = ""
 //        System.setProperty("spring.output.ansi.enabled", "always")
 //    }
 //

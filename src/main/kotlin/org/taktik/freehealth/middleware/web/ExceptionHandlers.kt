@@ -7,6 +7,7 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.freehealth.middleware.dto.ExceptionDto
 import org.taktik.freehealth.middleware.exception.MissingKeystoreException
 import org.taktik.freehealth.middleware.exception.MissingTokenException
+import org.taktik.freehealth.middleware.exception.UnauthorizedException
 import java.io.EOFException
 import javax.servlet.http.HttpServletRequest
 import javax.xml.ws.soap.SOAPFaultException
@@ -20,7 +21,7 @@ class ExceptionHandlers {
     fun handleTechnicalConnectorException(request: HttpServletRequest, exception: TechnicalConnectorException) =
             ExceptionDto(exception.category.httpStatus, exception, request.servletPath).toResponseEntity()
 
-    @ExceptionHandler(MissingKeystoreException::class, MissingTokenException::class)
+    @ExceptionHandler(MissingKeystoreException::class, MissingTokenException::class, UnauthorizedException::class)
     fun handleUnauthorizedException(request: HttpServletRequest, exception: Exception) =
             ExceptionDto(HttpStatus.UNAUTHORIZED, exception, request.servletPath).toResponseEntity()
 

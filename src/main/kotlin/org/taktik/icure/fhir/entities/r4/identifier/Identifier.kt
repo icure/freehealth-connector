@@ -5,6 +5,7 @@ package org.taktik.icure.fhir.entities.r4.identifier
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import kotlin.String
 import kotlin.collections.List
 import org.taktik.icure.fhir.entities.r4.Element
@@ -21,6 +22,7 @@ import org.taktik.icure.fhir.entities.r4.reference.Reference
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonPropertyOrder("system", "value", "assigner")
 class Identifier(
   /**
    * Organization that issued id (may be just text)

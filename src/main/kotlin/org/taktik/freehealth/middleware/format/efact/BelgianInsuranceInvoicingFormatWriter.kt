@@ -421,10 +421,11 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("28", icd.invoiceRef)
         ws.write("29", icd.anatomy ?: "00")
         ws.write("30",(if (icd.doctorSupplement >= 0) "+" else "-") + nf9.format(Math.abs(icd.doctorSupplement)))
-        ws.write("32", icd.override3rdPayerCode?. let { if (it >= 0) it else 0 } ?: 0)
+        ws.write("32", icd.override3rdPayerCode?. let { if (it == "N") it else "0" } ?: "0")
         ws.write("33", icd.personalInterventionCoveredByThirdPartyCode?. let { if (it >= 0) it else 0 } ?: 0)//MAF Zone 33 todo //Mettre 1 si a charge du medecin
         ws.write("34", (icd.sideCode?: InvoicingSideCode.None).code)
         ws.write("35", sender.conventionCode)
+        ws.write("44", icd.productLabel)
         //47 conditional: before 01/07/2019 0000000, after 01/07/2019 +0000000
         ws.write("47",
             when {
@@ -483,8 +484,10 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("5", FuzzyValues.getLocalDateTime(icd.dateCode!!)!!.format(dtf))
         ws.write("8a", noSIS)
         ws.write("15", icd.doctorIdentificationNumber)
-        if (isDentist) {
-            ws.write("17", icd.relatedCode ?: 0)
+        if (isDentist && icd.relatedCode !== null) {
+            val relatedCode = icd.relatedCode.toString();
+            ws.write("17", relatedCode.take(3))
+            ws.write("18", relatedCode.takeLast(3))
         }
         else {
             ws.write("17", 0)

@@ -10,8 +10,10 @@ import org.bouncycastle.cms.CMSProcessable
 import org.bouncycastle.cms.CMSProcessableByteArray
 import org.bouncycastle.cms.CMSSignedData
 import org.bouncycastle.cms.CMSSignerDigestMismatchException
+import org.bouncycastle.cms.SignerId
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient
+import org.bouncycastle.util.Selector
 import org.jose4j.jwt.consumer.JwtConsumerBuilder
 import org.springframework.stereotype.Service
 import org.taktik.freehealth.middleware.domain.rsw.Jwks
@@ -80,7 +82,11 @@ class RswFhirServiceImpl(val stsService: STSService) : RswFhirService {
 
             @Suppress("UNUSED_VARIABLE")
             val signed = signedData.signerInfos.signers.any { signer ->
-                signedData.certificates.getMatches(signer.sid).filterIsInstance(X509CertificateHolder::class.java).any { ch ->
+                data class X509CertificateHolderSelector(val sid: SignerId) : Selector<X509CertificateHolder> {
+                    override fun match(obj: X509CertificateHolder) = true //TODO select the right one
+                    override fun clone() = this.copy()
+                }
+                signedData.certificates.getMatches(X509CertificateHolderSelector(signer.sid)).any { ch ->
                     val cert: X509Certificate = JcaX509CertificateConverter().setProvider("BC").getCertificate(ch)
                     try { signer.verify(JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(cert)) } catch(e:CMSSignerDigestMismatchException) {
                         false // <- org.bouncycastle.cms.CMSSignerDigestMismatchException: message-digest attribute value does not match calculated value

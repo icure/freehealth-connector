@@ -36,6 +36,7 @@ interface EattestV3Service {
         hcpQuality: String,
         hcpMcnQuality: String,
         hcpCbe: String,
+        hcpQuality: String?,
         treatmentReason : String?,
         traineeSupervisorSsin: String?,
         traineeSupervisorNihii: String?,
@@ -49,8 +50,10 @@ interface EattestV3Service {
         patientFirstName:String,
         patientLastName:String,
         patientGender:String,
+        isPatientRcam: Boolean,
         referenceDate: Long?,
         attemptNbr: Int?,
+        decisionReference: String?,
         attest: Eattest
                   ): SendAttestResultWithResponse?
 

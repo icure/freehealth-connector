@@ -3,6 +3,7 @@ package org.taktik.freehealth.middleware.service
 import com.google.gson.JsonObject
 import org.joda.time.DateTime
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
+import org.taktik.freehealth.middleware.web.controllers.EagreementController
 import org.taktik.icure.fhir.entities.r4.binary.Binary
 import org.taktik.icure.fhir.entities.r4.claim.Claim
 import org.taktik.icure.fhir.entities.r4.claim.ClaimInsurance
@@ -30,10 +31,11 @@ interface EagreementServiceUtils {
         claimId: String,
         subTypeCode: String,
         agreementStartDate: DateTime,
-        insuranceRef: String,
+        insuranceRef: String?,
         pathologyCode: String?,
         pathologyStartDate: DateTime?,
-        providerType: String
+        providerType: String,
+        attachments: List<EagreementController.Attachment>?
     ): Claim?
 
     fun getSupportingInfo(sequenceNumber: Int, claimInformationCategory: String, annexTypeCode: String?, valueReference: String?, valueString: String?, valueAttachmentData: String?, valueAttachmentTitle: String?, valueAttachmentContentType: String?): ClaimSupportingInfo?
@@ -46,7 +48,6 @@ interface EagreementServiceUtils {
     fun getContained(data: String, containedId: String): List<Binary>?
 
     fun getParameters(parameterId: String,
-                      agreementTypes: String,
                       startDate: DateTime?,
                       endDate: DateTime?,
                       patientFirstName: String?,
@@ -59,7 +60,6 @@ interface EagreementServiceUtils {
     ): Parameters?
 
     fun getParameter(parameterName: String,
-                     agreementTypes: String?,
                      startDate: DateTime?,
                      endDate: DateTime?,
                      patientFirstName: String?,
@@ -71,7 +71,7 @@ interface EagreementServiceUtils {
                      subTypeCode: String?
     ): ParametersParameter?
 
-    fun getInsurance(requestType: EagreementServiceImpl.RequestTypeEnum, insuranceRef: String, display: String): ClaimInsurance?
+    fun getInsurance(requestType: EagreementServiceImpl.RequestTypeEnum, insuranceRef: String?, display: String): ClaimInsurance?
 
     fun getBillablePeriod(startDate: DateTime): Period?
 
@@ -105,19 +105,20 @@ interface EagreementServiceUtils {
         hcp2LastName: String?,
         orgNihii: String?,
         organizationType: String?,
-        annex1: String?,
-        annex2: String?,
+        prescription1: String?,
+        prescription2: String?,
         agreementStartDate: DateTime?,
         agreementEndDate: DateTime?,
         agreementType: String?,
-        numberOfSessionForAnnex1: Float?,
-        numberOfSessionForAnnex2: Float?,
+        numberOfSessionForPrescription1: Float?,
+        numberOfSessionForPrescription2: Float?,
         insuranceRef: String?,
         pathologyCode: String?,
         pathologyStartDate: DateTime?,
         sctCode: String?,
         sctDisplay: String?,
-        subTypeCode: String?
+        subTypeCode: String?,
+        attachments: List<EagreementController.Attachment>?
     ): JsonObject?
 
 }

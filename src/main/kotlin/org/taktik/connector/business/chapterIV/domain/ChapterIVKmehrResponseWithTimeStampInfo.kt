@@ -6,11 +6,16 @@ import org.bouncycastle.util.Arrays
 import org.taktik.connector.technical.utils.MarshallerHelper
 import java.io.Serializable
 
-class ChapterIVKmehrResponseWithTimeStampInfo(kmehrResponseBytes: ByteArray) : Serializable {
+class ChapterIVKmehrResponseWithTimeStampInfo(timeStampBytes: ByteArray, kmehrResponseBytes: ByteArray) : Serializable {
     private val kmehrResponseBytes: ByteArray = ArrayUtils.clone(kmehrResponseBytes)
+    private val timeStampBytes: ByteArray = ArrayUtils.clone(timeStampBytes)
 
     fun getKmehrResponseBytes(): ByteArray {
         return Arrays.clone(this.kmehrResponseBytes)
+    }
+
+    fun getTimeStampBytes(): ByteArray {
+        return Arrays.clone(this.timeStampBytes)
     }
 
     val kmehrresponse: Kmehrresponse

@@ -39,6 +39,6 @@ class TarificationConsultationResult {
         var reimbursement: Payment? = null
         var patientFee: Payment? = null
         var contract: String? = null
-        var justification: Int = 0
+        var justification: String = "0"
     }
 }
