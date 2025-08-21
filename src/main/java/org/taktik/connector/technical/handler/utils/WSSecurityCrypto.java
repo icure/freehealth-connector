@@ -21,6 +21,7 @@ public class WSSecurityCrypto implements Crypto {
    private static final Logger LOG = LoggerFactory.getLogger(WSSecurityCrypto.class);
    private final X509Certificate certificate;
    private final PrivateKey privateKey;
+   private String trustProvider;
 
    public WSSecurityCrypto(Credential cred) throws TechnicalConnectorException {
       this(cred.getPrivateKey(), cred.getCertificate());
@@ -61,20 +62,19 @@ public class WSSecurityCrypto implements Crypto {
       return this.privateKey;
    }
 
+   public PrivateKey getPrivateKey(PublicKey publicKey, CallbackHandler callbackHandler) throws WSSecurityException {
+      return null;
+   }
+
    public PrivateKey getPrivateKey(String identifier, String password) throws WSSecurityException {
       return this.privateKey;
    }
 
+   public void verifyTrust(X509Certificate[] x509Certificates, boolean b, Collection<Pattern> collection, Collection<Pattern> collection1) throws WSSecurityException {
+   }
+
    public byte[] getSKIBytesFromCert(X509Certificate cert) throws WSSecurityException {
       return (byte[])throwWSSecurityException("getSKIBytesFromCert");
-   }
-
-   public void verifyTrust(X509Certificate[] x509Certificates, boolean b, Collection<Pattern> collection) throws WSSecurityException {
-      throwWSSecurityException("verifyTrust");
-   }
-
-   public void verifyDirectTrust(X509Certificate[] x509Certificates) throws WSSecurityException {
-      throwWSSecurityException("verifyDirectTrust");
    }
 
    public void verifyTrust(PublicKey publicKey) throws WSSecurityException {
@@ -89,16 +89,24 @@ public class WSSecurityCrypto implements Crypto {
       return (X509Certificate)throwWSSecurityException("loadCertificate");
    }
 
-   public void setCertificateFactory(String provider, CertificateFactory certFactory) {
-      throw new UnsupportedOperationException("Unsupported method setCertificateFactory");
-   }
-
    public void setCryptoProvider(String provider) {
       throw new UnsupportedOperationException("Unsupported method setCryptoProvider");
    }
 
+   public String getTrustProvider() {
+      return this.trustProvider;
+   }
+
+   public void setTrustProvider(String trustProvider) {
+      this.trustProvider = trustProvider;
+   }
+
    public void setDefaultX509Identifier(String identifier) {
       throw new UnsupportedOperationException("Unsupported method setDefaultX509Identifier");
+   }
+
+   public void setCertificateFactory(CertificateFactory certificateFactory) {
+      throw new UnsupportedOperationException("Unsupported method setCertificateFactory");
    }
 
    private static <T> T throwWSSecurityException(String operation) throws WSSecurityException {

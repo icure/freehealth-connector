@@ -11,10 +11,15 @@ import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.freehealth.middleware.service.CryptoService
 import org.taktik.freehealth.middleware.service.STSService
+import springfox.documentation.swagger.readers.operation.OperationHiddenReader
 import java.util.UUID
 
 @Service
-class CryptoServiceImpl(val stsService: STSService, keyDepotService: KeyDepotService) : CryptoService {
+class CryptoServiceImpl(
+    val stsService: STSService,
+    keyDepotService: KeyDepotService,
+    private val operationHiddenReader: OperationHiddenReader
+) : CryptoService {
     val keyDepotManager: KeyDepotManager = KeyDepotManagerImpl.getInstance(keyDepotService)
 
     override fun encrypt(keystoreId: UUID,
@@ -37,7 +42,7 @@ class CryptoServiceImpl(val stsService: STSService, keyDepotService: KeyDepotSer
         return crypto.seal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, etkTokens, plainData)
     }
 
-    override fun decrypt(keystoreId: UUID,
+    override fun    decrypt(keystoreId: UUID,
         passPhrase: String,
         encryptedData: ByteArray): ByteArray? {
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!

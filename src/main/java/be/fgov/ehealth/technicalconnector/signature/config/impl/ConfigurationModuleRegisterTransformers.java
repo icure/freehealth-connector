@@ -1,5 +1,6 @@
 package be.fgov.ehealth.technicalconnector.signature.config.impl;
 
+import org.apache.xml.security.transforms.InvalidTransformException;
 import org.taktik.connector.technical.config.Configuration;
 import org.taktik.connector.technical.config.ConfigurationModule;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
@@ -20,6 +21,8 @@ public class ConfigurationModuleRegisterTransformers implements ConfigurationMod
             loaded = true;
          } catch (AlgorithmAlreadyRegisteredException var3) {
             LOG.error("Algorihm [{}] already loaded.", "urn:nippin:xml:sig:transform:optional-deflate", var3);
+         } catch (InvalidTransformException e) {
+            LOG.error("Invalid transformer [{}]", "urn:nippin:xml:sig:transform:optional-deflate", e);
          }
       }
 
