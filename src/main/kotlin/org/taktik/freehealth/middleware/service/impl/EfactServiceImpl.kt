@@ -153,7 +153,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                     iv.writeRecordHeader(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.reason!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, invoice.ignorePrescriptionDate, invoice.hospitalisedPatient, invoice.creditNote, invoice.relatedBatchSendNumber, invoice.relatedBatchYearMonth, invoice.relatedInvoiceIoCode, invoice.relatedInvoiceNumber, batch.magneticInvoice, invoice.startOfCoveragePeriod, invoice.admissionDate, invoice.locationNihii, invoice.locationService)
                 recordsCountPerOA[0]++
                 if(isMediprima){
-                    rn = iv.writeMediprimaRecord(rn, batch.sender!!, invoice.patient!!, invoice.invoiceNumber!!, invoice.invoiceRef!!, false)
+                    rn = iv.writeMediprimaRecord(rn, batch.sender!!, invoice)
                 }
                 metadata.recordsCount++
                 for (it in invoice.items) {
@@ -166,7 +166,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
                     if (it.insuranceRef != null) {
                         rn =
-                            iv.writeInvolvementRecordContent(rn, batch.sender!!, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, it)
+                            iv.writeInvolvementRecordContent(rn, batch.sender!!, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, it, isMediprima)
                         recordCodes.add(it.codeNomenclature)
                         recordsCountPerOA[0]++
                         metadata.recordsCount++

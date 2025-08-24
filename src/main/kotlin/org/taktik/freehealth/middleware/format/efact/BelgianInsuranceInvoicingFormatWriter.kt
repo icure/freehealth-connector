@@ -354,13 +354,18 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
     fun writeMediprimaRecord(
         recordNumber: Int,
         sender: InvoiceSender,
-        patient: Patient,
-        invoiceNumber: Long?,
-        invoiceRef: String?,
-        urgencyMedicalAssistance: Boolean
+        invoice: Invoice
     ): Int{
         val ws = WriterSession(writer, Record25Description)
-
+        var patient = invoice.patient!!
+        var invoiceNumber = invoice.invoiceNumber!!
+        var invoiceRef = invoice.invoiceRef!!
+        var urgencyMedicalAssistance = invoice.options?.get("urgencyMedicalAssistance") == "true"
+        var codeCover = invoice.options?.get("codeCover") ?: 0
+        var cbePcsa = invoice.options?.get("cbePcsa") ?: ""
+        var cardNumber = invoice.options?.get("cardNumber") ?: 0
+        var cardVersion = invoice.options?.get("cardVersion") ?: 0
+        var establishmentStayNumber = invoice.options?.get("establishmentStayNumber") ?: ""
 
         ws.write("2", recordNumber)
         ws.write("7", "690")
@@ -368,15 +373,15 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("9", if (patient.gender == null || patient.gender == Gender.male) 1 else 2)
         ws.write("12", if (urgencyMedicalAssistance) 1 else 0)
         ws.write("14", sender.nihii.toString().padEnd(11, '0'))
-        ws.write("15", "")
+        ws.write("15", establishmentStayNumber)
         ws.write("18", "690")
-        ws.write("24,25", invoiceNumber!!)
-        ws.write("27", "")
-        ws.write("28", invoiceRef!!)
-        ws.write("32", "1")
-        ws.write("38", "")
-        ws.write("56 ,57 ,58", "")
-        ws.write("59", "")
+        ws.write("24,25", invoiceNumber)
+        ws.write("27", codeCover)
+        ws.write("28", invoiceRef)
+        ws.write("32", 1)
+        ws.write("38", cbePcsa)
+        ws.write("56 ,57 ,58", cardNumber)
+        ws.write("59", cardVersion)
 
         ws.writeFieldsWithCheckSum()
         return recordNumber+1
@@ -483,7 +488,8 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                                       invoicingYear: Int?,
                                       invoicingMonth: Int?,
                                       patient: Patient,
-                                      icd: InvoiceItem): Int {
+                                      icd: InvoiceItem,
+                                      isMediprima: Boolean? = false): Int {
         val ws = WriterSession(writer, Record51Description)
 
         val creationDate = LocalDateTime.now()
@@ -526,7 +532,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
             ws.write("17", 0)
         }
         ws.write("19", (if (icd.reimbursedAmount >= 0) "+" else "-") + nf11.format(Math.abs(icd.reimbursedAmount)))
-        ws.write("27", "0000" + nf3.format(ct1) + nf3.format(ct2))
+        ws.write("27", (if (isMediprima!!) icd.options?.get("coveringCode") else "0000" + nf3.format(ct1) + nf3.format(ct2)))
         ws.write("42", icd.insuranceRef)
         ws.write("55", FuzzyValues.getLocalDateTime(icd.insuranceRefDate!!)!!.format(dtf))
 
