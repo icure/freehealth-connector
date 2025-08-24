@@ -361,10 +361,10 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         var invoiceNumber = invoice.invoiceNumber!!
         var invoiceRef = invoice.invoiceRef!!
         var urgencyMedicalAssistance = invoice.options?.get("urgencyMedicalAssistance") == "true"
-        var codeCover = invoice.options?.get("codeCover") ?: 0
+        var codeCover = invoice.options?.get("codeCover") ?: "0000000000"
         var cbePcsa = invoice.options?.get("cbePcsa") ?: ""
-        var cardNumber = invoice.options?.get("cardNumber") ?: 0
-        var cardVersion = invoice.options?.get("cardVersion") ?: 0
+        var cardNumber = invoice.options?.get("cardNumber") ?: "000000000000"
+        var cardVersion = invoice.options?.get("cardVersion") ?: "000000"
         var establishmentStayNumber = invoice.options?.get("establishmentStayNumber") ?: ""
 
         ws.write("2", recordNumber)
@@ -380,7 +380,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("28", invoiceRef)
         ws.write("32", 1)
         ws.write("38", cbePcsa)
-        ws.write("56 ,57 ,58", cardNumber)
+        ws.write("56,57,58", cardNumber)
         ws.write("59", cardVersion)
 
         ws.writeFieldsWithCheckSum()

@@ -236,7 +236,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
         val fed = sanitizedBatch.ioFederationCode
         val inputReference = "" + DecimalFormat("00000000000000").format(sanitizedBatch.numericalRef ?: 0)
-        val isMediprima = batch.ioFederationCode === "690"
+        val isMediprima = batch.ioFederationCode == "690"
         val content = makeFlatFile(sanitizedBatch, isTest, isMediprima)
 
         val requestObjectBuilder = try {
