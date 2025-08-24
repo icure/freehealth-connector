@@ -44,4 +44,5 @@ class Invoice {
     var admissionDate: Long? = null //yyyyMMdd
     var locationNihii: String? = null
     var locationService: Int? = null
+    var options: Map<String, String>? = null
 }
