@@ -1,6 +1,7 @@
 package org.taktik.freehealth.middleware.format.efact.segments
 
 
+
 object Record25Description: RecordOrSegmentDescription() {
     private val ZONE_DESCRIPTION_BY_ZONE = LinkedHashMap<String, ZoneDescription>(50)
 
@@ -56,6 +57,7 @@ object Record25Description: RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTION_BY_ZONE, "55", "Reserve", null, "N", pos, 8)
         pos = register(ZONE_DESCRIPTION_BY_ZONE, "56,57,58", "NumeroCarte", null, "N", pos, 12)
         pos = register(ZONE_DESCRIPTION_BY_ZONE, "59", "VersionCarte", null, "N", pos, 6)
+        pos = register(ZONE_DESCRIPTION_BY_ZONE, "98", "Reserve", null, "N", pos, 2)
               register(ZONE_DESCRIPTION_BY_ZONE, "99", "Chiffres de controle de l'enregistrement", null, "N", pos, 2, null, true)
     }
 }
