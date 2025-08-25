@@ -23,9 +23,9 @@ object Record25Description: RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTION_BY_ZONE, "28", "ReferenceDeLetablissement", "reference", "A", pos, 25)
         pos = register(ZONE_DESCRIPTION_BY_ZONE, "32", "FlagIdentificationBeneficiaire", null, "N", pos, 1)
         pos = register(ZONE_DESCRIPTION_BY_ZONE, "38", "BceCpas", null, "N", pos, 12)
+        pos = register(ZONE_DESCRIPTION_BY_ZONE, "47,48,49", "ReferenceAMUElectronique", null, "A", pos, 21)
         pos = register(ZONE_DESCRIPTION_BY_ZONE, "56,57,58", "NumeroCarte", null, "N", pos, 12)
         pos = register(ZONE_DESCRIPTION_BY_ZONE, "59", "VersionCarte", null, "N", pos, 6)
-        pos = register(ZONE_DESCRIPTION_BY_ZONE, "60", "ChiffreControleRecord", null, "N", pos, 2)
-
+              register(ZONE_DESCRIPTION_BY_ZONE, "99", "Chiffres de controle de l'enregistrement", null, "N", pos, 2, null, true)
     }
 }

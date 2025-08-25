@@ -366,6 +366,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         var cardNumber = invoice.options?.get("cardNumber") ?: "000000000000"
         var cardVersion = invoice.options?.get("cardVersion") ?: "000000"
         var establishmentStayNumber = invoice.options?.get("establishmentStayNumber") ?: ""
+        var refElectronicAMU = invoice.options?.get("refElectronicAMU") ?: ""
 
         ws.write("2", recordNumber)
         ws.write("7", "690")
@@ -380,6 +381,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("28", invoiceRef)
         ws.write("32", 1)
         ws.write("38", cbePcsa)
+        ws.write("47,48,49", refElectronicAMU)
         ws.write("56,57,58", cardNumber)
         ws.write("59", cardVersion)
 
