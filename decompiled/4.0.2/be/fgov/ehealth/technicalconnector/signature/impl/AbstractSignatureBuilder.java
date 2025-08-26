@@ -15,7 +15,6 @@ import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -43,11 +42,8 @@ public class AbstractSignatureBuilder {
       Integer duration = (Integer)SignatureUtils.getOption("SigningTimeClockSkewDuration", options, 5);
       TimeUnit timeUnit = (TimeUnit)SignatureUtils.getOption("SigningTimeClockSkewTimeUnit", options, TimeUnit.MINUTES);
       CertificateChecker certChecker = CertificateCheckerFactory.getCertificateChecker();
-      Iterator var6 = result.getCertChain().iterator();
 
-      while(var6.hasNext()) {
-         X509Certificate cert = (X509Certificate)var6.next();
-
+      for(X509Certificate cert : result.getCertChain()) {
          try {
             cert.checkValidity(result.getVerifiedSigningTime(duration, timeUnit).toDate());
          } catch (CertificateExpiredException var10) {
@@ -63,8 +59,8 @@ public class AbstractSignatureBuilder {
          }
 
          this.validateEndCertificate(result, certChecker, duration, timeUnit);
-      } catch (TechnicalConnectorException var9) {
-         LOG.error("Unable to verify certificate chain.", var9);
+      } catch (TechnicalConnectorException e) {
+         LOG.error("Unable to verify certificate chain.", e);
          result.getErrors().add(SignatureVerificationError.CERTIFICATE_CHAIN_COULD_NOT_BE_VERIFIED);
       }
 
@@ -83,8 +79,8 @@ public class AbstractSignatureBuilder {
          }
 
          result.setSigningCert(cert);
-      } catch (CertificateException var6) {
-         LOG.error("EndCertificate invalid.", var6);
+      } catch (CertificateException e) {
+         LOG.error("EndCertificate invalid.", e);
          result.getErrors().add(SignatureVerificationError.CERTIFICATE_COULD_NOT_BE_VERIFIED);
       }
 
@@ -94,10 +90,10 @@ public class AbstractSignatureBuilder {
       try {
          SecurityConfiguration.configure();
          CF = CertificateFactory.getInstance("X.509", "BC");
-      } catch (NoSuchProviderException var1) {
-         throw new IllegalArgumentException(var1);
-      } catch (CertificateException var2) {
-         throw new IllegalArgumentException(var2);
+      } catch (NoSuchProviderException e) {
+         throw new IllegalArgumentException(e);
+      } catch (CertificateException e) {
+         throw new IllegalArgumentException(e);
       }
    }
 }

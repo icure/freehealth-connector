@@ -11,7 +11,7 @@ public class MedadminServiceImplementationFactory extends ImplementationClassFac
 
    public <T> T createImplementationClass(Class<T> clazz, SessionValidator sessionValidator, EhealthReplyValidator replyValidator, String... additionalParameters) throws ConnectorException {
       if (clazz.equals(MedadminServiceImpl.class) && additionalParameters.length == 0) {
-         return new MedadminServiceImpl();
+         return (T)(new MedadminServiceImpl());
       } else {
          throw new UnsupportedOperationException("class " + clazz + " not supported");
       }

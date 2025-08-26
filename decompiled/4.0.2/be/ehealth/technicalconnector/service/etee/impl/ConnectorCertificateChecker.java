@@ -31,10 +31,10 @@ public class ConnectorCertificateChecker implements CertificateChecker {
          CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
          X509Certificate cert = (X509Certificate)certFactory.generateCertificate(new FileInputStream(certFile));
          return this.isCertificateRevoked(cert, validOn);
-      } catch (FileNotFoundException var5) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var5, new Object[]{var5.getMessage()});
-      } catch (CertificateException var6) {
-         throw new CertificateVerificationException(var6.getMessage(), var6);
+      } catch (FileNotFoundException e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{e.getMessage()});
+      } catch (CertificateException e) {
+         throw new CertificateVerificationException(e.getMessage(), e);
       }
    }
 
@@ -45,8 +45,8 @@ public class ConnectorCertificateChecker implements CertificateChecker {
    public boolean isCertificateRevoked(X509Certificate cert, DateTime validOn) throws TechnicalConnectorException {
       try {
          return RevocationStatusCheckerFactory.getStatusChecker().isRevoked(cert, validOn);
-      } catch (CertificateException var4) {
-         throw new CertificateVerificationException(var4.getMessage(), var4);
+      } catch (CertificateException e) {
+         throw new CertificateVerificationException(e.getMessage(), e);
       }
    }
 

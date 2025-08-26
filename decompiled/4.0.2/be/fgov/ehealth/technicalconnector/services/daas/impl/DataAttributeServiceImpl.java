@@ -62,8 +62,8 @@ public class DataAttributeServiceImpl implements DataAttributeService {
          Element response = (Element)ServiceFactory.getGenericWsSender().send(request).asNode();
          this.validate(response);
          return this.map(response);
-      } catch (SOAPException var6) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, new Object[]{var6.getMessage(), var6});
+      } catch (SOAPException e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, new Object[]{e.getMessage(), e});
       }
    }
 
@@ -130,9 +130,9 @@ public class DataAttributeServiceImpl implements DataAttributeService {
             Object object = this.jaxbContext.createUnmarshaller().unmarshal(value);
             ValidatorHelper.validate(object, "/ehealth-daasattribute/XSD/ehealth-daasattribute-1_0.xsd");
             return new AttributeValue(object);
-         } catch (Exception var3) {
+         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
-               LOG.debug("Unrecognised object [{}], adding as node", toString(value), var3);
+               LOG.debug("Unrecognised object [{}], adding as node", toString(value), e);
             }
 
             return new AttributeValue(value);
@@ -153,8 +153,8 @@ public class DataAttributeServiceImpl implements DataAttributeService {
                return (String)firstEntry.getKey() + ":" + (String)((List)firstEntry.getValue()).get(0);
             }
          }
-      } catch (TechnicalConnectorException var4) {
-         LOG.warn("Exception while extracting issuer from session.", var4);
+      } catch (TechnicalConnectorException e) {
+         LOG.warn("Exception while extracting issuer from session.", e);
       }
 
       LOG.info("Returning default issuer.");

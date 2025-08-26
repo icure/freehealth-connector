@@ -97,15 +97,15 @@ public class ResponseBuilderImpl implements ResponseBuilder, ConfigurationModule
       try {
          TimeStampResponse timeStampResponse = new TimeStampResponse(bytes);
          return timeStampResponse;
-      } catch (TSPException var4) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.UNKNOWN_ERROR, var4, new Object[0]);
-      } catch (IOException var5) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.UNKNOWN_ERROR, var5, new Object[0]);
+      } catch (TSPException e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.UNKNOWN_ERROR, e, new Object[0]);
+      } catch (IOException e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.UNKNOWN_ERROR, e, new Object[0]);
       }
    }
 
    public Kmehrresponse convertToKmehrResKmehrresponse(byte[] bytes) throws ChapterIVBusinessConnectorException {
-      MarshallerHelper<Kmehrresponse, Kmehrresponse> kmehrResponseMarshallerHelper = new MarshallerHelper(Kmehrresponse.class, Kmehrresponse.class);
+      MarshallerHelper<Kmehrresponse, Kmehrresponse> kmehrResponseMarshallerHelper = new MarshallerHelper<Kmehrresponse, Kmehrresponse>(Kmehrresponse.class, Kmehrresponse.class);
       return bytes != null && bytes.length > 0 ? (Kmehrresponse)kmehrResponseMarshallerHelper.toObject(bytes) : null;
    }
 
@@ -157,18 +157,18 @@ public class ResponseBuilderImpl implements ResponseBuilder, ConfigurationModule
          LOG.trace(" timestamp response validated , now validating timestamp token");
          this.validateTimeStampToken(timeStampResponse);
          LOG.trace(" timestamp token validated");
-      } catch (TSPException var4) {
-         throw new UnsealConnectorException(UnsealConnectorExceptionValues.ERROR_CRYPTO, var4, new Object[]{"time stamp was not valid :" + var4.getMessage()});
-      } catch (TechnicalConnectorException var5) {
-         throw new UnsealConnectorException(UnsealConnectorExceptionValues.ERROR_CRYPTO, var5, new Object[]{" error while validating timestamptoken :" + var5.getMessage()});
+      } catch (TSPException e) {
+         throw new UnsealConnectorException(UnsealConnectorExceptionValues.ERROR_CRYPTO, e, new Object[]{"time stamp was not valid :" + e.getMessage()});
+      } catch (TechnicalConnectorException e) {
+         throw new UnsealConnectorException(UnsealConnectorExceptionValues.ERROR_CRYPTO, e, new Object[]{" error while validating timestamptoken :" + e.getMessage()});
       }
    }
 
    private void validateTimeStampToken(TimeStampResponse timeStampResponse) throws ChapterIVBusinessConnectorException, TechnicalConnectorException {
       try {
          TimeStampValidatorFactory.getInstance().validateTimeStampToken(timeStampResponse.getTimeStampToken());
-      } catch (InvalidTimeStampException var3) {
-         throw new ChapterIVBusinessConnectorException(ChapterIVBusinessConnectorExceptionValues.TIMESTAMP_NOT_CORRECT, var3, new Object[0]);
+      } catch (InvalidTimeStampException e) {
+         throw new ChapterIVBusinessConnectorException(ChapterIVBusinessConnectorExceptionValues.TIMESTAMP_NOT_CORRECT, e, new Object[0]);
       }
    }
 
@@ -178,13 +178,12 @@ public class ResponseBuilderImpl implements ResponseBuilder, ConfigurationModule
    }
 
    public UnsealedResponseWrapper<?> getUnsealedResponse(byte[] unsealedSecuredContent, ConversationType type) {
-      MarshallerHelper helper;
       if (ConversationType.ADMISSION.equals(type)) {
-         helper = new MarshallerHelper(Response.class, Response.class);
+         MarshallerHelper<Response, Response> helper = new MarshallerHelper<Response, Response>(Response.class, Response.class);
          Response response = (Response)helper.toObject(unsealedSecuredContent);
          return WrappedResponseBuilder.wrap(response);
       } else if (ConversationType.CONSULT.equals(type)) {
-         helper = new MarshallerHelper(be.cin.io.unsealed.medicaladvisoragreement.consult.v1.Response.class, be.cin.io.unsealed.medicaladvisoragreement.consult.v1.Response.class);
+         MarshallerHelper<be.cin.io.unsealed.medicaladvisoragreement.consult.v1.Response, be.cin.io.unsealed.medicaladvisoragreement.consult.v1.Response> helper = new MarshallerHelper<be.cin.io.unsealed.medicaladvisoragreement.consult.v1.Response, be.cin.io.unsealed.medicaladvisoragreement.consult.v1.Response>(be.cin.io.unsealed.medicaladvisoragreement.consult.v1.Response.class, be.cin.io.unsealed.medicaladvisoragreement.consult.v1.Response.class);
          be.cin.io.unsealed.medicaladvisoragreement.consult.v1.Response response = (be.cin.io.unsealed.medicaladvisoragreement.consult.v1.Response)helper.toObject(unsealedSecuredContent);
          return WrappedResponseBuilder.wrap(response);
       } else {
@@ -199,11 +198,11 @@ public class ResponseBuilderImpl implements ResponseBuilder, ConfigurationModule
       try {
          UnsealedData unsealedData = SessionUtil.getHolderOfKeyCrypto().unseal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, securedContent);
          return unsealedData != null ? unsealedData.getContentAsByte() : null;
-      } catch (UnsealConnectorException var5) {
+      } catch (UnsealConnectorException e) {
          if (ignoreWarnings) {
-            return ConnectorExceptionUtils.processUnsealConnectorException(var5);
+            return ConnectorExceptionUtils.processUnsealConnectorException(e);
          } else {
-            throw var5;
+            throw e;
          }
       }
    }

@@ -25,11 +25,7 @@ public enum CDSTENTDOMINANCEvalues {
    }
 
    public static CDSTENTDOMINANCEvalues fromValue(String v) {
-      CDSTENTDOMINANCEvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDSTENTDOMINANCEvalues c = var1[var3];
+      for(CDSTENTDOMINANCEvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

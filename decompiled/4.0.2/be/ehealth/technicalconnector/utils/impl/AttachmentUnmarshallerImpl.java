@@ -27,8 +27,8 @@ public class AttachmentUnmarshallerImpl extends AttachmentUnmarshaller {
 
       try {
          return attachment.getDataHandler();
-      } catch (SOAPException var4) {
-         throw new IllegalStateException(var4);
+      } catch (SOAPException e) {
+         throw new IllegalStateException(e);
       }
    }
 
@@ -36,16 +36,16 @@ public class AttachmentUnmarshallerImpl extends AttachmentUnmarshaller {
       try {
          DataHandler handler = this.getAttachmentAsDataHandler(cid);
          return ConnectorIOUtils.getBytes(handler.getInputStream());
-      } catch (Exception var3) {
-         throw new IllegalStateException(var3);
+      } catch (Exception e) {
+         throw new IllegalStateException(e);
       }
    }
 
    private static String decode(String cid) {
       try {
          return URLDecoder.decode(cid, "UTF-8");
-      } catch (UnsupportedEncodingException var2) {
-         throw new IllegalStateException(var2);
+      } catch (UnsupportedEncodingException e) {
+         throw new IllegalStateException(e);
       }
    }
 

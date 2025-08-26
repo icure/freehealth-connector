@@ -5,7 +5,6 @@ import be.ehealth.technicalconnector.exception.ResponseAPDUException;
 import be.ehealth.technicalconnector.exception.TechnicalConnectorException;
 import be.ehealth.technicalconnector.exception.TechnicalConnectorExceptionValues;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import javax.smartcardio.ATR;
 import javax.smartcardio.Card;
@@ -45,10 +44,10 @@ public final class PCSCUtils {
                throw new BeIDPinCodeException(new ResponseAPDUException("PIN Verification Error", responseApdu));
             }
          }
-      } catch (CardNotPresentException var2) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_EID_NULL, var2, new Object[0]);
-      } catch (CardException var3) {
-         throw new BeIDPinCodeException(var3);
+      } catch (CardNotPresentException e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_EID_NULL, e, new Object[0]);
+      } catch (CardException e) {
+         throw new BeIDPinCodeException(e);
       }
    }
 
@@ -86,10 +85,8 @@ public final class PCSCUtils {
       List<CardTerminal> terminals = factory.terminals().list();
       LOG.debug("Terminals: {}", terminals);
       Card card = null;
-      Iterator var4 = terminals.iterator();
 
-      while(var4.hasNext()) {
-         CardTerminal terminal = (CardTerminal)var4.next();
+      for(CardTerminal terminal : terminals) {
          if (terminal.isCardPresent()) {
             card = terminal.connect("*");
             if (card != null && matchesEidAtr(card.getATR())) {
@@ -110,9 +107,9 @@ public final class PCSCUtils {
 
             try {
                Thread.sleep(10L);
-            } catch (InterruptedException var7) {
+            } catch (InterruptedException e) {
                Thread.currentThread().interrupt();
-               throw new be.ehealth.technicalconnector.exception.InterruptedException("Cannot sleep", var7);
+               throw new be.ehealth.technicalconnector.exception.InterruptedException("Cannot sleep", e);
             }
 
             responseApdu = cardChannel.transmit(commandApdu);

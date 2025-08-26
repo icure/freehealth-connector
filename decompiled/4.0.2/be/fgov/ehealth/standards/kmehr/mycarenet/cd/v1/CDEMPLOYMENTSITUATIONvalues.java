@@ -27,11 +27,7 @@ public enum CDEMPLOYMENTSITUATIONvalues {
    }
 
    public static CDEMPLOYMENTSITUATIONvalues fromValue(String v) {
-      CDEMPLOYMENTSITUATIONvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDEMPLOYMENTSITUATIONvalues c = var1[var3];
+      for(CDEMPLOYMENTSITUATIONvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

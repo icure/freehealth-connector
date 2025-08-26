@@ -100,8 +100,8 @@ public class SVRLXMLWriter extends XMLFilterImpl {
 
       try {
          this.flush();
-      } catch (IOException var2) {
-         throw new SAXException(var2);
+      } catch (IOException e) {
+         throw new SAXException(e);
       }
    }
 
@@ -280,16 +280,16 @@ public class SVRLXMLWriter extends XMLFilterImpl {
    private void write(char c) throws SAXException {
       try {
          this.output.write(c);
-      } catch (IOException var3) {
-         throw new SAXException(var3);
+      } catch (IOException e) {
+         throw new SAXException(e);
       }
    }
 
    private void write(String s) throws SAXException {
       try {
          this.output.write(s);
-      } catch (IOException var3) {
-         throw new SAXException(var3);
+      } catch (IOException e) {
+         throw new SAXException(e);
       }
    }
 

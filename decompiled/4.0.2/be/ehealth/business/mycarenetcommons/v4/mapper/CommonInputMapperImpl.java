@@ -5,6 +5,7 @@ import be.ehealth.business.mycarenetdomaincommons.domain.Attribute;
 import be.ehealth.business.mycarenetdomaincommons.domain.CareProvider;
 import be.ehealth.business.mycarenetdomaincommons.domain.CommonInput;
 import be.ehealth.business.mycarenetdomaincommons.domain.Identification;
+import be.ehealth.business.mycarenetdomaincommons.domain.Identifier;
 import be.ehealth.business.mycarenetdomaincommons.domain.Nihii;
 import be.ehealth.business.mycarenetdomaincommons.domain.Origin;
 import be.ehealth.business.mycarenetdomaincommons.domain.Party;
@@ -15,7 +16,6 @@ import be.fgov.ehealth.mycarenet.commons.core.v4.AttributeType;
 import be.fgov.ehealth.mycarenet.commons.core.v4.CareProviderType;
 import be.fgov.ehealth.mycarenet.commons.core.v4.CommonInputType;
 import be.fgov.ehealth.mycarenet.commons.core.v4.IdType;
-import be.fgov.ehealth.mycarenet.commons.core.v4.Identifier;
 import be.fgov.ehealth.mycarenet.commons.core.v4.LicenseType;
 import be.fgov.ehealth.mycarenet.commons.core.v4.NihiiType;
 import be.fgov.ehealth.mycarenet.commons.core.v4.OriginType;
@@ -25,7 +25,6 @@ import be.fgov.ehealth.mycarenet.commons.core.v4.ReferenceType;
 import be.fgov.ehealth.mycarenet.commons.core.v4.RequestType;
 import be.fgov.ehealth.mycarenet.commons.core.v4.ValueRefString;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class CommonInputMapperImpl implements CommonInputMapper {
@@ -40,16 +39,15 @@ public class CommonInputMapperImpl implements CommonInputMapper {
          commonInputType.setRequest(this.commonInputToRequestType(input));
          commonInputType.setOrigin(this.map(input.getOrigin()));
          commonInputType.setInputReference(input.getInputReference());
-         List list1;
          if (commonInputType.getReferences() != null) {
-            list1 = this.referenceListToReferenceTypeList(input.getReferences());
-            if (list1 != null) {
-               commonInputType.getReferences().addAll(list1);
+            List<ReferenceType> list = this.referenceListToReferenceTypeList(input.getReferences());
+            if (list != null) {
+               commonInputType.getReferences().addAll(list);
             }
          }
 
          if (commonInputType.getAttributes() != null) {
-            list1 = this.attributeListToAttributeTypeList(input.getAttributes());
+            List<AttributeType> list1 = this.attributeListToAttributeTypeList(input.getAttributes());
             if (list1 != null) {
                commonInputType.getAttributes().addAll(list1);
             }
@@ -177,10 +175,8 @@ public class CommonInputMapperImpl implements CommonInputMapper {
          return null;
       } else {
          List<ReferenceType> list1 = new ArrayList(list.size());
-         Iterator var3 = list.iterator();
 
-         while(var3.hasNext()) {
-            Reference reference = (Reference)var3.next();
+         for(Reference reference : list) {
             list1.add(this.map(reference));
          }
 
@@ -193,10 +189,8 @@ public class CommonInputMapperImpl implements CommonInputMapper {
          return null;
       } else {
          List<AttributeType> list1 = new ArrayList(list.size());
-         Iterator var3 = list.iterator();
 
-         while(var3.hasNext()) {
-            Attribute attribute = (Attribute)var3.next();
+         for(Attribute attribute : list) {
             list1.add(this.map(attribute));
          }
 
@@ -214,26 +208,24 @@ public class CommonInputMapperImpl implements CommonInputMapper {
       }
    }
 
-   protected Identifier identifierToIdentifier(be.ehealth.business.mycarenetdomaincommons.domain.Identifier identifier) {
+   protected be.fgov.ehealth.mycarenet.commons.core.v4.Identifier identifierToIdentifier(Identifier identifier) {
       if (identifier == null) {
          return null;
       } else {
-         Identifier identifier1 = new Identifier();
+         be.fgov.ehealth.mycarenet.commons.core.v4.Identifier identifier1 = new be.fgov.ehealth.mycarenet.commons.core.v4.Identifier();
          identifier1.setValue(identifier.getValue());
          identifier1.setType(identifier.getType());
          return identifier1;
       }
    }
 
-   protected List<Identifier> identifierListToIdentifierList(List<be.ehealth.business.mycarenetdomaincommons.domain.Identifier> list) {
+   protected List<be.fgov.ehealth.mycarenet.commons.core.v4.Identifier> identifierListToIdentifierList(List<Identifier> list) {
       if (list == null) {
          return null;
       } else {
-         List<Identifier> list1 = new ArrayList(list.size());
-         Iterator var3 = list.iterator();
+         List<be.fgov.ehealth.mycarenet.commons.core.v4.Identifier> list1 = new ArrayList(list.size());
 
-         while(var3.hasNext()) {
-            be.ehealth.business.mycarenetdomaincommons.domain.Identifier identifier = (be.ehealth.business.mycarenetdomaincommons.domain.Identifier)var3.next();
+         for(Identifier identifier : list) {
             list1.add(this.identifierToIdentifier(identifier));
          }
 
@@ -249,16 +241,15 @@ public class CommonInputMapperImpl implements CommonInputMapper {
          actorType.setType(actor.getType());
          actorType.setSubType(actor.getSubType());
          actorType.setRole(actor.getRole());
-         List list1;
          if (actorType.getIdentifiers() != null) {
-            list1 = this.identifierListToIdentifierList(actor.getIdentifiers());
-            if (list1 != null) {
-               actorType.getIdentifiers().addAll(list1);
+            List<be.fgov.ehealth.mycarenet.commons.core.v4.Identifier> list = this.identifierListToIdentifierList(actor.getIdentifiers());
+            if (list != null) {
+               actorType.getIdentifiers().addAll(list);
             }
          }
 
          if (actorType.getAttributes() != null) {
-            list1 = this.attributeListToAttributeTypeList(actor.getAttributes());
+            List<AttributeType> list1 = this.attributeListToAttributeTypeList(actor.getAttributes());
             if (list1 != null) {
                actorType.getAttributes().addAll(list1);
             }
@@ -273,10 +264,8 @@ public class CommonInputMapperImpl implements CommonInputMapper {
          return null;
       } else {
          List<ActorType> list1 = new ArrayList(list.size());
-         Iterator var3 = list.iterator();
 
-         while(var3.hasNext()) {
-            Actor actor = (Actor)var3.next();
+         for(Actor actor : list) {
             list1.add(this.actorToActorType(actor));
          }
 

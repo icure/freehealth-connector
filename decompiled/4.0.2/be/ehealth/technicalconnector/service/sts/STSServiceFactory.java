@@ -6,12 +6,12 @@ import be.ehealth.technicalconnector.utils.ConfigurableFactoryHelper;
 public final class STSServiceFactory {
    private static final String PROP_STSSERVICE_CLASS = "service.sts.class";
    private static final String DEFAULT_STSSERVICE_CLASS = "be.ehealth.technicalconnector.service.sts.impl.STSServiceImpl";
-   private static ConfigurableFactoryHelper<STSService> factoryHelper = new ConfigurableFactoryHelper("service.sts.class", "be.ehealth.technicalconnector.service.sts.impl.STSServiceImpl");
+   private static ConfigurableFactoryHelper<STSService> factoryHelper = new ConfigurableFactoryHelper<STSService>("service.sts.class", "be.ehealth.technicalconnector.service.sts.impl.STSServiceImpl");
 
    private STSServiceFactory() {
    }
 
    public static STSService getInstance() throws TechnicalConnectorException {
-      return (STSService)factoryHelper.getImplementation();
+      return factoryHelper.getImplementation();
    }
 }

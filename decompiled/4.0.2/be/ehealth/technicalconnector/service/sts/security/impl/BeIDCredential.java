@@ -45,9 +45,9 @@ public final class BeIDCredential extends AbstractExtendedCredential {
          }
 
          return (PrivateKey)this.getKeyStore().getKey(alias, (char[])null);
-      } catch (Exception var2) {
-         LOG.error(var2.getMessage());
-         throw new CredentialException(var2);
+      } catch (Exception e) {
+         LOG.error(e.getMessage());
+         throw new CredentialException(e);
       }
    }
 
@@ -67,8 +67,8 @@ public final class BeIDCredential extends AbstractExtendedCredential {
       try {
          String alias = this.getAlias();
          certificate = (X509Certificate)this.getKeyStore().getCertificate(alias);
-      } catch (Exception var3) {
-         LOG.warn("getCertificate()", var3);
+      } catch (Exception e) {
+         LOG.warn("getCertificate()", e);
       }
 
       return certificate;
@@ -87,9 +87,9 @@ public final class BeIDCredential extends AbstractExtendedCredential {
                break;
             }
          }
-      } catch (Exception var4) {
+      } catch (Exception e) {
          this.keyStore = null;
-         LOG.warn("Unable to deterimine alias", var4);
+         LOG.warn("Unable to deterimine alias", e);
       }
 
       return eidAutAlias;
@@ -153,12 +153,12 @@ public final class BeIDCredential extends AbstractExtendedCredential {
    public Certificate[] getCertificateChain() {
       try {
          return this.getKeyStore().getCertificateChain(this.getAlias());
-      } catch (KeyStoreException var2) {
-         LOG.error(var2.getMessage());
-         throw new CredentialException(var2);
-      } catch (TechnicalConnectorException var3) {
-         LOG.error(var3.getMessage());
-         throw new CredentialException(var3);
+      } catch (KeyStoreException e) {
+         LOG.error(e.getMessage());
+         throw new CredentialException(e);
+      } catch (TechnicalConnectorException e) {
+         LOG.error(e.getMessage());
+         throw new CredentialException(e);
       }
    }
 }

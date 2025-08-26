@@ -1,0 +1,187 @@
+Signature-Version: 1.0
+SHA-256-Digest-Manifest-Main-Attributes: j9Sp7qDXscTZbvgCfycgHFiu64fCh
+ WY1nQoSMshWtjo=
+SHA-256-Digest-Manifest: 9Khq0hQ6PRHw8K0cjCjSVMSmcy14I9sRLmIxZDK3Cfs=
+Created-By: 1.8.0_281 (Oracle Corporation)
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/CmsSignatureBu
+ ilder$X509CertifcateSelector.class
+SHA-256-Digest: vHLaGGzBn7cmNGne91dUqbltsThmz77xlm6Q8LDfSOI=
+
+Name: be/fgov/ehealth/technicalconnector/signature/SignatureBuilderFac
+ tory.class
+SHA-256-Digest: ulttK0TAPBomQMZX6xX+chA2LIUFb1cGv8KaKLukrq0=
+
+Name: be/fgov/ehealth/technicalconnector/signature/transformers/Encaps
+ ulationTransformer.class
+SHA-256-Digest: kelJOPZefg94umk+ctNY/ym/NKobuSa0TD74858pDho=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/xades/domain/R
+ ef.class
+SHA-256-Digest: akWzTjOQmQc/WXFLZjoaliHrhp1HFCSgH7UbZAZAGWs=
+
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-technical-sig
+ nature/pom.xml
+SHA-256-Digest: LsjyrcDSc/QS2SfTszpjgNi7sv0qdHbfzoT5FZ9aSLQ=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/xades/impl/Xad
+ esCSpecification.class
+SHA-256-Digest: EN9AbinUttUSAu8QGe4RBsnBzUzxhkb+DUfial0WWXg=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/extractor/X509
+ DataExctractor.class
+SHA-256-Digest: 1CZbu9x8rEkroiX084WahJwj9ApW6z7gN4CSVAxW74c=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/tsa/impl/TimeS
+ tampGeneratorImpl.class
+SHA-256-Digest: xK3TD/V+7u7OFBrtw3HOfk6va7r1N1tAJ85I+FlgYT0=
+
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-technical-sig
+ nature/pom.properties
+SHA-256-Digest: kOeg6SpGyU7k2wKEsgccLTuISYYt3ubUQLweKpuAiKA=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/xades/domain/O
+ cspRef.class
+SHA-256-Digest: 02CWMgmi4AmOE24mOv0jmq6J/cbLWSFoSi2aIqyVi9A=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/extractor/Fork
+ edExtractor.class
+SHA-256-Digest: V+Mf++pLb1HF17+IhL/yv+jG+K2/JOTS4HH/sc35GHQ=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/xades/domain/U
+ nsignedPropertiesBuilder.class
+SHA-256-Digest: 4WglqmBy1eJZNg7vWgOwjSQw2/CmYjFY7JkNZNL1ikU=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/tsa/TimestampG
+ eneratorFactory.class
+SHA-256-Digest: 0tqIfFi1JNoNRFXFcDpsjDM9RubNhsw/JCnCC8FtSnQ=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/xades/domain/C
+ rlRef.class
+SHA-256-Digest: D0JR1EImNxn5aezlpUI+AA8PDTa+wVXsjXB1ui6kNzg=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/xades/impl/Xad
+ esBesSpecification.class
+SHA-256-Digest: 6dWsD8sZvviyudZOS61GfZ8iPpznOhKOicy7k2mG1CE=
+
+Name: be/fgov/ehealth/technicalconnector/signature/transformers/Nippin
+ OptionalDeflateTransformer.class
+SHA-256-Digest: vn04ixT0JS5Ljb4FLlBsf3Vg//J3WMGtypSnD574d4U=
+
+Name: be/fgov/ehealth/technicalconnector/signature/domain/SignatureVer
+ ificationResult.class
+SHA-256-Digest: KitUgoPklzDHw6tZcqg0dh8WqWO6eos/Nqxgpkn5syY=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/xades/domain/S
+ ignedPropertiesBuilder.class
+SHA-256-Digest: tFUOnzFx4LE9ZHzQ4xbiOcecMO4grDRNqSiuHhLlv2U=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/xades/impl/Xad
+ esTSpecification.class
+SHA-256-Digest: wVoxGycjuiTLnIrUPCH0nUc83HZXcrpcVI4qp0qrbKY=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/xades/domain/Q
+ ualifyingPropertiesBuilder.class
+SHA-256-Digest: nGJpjZ+rAoN68t/e81OG3vF4KEmzLJg3BLf41quTIIs=
+
+Name: be/fgov/ehealth/technicalconnector/signature/resolvers/DocumentR
+ esolver.class
+SHA-256-Digest: 3OoeNbNZEbtv8BGQraGNpRd+eanQ9remKqMbfTOey7c=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/xades/impl/Xad
+ esVerificationHelper.class
+SHA-256-Digest: VX7Nux/5QeOpdSbtPYxFUpPruM8vXwswv4I6Md/OlME=
+
+Name: be/fgov/ehealth/technicalconnector/signature/config/impl/Configu
+ rationModuleRegisterTransformers.class
+SHA-256-Digest: /jRCeTc147ybYTfMS2YUlbQLWwXMdaCjRqhAGLrN0So=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/xades/XadesSpe
+ cification.class
+SHA-256-Digest: Z1nwqt4Kz5aL1vDOyjNL9e1oFpafrNFVztT2zqOlK6A=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/CmsSignatureBu
+ ilder$1.class
+SHA-256-Digest: aBXGm85a1ZC+ij4G0nERKzURF4+2EfAav/umC0r+h9U=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/extractor/Extr
+ actor.class
+SHA-256-Digest: EkRgBT33apjDKI3m2EZ31aM5QbFrXLezssli8Mx/MKI=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/xades/XadesHan
+ dler.class
+SHA-256-Digest: LcIy5HWSBgNyW4oBfM3P/tnGH4104h97R5bCgJ1UlJc=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/CmsSignatureBu
+ ilder.class
+SHA-256-Digest: H5+vyWissgwFm7HyRaBNPzxwd3bx80BQN9r9fleeykY=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/SignatureUtils
+ .class
+SHA-256-Digest: ZMmxRoVR4GQXfbKs1ojQXrmhzegg66zecMePasrSg20=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/AbstractSignat
+ ureBuilder.class
+SHA-256-Digest: 58mskmVe9nDFsRPJdg9DeGOim5z/UIk7N0F5b3Hv5Gg=
+
+Name: templates/keyinfo-saml1.1-reference.xml
+SHA-256-Digest: B6TpxEVR38rLijD3YF/7t+S2bi2dCPiBzxzVMRDRCks=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/XmlSignatureBu
+ ilder.class
+SHA-256-Digest: nzjuH/Ooi4FHTVUCbaT0bU6dYhdWBH044D6TDTMmSgQ=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/xades/domain/C
+ ertRef.class
+SHA-256-Digest: 0Y/g7izfnQcMvpLNfFlKMVj+i6KrZXQAOed2lCAH//I=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/xades/domain/R
+ ef$EncodingException.class
+SHA-256-Digest: AkYKeVpDFyQGwntc5f57UsjSzI8t2piHYmkLWzIeiCA=
+
+Name: be/fgov/ehealth/technicalconnector/signature/domain/CadesOption.
+ class
+SHA-256-Digest: lXjY7cKlmzD/6osFzBGizz8xjfm/wQSflfASExO/EAg=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/xades/impl/Xad
+ esSpecification.class
+SHA-256-Digest: dsyrsLV2mksd44tZICLBDutVECIN9JdcaLMDeK0L/7A=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/XmlSignatureBu
+ ilder$PassthroughEncapsulationTransformer.class
+SHA-256-Digest: l1pjro4EhvrWniAJc66crzJeC7b7MRWYub5l19M/0aQ=
+
+Name: be/fgov/ehealth/technicalconnector/signature/AdvancedElectronicS
+ ignatureEnumeration.class
+SHA-256-Digest: YtkmHERquBgKpwp4pm+qd/zLobRdrvDT43D8ese4Ztw=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/tsa/TimestampG
+ enerator.class
+SHA-256-Digest: x/VSmNeTZ3wZyDm6pRp5LGpaAoOIWN5MBMyM/gts1WU=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/XmlSignatureBu
+ ilder$1.class
+SHA-256-Digest: /udlpKEhLj3Y+xWVURNNFks15paSsnfmatI/2KUxwZw=
+
+Name: be/fgov/ehealth/technicalconnector/signature/SignatureBuilder.cl
+ ass
+SHA-256-Digest: HOg9v9dMvkhx2P4KslN5G/RdwDcJb2Wf7i6num+wR04=
+
+Name: disclaimer/release.notes.technical-signature.txt
+SHA-256-Digest: h3+JMsQKLaEJYk4opgvF5ljvT+k2DkKIPTLuZjtppnc=
+
+Name: be/fgov/ehealth/technicalconnector/signature/domain/SignatureVer
+ ificationError.class
+SHA-256-Digest: broD18aYNSDopVXD1DdUeZgzFkYPfoPcpZWgnAB89B0=
+
+Name: be/fgov/ehealth/technicalconnector/signature/domain/XadesOption.
+ class
+SHA-256-Digest: p5SQOO6r9LQJDX5i3jQmi4WYgPoBkK1vARxDQk3F1kw=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/DomUtils$Array
+ NodeList.class
+SHA-256-Digest: 4ulJ4Nmi9tYK3ouuwpTvcDgA4kyixOmwcriJZwpHxL0=
+
+Name: be/fgov/ehealth/technicalconnector/signature/impl/DomUtils.class
+SHA-256-Digest: 1/Xg6w4pR6fJ8JsE1jAzaLqNb0XyQpsRz6jdohEoZo0=
+

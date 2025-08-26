@@ -26,11 +26,7 @@ public enum CDMEDICATIONschemes {
    }
 
    public static CDMEDICATIONschemes fromValue(String v) {
-      CDMEDICATIONschemes[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDMEDICATIONschemes c = var1[var3];
+      for(CDMEDICATIONschemes c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

@@ -37,11 +37,7 @@ public enum IDHCPARTYschemes {
    }
 
    public static IDHCPARTYschemes fromValue(String v) {
-      IDHCPARTYschemes[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         IDHCPARTYschemes c = var1[var3];
+      for(IDHCPARTYschemes c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

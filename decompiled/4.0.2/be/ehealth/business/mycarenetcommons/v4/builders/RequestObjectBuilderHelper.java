@@ -26,11 +26,11 @@ public class RequestObjectBuilderHelper<T extends SendRequestType> {
    }
 
    public T buildSendRequestType(boolean isTest, String inputReference, List<Attribute> attributes, Blob blob, String projectIdentifier, Class<T> clazz) throws TechnicalConnectorException {
-      SendRequestType sendRequestType;
+      T sendRequestType;
       try {
-         sendRequestType = (SendRequestType)clazz.newInstance();
-      } catch (Exception var10) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.UNEXPECTED_ERROR, var10, new Object[0]);
+         sendRequestType = (T)(clazz.newInstance());
+      } catch (Exception e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.UNEXPECTED_ERROR, e, new Object[0]);
       }
 
       CommonBuilder commonBuilder = RequestBuilderFactory.getCommonBuilder(projectIdentifier);
@@ -45,15 +45,6 @@ public class RequestObjectBuilderHelper<T extends SendRequestType> {
    public void checkParameterNotNull(Object references, String parameterName) throws TechnicalConnectorException {
       if (references == null) {
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_INPUT_PARAMETER_NULL, new Object[]{parameterName});
-      }
-   }
-
-   public static class WithoutRouting implements Routing {
-      public WithoutRouting() {
-      }
-
-      public RoutingType createRouting() {
-         return null;
       }
    }
 
@@ -73,6 +64,15 @@ public class RequestObjectBuilderHelper<T extends SendRequestType> {
          Patient patient = (new Patient.Builder()).withInss(this.patientSsin.getValue()).build();
          RoutingMapper mapper = (RoutingMapper)Mappers.getMapper(RoutingMapper.class);
          return mapper.map(commonBuilder.createRouting(patient, this.referenceDate));
+      }
+   }
+
+   public static class WithoutRouting implements Routing {
+      public WithoutRouting() {
+      }
+
+      public RoutingType createRouting() {
+         return null;
       }
    }
 

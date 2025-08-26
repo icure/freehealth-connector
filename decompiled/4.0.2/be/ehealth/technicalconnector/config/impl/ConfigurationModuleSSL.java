@@ -46,8 +46,8 @@ public final class ConfigurationModuleSSL implements ConfigurationModule {
 
          sc.init((KeyManager[])null, trustManagers, (SecureRandom)null);
          HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-      } catch (Exception var5) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var5, new Object[]{var5.getMessage()});
+      } catch (Exception e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{e.getMessage()});
       }
    }
 

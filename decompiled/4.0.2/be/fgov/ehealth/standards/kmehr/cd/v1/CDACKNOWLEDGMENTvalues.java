@@ -29,11 +29,7 @@ public enum CDACKNOWLEDGMENTvalues {
    }
 
    public static CDACKNOWLEDGMENTvalues fromValue(String v) {
-      CDACKNOWLEDGMENTvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDACKNOWLEDGMENTvalues c = var1[var3];
+      for(CDACKNOWLEDGMENTvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

@@ -122,11 +122,8 @@ public class BlobBuilderImpl implements BlobBuilder {
 
    private ConfigValidator getProperties(String... neededProperties) {
       List<String> expectedProps = new ArrayList();
-      String[] var3 = neededProperties;
-      int var4 = neededProperties.length;
 
-      for(int var5 = 0; var5 < var4; ++var5) {
-         String neededPropertie = var3[var5];
+      for(String neededPropertie : neededProperties) {
          expectedProps.add(neededPropertie);
       }
 

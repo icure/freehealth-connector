@@ -28,8 +28,8 @@ public class ConfigurationModuleBeidNet implements ConfigurationModule {
             BeIDInstantiator instantiator = (BeIDInstantiator)clazz.newInstance();
             BeIDFactory.setInstantiator(instantiator);
             initialized = true;
-         } catch (Exception var5) {
-            log.debug("Unable to register BeIDInstantiator [{}]", className, var5);
+         } catch (Exception e) {
+            log.debug("Unable to register BeIDInstantiator [{}]", className, e);
          }
       }
 

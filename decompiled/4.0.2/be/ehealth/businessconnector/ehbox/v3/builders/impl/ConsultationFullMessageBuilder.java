@@ -28,7 +28,6 @@ import be.fgov.ehealth.ehbox.core.v3.Row;
 import be.fgov.ehealth.ehbox.core.v3.Table;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.List;
 import javax.activation.DataHandler;
 import org.apache.commons.lang.ArrayUtils;
@@ -50,7 +49,7 @@ public class ConsultationFullMessageBuilder extends AbstractConsultationBuilder<
    public final Message<GetFullMessageResponse> buildFullMessage(GetFullMessageResponse response) throws EhboxBusinessConnectorException, TechnicalConnectorException {
       ConsultationMessageType recievedMsg = response.getMessage();
       Message<GetFullMessageResponse> message = this.createMessage(recievedMsg.getContentContext().getContentSpecification(), response, recievedMsg.getMessageId(), response.getMessage().getPublicationId());
-      AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse> container = new AbstractConsultationBuilder.ExceptionContainer(message);
+      AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse> container = new AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse>(message);
       this.processMessageInfo(response.getMessageInfo(), message);
       this.processSender(response.getSender(), (ContentSpecificationType)null, message);
       this.processDestinationContext(recievedMsg.getDestinationContexts(), message);
@@ -82,22 +81,14 @@ public class ConsultationFullMessageBuilder extends AbstractConsultationBuilder<
          if (error != null) {
             errorMessage.setErrorCode(error.getCode());
             errorMessage.setErrorPublicationId(error.getPublicationId());
-            Iterator var5;
-            String failureMessage;
             if (error.getMessages() != null) {
-               var5 = error.getMessages().iterator();
-
-               while(var5.hasNext()) {
-                  failureMessage = (String)var5.next();
-                  errorMessage.getErrorMsg().add("error:" + failureMessage);
+               for(String errorMessageString : error.getMessages()) {
+                  errorMessage.getErrorMsg().add("error:" + errorMessageString);
                }
             }
 
             if (error.getFailures() != null) {
-               var5 = error.getFailures().iterator();
-
-               while(var5.hasNext()) {
-                  failureMessage = (String)var5.next();
+               for(String failureMessage : error.getFailures()) {
                   errorMessage.getErrorMsg().add("failure:" + failureMessage);
                }
             }
@@ -113,10 +104,8 @@ public class ConsultationFullMessageBuilder extends AbstractConsultationBuilder<
       this.processMainDocument(response.getDocument(), documentMessage, container);
       if (!response.getAnnices().isEmpty()) {
          documentMessage.setHasAnnex(true);
-         Iterator var5 = response.getAnnices().iterator();
 
-         while(var5.hasNext()) {
-            ConsultationAnnexType annexType = (ConsultationAnnexType)var5.next();
+         for(ConsultationAnnexType annexType : response.getAnnices()) {
             this.processAnnex(documentMessage, annexType, container);
          }
       }
@@ -124,10 +113,7 @@ public class ConsultationFullMessageBuilder extends AbstractConsultationBuilder<
    }
 
    private void processDestinationContext(List<DestinationContextType> destinationList, Message<?> message) {
-      Iterator var3 = destinationList.iterator();
-
-      while(var3.hasNext()) {
-         DestinationContextType destinationContext = (DestinationContextType)var3.next();
+      for(DestinationContextType destinationContext : destinationList) {
          IdentifierType identityType = IdentifierType.lookup(destinationContext.getType(), destinationContext.getSubType(), 49);
          Addressee destination = new Addressee(identityType);
          destination.setId(destinationContext.getId());
@@ -175,8 +161,8 @@ public class ConsultationFullMessageBuilder extends AbstractConsultationBuilder<
          if (responseHandler != null) {
             try {
                document.setContent(this.base64decoding(responseHandler, documentMessage.isEncrypted(), container));
-            } catch (UnsealConnectorException var7) {
-               document.setException(var7);
+            } catch (UnsealConnectorException e) {
+               document.setException(e);
             }
          }
       } else if (response.getEncryptableTextContent() != null) {
@@ -208,10 +194,8 @@ public class ConsultationFullMessageBuilder extends AbstractConsultationBuilder<
          Table table = response.getTable();
          if (table != null) {
             documentMessage.setFreeInformationTableTitle(table.getTitle());
-            Iterator var6 = table.getRows().iterator();
 
-            while(var6.hasNext()) {
-               Row row = (Row)var6.next();
+            for(Row row : table.getRows()) {
                byte[] decryptedKeyBytes = this.handleAndDecryptIfNeeded(row.getEncryptableLeftCell(), documentMessage.isEncrypted(), container);
                byte[] decryptedValueBytes = this.handleAndDecryptIfNeeded(row.getEncryptableRightCell(), documentMessage.isEncrypted(), container);
                String decryptedKey = ConnectorIOUtils.toString(decryptedKeyBytes, Charset.UTF_8);
@@ -226,22 +210,22 @@ public class ConsultationFullMessageBuilder extends AbstractConsultationBuilder<
    private <T> byte[] base64decoding(DataHandler dataHandler, boolean encrypted, AbstractConsultationBuilder.ExceptionContainer<GetFullMessageResponse> container) throws TechnicalConnectorException, EhboxBusinessConnectorException {
       InputStream is = null;
 
-      byte[] var6;
+      B var6;
       try {
          is = dataHandler.getInputStream();
          byte[] byteVal = ConnectorIOUtils.getBytes(is);
-         if (ArrayUtils.isEmpty(byteVal)) {
-            Object var12 = null;
-            return (byte[])var12;
+         if (!ArrayUtils.isEmpty(byteVal)) {
+            var6 = this.handleAndDecryptIfNeeded(byteVal, encrypted, container);
+            return (byte[])var6;
          }
 
-         var6 = this.handleAndDecryptIfNeeded(byteVal, encrypted, container);
-      } catch (IOException var10) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var10, new Object[]{"Unable to decode datahandler"});
+         var6 = null;
+      } catch (IOException e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{"Unable to decode datahandler"});
       } finally {
          ConnectorIOUtils.closeQuietly((Object)is);
       }
 
-      return var6;
+      return (byte[])var6;
    }
 }

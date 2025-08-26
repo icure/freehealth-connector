@@ -8,7 +8,7 @@ import java.security.KeyStore;
 
 public class BeIDFactory {
    private static final String PROP_BEID_INSTANTIATOR = "be.ehealth.technicalconnector.beid.instantiator";
-   private static ConfigurableFactoryHelper<BeIDInstantiator> helper = new ConfigurableFactoryHelper("be.ehealth.technicalconnector.beid.instantiator", CommonsEidInstantiator.class.getName());
+   private static ConfigurableFactoryHelper<BeIDInstantiator> helper = new ConfigurableFactoryHelper<BeIDInstantiator>("be.ehealth.technicalconnector.beid.instantiator", CommonsEidInstantiator.class.getName());
    private static BeIDInstantiator instantiator;
 
    public BeIDFactory() {
@@ -16,7 +16,7 @@ public class BeIDFactory {
 
    private static BeIDInstantiator getInstantiator() throws TechnicalConnectorException {
       if (instantiator == null) {
-         instantiator = (BeIDInstantiator)helper.getImplementation();
+         instantiator = helper.getImplementation();
       }
 
       return instantiator;

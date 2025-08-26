@@ -31,11 +31,7 @@ public enum CDSTENTLESIONTYPEvalues {
    }
 
    public static CDSTENTLESIONTYPEvalues fromValue(String v) {
-      CDSTENTLESIONTYPEvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDSTENTLESIONTYPEvalues c = var1[var3];
+      for(CDSTENTLESIONTYPEvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

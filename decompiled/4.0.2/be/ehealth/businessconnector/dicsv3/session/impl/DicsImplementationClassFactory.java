@@ -13,7 +13,7 @@ public class DicsImplementationClassFactory extends ImplementationClassFactory {
 
    public <T> T createImplementationClass(Class<T> clazz, SessionValidator sessionValidator, EhealthReplyValidator replyValidator, Crypto hokCrypto, Crypto encryptionCrypto, String... additionalParameters) throws TechnicalConnectorException, ConnectorException {
       if (clazz.equals(DicsSessionServiceImpl.class) && additionalParameters.length == 0) {
-         return new DicsSessionServiceImpl(sessionValidator);
+         return (T)(new DicsSessionServiceImpl(sessionValidator));
       } else {
          throw new UnsupportedOperationException("class " + clazz + " not supported or the number of additional parameters(" + additionalParameters.length + ") are added ");
       }

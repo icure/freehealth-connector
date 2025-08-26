@@ -24,11 +24,7 @@ public enum CDERRORschemes {
    }
 
    public static CDERRORschemes fromValue(String v) {
-      CDERRORschemes[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDERRORschemes c = var1[var3];
+      for(CDERRORschemes c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

@@ -32,7 +32,7 @@ public class CommonsEidInstantiator implements BeIDInstantiator {
    public static final String PROP_CARDREADERSTICKINESS = "be.ehealth.technicalconnector.beid.impl.commons-eid.cardreaderstickiness";
    private static final Logger LOG = LoggerFactory.getLogger(CommonsEidInstantiator.class);
    public static final String PROP_BEID_ADAPTOR = "be.ehealth.technicalconnector.beid.beidcardadaptor.class";
-   private static ConfigurableFactoryHelper<BeIDCardAdaptor> adaptorHelper = new ConfigurableFactoryHelper("be.ehealth.technicalconnector.beid.beidcardadaptor.class", CommonsEidAdaptor.class.getName());
+   private static ConfigurableFactoryHelper<BeIDCardAdaptor> adaptorHelper = new ConfigurableFactoryHelper<BeIDCardAdaptor>("be.ehealth.technicalconnector.beid.beidcardadaptor.class", CommonsEidAdaptor.class.getName());
    private static Cache<String, BeIDInfo> cacheBeIDInfo;
    private static Cache<String, KeyStore> cacheKeystore;
 
@@ -42,7 +42,7 @@ public class CommonsEidInstantiator implements BeIDInstantiator {
 
    public BeIDInfo instantiateBeIDInfo(String scope, boolean useCache) throws TechnicalConnectorException {
       if (useCache && cacheBeIDInfo.containsKey(scope)) {
-         return (BeIDInfo)cacheBeIDInfo.get(scope);
+         return cacheBeIDInfo.get(scope);
       } else {
          BeIDInfo result = new BeIDInfo();
          BeIDCard beIDCard = null;
@@ -60,8 +60,8 @@ public class CommonsEidInstantiator implements BeIDInstantiator {
             result.setAddress(mapper.map(address));
             LOG.debug("processing photo file");
             result.setPhoto(beIDCard.readFile(FileType.Photo));
-         } catch (Exception var13) {
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.BEID_ERROR, var13, new Object[]{var13.getMessage()});
+         } catch (Exception e) {
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.BEID_ERROR, e, new Object[]{e.getMessage()});
          } finally {
             ConnectorIOUtils.closeQuietly((Object)beIDCard);
          }
@@ -76,7 +76,7 @@ public class CommonsEidInstantiator implements BeIDInstantiator {
 
    public KeyStore instantiateKeyStore(String scope, boolean useCache) throws TechnicalConnectorException {
       if (useCache && cacheKeystore.containsKey(scope)) {
-         return (KeyStore)cacheKeystore.get(scope);
+         return cacheKeystore.get(scope);
       } else {
          ConfigValidator conf = ConfigFactory.getConfigValidator();
          KeyStore keyStore = null;
@@ -90,8 +90,8 @@ public class CommonsEidInstantiator implements BeIDInstantiator {
             keyStoreParameter.setLogoff(conf.getBooleanProperty("be.ehealth.technicalconnector.beid.impl.commons-eid.logoff", false));
             keyStoreParameter.setCardReaderStickiness(conf.getBooleanProperty("be.ehealth.technicalconnector.beid.impl.commons-eid.cardreaderstickiness", false));
             keyStore.load(keyStoreParameter);
-         } catch (Exception var7) {
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.BEID_ERROR, var7, new Object[0]);
+         } catch (Exception e) {
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.BEID_ERROR, e, new Object[0]);
          }
 
          if (useCache) {
@@ -112,8 +112,8 @@ public class CommonsEidInstantiator implements BeIDInstantiator {
    }
 
    static {
-      cacheBeIDInfo = CacheFactory.newInstance(CacheFactory.CacheType.MEMORY, "beid-info", CacheInformation.ExpiryType.NONE, (Duration)null);
-      cacheKeystore = CacheFactory.newInstance(CacheFactory.CacheType.MEMORY, "beid-keystore", CacheInformation.ExpiryType.NONE, (Duration)null);
+      cacheBeIDInfo = CacheFactory.<String, BeIDInfo>newInstance(CacheFactory.CacheType.MEMORY, "beid-info", CacheInformation.ExpiryType.NONE, (Duration)null);
+      cacheKeystore = CacheFactory.<String, KeyStore>newInstance(CacheFactory.CacheType.MEMORY, "beid-keystore", CacheInformation.ExpiryType.NONE, (Duration)null);
    }
 
    @Mapper

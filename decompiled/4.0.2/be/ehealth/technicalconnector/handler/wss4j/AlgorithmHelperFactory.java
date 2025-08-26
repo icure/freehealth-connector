@@ -2,7 +2,6 @@ package be.ehealth.technicalconnector.handler.wss4j;
 
 import be.ehealth.technicalconnector.service.sts.security.Credential;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class AlgorithmHelperFactory {
@@ -12,18 +11,13 @@ public class AlgorithmHelperFactory {
    }
 
    public static AlgorithmHelper getAlgorithmHelper(Credential credential) {
-      Iterator var1 = helpers.iterator();
-
-      AlgorithmHelper helper;
-      do {
-         if (!var1.hasNext()) {
-            throw new IllegalArgumentException("Unsupported algorithm " + credential);
+      for(AlgorithmHelper helper : helpers) {
+         if (helper.canHandle(credential)) {
+            return helper;
          }
+      }
 
-         helper = (AlgorithmHelper)var1.next();
-      } while(!helper.canHandle(credential));
-
-      return helper;
+      throw new IllegalArgumentException("Unsupported algorithm " + credential);
    }
 
    static {

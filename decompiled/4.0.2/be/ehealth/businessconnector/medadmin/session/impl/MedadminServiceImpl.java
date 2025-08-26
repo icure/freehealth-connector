@@ -32,7 +32,6 @@ import be.ehealth.technicalconnector.exception.TechnicalConnectorException;
 import be.ehealth.technicalconnector.exception.TechnicalConnectorExceptionValues;
 import be.ehealth.technicalconnector.utils.ConnectorXmlUtils;
 import be.ehealth.technicalconnector.validator.ValidatorHelper;
-import java.util.Iterator;
 import org.w3c.dom.Element;
 
 public class MedadminServiceImpl extends DefaultCommonAsyncService implements MedAdminService {
@@ -62,19 +61,19 @@ public class MedadminServiceImpl extends DefaultCommonAsyncService implements Me
    }
 
    public ProcessedPostResponse postMedAdminRequestList(MedAdminRequestList medAdminRequestList, String recipient, InputReference inputReference) throws ConnectorException {
-      return this.postHelper.post(medAdminRequestList, "M4A_XML", "/mycarenet-genasync/XSD/MyCareNet_MedAdmin.xsd", recipient, inputReference);
+      return this.postHelper.post((Object)medAdminRequestList, "M4A_XML", (String)"/mycarenet-genasync/XSD/MyCareNet_MedAdmin.xsd", recipient, inputReference);
    }
 
    public ProcessedPostResponse postSingleNurseContractualCareRequest(SingleNurseContractualCareRequest singleNurseContractualCareRequest, String recipient, InputReference inputReference) throws ConnectorException {
-      return this.postHelper.post(singleNurseContractualCareRequest, "M4A_XML", "/mycarenet-genasync/XSD/MyCareNet_MedAdmin.xsd", recipient, inputReference);
+      return this.postHelper.post((Object)singleNurseContractualCareRequest, "M4A_XML", (String)"/mycarenet-genasync/XSD/MyCareNet_MedAdmin.xsd", recipient, inputReference);
    }
 
    public ProcessedPostResponse postSinglePalliativeCareRequest(SinglePalliativeCareRequest singlePalliativeCareRequest, String recipient, InputReference inputReference) throws ConnectorException {
-      return this.postHelper.post(singlePalliativeCareRequest, "M4A_XML", "/mycarenet-genasync/XSD/MyCareNet_MedAdmin.xsd", recipient, inputReference);
+      return this.postHelper.post((Object)singlePalliativeCareRequest, "M4A_XML", (String)"/mycarenet-genasync/XSD/MyCareNet_MedAdmin.xsd", recipient, inputReference);
    }
 
    public ProcessedPostResponse postSingleSpecificTechnicalCareRequest(SingleSpecificTechnicalCareRequest singleSpecificTechnicalCareRequest, String recipient, InputReference inputReference) throws ConnectorException {
-      return this.postHelper.post(singleSpecificTechnicalCareRequest, "M4A_XML", "/mycarenet-genasync/XSD/MyCareNet_MedAdmin.xsd", recipient, inputReference);
+      return this.postHelper.post((Object)singleSpecificTechnicalCareRequest, "M4A_XML", (String)"/mycarenet-genasync/XSD/MyCareNet_MedAdmin.xsd", recipient, inputReference);
    }
 
    public M4AXmlProcessedGetResponse getM4AXml(GetRequest request) throws ConnectorException {
@@ -86,57 +85,49 @@ public class MedadminServiceImpl extends DefaultCommonAsyncService implements Me
    }
 
    public void transformRawResponseToBusinessObjects(ProcessedGetResponse<byte[]> processedGetResponse, M4AXmlProcessedGetResponse medAdminProcessedGetResponse) throws TechnicalConnectorException {
-      Iterator var3 = processedGetResponse.getMsgResponses().iterator();
+      for(ProcessedMsgResponse<byte[]> processedMsgResponse : processedGetResponse.getMsgResponses()) {
+         M4AXmlProcessedMsgResponse adminProcessedMsgResponse = new M4AXmlProcessedMsgResponse(processedMsgResponse);
+         medAdminProcessedGetResponse.getMsgResponses().add(adminProcessedMsgResponse);
+         byte[] businessResponse = processedMsgResponse.getBusinessResponse();
+         String type = ((Element)ConnectorXmlUtils.toObject(businessResponse, Object.class)).getLocalName();
+         if ("SingleNurseContractualCareResponse".equals(type)) {
+            SingleNurseContractualCareResponse singleNurseContractualCareResponse = (SingleNurseContractualCareResponse)ConnectorXmlUtils.toObject(businessResponse, SingleNurseContractualCareResponse.class);
+            this.validateAgainstXsd(singleNurseContractualCareResponse);
+            adminProcessedMsgResponse.getSingleNurseContractualCareResponses().add(singleNurseContractualCareResponse);
+         } else if ("SinglePalliativeCareResponse".equals(type)) {
+            SinglePalliativeCareResponse singlePalliativeCareResponse = (SinglePalliativeCareResponse)ConnectorXmlUtils.toObject(businessResponse, SinglePalliativeCareResponse.class);
+            this.validateAgainstXsd(singlePalliativeCareResponse);
+            adminProcessedMsgResponse.getSinglePalliativeCareResponses().add(singlePalliativeCareResponse);
+         } else if ("SingleSpecificTechnicalCareResponse".equals(type)) {
+            SingleSpecificTechnicalCareResponse singleSpecificTechnicalCareResponse = (SingleSpecificTechnicalCareResponse)ConnectorXmlUtils.toObject(businessResponse, SingleSpecificTechnicalCareResponse.class);
+            this.validateAgainstXsd(singleSpecificTechnicalCareResponse);
+            adminProcessedMsgResponse.getSingleSpecificTechnicalCareResponses().add(singleSpecificTechnicalCareResponse);
+         } else if ("SingleNurseContractualCareUpdate".equals(type)) {
+            SingleNurseContractualCareUpdate singleNurseContractualCareUpdate = (SingleNurseContractualCareUpdate)ConnectorXmlUtils.toObject(businessResponse, SingleNurseContractualCareUpdate.class);
+            this.validateAgainstXsd(singleNurseContractualCareUpdate);
+            adminProcessedMsgResponse.getSingleNurseContractualCareUpdates().add(singleNurseContractualCareUpdate);
+         } else {
+            if (!"MedAdminResponseList".equals(type)) {
+               throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, new Object[]{"[" + type + "] is not a valid root element for the business response"});
+            }
 
-      while(true) {
-         while(var3.hasNext()) {
-            ProcessedMsgResponse<byte[]> processedMsgResponse = (ProcessedMsgResponse)var3.next();
-            M4AXmlProcessedMsgResponse adminProcessedMsgResponse = new M4AXmlProcessedMsgResponse(processedMsgResponse);
-            medAdminProcessedGetResponse.getMsgResponses().add(adminProcessedMsgResponse);
-            byte[] businessResponse = (byte[])processedMsgResponse.getBusinessResponse();
-            String type = ((Element)ConnectorXmlUtils.toObject(businessResponse, Object.class)).getLocalName();
-            if ("SingleNurseContractualCareResponse".equals(type)) {
-               SingleNurseContractualCareResponse singleNurseContractualCareResponse = (SingleNurseContractualCareResponse)ConnectorXmlUtils.toObject(businessResponse, SingleNurseContractualCareResponse.class);
-               this.validateAgainstXsd(singleNurseContractualCareResponse);
-               adminProcessedMsgResponse.getSingleNurseContractualCareResponses().add(singleNurseContractualCareResponse);
-            } else if ("SinglePalliativeCareResponse".equals(type)) {
-               SinglePalliativeCareResponse singlePalliativeCareResponse = (SinglePalliativeCareResponse)ConnectorXmlUtils.toObject(businessResponse, SinglePalliativeCareResponse.class);
-               this.validateAgainstXsd(singlePalliativeCareResponse);
-               adminProcessedMsgResponse.getSinglePalliativeCareResponses().add(singlePalliativeCareResponse);
-            } else if ("SingleSpecificTechnicalCareResponse".equals(type)) {
-               SingleSpecificTechnicalCareResponse singleSpecificTechnicalCareResponse = (SingleSpecificTechnicalCareResponse)ConnectorXmlUtils.toObject(businessResponse, SingleSpecificTechnicalCareResponse.class);
-               this.validateAgainstXsd(singleSpecificTechnicalCareResponse);
-               adminProcessedMsgResponse.getSingleSpecificTechnicalCareResponses().add(singleSpecificTechnicalCareResponse);
-            } else if ("SingleNurseContractualCareUpdate".equals(type)) {
-               SingleNurseContractualCareUpdate singleNurseContractualCareUpdate = (SingleNurseContractualCareUpdate)ConnectorXmlUtils.toObject(businessResponse, SingleNurseContractualCareUpdate.class);
-               this.validateAgainstXsd(singleNurseContractualCareUpdate);
-               adminProcessedMsgResponse.getSingleNurseContractualCareUpdates().add(singleNurseContractualCareUpdate);
-            } else {
-               if (!"MedAdminResponseList".equals(type)) {
-                  throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, new Object[]{"[" + type + "] is not a valid root element for the business response"});
-               }
+            MedAdminResponseList medAdminResponseList = (MedAdminResponseList)ConnectorXmlUtils.toObject(businessResponse, MedAdminResponseList.class);
+            this.validateAgainstXsd(medAdminResponseList);
 
-               MedAdminResponseList medAdminResponseList = (MedAdminResponseList)ConnectorXmlUtils.toObject(businessResponse, MedAdminResponseList.class);
-               this.validateAgainstXsd(medAdminResponseList);
-               Iterator var9 = medAdminResponseList.getSingleNurseContractualCareResponsesAndSingleNurseContractualCareUpdatesAndSinglePalliativeCareResponses().iterator();
-
-               while(var9.hasNext()) {
-                  Object o = var9.next();
-                  if (o instanceof SingleNurseContractualCareResponse) {
-                     adminProcessedMsgResponse.getSingleNurseContractualCareResponses().add((SingleNurseContractualCareResponse)o);
-                  } else if (o instanceof SingleNurseContractualCareUpdate) {
-                     adminProcessedMsgResponse.getSingleNurseContractualCareUpdates().add((SingleNurseContractualCareUpdate)o);
-                  } else if (o instanceof SinglePalliativeCareResponse) {
-                     adminProcessedMsgResponse.getSinglePalliativeCareResponses().add((SinglePalliativeCareResponse)o);
-                  } else if (o instanceof SingleSpecificTechnicalCareResponse) {
-                     adminProcessedMsgResponse.getSingleSpecificTechnicalCareResponses().add((SingleSpecificTechnicalCareResponse)o);
-                  }
+            for(Object o : medAdminResponseList.getSingleNurseContractualCareResponsesAndSingleNurseContractualCareUpdatesAndSinglePalliativeCareResponses()) {
+               if (o instanceof SingleNurseContractualCareResponse) {
+                  adminProcessedMsgResponse.getSingleNurseContractualCareResponses().add((SingleNurseContractualCareResponse)o);
+               } else if (o instanceof SingleNurseContractualCareUpdate) {
+                  adminProcessedMsgResponse.getSingleNurseContractualCareUpdates().add((SingleNurseContractualCareUpdate)o);
+               } else if (o instanceof SinglePalliativeCareResponse) {
+                  adminProcessedMsgResponse.getSinglePalliativeCareResponses().add((SinglePalliativeCareResponse)o);
+               } else if (o instanceof SingleSpecificTechnicalCareResponse) {
+                  adminProcessedMsgResponse.getSingleSpecificTechnicalCareResponses().add((SingleSpecificTechnicalCareResponse)o);
                }
             }
          }
-
-         return;
       }
+
    }
 
    public M4ACnfXmlProcessedGetResponse getM4ACnfXml(GetRequest request) throws ConnectorException {
@@ -148,51 +139,43 @@ public class MedadminServiceImpl extends DefaultCommonAsyncService implements Me
    }
 
    public void transformRawResponseToBusinessObjects(ProcessedGetResponse<byte[]> processedGetResponse, M4ACnfXmlProcessedGetResponse medAdminProcessedGetResponse) throws TechnicalConnectorException {
-      Iterator var3 = processedGetResponse.getMsgResponses().iterator();
+      for(ProcessedMsgResponse<byte[]> processedMsgResponse : processedGetResponse.getMsgResponses()) {
+         M4ACnfXmlProcessedMsgResponse adminProcessedMsgResponse = new M4ACnfXmlProcessedMsgResponse(processedMsgResponse);
+         medAdminProcessedGetResponse.getMsgResponses().add(adminProcessedMsgResponse);
+         byte[] businessResponse = processedMsgResponse.getBusinessResponse();
+         String type = ((Element)ConnectorXmlUtils.toObject(businessResponse, Object.class)).getLocalName();
+         if ("SingleNurseContractualCareRequest".equals(type)) {
+            SingleNurseContractualCareRequest singleNurseContractualCareRequest = (SingleNurseContractualCareRequest)ConnectorXmlUtils.toObject(businessResponse, SingleNurseContractualCareRequest.class);
+            this.validateAgainstXsd(singleNurseContractualCareRequest);
+            adminProcessedMsgResponse.getSingleNurseContractualCareRequests().add(singleNurseContractualCareRequest);
+         } else if ("SinglePalliativeCareRequest".equals(type)) {
+            SinglePalliativeCareRequest singlePalliativeCareRequest = (SinglePalliativeCareRequest)ConnectorXmlUtils.toObject(businessResponse, SinglePalliativeCareRequest.class);
+            this.validateAgainstXsd(singlePalliativeCareRequest);
+            adminProcessedMsgResponse.getSinglePalliativeCareRequests().add(singlePalliativeCareRequest);
+         } else if ("SingleSpecificTechnicalCareRequest".equals(type)) {
+            SingleSpecificTechnicalCareRequest singleSpecificTechnicalCareRequest = (SingleSpecificTechnicalCareRequest)ConnectorXmlUtils.toObject(businessResponse, SingleSpecificTechnicalCareRequest.class);
+            this.validateAgainstXsd(singleSpecificTechnicalCareRequest);
+            adminProcessedMsgResponse.getSingleSpecificTechnicalCareRequests().add(singleSpecificTechnicalCareRequest);
+         } else {
+            if (!"MedAdminRequestList".equals(type)) {
+               throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, new Object[]{"[" + type + "] is not a valid root element for the business response"});
+            }
 
-      while(true) {
-         while(var3.hasNext()) {
-            ProcessedMsgResponse<byte[]> processedMsgResponse = (ProcessedMsgResponse)var3.next();
-            M4ACnfXmlProcessedMsgResponse adminProcessedMsgResponse = new M4ACnfXmlProcessedMsgResponse(processedMsgResponse);
-            medAdminProcessedGetResponse.getMsgResponses().add(adminProcessedMsgResponse);
-            byte[] businessResponse = (byte[])processedMsgResponse.getBusinessResponse();
-            String type = ((Element)ConnectorXmlUtils.toObject(businessResponse, Object.class)).getLocalName();
-            if ("SingleNurseContractualCareRequest".equals(type)) {
-               SingleNurseContractualCareRequest singleNurseContractualCareRequest = (SingleNurseContractualCareRequest)ConnectorXmlUtils.toObject(businessResponse, SingleNurseContractualCareRequest.class);
-               this.validateAgainstXsd(singleNurseContractualCareRequest);
-               adminProcessedMsgResponse.getSingleNurseContractualCareRequests().add(singleNurseContractualCareRequest);
-            } else if ("SinglePalliativeCareRequest".equals(type)) {
-               SinglePalliativeCareRequest singlePalliativeCareRequest = (SinglePalliativeCareRequest)ConnectorXmlUtils.toObject(businessResponse, SinglePalliativeCareRequest.class);
-               this.validateAgainstXsd(singlePalliativeCareRequest);
-               adminProcessedMsgResponse.getSinglePalliativeCareRequests().add(singlePalliativeCareRequest);
-            } else if ("SingleSpecificTechnicalCareRequest".equals(type)) {
-               SingleSpecificTechnicalCareRequest singleSpecificTechnicalCareRequest = (SingleSpecificTechnicalCareRequest)ConnectorXmlUtils.toObject(businessResponse, SingleSpecificTechnicalCareRequest.class);
-               this.validateAgainstXsd(singleSpecificTechnicalCareRequest);
-               adminProcessedMsgResponse.getSingleSpecificTechnicalCareRequests().add(singleSpecificTechnicalCareRequest);
-            } else {
-               if (!"MedAdminRequestList".equals(type)) {
-                  throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, new Object[]{"[" + type + "] is not a valid root element for the business response"});
-               }
+            MedAdminRequestList medAdminRequestList = (MedAdminRequestList)ConnectorXmlUtils.toObject(businessResponse, MedAdminRequestList.class);
+            this.validateAgainstXsd(medAdminRequestList);
 
-               MedAdminRequestList medAdminRequestList = (MedAdminRequestList)ConnectorXmlUtils.toObject(businessResponse, MedAdminRequestList.class);
-               this.validateAgainstXsd(medAdminRequestList);
-               Iterator var9 = medAdminRequestList.getSingleNurseContractualCareRequestsAndSinglePalliativeCareRequestsAndSingleSpecificTechnicalCareRequests().iterator();
-
-               while(var9.hasNext()) {
-                  Object o = var9.next();
-                  if (o instanceof SingleNurseContractualCareRequest) {
-                     adminProcessedMsgResponse.getSingleNurseContractualCareRequests().add((SingleNurseContractualCareRequest)o);
-                  } else if (o instanceof SinglePalliativeCareRequest) {
-                     adminProcessedMsgResponse.getSinglePalliativeCareRequests().add((SinglePalliativeCareRequest)o);
-                  } else if (o instanceof SingleSpecificTechnicalCareRequest) {
-                     adminProcessedMsgResponse.getSingleSpecificTechnicalCareRequests().add((SingleSpecificTechnicalCareRequest)o);
-                  }
+            for(Object o : medAdminRequestList.getSingleNurseContractualCareRequestsAndSinglePalliativeCareRequestsAndSingleSpecificTechnicalCareRequests()) {
+               if (o instanceof SingleNurseContractualCareRequest) {
+                  adminProcessedMsgResponse.getSingleNurseContractualCareRequests().add((SingleNurseContractualCareRequest)o);
+               } else if (o instanceof SinglePalliativeCareRequest) {
+                  adminProcessedMsgResponse.getSinglePalliativeCareRequests().add((SinglePalliativeCareRequest)o);
+               } else if (o instanceof SingleSpecificTechnicalCareRequest) {
+                  adminProcessedMsgResponse.getSingleSpecificTechnicalCareRequests().add((SingleSpecificTechnicalCareRequest)o);
                }
             }
          }
-
-         return;
       }
+
    }
 
    public void validateAgainstXsd(Object object) throws TechnicalConnectorException {
@@ -215,13 +198,10 @@ public class MedadminServiceImpl extends DefaultCommonAsyncService implements Me
    }
 
    public void transformRawResponseToBusinessObjects(ProcessedGetResponse<byte[]> processedGetResponse, RejectXmlProcessedGetResponse medAdminProcessedGetResponse) throws TechnicalConnectorException {
-      RejectXmlProcessedMsgResponse adminProcessedMsgResponse;
-      RejectInb rejectInbResponse;
-      for(Iterator var3 = processedGetResponse.getMsgResponses().iterator(); var3.hasNext(); adminProcessedMsgResponse.getRejectInbResponses().add(rejectInbResponse)) {
-         ProcessedMsgResponse<byte[]> processedMsgResponse = (ProcessedMsgResponse)var3.next();
-         adminProcessedMsgResponse = new RejectXmlProcessedMsgResponse(processedMsgResponse);
+      for(ProcessedMsgResponse<byte[]> processedMsgResponse : processedGetResponse.getMsgResponses()) {
+         RejectXmlProcessedMsgResponse adminProcessedMsgResponse = new RejectXmlProcessedMsgResponse(processedMsgResponse);
          medAdminProcessedGetResponse.getMsgResponses().add(adminProcessedMsgResponse);
-         byte[] businessResponse = (byte[])processedMsgResponse.getBusinessResponse();
+         byte[] businessResponse = processedMsgResponse.getBusinessResponse();
          String receivedXml = new String(businessResponse);
          if (receivedXml.contains("\u0000")) {
             receivedXml = receivedXml.replaceAll("\u0000", "");
@@ -232,10 +212,12 @@ public class MedadminServiceImpl extends DefaultCommonAsyncService implements Me
             throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, new Object[]{"[" + type + "] is not a valid root element for the business response"});
          }
 
-         rejectInbResponse = (RejectInb)ConnectorXmlUtils.toObject(receivedXml, RejectInb.class);
+         RejectInb rejectInbResponse = (RejectInb)ConnectorXmlUtils.toObject(receivedXml, RejectInb.class);
          if (config.getBooleanProperty("genericasync.medadmin.validation.incoming.businessresponse", true)) {
-            ValidatorHelper.validate(rejectInbResponse, "/mycarenet-commons/XSD/Reject.xsd");
+            ValidatorHelper.validate((Object)rejectInbResponse, (String)"/mycarenet-commons/XSD/Reject.xsd");
          }
+
+         adminProcessedMsgResponse.getRejectInbResponses().add(rejectInbResponse);
       }
 
    }

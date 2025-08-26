@@ -24,7 +24,6 @@ import be.fgov.ehealth.ehbox.core.v3.EhboxIdentifierType;
 import be.fgov.ehealth.ehbox.core.v3.MessageInfoType;
 import be.fgov.ehealth.ehbox.core.v3.SenderType;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -45,10 +44,7 @@ public abstract class AbstractConsultationBuilder<T> {
 
    protected void processCustomMetas(List<CustomMetaType> metas, Message<T> message) {
       if (metas != null) {
-         Iterator var3 = metas.iterator();
-
-         while(var3.hasNext()) {
-            CustomMetaType meta = (CustomMetaType)var3.next();
+         for(CustomMetaType meta : metas) {
             message.getCustomMetas().put(meta.getKey(), meta.getValue());
          }
       }
@@ -146,9 +142,9 @@ public abstract class AbstractConsultationBuilder<T> {
 
                try {
                   byteVal = ConnectorExceptionUtils.processUnsealConnectorException(e);
-               } catch (UnsealConnectorException var7) {
-                  LOG.error("unrecoverable unsealException occurred while decrypting ehbox content , returning null as message , error : " + var7.getMessage());
-                  throw new EhboxCryptoException(var7, (Message)null);
+               } catch (UnsealConnectorException unrecoverableUnsealException) {
+                  LOG.error("unrecoverable unsealException occurred while decrypting ehbox content , returning null as message , error : " + unrecoverableUnsealException.getMessage());
+                  throw new EhboxCryptoException(unrecoverableUnsealException, (Message)null);
                }
             }
          }
@@ -160,23 +156,23 @@ public abstract class AbstractConsultationBuilder<T> {
    protected Message<T> createMessage(ContentSpecificationType content, T responseMsg, String id, String publicationId) throws EhboxBusinessConnectorException {
       Message<T> message = null;
       if ("DOCUMENT".equals(content.getContentType())) {
-         message = new DocumentMessage();
+         message = new DocumentMessage<T>();
       } else if ("NEWS".equals(content.getContentType())) {
-         message = new NewsMessage();
+         message = new NewsMessage<T>();
       } else if ("ERROR".equals(content.getContentType())) {
-         message = new ErrorMessage();
+         message = new ErrorMessage<T>();
       } else {
          if (!"ACKNOWLEDGMENT".equals(content.getContentType())) {
             throw new EhboxBusinessConnectorException(EhboxBusinessConnectorExceptionValues.ERROR_BUSINESS_CODE_REASON, new Object[]{"Unsupported contentType", content.getContentType()});
          }
 
-         message = new AcknowledgeMessage();
+         message = new AcknowledgeMessage<T>();
       }
 
-      ((Message)message).setOriginal(responseMsg);
-      ((Message)message).setId(id);
-      ((Message)message).setPublicationId(publicationId);
-      return (Message)message;
+      message.setOriginal(responseMsg);
+      message.setId(id);
+      message.setPublicationId(publicationId);
+      return message;
    }
 
    static class ExceptionContainer<T> {

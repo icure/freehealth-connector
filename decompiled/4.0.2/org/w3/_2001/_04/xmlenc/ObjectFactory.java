@@ -88,7 +88,7 @@ public class ObjectFactory {
       scope = AgreementMethod.class
    )
    public JAXBElement<byte[]> createAgreementMethodKANonce(byte[] value) {
-      return new JAXBElement(_AgreementMethodKANonce_QNAME, byte[].class, AgreementMethod.class, (byte[])value);
+      return new JAXBElement(_AgreementMethodKANonce_QNAME, byte[].class, AgreementMethod.class, value);
    }
 
    @XmlElementDecl(
@@ -124,6 +124,6 @@ public class ObjectFactory {
       scope = EncryptionMethodType.class
    )
    public JAXBElement<byte[]> createEncryptionMethodTypeOAEPparams(byte[] value) {
-      return new JAXBElement(_EncryptionMethodTypeOAEPparams_QNAME, byte[].class, EncryptionMethodType.class, (byte[])value);
+      return new JAXBElement(_EncryptionMethodTypeOAEPparams_QNAME, byte[].class, EncryptionMethodType.class, value);
    }
 }

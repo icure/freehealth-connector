@@ -94,9 +94,9 @@ public class DicsSessionServiceImpl implements DicsSessionService, Configuration
          this.sessionValidator.validateSession();
          GenericRequest service = ServiceFactory.getDicsService(Session.getInstance().getSession().getSAMLToken(), operation);
          service.setPayload(request);
-         return be.ehealth.technicalconnector.ws.ServiceFactory.getGenericWsSender().send(service).asObject(clazz);
-      } catch (SOAPException var5) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var5, new Object[]{var5.getMessage()});
+         return (T)be.ehealth.technicalconnector.ws.ServiceFactory.getGenericWsSender().send(service).asObject(clazz);
+      } catch (SOAPException e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, e, new Object[]{e.getMessage()});
       }
    }
 
