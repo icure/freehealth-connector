@@ -18,7 +18,7 @@ object Record25Description: RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTION_BY_ZONE, "5", "Reserve", null, "N", pos, 8)
         pos = register(ZONE_DESCRIPTION_BY_ZONE, "6a,6b", "Reserve", null, "N", pos, 8)
         pos = register(ZONE_DESCRIPTION_BY_ZONE, "7", "NumeroMutuelleAffiliation", null, "N", pos, 3)
-        pos = register(ZONE_DESCRIPTION_BY_ZONE, "8", "NumeroIdentificationBeneficiaireMediprima", null, "A", pos, 13)
+        pos = register(ZONE_DESCRIPTION_BY_ZONE, "8", "NumeroIdentificationBeneficiaireMediprima", null, "N", pos, 13)
         pos = register(ZONE_DESCRIPTION_BY_ZONE, "9", "SexeBeneficiaire", null, "N", pos, 1)
         pos = register(ZONE_DESCRIPTION_BY_ZONE, "10", "Reserve", null, "N", pos, 1)
         pos = register(ZONE_DESCRIPTION_BY_ZONE, "11", "Reserve", null, "N", pos, 1)
