@@ -25,11 +25,7 @@ public enum CDDISCHARGETYPEvalues {
    }
 
    public static CDDISCHARGETYPEvalues fromValue(String v) {
-      CDDISCHARGETYPEvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDDISCHARGETYPEvalues c = var1[var3];
+      for(CDDISCHARGETYPEvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

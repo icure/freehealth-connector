@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.service
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import org.taktik.connector.business.domain.dmg.DmgAcknowledge
 import org.taktik.freehealth.middleware.dto.efact.*
 import java.util.UUID
@@ -41,6 +42,6 @@ interface EfactService {
         valueHashes: List<String>
     ): Boolean
 
-    fun makeFlatFile(batch: InvoicesBatch, isTest: Boolean): String
-    fun makeFlatFileCoreWithMetadata(batch: InvoicesBatch, isTest: Boolean): FlatFileWithMetadata
+    fun makeFlatFile(batch: InvoicesBatch, isTest: Boolean, isMediprima: Boolean): String
+    fun makeFlatFileCoreWithMetadata(batch: InvoicesBatch, isTest: Boolean, isMediprima: Boolean): FlatFileWithMetadata
 }

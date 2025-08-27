@@ -97,11 +97,7 @@ public enum CDITEMEBIRTHvalues {
    }
 
    public static CDITEMEBIRTHvalues fromValue(String v) {
-      CDITEMEBIRTHvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDITEMEBIRTHvalues c = var1[var3];
+      for(CDITEMEBIRTHvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

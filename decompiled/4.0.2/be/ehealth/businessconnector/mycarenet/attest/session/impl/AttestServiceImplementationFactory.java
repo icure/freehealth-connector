@@ -11,7 +11,7 @@ public class AttestServiceImplementationFactory extends ImplementationClassFacto
 
    public <T> T createImplementationClass(Class<T> clazz, SessionValidator sessionValidator, EhealthReplyValidator replyValidator, String... additionalParameters) throws TechnicalConnectorException {
       if (clazz.equals(AttestServiceImpl.class) && additionalParameters.length == 0) {
-         return new AttestServiceImpl(sessionValidator, replyValidator);
+         return (T)(new AttestServiceImpl(sessionValidator, replyValidator));
       } else {
          throw new UnsupportedOperationException("class " + clazz + " not supported");
       }

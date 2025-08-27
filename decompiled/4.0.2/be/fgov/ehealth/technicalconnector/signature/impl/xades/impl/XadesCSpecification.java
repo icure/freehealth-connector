@@ -12,7 +12,6 @@ import be.fgov.ehealth.technicalconnector.signature.impl.xades.domain.UnsignedPr
 import java.io.IOException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.util.Iterator;
 import java.util.Map;
 import org.apache.xml.security.signature.XMLSignature;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -34,16 +33,14 @@ public class XadesCSpecification implements be.fgov.ehealth.technicalconnector.s
          X509Certificate signing = sig.getKeyInfo().getX509Certificate();
          OCSPData ocsp = (OCSPData)OCSPCheckerBuilder.newBuilder().addOCSPPolicy(OCSPPolicy.RECEIVER_MANDATORY).build().validate(signing).getData();
          unsignedProps.addCertificate(signing);
-         Iterator var7 = ocsp.getCrls().iterator();
 
-         while(var7.hasNext()) {
-            X509CRL crl = (X509CRL)var7.next();
+         for(X509CRL crl : ocsp.getCrls()) {
             unsignedProps.addCrlRef(crl);
          }
 
          unsignedProps.addOCSPRef(this.convertToOCSPResp(ocsp));
-      } catch (Exception var9) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var9, new Object[]{"Unable to add optional Signature parts"});
+      } catch (Exception e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{"Unable to add optional Signature parts"});
       }
    }
 

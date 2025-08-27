@@ -37,11 +37,7 @@ public enum CDITEMBVTvalues {
    }
 
    public static CDITEMBVTvalues fromValue(String v) {
-      CDITEMBVTvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDITEMBVTvalues c = var1[var3];
+      for(CDITEMBVTvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

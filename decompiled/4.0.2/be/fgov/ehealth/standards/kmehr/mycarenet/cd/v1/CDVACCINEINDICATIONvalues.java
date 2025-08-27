@@ -77,11 +77,7 @@ public enum CDVACCINEINDICATIONvalues {
    }
 
    public static CDVACCINEINDICATIONvalues fromValue(String v) {
-      CDVACCINEINDICATIONvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDVACCINEINDICATIONvalues c = var1[var3];
+      for(CDVACCINEINDICATIONvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

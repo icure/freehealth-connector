@@ -24,11 +24,7 @@ public enum CDTIMEUNITschemes {
    }
 
    public static CDTIMEUNITschemes fromValue(String v) {
-      CDTIMEUNITschemes[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDTIMEUNITschemes c = var1[var3];
+      for(CDTIMEUNITschemes c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

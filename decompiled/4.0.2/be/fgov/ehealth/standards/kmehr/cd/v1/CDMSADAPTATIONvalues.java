@@ -29,11 +29,7 @@ public enum CDMSADAPTATIONvalues {
    }
 
    public static CDMSADAPTATIONvalues fromValue(String v) {
-      CDMSADAPTATIONvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDMSADAPTATIONvalues c = var1[var3];
+      for(CDMSADAPTATIONvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

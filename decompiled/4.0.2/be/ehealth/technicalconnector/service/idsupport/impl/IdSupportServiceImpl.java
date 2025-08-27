@@ -49,8 +49,8 @@ public class IdSupportServiceImpl extends AbstractSessionServiceWithCache implem
          VerifyIdResponse response = (VerifyIdResponse)be.ehealth.technicalconnector.ws.ServiceFactory.getGenericWsSender().send(genericRequest).asObject(VerifyIdResponse.class);
          this.validator.validateReplyStatus((StatusResponseType)response);
          return response;
-      } catch (SOAPException var4) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, new Object[]{var4.getMessage(), var4});
+      } catch (SOAPException e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, new Object[]{e.getMessage(), e});
       }
    }
 

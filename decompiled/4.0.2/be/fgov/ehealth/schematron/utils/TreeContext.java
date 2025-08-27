@@ -12,9 +12,8 @@ public class TreeContext extends Stack<HashMap<String, Integer>> {
 
    public void onStartElement(String uri, String localName) {
       String pseudo = "*:" + localName + "[namespace-uri()='" + uri + "']";
-      HashMap currContext;
       if (this.justClosed && this.size() != 0) {
-         currContext = (HashMap)this.peek();
+         HashMap<String, Integer> currContext = (HashMap)this.peek();
          Integer preceding = (Integer)currContext.get(pseudo);
          if (preceding != null) {
             int newCount = preceding + 1;
@@ -25,9 +24,9 @@ public class TreeContext extends Stack<HashMap<String, Integer>> {
             currContext.put(pseudo, 1);
          }
       } else {
-         currContext = new HashMap();
-         currContext.put(pseudo, 1);
-         this.push(currContext);
+         HashMap<String, Integer> newContext = new HashMap();
+         newContext.put(pseudo, 1);
+         this.push(newContext);
       }
 
       this.parents.push(pseudo);

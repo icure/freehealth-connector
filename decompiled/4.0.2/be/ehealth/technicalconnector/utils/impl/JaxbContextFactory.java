@@ -2,7 +2,6 @@ package be.ehealth.technicalconnector.utils.impl;
 
 import java.security.MessageDigest;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -26,8 +25,8 @@ public final class JaxbContextFactory {
    public static void initJaxbContext(Package packageInstance) {
       try {
          getJaxbContextForPackage(packageInstance);
-      } catch (Exception var2) {
-         LOG.warn("Unable to load JaxbContext for {}", packageInstance, var2);
+      } catch (Exception e) {
+         LOG.warn("Unable to load JaxbContext for {}", packageInstance, e);
       }
 
    }
@@ -35,8 +34,8 @@ public final class JaxbContextFactory {
    public static void initJaxbContext(Class<?>... classesToBeBound) {
       try {
          getJaxbContextForClass(classesToBeBound);
-      } catch (JAXBException var2) {
-         LOG.warn("Unable to load JaxbContext for {}", ArrayUtils.toString(classesToBeBound), var2);
+      } catch (JAXBException e) {
+         LOG.warn("Unable to load JaxbContext for {}", ArrayUtils.toString(classesToBeBound), e);
       }
 
    }
@@ -71,11 +70,8 @@ public final class JaxbContextFactory {
 
    private static String calculateKey(Class<?>... classesToBeBound) {
       Set<String> keyList = new TreeSet();
-      Class[] var2 = classesToBeBound;
-      int var3 = classesToBeBound.length;
 
-      for(int var4 = 0; var4 < var3; ++var4) {
-         Class<?> classToBeBound = var2[var4];
+      for(Class<?> classToBeBound : classesToBeBound) {
          keyList.add(classToBeBound.getName());
       }
 
@@ -83,10 +79,8 @@ public final class JaxbContextFactory {
          return (String)keyList.iterator().next();
       } else {
          MessageDigest complete = DigestUtils.getMd5Digest();
-         Iterator var7 = keyList.iterator();
 
-         while(var7.hasNext()) {
-            String clazz = (String)var7.next();
+         for(String clazz : keyList) {
             complete.update(clazz.getBytes());
          }
 

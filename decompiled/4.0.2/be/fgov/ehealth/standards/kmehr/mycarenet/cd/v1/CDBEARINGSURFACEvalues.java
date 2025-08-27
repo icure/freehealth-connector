@@ -31,11 +31,7 @@ public enum CDBEARINGSURFACEvalues {
    }
 
    public static CDBEARINGSURFACEvalues fromValue(String v) {
-      CDBEARINGSURFACEvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDBEARINGSURFACEvalues c = var1[var3];
+      for(CDBEARINGSURFACEvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

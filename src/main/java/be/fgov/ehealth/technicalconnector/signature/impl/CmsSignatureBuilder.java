@@ -70,15 +70,20 @@ public class CmsSignatureBuilder extends AbstractSignatureBuilder implements Sig
          }
 
          return this.verify(signedData, options);
-      } catch (CMSException var7) {
-         LOG.error("Unable to verify signature", var7);
-         result.getErrors().add(SignatureVerificationError.SIGNATURE_COULD_NOT_BE_VERIFIED);
-      } catch (IOException var8) {
-         LOG.error("Unable to verify signature", var8);
-         result.getErrors().add(SignatureVerificationError.SIGNATURE_COULD_NOT_BE_VERIFIED);
+      } catch (CMSException e) {
+         LOG.error("Unable to verify signature", e);
+         result.addError(SignatureVerificationError.SIGNATURE_COULD_NOT_BE_VERIFIED);
+      } catch (IOException e) {
+         LOG.error("Unable to verify signature", e);
+         result.addError(SignatureVerificationError.SIGNATURE_COULD_NOT_BE_VERIFIED);
       }
 
       return result;
+   }
+
+   @Override
+   public SignatureVerificationResult verify(Document signedContent, Element sigElement, Map<String, Object> options) throws TechnicalConnectorException {
+      throw new UnsupportedOperationException();
    }
 
    public SignatureVerificationResult verify(byte[] signedByteArray, Map<String, Object> options) throws TechnicalConnectorException {
@@ -88,25 +93,18 @@ public class CmsSignatureBuilder extends AbstractSignatureBuilder implements Sig
          CMSSignedData signedData = new CMSSignedData(signedByteArray);
          this.extractChain(result, signedData);
          this.validateChain(result, options);
-         Iterator signerInfos = signedData.getSignerInfos().iterator();
 
-         while(signerInfos.hasNext()) {
-            SignerInformation signer = (SignerInformation)signerInfos.next();
+         for(SignerInformation signer : signedData.getSignerInfos()) {
             if (!signer.verify(verifierBuilder.build(result.getSigningCert().getPublicKey()))) {
-               result.getErrors().add(SignatureVerificationError.SIGNATURE_COULD_NOT_BE_VERIFIED);
+               result.addError(SignatureVerificationError.SIGNATURE_COULD_NOT_BE_VERIFIED);
             }
          }
-      } catch (Exception var7) {
-         LOG.error("Unable to verify signature", var7);
-         result.getErrors().add(SignatureVerificationError.SIGNATURE_COULD_NOT_BE_VERIFIED);
+      } catch (Exception e) {
+         LOG.error("Unable to verify signature", e);
+         result.addError(SignatureVerificationError.SIGNATURE_COULD_NOT_BE_VERIFIED);
       }
 
       return result;
-   }
-
-   @Override
-   public SignatureVerificationResult verify(Document signedContent, Element sigElement, Map<String, Object> options) throws TechnicalConnectorException {
-      throw new UnsupportedOperationException();
    }
 
    public byte[] sign(Credential signatureCredential, byte[] byteArrayToSign) throws TechnicalConnectorException {
@@ -125,7 +123,7 @@ public class CmsSignatureBuilder extends AbstractSignatureBuilder implements Sig
       try {
          CMSTypedData content = new CMSProcessableByteArray(contentToSign);
          CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
-         String signatureAlgorithm = (String)SignatureUtils.getOption("signatureAlgorithm", optionMap, "Sha1WithRSA");
+         String signatureAlgorithm = (String)SignatureUtils.getOption("signatureAlgorithm", optionMap, this.determineDefaultAlgo(signatureCredential));
          JcaSignerInfoGeneratorBuilder signerInfoGeneratorBuilder = new JcaSignerInfoGeneratorBuilder((new JcaDigestCalculatorProviderBuilder()).build());
          ContentSigner contentSigner = (new JcaContentSignerBuilder(signatureAlgorithm)).build(signatureCredential.getPrivateKey());
          CMSAttributeTableGenerator cmsAttributeTableGenerator = (CMSAttributeTableGenerator)SignatureUtils.getOption("signedAttributeGenerator", optionMap, new DefaultSignedAttributeTableGenerator());
@@ -138,16 +136,28 @@ public class CmsSignatureBuilder extends AbstractSignatureBuilder implements Sig
 
          boolean encapsulate = (Boolean) SignatureUtils.getOption("encapsulate", optionMap, Boolean.FALSE);
          return generator.generate(content, encapsulate).getEncoded();
-      } catch (Exception var14) {
-         LOG.error(var14.getMessage(), var14);
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_SIGNATURE, var14, new Object[]{var14.getClass().getSimpleName() + " : " + var14.getMessage()});
+      } catch (Exception e) {
+         LOG.error(e.getMessage(), e);
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_SIGNATURE, e, new Object[]{e.getClass().getSimpleName() + " : " + e.getMessage()});
+      }
+   }
+
+   protected String determineDefaultAlgo(Credential signatureCredential) throws TechnicalConnectorException {
+      String keyType = signatureCredential.getPrivateKey().getAlgorithm();
+      switch (keyType) {
+         case "RSA":
+            return "SHA256withRSA";
+         case "EC":
+            return "SHA256withECDSA";
+         default:
+            throw new IllegalArgumentException("Unsupported credential of type " + keyType);
       }
    }
 
    private void extractChain(SignatureVerificationResult result, CMSSignedData signedData) throws CertificateException {
       Store<X509CertificateHolder> certs = signedData.getCertificates();
-      Collection<X509CertificateHolder> certCollection = certs.getMatches(new CmsSignatureBuilder.X509CertifcateSelector());
-      Iterator iterator = certCollection.iterator();
+      Collection<X509CertificateHolder> certCollection = certs.getMatches(new X509CertifcateSelector());
+      Iterator<X509CertificateHolder> iterator = certCollection.iterator();
 
       while(iterator.hasNext()) {
          result.getCertChain().add(converter.getCertificate((X509CertificateHolder)iterator.next()));
@@ -159,10 +169,6 @@ public class CmsSignatureBuilder extends AbstractSignatureBuilder implements Sig
       Security.addProvider(new BouncyCastleProvider());
    }
 
-   // $FF: synthetic class
-   static class SyntheticClass_1 {
-   }
-
    private static class X509CertifcateSelector implements Selector<X509CertificateHolder> {
       private X509CertifcateSelector() {
       }
@@ -172,12 +178,7 @@ public class CmsSignatureBuilder extends AbstractSignatureBuilder implements Sig
       }
 
       public Object clone() {
-         return new CmsSignatureBuilder.X509CertifcateSelector();
-      }
-
-      // $FF: synthetic method
-      X509CertifcateSelector(CmsSignatureBuilder.SyntheticClass_1 x0) {
-         this();
+         return new X509CertifcateSelector();
       }
    }
 }

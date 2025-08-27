@@ -25,11 +25,7 @@ public enum CDMSORIGINvalues {
    }
 
    public static CDMSORIGINvalues fromValue(String v) {
-      CDMSORIGINvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDMSORIGINvalues c = var1[var3];
+      for(CDMSORIGINvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

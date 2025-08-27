@@ -2,7 +2,6 @@ package be.fgov.ehealth.schematron.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.helpers.AttributesImpl;
@@ -60,10 +59,8 @@ public class NamespacePrefixMappings {
 
    public ArrayList<AttributesImpl> asAttributes() {
       ArrayList<AttributesImpl> a = new ArrayList();
-      Iterator<String> iter = this.prefixMap.keySet().iterator();
 
-      while(iter.hasNext()) {
-         String prefix = (String)iter.next();
+      for(String prefix : this.prefixMap.keySet()) {
          String uri = this.nsForPrefix(prefix);
          AttributesImpl atts = new AttributesImpl();
          atts.addAttribute("", "prefix", "prefix", "CDATA", prefix);

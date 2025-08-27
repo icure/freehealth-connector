@@ -54,7 +54,6 @@ import be.fgov.ehealth.technicalconnector.ra.service.AuthenticationCertificateRe
 import be.fgov.ehealth.technicalconnector.ra.utils.CertificateUtils;
 import be.fgov.ehealth.technicalconnector.ra.utils.RaUtils;
 import java.security.cert.X509Certificate;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
@@ -75,10 +74,8 @@ public class AuthenticationCertificateRegistrationServiceImpl implements Authent
       RaUtils.setCommonAttributes(payload);
       EHealthCertificateSigningRequestType eHealthCSR = new EHealthCertificateSigningRequestType();
       eHealthCSR.setCSR(contract.getPkcs10DerEncoded());
-      Iterator var5 = contract.getUsageTypes().iterator();
 
-      while(var5.hasNext()) {
-         UsageType usageType = (UsageType)var5.next();
+      for(UsageType usageType : contract.getUsageTypes()) {
          eHealthCSR.getBaseServiceUsages().add(usageType.getServiceName());
       }
 
@@ -87,25 +84,24 @@ public class AuthenticationCertificateRegistrationServiceImpl implements Authent
       eHealthCSR.setContract(contractType);
       payload.setEHealthCSR(eHealthCSR);
       String signedPayload = RaUtils.sign(payload, payload.getId(), this.signCred);
-      return new Result(MapperFactory.mapper().asCertificate((GenerateCertificateResponse)RaUtils.invokeCertRa(signedPayload, "urn:be:fgov:ehealth:etee:certra:protocol:v2:generatecertificate", GenerateCertificateResponse.class).getResult()));
+      return new Result<Certificate>(MapperFactory.mapper().asCertificate((GenerateCertificateResponse)RaUtils.invokeCertRa(signedPayload, "urn:be:fgov:ehealth:etee:certra:protocol:v2:generatecertificate", GenerateCertificateResponse.class).getResult()));
    }
 
    public Result<X509Certificate[]> getCertificate(byte[] publicKeyIdentifier) throws TechnicalConnectorException {
       GetCertificateRequest request = new GetCertificateRequest();
       RaUtils.setCommonAttributes(request);
       request.setPublicKeyIdentifier(publicKeyIdentifier);
-      Result<GetCertificateResponse> resp = RaUtils.invokeCertRa(ConnectorXmlUtils.toString((Object)request), "urn:be:fgov:ehealth:etee:certra:protocol:v2:getcertificate", GetCertificateResponse.class);
+      Result<GetCertificateResponse> resp = RaUtils.<GetCertificateResponse>invokeCertRa(ConnectorXmlUtils.toString((Object)request), "urn:be:fgov:ehealth:etee:certra:protocol:v2:getcertificate", GetCertificateResponse.class);
       if (!resp.getStatus().equals(Status.OK)) {
          return resp.getStatus().equals(Status.PENDING) ? new Result(resp.getTime()) : new Result("Unable to obtain certificate", resp.getCause());
       } else {
          X509Certificate[] x509Certificates = new X509Certificate[0];
 
-         byte[] x509Certificate;
-         for(Iterator var5 = ((GetCertificateResponse)resp.getResult()).getX509Certificates().iterator(); var5.hasNext(); x509Certificates = (X509Certificate[])((X509Certificate[])ArrayUtils.add(x509Certificates, CertificateUtils.toX509Certificate(x509Certificate)))) {
-            x509Certificate = (byte[])var5.next();
+         for(byte[] x509Certificate : (resp.getResult()).getX509Certificates()) {
+            x509Certificates = (X509Certificate[])ArrayUtils.add(x509Certificates, CertificateUtils.toX509Certificate(x509Certificate));
          }
 
-         return new Result(x509Certificates);
+         return new Result<X509Certificate[]>(x509Certificates);
       }
    }
 
@@ -116,7 +112,7 @@ public class AuthenticationCertificateRegistrationServiceImpl implements Authent
       GeneratedContract contract = MapperFactory.mapper().asGeneratedContract(generateContractResponse.getContract());
       contract.setContactData(contractRequest.getContactData());
       contract.setIdentifierType(IdentifierType.lookup(((ActorId)contractRequest.getCertificateIdentifier().getActor().getIds().get(0)).getType(), (String)null, 48));
-      return new Result(contract, generateContractResponse);
+      return new Result<GeneratedContract>(contract, generateContractResponse);
    }
 
    public Result<Void> revokeCertificate(RevocationRequest revocationRequest) throws TechnicalConnectorException {
@@ -124,13 +120,13 @@ public class AuthenticationCertificateRegistrationServiceImpl implements Authent
       RaUtils.setIssueInstant(revokeRequest);
       String signedPayload = RaUtils.sign(revokeRequest, revokeRequest.getId(), this.signCred);
       RevokeResponse revokeResponse = (RevokeResponse)RaUtils.invokeCertRa(signedPayload, "urn:be:fgov:ehealth:etee:certra:protocol:v2:revoke", RevokeResponse.class).getResult();
-      return new Result((Void)null, revokeResponse);
+      return new Result<Void>((Void)null, revokeResponse);
    }
 
    public Result<GetGenericOrganizationTypesResponse> getOrganizationList() throws TechnicalConnectorException {
       GetGenericOrganizationTypesRequest req = new GetGenericOrganizationTypesRequest();
       RaUtils.setCommonAttributes(req);
-      return RaUtils.invokeCertRa(ConnectorXmlUtils.toString((Object)req), "urn:be:fgov:ehealth:certra:protocol:v2:getGenericOrganizationTypes", GetGenericOrganizationTypesResponse.class);
+      return RaUtils.<GetGenericOrganizationTypesResponse>invokeCertRa(ConnectorXmlUtils.toString((Object)req), "urn:be:fgov:ehealth:certra:protocol:v2:getGenericOrganizationTypes", GetGenericOrganizationTypesResponse.class);
    }
 
    public Result<ActorQualities> getActorQualities() throws TechnicalConnectorException {
@@ -142,7 +138,7 @@ public class AuthenticationCertificateRegistrationServiceImpl implements Authent
       payload.setSSIN(id);
       String signedPayload = RaUtils.sign(payload, payload.getId(), this.authCred);
       GetActorQualitiesResponse response = (GetActorQualitiesResponse)RaUtils.invokeCertRa(signedPayload, "urn:be:fgov:ehealth:certra:protocol:v2:getActorQualities", GetActorQualitiesResponse.class).getResult();
-      return new Result(MapperFactory.mapper().asActorQualities(response), response);
+      return new Result<ActorQualities>(MapperFactory.mapper().asActorQualities(response), response);
    }
 
    public Result<List<String>> getApplicationIdList(Organization organization) throws TechnicalConnectorException {
@@ -152,8 +148,8 @@ public class AuthenticationCertificateRegistrationServiceImpl implements Authent
       id.setType(organization.getType().getType(48));
       id.setValue(organization.getId());
       req.setOrganizationIdentifier(id);
-      Result<GetExistingApplicationIdsResponse> response = RaUtils.invokeCertRa(ConnectorXmlUtils.toString((Object)req), "urn:be:fgov:ehealth:etee:certra:protocol:v2:getexistingapplicationids", GetExistingApplicationIdsResponse.class);
-      return new Result(((GetExistingApplicationIdsResponse)response.getResult()).getApplicationIds());
+      Result<GetExistingApplicationIdsResponse> response = RaUtils.<GetExistingApplicationIdsResponse>invokeCertRa(ConnectorXmlUtils.toString((Object)req), "urn:be:fgov:ehealth:etee:certra:protocol:v2:getexistingapplicationids", GetExistingApplicationIdsResponse.class);
+      return new Result<List<String>>((response.getResult()).getApplicationIds());
    }
 
    public Result<CertificateInfoType> getCertificateInfoForAuthenticationCertificate(Credential credential) throws TechnicalConnectorException {
@@ -161,7 +157,7 @@ public class AuthenticationCertificateRegistrationServiceImpl implements Authent
       RaUtils.setCommonAttributes(req);
       String signedPayload = RaUtils.sign(req, req.getId(), credential);
       GetCertificateInfoForAuthenticationCertificateResponse response = (GetCertificateInfoForAuthenticationCertificateResponse)RaUtils.invokeCertRa(signedPayload, "urn:be:fgov:ehealth:etee:certra:protocol:v2:getCertificateInfoForAuthenticationCertificate", GetCertificateInfoForAuthenticationCertificateResponse.class).getResult();
-      return new Result(response.getCertificateInfo(), response);
+      return new Result<CertificateInfoType>(response.getCertificateInfo(), response);
    }
 
    public Result<List<CertificateInfoType>> getCertificateInfoForCitizen() throws TechnicalConnectorException {
@@ -169,21 +165,21 @@ public class AuthenticationCertificateRegistrationServiceImpl implements Authent
       RaUtils.setCommonAttributes(req);
       String signedPayload = RaUtils.sign(req, req.getId(), this.authCred);
       GetCertificateInfoForCitizenResponse response = (GetCertificateInfoForCitizenResponse)RaUtils.invokeCertRa(signedPayload, "urn:be:fgov:ehealth:certra:protocol:v2:getCertificateInfoForCitizen", GetCertificateInfoForCitizenResponse.class).getResult();
-      return new Result(response.getCertificateInfos(), response);
+      return new Result<List<CertificateInfoType>>(response.getCertificateInfos(), response);
    }
 
    public Result<SubmitCSRForForeignerResponseInfo> submitCSRForForeigner(ForeignerRequest foreignerRequest) throws TechnicalConnectorException {
       SubmitCSRForForeignerRequest req = MapperFactory.mapper().asSubmitCSRForForeignerRequest(foreignerRequest);
       RaUtils.setIssueInstant(req);
       SubmitCSRForForeignerResponse response = (SubmitCSRForForeignerResponse)RaUtils.invokeCertRa(ConnectorXmlUtils.toString((Object)req), "urn:be:fgov:ehealth:certra:protocol:v2:submitCSRForForeigner", SubmitCSRForForeignerResponse.class).getResult();
-      return new Result(MapperFactory.mapper().asSubmitCSRForForeignerResponseInfo(response), response);
+      return new Result<SubmitCSRForForeignerResponseInfo>(MapperFactory.mapper().asSubmitCSRForForeignerResponseInfo(response), response);
    }
 
    public Result<GeneratedRevocationContract> generateRevocationContract(RevocationContractRequest revocationContractRequest) throws TechnicalConnectorException {
       GenerateRevocationContractRequest req = MapperFactory.mapper().asGenerateContractRequest(revocationContractRequest);
       RaUtils.setIssueInstant(req);
       GenerateRevocationContractResponse response = (GenerateRevocationContractResponse)RaUtils.invokeCertRa(ConnectorXmlUtils.toString((Object)req), "urn:be:fgov:ehealth:certra:protocol:v2:generateRevocationContract", GenerateRevocationContractResponse.class).getResult();
-      return new Result(MapperFactory.mapper().asRevocationContract(response.getContract()), response);
+      return new Result<GeneratedRevocationContract>(MapperFactory.mapper().asRevocationContract(response.getContract()), response);
    }
 
    public void initialize(Map<String, Object> parameterMap) throws TechnicalConnectorException {

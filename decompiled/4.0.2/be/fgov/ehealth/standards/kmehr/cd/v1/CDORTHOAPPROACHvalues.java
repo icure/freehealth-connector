@@ -47,11 +47,7 @@ public enum CDORTHOAPPROACHvalues {
    }
 
    public static CDORTHOAPPROACHvalues fromValue(String v) {
-      CDORTHOAPPROACHvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDORTHOAPPROACHvalues c = var1[var3];
+      for(CDORTHOAPPROACHvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

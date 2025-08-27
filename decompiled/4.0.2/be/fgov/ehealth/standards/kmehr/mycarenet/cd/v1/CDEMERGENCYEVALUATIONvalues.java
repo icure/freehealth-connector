@@ -29,11 +29,7 @@ public enum CDEMERGENCYEVALUATIONvalues {
    }
 
    public static CDEMERGENCYEVALUATIONvalues fromValue(String v) {
-      CDEMERGENCYEVALUATIONvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDEMERGENCYEVALUATIONvalues c = var1[var3];
+      for(CDEMERGENCYEVALUATIONvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

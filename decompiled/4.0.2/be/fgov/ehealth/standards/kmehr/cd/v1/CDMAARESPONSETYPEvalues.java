@@ -27,11 +27,7 @@ public enum CDMAARESPONSETYPEvalues {
    }
 
    public static CDMAARESPONSETYPEvalues fromValue(String v) {
-      CDMAARESPONSETYPEvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDMAARESPONSETYPEvalues c = var1[var3];
+      for(CDMAARESPONSETYPEvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

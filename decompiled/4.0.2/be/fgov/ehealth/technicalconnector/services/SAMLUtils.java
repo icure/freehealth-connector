@@ -7,7 +7,6 @@ import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory;
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationError;
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationResult;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,10 +62,7 @@ public final class SAMLUtils {
       SignatureVerificationResult verificationResult = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XML).verify(signed, options);
       if (!verificationResult.isValid()) {
          if (!verificationResult.getErrors().contains(SignatureVerificationError.SIGNATURE_NOT_PRESENT)) {
-            Iterator var5 = verificationResult.getErrors().iterator();
-
-            while(var5.hasNext()) {
-               SignatureVerificationError signatureVerificationError = (SignatureVerificationError)var5.next();
+            for(SignatureVerificationError signatureVerificationError : verificationResult.getErrors()) {
                LOG.error(signatureVerificationError.getMessage());
             }
 

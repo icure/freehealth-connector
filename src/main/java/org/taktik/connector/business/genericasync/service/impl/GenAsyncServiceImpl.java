@@ -90,7 +90,7 @@ public class GenAsyncServiceImpl implements GenAsyncService {
    protected static GenericRequest build(SAMLToken token, String serviceName) throws TechnicalConnectorException {
       GenericRequest request = new GenericRequest();
       request.setEndpoint(getProperty("endpoint.genericasync.", serviceName, true));
-      HandlerChain chain = HandlerChainUtil.buildChainWithValidator("validation.incoming.message.genasync.", "/mycarenet-genasync/XSD/GenericAsync-V4.xsd");
+      HandlerChain chain = HandlerChainUtil.buildChainWithValidator("validation.incoming.message.genasync." + serviceName + ".v1", "/mycarenet-genasync/XSD/GenericAsync-V4.xsd");
       chain.register(HandlerPosition.SECURITY, new SAMLHolderOfKeyHandler(token, getDuration("security.outgoing.message.genasync.timestamp.", serviceName, 30L)));
       chain.register(HandlerPosition.SECURITY, new IncomingSecurityHandler(getDuration("security.incoming.message.genasync.timestamp.created.ttl.", serviceName, 30L), getDuration("security.incoming.message.genasync.timestamp.expires.ttl.", serviceName, 30L)));
       chain.register(HandlerPosition.SECURITY, new SOAPHeaderLoggerHandler());
@@ -117,6 +117,6 @@ public class GenAsyncServiceImpl implements GenAsyncService {
 
    private static Duration getDuration(String startKey, String serviceName, long defaultDurationInSeconds) throws TechnicalConnectorException {
       String key = startKey + serviceName + ".v1";
-      return config.getDurationProperty(key, defaultDurationInSeconds, TimeUnit.SECONDS);
+      return config.hasDurationProperty(key) ? config.getDurationProperty(key, defaultDurationInSeconds, TimeUnit.SECONDS) : new Duration(Long.valueOf(config.getProperty(key, Long.toString(defaultDurationInSeconds))), TimeUnit.SECONDS);
    }
 }

@@ -24,11 +24,7 @@ public enum CDPROOFschemes {
    }
 
    public static CDPROOFschemes fromValue(String v) {
-      CDPROOFschemes[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDPROOFschemes c = var1[var3];
+      for(CDPROOFschemes c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

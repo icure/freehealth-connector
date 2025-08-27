@@ -61,11 +61,7 @@ public enum CDIMPLANTATIONTYPEvalues {
    }
 
    public static CDIMPLANTATIONTYPEvalues fromValue(String v) {
-      CDIMPLANTATIONTYPEvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDIMPLANTATIONTYPEvalues c = var1[var3];
+      for(CDIMPLANTATIONTYPEvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

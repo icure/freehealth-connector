@@ -56,21 +56,19 @@ public class SignatureVerificationResult implements Serializable {
    }
 
    public DateTime getVerifiedSigningTime(int amount, TimeUnit unit) {
-      Iterator i$ = this.timestampGenTime.iterator();
+      for(DateTime genTime : this.timestampGenTime) {
+         DateTime start = genTime.minus(unit.toMillis((long)amount));
+         DateTime end = genTime.plus(unit.toMillis((long)amount));
+         if (!this.signingTime.isBefore(start) && !this.signingTime.isAfter(end)) {
+            return this.signingTime;
+         }
+      }
 
-      DateTime start;
-      DateTime end;
-      do {
-         if (!i$.hasNext()) {
             return new DateTime();
          }
 
-         DateTime genTime = (DateTime)i$.next();
-         start = genTime.minus(unit.toMillis((long)amount));
-         end = genTime.plus(unit.toMillis((long)amount));
-      } while(this.signingTime.isBefore(start) || this.signingTime.isAfter(end));
-
-      return this.signingTime;
+   public void addError(SignatureVerificationError error) {
+      this.errors.add(error);
    }
 
    public List<TimeStampToken> getTsTokens() {
@@ -83,10 +81,8 @@ public class SignatureVerificationResult implements Serializable {
 
    private void writeObject(ObjectOutputStream out) throws IOException {
       this.serTsTokens = new ArrayList();
-      Iterator i$ = this.tsTokens.iterator();
 
-      while(i$.hasNext()) {
-         TimeStampToken tsToken = (TimeStampToken)i$.next();
+      for(TimeStampToken tsToken : this.tsTokens) {
          this.serTsTokens.add(ArrayUtils.toObject(tsToken.getEncoded()));
       }
 
@@ -98,15 +94,11 @@ public class SignatureVerificationResult implements Serializable {
       in.defaultReadObject();
       this.tsTokens = new ArrayList();
       if (this.serTsTokens != null) {
-         Iterator i$ = this.serTsTokens.iterator();
-
-         while(i$.hasNext()) {
-            Byte[] serToken = (Byte[])i$.next();
-
+         for(Byte[] serToken : this.serTsTokens) {
             try {
                this.tsTokens.add(TimestampUtil.getTimeStampToken(ArrayUtils.toPrimitive(serToken)));
-            } catch (TechnicalConnectorException var5) {
-               throw new IOException(var5);
+            } catch (TechnicalConnectorException e) {
+               throw new IOException(e);
             }
          }
       }

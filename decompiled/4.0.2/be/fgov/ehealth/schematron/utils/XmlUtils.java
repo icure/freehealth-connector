@@ -23,8 +23,8 @@ public final class XmlUtils {
    public static String flatten(byte[] xml) {
       try {
          return flatten(new String(xml, "UTF-8"));
-      } catch (UnsupportedEncodingException var2) {
-         throw new IllegalArgumentException("UTF-8 not supported", var2);
+      } catch (UnsupportedEncodingException e) {
+         throw new IllegalArgumentException("UTF-8 not supported", e);
       }
    }
 }

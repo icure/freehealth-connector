@@ -48,15 +48,14 @@ public class SvrlHarvestHandler implements ContentHandler {
 
    public void startElement(String uri, String localName, String arqName, Attributes atts) throws SAXException {
       if (uri.equals("http://purl.oclc.org/dsdl/svrl")) {
-         String xpath;
          if (!localName.equals("successful-report") && !localName.equals("failed-assert")) {
             if (localName.equals("ns-prefix-in-attribute-values")) {
-               xpath = atts.getValue("prefix");
+               String prefix = atts.getValue("prefix");
                String ns = atts.getValue("uri");
-               this.nsMap.registerMapping(xpath, ns);
+               this.nsMap.registerMapping(prefix, ns);
             }
          } else {
-            xpath = atts.getValue("location");
+            String xpath = atts.getValue("location");
             if (this.locMap.get(xpath) == null) {
                xpath = Utils.trimAttributePart(xpath);
                this.locMap.put(xpath, new PhysicalLocation());

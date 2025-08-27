@@ -13,6 +13,7 @@ import be.fgov.ehealth.etee.crypto.policies.OCSPOption;
 import be.fgov.ehealth.etee.crypto.policies.OCSPPolicy;
 import be.fgov.ehealth.etee.crypto.policies.SigningOption;
 import java.io.InputStream;
+import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -30,7 +31,6 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -57,7 +57,7 @@ public final class CryptoFactory {
    private static final String PROP_CAKEYSTORE_PATH = "CAKEYSTORE_LOCATION";
    private static final String PROP_CAKEYSTORE_PASSWORD = "CAKEYSTORE_PASSWORD";
    private static final String PROP_KEYSTORE_DIR = "KEYSTORE_DIR";
-   private static final ConfigurableFactoryHelper<Crypto> helper = new ConfigurableFactoryHelper("crypto.classname", "be.ehealth.technicalconnector.service.etee.impl.CryptoImpl");
+   private static final ConfigurableFactoryHelper<Crypto> helper = new ConfigurableFactoryHelper<Crypto>("crypto.classname", "be.ehealth.technicalconnector.service.etee.impl.CryptoImpl");
 
    private CryptoFactory() {
    }
@@ -75,7 +75,7 @@ public final class CryptoFactory {
       signingOptions.put(SigningOption.TSA_CERT_STORE, generateCertStore("be.fgov.ehealth.etee.crypto.policies.SigningOption.TSA_CERT_STORE"));
       configParameters.put("cryptolib.signing.optionmap", signingOptions);
       configParameters.put("cryptolib.ocsp.optionmap", getOCSPOptions());
-      return (Crypto)helper.getImplementation(configParameters);
+      return helper.getImplementation(configParameters);
    }
 
    public static Map<OCSPOption, Object> getOCSPOptions() {
@@ -109,8 +109,8 @@ public final class CryptoFactory {
          LOG.debug("Current keystore [{}] content is: ", key);
          dump(keystore);
          return keystore;
-      } catch (Exception var6) {
-         throw new ConfigurationException(var6);
+      } catch (Exception e) {
+         throw new ConfigurationException(e);
       }
    }
 
@@ -124,10 +124,8 @@ public final class CryptoFactory {
          }
 
          Collections.sort(aliasList);
-         Iterator var3 = aliasList.iterator();
 
-         while(var3.hasNext()) {
-            String alias = (String)var3.next();
+         for(String alias : aliasList) {
             LOG.debug(" .[{}] {} ", alias, ((X509Certificate)keystore.getCertificate(alias)).getSubjectX500Principal().getName("RFC1779"));
          }
       }
@@ -138,8 +136,8 @@ public final class CryptoFactory {
       try {
          KeyStoreManager ocspKeyStoreManager = new KeyStoreManager(keystorePath, pwd);
          keystore = ocspKeyStoreManager.getKeyStore();
-      } catch (TechnicalConnectorException var4) {
-         LOG.info("Unable to load keystore.", var4);
+      } catch (TechnicalConnectorException e) {
+         LOG.info("Unable to load keystore.", e);
       }
 
       return keystore;
@@ -157,33 +155,24 @@ public final class CryptoFactory {
    private static CertStore generateCertStore(String baseKey, KeyStore... stores) {
       try {
          Collection certsAndCrls = new ArrayList();
-         KeyStore[] var3 = stores;
-         int var4 = stores.length;
 
-         for(int var5 = 0; var5 < var4; ++var5) {
-            KeyStore store = var3[var5];
+         for(KeyStore store : stores) {
             process(certsAndCrls, store);
          }
 
          CertificateFactory factory = CertificateFactory.getInstance("X.509");
-         Iterator var9 = ConfigFactory.getConfigValidator().getMatchingProperties(baseKey + ".CERT").iterator();
 
-         String crlLocation;
-         while(var9.hasNext()) {
-            crlLocation = (String)var9.next();
-            processCERT(certsAndCrls, factory, crlLocation);
+         for(String certLocation : ConfigFactory.getConfigValidator().getMatchingProperties(baseKey + ".CERT")) {
+            processCERT(certsAndCrls, factory, certLocation);
          }
 
-         var9 = ConfigFactory.getConfigValidator().getMatchingProperties(baseKey + ".CRL").iterator();
-
-         while(var9.hasNext()) {
-            crlLocation = (String)var9.next();
+         for(String crlLocation : ConfigFactory.getConfigValidator().getMatchingProperties(baseKey + ".CRL")) {
             processCRL(certsAndCrls, factory, crlLocation);
          }
 
          return CertStore.getInstance("Collection", new CollectionCertStoreParameters(certsAndCrls));
-      } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | CertificateException var7) {
-         LOG.error(var7.getClass().getName() + ":" + var7.getMessage(), var7);
+      } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | CertificateException e) {
+         LOG.error(e.getClass().getName() + ":" + ((GeneralSecurityException)e).getMessage(), e);
          return null;
       }
    }
@@ -213,8 +202,8 @@ public final class CryptoFactory {
             }
 
          }
-      } catch (Exception var16) {
-         LOG.error(var16.getClass().getName() + ":" + var16.getMessage(), var16);
+      } catch (Exception e) {
+         LOG.error(e.getClass().getName() + ":" + e.getMessage(), e);
       }
 
    }
@@ -244,8 +233,8 @@ public final class CryptoFactory {
             }
 
          }
-      } catch (Exception var16) {
-         LOG.error(var16.getClass().getName() + ":" + var16.getMessage(), var16);
+      } catch (Exception e) {
+         LOG.error(e.getClass().getName() + ":" + e.getMessage(), e);
       }
 
    }
@@ -261,8 +250,8 @@ public final class CryptoFactory {
          }
 
          LOG.info("Added truststore in CertStore.");
-      } catch (KeyStoreException var4) {
-         LOG.warn("Unable to add truststore to CertStore", var4);
+      } catch (KeyStoreException e) {
+         LOG.warn("Unable to add truststore to CertStore", e);
       }
 
    }

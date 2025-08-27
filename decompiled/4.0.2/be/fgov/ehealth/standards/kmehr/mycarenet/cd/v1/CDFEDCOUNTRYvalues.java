@@ -497,11 +497,7 @@ public enum CDFEDCOUNTRYvalues {
    }
 
    public static CDFEDCOUNTRYvalues fromValue(String v) {
-      CDFEDCOUNTRYvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDFEDCOUNTRYvalues c = var1[var3];
+      for(CDFEDCOUNTRYvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

@@ -1,0 +1,106 @@
+package be.ehealth.technicalconnector.ws.domain;
+
+import be.ehealth.technicalconnector.exception.TechnicalConnectorException;
+import be.ehealth.technicalconnector.utils.ConnectorXmlUtils;
+import be.ehealth.technicalconnector.utils.MarshallerHelper;
+import java.util.Iterator;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFault;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.ws.soap.SOAPFaultException;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+public class GenericResponse {
+   private static final Logger LOG = LoggerFactory.getLogger(GenericResponse.class);
+   private SOAPMessage message;
+
+   public GenericResponse(SOAPMessage message) {
+      this.message = message;
+   }
+
+   public Node asNode() throws SOAPException {
+      return this.getFirstChildElement();
+   }
+
+   public String asString() throws TechnicalConnectorException, SOAPException {
+      Node response = this.getFirstChildElement();
+      if (response != null) {
+         return ConnectorXmlUtils.toString(response);
+      } else {
+         LOG.warn("An empty body is recieved, returning empty String");
+         return "";
+      }
+   }
+
+   public SOAPMessage getSOAPMessage() {
+      return this.message;
+   }
+
+   public <T> T asObject(Class<T> clazz) throws SOAPException {
+      if (!clazz.isAnnotationPresent(XmlRootElement.class)) {
+         throw new IllegalArgumentException("Class [" + clazz + "] is not annotated with @XMLRootElement");
+      } else {
+         this.getSOAPException();
+         MarshallerHelper<T, T> helper = new MarshallerHelper<T, T>(clazz, clazz);
+         helper.clearAttachmentPartMap();
+         Iterator<AttachmentPart> attachmentPartIterator = this.message.getAttachments();
+
+         while(attachmentPartIterator.hasNext()) {
+            AttachmentPart element = (AttachmentPart)attachmentPartIterator.next();
+            helper.addAttachmentPart(ConnectorXmlUtils.sanitizePartId(element.getContentId()), element);
+         }
+
+         return (T)helper.toObject((Node)this.getFirstChildElement());
+      }
+   }
+
+   public byte[] getAttachment(String cid) throws SOAPException {
+      Iterator<AttachmentPart> attachmentPartIterator = this.message.getAttachments();
+
+      while(attachmentPartIterator.hasNext()) {
+         AttachmentPart element = (AttachmentPart)attachmentPartIterator.next();
+         if (StringUtils.equals(ConnectorXmlUtils.sanitizePartId(cid), ConnectorXmlUtils.sanitizePartId(element.getContentId()))) {
+            return element.getRawContentBytes();
+         }
+      }
+
+      throw new SOAPException("Unable to find attachment with id [" + cid + "]");
+   }
+
+   public Source asSource() throws SOAPException {
+      return new DOMSource(this.getFirstChildElement());
+   }
+
+   private Element getFirstChildElement() throws SOAPException {
+      this.getSOAPException();
+      Node n = this.message.getSOAPPart().getEnvelope().getBody();
+      return ConnectorXmlUtils.getFirstChildElement(n);
+   }
+
+   public void getSOAPException() throws SOAPException {
+      if (this.message != null && this.message.getSOAPBody() != null) {
+         SOAPFault fault = this.message.getSOAPBody().getFault();
+         if (fault != null) {
+            try {
+               if (LOG.isErrorEnabled()) {
+                  LOG.error("SOAPFault: {}", ConnectorXmlUtils.flatten(ConnectorXmlUtils.toString((Node)fault)));
+               }
+            } catch (TechnicalConnectorException e) {
+               LOG.debug("Unable to dump SOAPFault. Reason [{}]", e.getMessage(), e);
+            }
+
+            throw new SOAPFaultException(fault);
+         }
+      } else {
+         throw new SOAPException("No message SOAPmessage recieved");
+      }
+   }
+}

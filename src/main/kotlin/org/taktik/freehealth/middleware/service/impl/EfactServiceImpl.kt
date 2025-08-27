@@ -60,7 +60,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
     private val config = ConfigFactory.getConfigValidator(listOf())
     private val genAsyncService = GenAsyncServiceImpl("invoicing")
 
-    override fun makeFlatFile(batch: InvoicesBatch, isTest: Boolean): String {
+    override fun makeFlatFile(batch: InvoicesBatch, isTest: Boolean, isMediprima: Boolean): String {
         require(batch.numericalRef?.let { it <= 99999999999999L } ?: false) { batch.numericalRef?.let { "numericalRef is too long (14 positions max)" } ?: "numericalRef is missing" }
         requireNotNull(batch.sender) { "Sender cannot be null" }
         requireNotNull(batch.batchRef) { "BatchRef cannot be null" }
@@ -80,7 +80,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         try {
             iv.write200and300(batch.sender!!, batch.numericalRef
                 ?: 0, batch.fileRef!!, if (isTest) 92 else 12, batch.uniqueSendNumber!!, batch.invoicingYear, batch.invoicingMonth, isTest)
-            val metadata = makeFlatFileCore(iv, batch, isTest)
+            val metadata = makeFlatFileCore(iv, batch, isMediprima, isTest)
 
             for (k in metadata.codesPerOAMap.keys) {
                 iv.write400(k, batch.numericalRef, metadata.recordsCountPerOAMap[k]!![0], metadata.codesPerOAMap[k]!!, metadata.amountPerOAMap[k]!![0])
@@ -94,7 +94,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
     }
 
 
-    override fun makeFlatFileCoreWithMetadata(batch: InvoicesBatch, isTest: Boolean): FlatFileWithMetadata {
+    override fun makeFlatFileCoreWithMetadata(batch: InvoicesBatch, isTest: Boolean, isMediprima: Boolean): FlatFileWithMetadata {
         require(batch.numericalRef?.let { it <= 99999999999999L } ?: false) { batch.numericalRef?.let { "numericalRef is too long (14 positions max)" } ?: "numericalRef is missing" }
         requireNotNull(batch.sender) { "Sender cannot be null" }
         requireNotNull(batch.batchRef) { "BatchRef cannot be null" }
@@ -111,7 +111,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         val iv = BelgianInsuranceInvoicingFormatWriter(stringWriter)
 
         val metadata = try {
-            this.makeFlatFileCore(iv, batch, isTest)
+            this.makeFlatFileCore(iv, batch, isMediprima, isTest)
         } catch (e: IOException) {
             throw IllegalArgumentException(e)
         }
@@ -121,6 +121,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
     fun makeFlatFileCore(iv: BelgianInsuranceInvoicingFormatWriter,
         batch: InvoicesBatch,
+        isMediprima: Boolean,
         isTest: Boolean): FlatFileWithMetadata.FlatFileMetadata {
         val metadata = FlatFileWithMetadata.FlatFileMetadata()
 
@@ -148,6 +149,9 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                 rn =
                     iv.writeRecordHeader(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.reason!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, invoice.ignorePrescriptionDate, invoice.hospitalisedPatient, invoice.creditNote, invoice.relatedBatchSendNumber, invoice.relatedBatchYearMonth, invoice.relatedInvoiceIoCode, invoice.relatedInvoiceNumber, batch.magneticInvoice, invoice.startOfCoveragePeriod, invoice.admissionDate, invoice.locationNihii, invoice.locationService)
                 recordsCountPerOA[0]++
+                if(isMediprima){
+                    rn = iv.writeMediprimaRecord(rn, batch.sender!!, invoice)
+                }
                 metadata.recordsCount++
                 for (it in invoice.items) {
                     it.gnotionNihii = it.gnotionNihii ?: invoice.gnotionNihii
@@ -159,7 +163,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
                     if (it.insuranceRef != null) {
                         rn =
-                            iv.writeInvolvementRecordContent(rn, batch.sender!!, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, it)
+                            iv.writeInvolvementRecordContent(rn, batch.sender!!, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, it, isMediprima)
                         recordCodes.add(it.codeNomenclature)
                         recordsCountPerOA[0]++
                         metadata.recordsCount++
@@ -229,7 +233,8 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
         val fed = sanitizedBatch.ioFederationCode
         val inputReference = "" + DecimalFormat("00000000000000").format(sanitizedBatch.numericalRef ?: 0)
-        val content = makeFlatFile(sanitizedBatch, isTest)
+        val isMediprima = batch.ioFederationCode == "690"
+        val content = makeFlatFile(sanitizedBatch, isTest, isMediprima)
 
         val requestObjectBuilder = try {
             BuilderFactory.getRequestObjectBuilder("invoicing")

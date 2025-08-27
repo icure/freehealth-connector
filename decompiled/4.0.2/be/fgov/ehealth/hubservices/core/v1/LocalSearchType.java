@@ -27,11 +27,7 @@ public enum LocalSearchType {
    }
 
    public static LocalSearchType fromValue(String v) {
-      LocalSearchType[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         LocalSearchType c = var1[var3];
+      for(LocalSearchType c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

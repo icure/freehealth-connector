@@ -41,6 +41,6 @@ public class ObjectFactory {
       name = "ETK"
    )
    public JAXBElement<byte[]> createETK(byte[] value) {
-      return new JAXBElement(_ETK_QNAME, byte[].class, (Class)null, (byte[])value);
+      return new JAXBElement(_ETK_QNAME, byte[].class, (Class)null, value);
    }
 }

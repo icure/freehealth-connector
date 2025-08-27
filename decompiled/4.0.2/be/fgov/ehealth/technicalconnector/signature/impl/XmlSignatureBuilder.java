@@ -19,7 +19,6 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.xml.xpath.XPath;
@@ -54,11 +53,7 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
 
    private static void addKeyInfo(Credential signatureCredential, XMLSignature sig) throws TechnicalConnectorException, XMLSecurityException {
       if (signatureCredential.getCertificateChain() != null) {
-         Certificate[] var2 = signatureCredential.getCertificateChain();
-         int var3 = var2.length;
-
-         for(int var4 = 0; var4 < var3; ++var4) {
-            Certificate cert = var2[var4];
+         for(Certificate cert : signatureCredential.getCertificateChain()) {
             if (sig.getKeyInfo().itemX509Data(0) == null) {
                X509Data x509data = new X509Data(sig.getDocument());
                sig.getKeyInfo().add(x509data);
@@ -100,8 +95,8 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
                } else {
                   LOG.warn("XPATH error: " + nodes.getLength() + "found at location [" + xpathLocation + "],using default.");
                }
-            } catch (XPathExpressionException var9) {
-               LOG.info("Unable to determine XPath Location, using default.", var9);
+            } catch (XPathExpressionException e) {
+               LOG.info("Unable to determine XPath Location, using default.", e);
             }
          } else {
             LOG.debug("Using default location (last child tag)");
@@ -114,10 +109,8 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
 
    private static Transforms transforms(List<String> tranformerList, Document doc) throws TransformationException {
       Transforms baseDocTransform = new Transforms(doc);
-      Iterator var3 = tranformerList.iterator();
 
-      while(var3.hasNext()) {
-         String transform = (String)var3.next();
+      for(String transform : tranformerList) {
          baseDocTransform.addTransform(transform);
       }
 
@@ -160,8 +153,8 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
          sig.setId(xmldsigId);
          handler.after();
          return transform(mustEncapsulate(transformerList), encapsulateLocation, encapsulationTranformer, doc, sig);
-      } catch (Exception var16) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var16, new Object[]{var16.getMessage()});
+      } catch (Exception e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{e.getMessage()});
       }
    }
 
@@ -203,11 +196,8 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
 
       this.verifyXmlDsigSignature(result, sigElement, signedContent, optionMap);
       this.verifyManifest(result, sigElement, optionMap);
-      XadesSpecification[] var7 = this.specs;
-      int var8 = var7.length;
 
-      for(int var9 = 0; var9 < var8; ++var9) {
-         XadesSpecification spec = var7[var9];
+      for(XadesSpecification spec : this.specs) {
          spec.verify(result, sigElement);
       }
 
@@ -248,8 +238,8 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
          if (!xmlSignature.checkSignatureValue(signingCert)) {
             result.getErrors().add(SignatureVerificationError.SIGNATURE_COULD_NOT_BE_VERIFIED);
          }
-      } catch (Exception var11) {
-         LOG.error("Unable to verify XmlDsig Signature", var11);
+      } catch (Exception e) {
+         LOG.error("Unable to verify XmlDsig Signature", e);
          result.getErrors().add(SignatureVerificationError.SIGNATURE_COULD_NOT_BE_VERIFIED);
       }
 

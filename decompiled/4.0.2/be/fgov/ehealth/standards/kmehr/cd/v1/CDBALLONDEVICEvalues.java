@@ -25,11 +25,7 @@ public enum CDBALLONDEVICEvalues {
    }
 
    public static CDBALLONDEVICEvalues fromValue(String v) {
-      CDBALLONDEVICEvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDBALLONDEVICEvalues c = var1[var3];
+      for(CDBALLONDEVICEvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

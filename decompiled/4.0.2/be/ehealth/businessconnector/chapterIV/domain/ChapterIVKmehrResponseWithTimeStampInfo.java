@@ -30,17 +30,17 @@ public final class ChapterIVKmehrResponseWithTimeStampInfo implements Serializab
    }
 
    public Kmehrresponse getKmehrresponse() {
-      MarshallerHelper<Kmehrresponse, Kmehrresponse> helper = new MarshallerHelper(Kmehrresponse.class, Kmehrresponse.class);
+      MarshallerHelper<Kmehrresponse, Kmehrresponse> helper = new MarshallerHelper<Kmehrresponse, Kmehrresponse>(Kmehrresponse.class, Kmehrresponse.class);
       return (Kmehrresponse)helper.toObject(this.kmehrResponseBytes);
    }
 
    public TimeStampResponse getTimeStampResponse() {
       try {
          return new TimeStampResponse(Arrays.clone(this.timeStampBytes));
-      } catch (TSPException var2) {
-         LOG.error(var2.getClass().getSimpleName() + ":" + var2.getMessage(), var2);
-      } catch (IOException var3) {
-         LOG.error(var3.getClass().getSimpleName() + ":" + var3.getMessage(), var3);
+      } catch (TSPException e) {
+         LOG.error(e.getClass().getSimpleName() + ":" + e.getMessage(), e);
+      } catch (IOException e) {
+         LOG.error(e.getClass().getSimpleName() + ":" + e.getMessage(), e);
       }
 
       return null;

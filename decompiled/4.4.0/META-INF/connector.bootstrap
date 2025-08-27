@@ -1,0 +1,3 @@
+be.ehealth.technicalconnector.service.keydepot.impl.KeyDepotServiceImpl
+be.ehealth.technicalconnector.service.kgss.impl.KgssServiceImpl
+be.ehealth.technicalconnector.service.kgss.builders.impl.KgssMessageBuilderImpl

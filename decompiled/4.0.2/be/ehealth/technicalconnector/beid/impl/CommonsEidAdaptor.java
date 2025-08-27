@@ -26,9 +26,9 @@ public class CommonsEidAdaptor implements BeIDCardAdaptor {
          try {
             BeIDCard beIDCard = beIDCards.getOneBeIDCard();
             return beIDCard;
-         } catch (CancelledException var4) {
+         } catch (CancelledException e) {
             ConnectorIOUtils.closeQuietly((Object)beIDCards);
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.BEID_ERROR, var4, new Object[]{var4.getMessage()});
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.BEID_ERROR, e, new Object[]{e.getMessage()});
          }
       }
    }

@@ -15,10 +15,10 @@ public final class TimestampGeneratorFactory {
    }
 
    public static TimestampGenerator getInstance(Map<String, Object> options) throws TechnicalConnectorException {
-      return (TimestampGenerator)factoryHelper.getImplementation(options);
+      return factoryHelper.getImplementation(options);
    }
 
    static {
-      factoryHelper = new ConfigurableFactoryHelper("be.fgov.ehealth.technicalconnector.signature.timestampgenerator", DEFAULT_TSGEN_CLASS);
+      factoryHelper = new ConfigurableFactoryHelper<TimestampGenerator>("be.fgov.ehealth.technicalconnector.signature.timestampgenerator", DEFAULT_TSGEN_CLASS);
    }
 }

@@ -71,8 +71,8 @@ public final class TrustStoreUpdater {
          shaCacheLocation = ConfigFactory.getConfigValidator().getProperty("truststoreupdater.local.cache", ConnectorIOUtils.getTempFileLocation(TrustStoreUpdater.class.getCanonicalName() + ".properties"));
          is = ConnectorIOUtils.getResourceAsStream(shaCacheLocation);
          shaCache.load(is);
-      } catch (Exception var5) {
-         LOG.error("Unable to load sha cache", var5);
+      } catch (Exception e) {
+         LOG.error("Unable to load sha cache", e);
       } finally {
          ConnectorIOUtils.closeQuietly((Object)is);
       }
@@ -86,8 +86,8 @@ public final class TrustStoreUpdater {
          try {
             fos = new FileOutputStream(new File(shaCacheLocation));
             shaCache.store(fos, "eHealth TSL cache");
-         } catch (Exception var5) {
-            LOG.error("Unable to store fingerprints to cache", var5);
+         } catch (Exception e) {
+            LOG.error("Unable to store fingerprints to cache", e);
          } finally {
             ConnectorIOUtils.closeQuietly((Object)fos);
          }
@@ -101,9 +101,9 @@ public final class TrustStoreUpdater {
       try {
          ConnectorIOUtils.getResourceAsStream(location);
          return location;
-      } catch (TechnicalConnectorException var3) {
+      } catch (TechnicalConnectorException e) {
          location = ConfigFactory.getConfigValidator().getProperty("KEYSTORE_DIR") + ConfigFactory.getConfigValidator().getProperty(key);
-         LOG.debug("Trying to obtain location by adding ${KEYSTORE_DIR} [" + location + "] Reason " + ExceptionUtils.getRootCauseMessage(var3));
+         LOG.debug("Trying to obtain location by adding ${KEYSTORE_DIR} [" + location + "] Reason " + ExceptionUtils.getRootCauseMessage(e));
          ConnectorIOUtils.getResourceAsStream(location);
          return location;
       }
@@ -115,16 +115,15 @@ public final class TrustStoreUpdater {
 
    private static void update(String type, String tslEndpoint, String storeLocation, char[] storepwd, String... serviceTypeIdentifiers) throws TechnicalConnectorException {
       String sha = ConnectorIOUtils.convertStreamToString(ConnectorIOUtils.getResourceAsStream(tslEndpoint + ".sha2"));
-      String xml;
       if (shaCache.containsKey(type)) {
-         xml = shaCache.getProperty(type);
-         if (xml.equals(sha) && DateUtils.parseDateTime(shaCache.getProperty(type + "-nextUpdate")).isAfterNow()) {
+         String cacheSha = shaCache.getProperty(type);
+         if (cacheSha.equals(sha) && DateUtils.parseDateTime(shaCache.getProperty(type + "-nextUpdate")).isAfterNow()) {
             LOG.info("Truststore already up-to-date. Skipping TSL file [" + tslEndpoint + "]");
             return;
          }
       }
 
-      xml = ConnectorIOUtils.convertStreamToString(ConnectorIOUtils.getResourceAsStream(tslEndpoint + ".xml"));
+      String xml = ConnectorIOUtils.convertStreamToString(ConnectorIOUtils.getResourceAsStream(tslEndpoint + ".xml"));
       if (TrustServiceStatusListSignatureVerifier.isValid(xml)) {
          TrustServiceStatusListParser parser = new TrustServiceStatusListParser();
          parser.parse(xml, serviceTypeIdentifiers);

@@ -42,8 +42,8 @@ public class ProofBuilderImpl implements ProofBuilder {
          TherapeuticLink therapeuticLink = this.createMandateTherapeuticLinkForProof();
          this.addSignature(cred, proof, therapeuticLink);
          return proof;
-      } catch (Exception var5) {
-         TherLinkBusinessConnectorException therLinkBusinessConnectorException = new TherLinkBusinessConnectorException(TherLinkBusinessConnectorExceptionValues.ERROR_CREATEPROOF, new Object[]{var5.getMessage(), var5});
+      } catch (Exception e) {
+         TherLinkBusinessConnectorException therLinkBusinessConnectorException = new TherLinkBusinessConnectorException(TherLinkBusinessConnectorExceptionValues.ERROR_CREATEPROOF, new Object[]{e.getMessage(), e});
          LOG.error(therLinkBusinessConnectorException.getMessage());
          throw therLinkBusinessConnectorException;
       }

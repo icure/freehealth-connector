@@ -8,8 +8,6 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import org.slf4j.Logger;
@@ -42,8 +40,8 @@ public class TrustManagerFactory {
          javax.net.ssl.TrustManagerFactory factory = javax.net.ssl.TrustManagerFactory.getInstance("PKIX");
          factory.init(trustStore);
          return factory.getTrustManagers()[0];
-      } catch (Exception var6) {
-         throw new ConfigurationException(var6);
+      } catch (Exception e) {
+         throw new ConfigurationException(e);
       }
    }
 
@@ -56,8 +54,8 @@ public class TrustManagerFactory {
          is = ConnectorIOUtils.getResourceAsStream(storeLocation);
          truststore.load(is, passwordCharArray);
          var4 = truststore;
-      } catch (Exception var8) {
-         throw new ConfigurationException(var8);
+      } catch (Exception e) {
+         throw new ConfigurationException(e);
       } finally {
          ConnectorIOUtils.closeQuietly((Object)is);
       }
@@ -68,19 +66,16 @@ public class TrustManagerFactory {
    private static void dumpContext(KeyStore store, String location) {
       try {
          LOG.debug("Content of KeyStore [{}]", location);
-         List<String> aliases = Collections.list(store.aliases());
-         Iterator var3 = aliases.iterator();
 
-         while(var3.hasNext()) {
-            String alias = (String)var3.next();
+         for(String alias : Collections.list(store.aliases())) {
             Certificate cert = store.getCertificate(alias);
             X509Certificate x509Cert = (X509Certificate)cert;
             String dn = x509Cert.getSubjectX500Principal().getName("RFC2253");
             LOG.debug("\t.{}: {}", alias, dn);
          }
 
-      } catch (Exception var8) {
-         throw new ConfigurationException(var8);
+      } catch (Exception e) {
+         throw new ConfigurationException(e);
       }
    }
 

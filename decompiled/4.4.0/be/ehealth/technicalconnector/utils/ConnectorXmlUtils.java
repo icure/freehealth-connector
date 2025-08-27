@@ -1,0 +1,289 @@
+package be.ehealth.technicalconnector.utils;
+
+import be.ehealth.technicalconnector.exception.InstantiationException;
+import be.ehealth.technicalconnector.exception.TechnicalConnectorException;
+import be.ehealth.technicalconnector.exception.TechnicalConnectorExceptionValues;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.apache.commons.lang3.RegExUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+public final class ConnectorXmlUtils {
+   private static final Logger LOG = LoggerFactory.getLogger(ConnectorXmlUtils.class);
+   private static TransformerFactory trfactory = TransformerFactory.newInstance();
+
+   public static DocumentBuilder getDocumentBuilder() {
+      try {
+         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+         dbf.setNamespaceAware(true);
+         return dbf.newDocumentBuilder();
+      } catch (Exception e) {
+         throw new IllegalArgumentException(e);
+      }
+   }
+
+   private ConnectorXmlUtils() {
+      throw new UnsupportedOperationException();
+   }
+
+   public static Element getFirstElementByTagNameNS(Element node, String namespaceURI, String localName) {
+      NodeList nodeList = node.getElementsByTagNameNS(namespaceURI, localName);
+      if (nodeList.getLength() == 0) {
+         return null;
+      } else {
+         if (nodeList.getLength() > 1) {
+            LOG.debug("{}:{} elements count: {} ,returning first one", new Object[]{namespaceURI, localName, nodeList.getLength()});
+         }
+
+         return (Element)nodeList.item(0);
+      }
+   }
+
+   public static Element getFirstChildElement(Node node) {
+      Node child;
+      for(child = node.getFirstChild(); child != null && child.getNodeType() != 1; child = child.getNextSibling()) {
+      }
+
+      return child != null ? (Element)child : null;
+   }
+
+   public static void dump(Object obj) {
+      if (LOG.isDebugEnabled()) {
+         try {
+            if (obj != null) {
+               String xmlString = toString(obj);
+               LOG.debug("Contents of " + obj.getClass().getCanonicalName() + "  : " + xmlString + "");
+            }
+         } catch (Exception e) {
+            LOG.error("Error occured while logging contents of object " + obj.getClass().getCanonicalName() + ". Reason: " + e.getMessage());
+         }
+      }
+
+   }
+
+   public static byte[] toByteArray(Node node) {
+      try {
+         ByteArrayOutputStream out = new ByteArrayOutputStream();
+         Throwable var2 = null;
+
+         byte[] var6;
+         try {
+            Source source = new DOMSource(node);
+            Result result = new StreamResult(out);
+            Transformer transformer = trfactory.newTransformer();
+            transformer.transform(source, result);
+            var6 = out.toByteArray();
+         } catch (Throwable var16) {
+            var2 = var16;
+            throw var16;
+         } finally {
+            if (out != null) {
+               if (var2 != null) {
+                  try {
+                     out.close();
+                  } catch (Throwable var15) {
+                     var2.addSuppressed(var15);
+                  }
+               } else {
+                  out.close();
+               }
+            }
+
+         }
+
+         return var6;
+      } catch (Exception e) {
+         LOG.error(e.getClass().getSimpleName() + ":" + e.getMessage());
+         return new byte[0];
+      }
+   }
+
+   public static byte[] toByteArray(Object obj) {
+      MarshallerHelper marshallerHelper = new MarshallerHelper(obj.getClass(), obj.getClass());
+      return marshallerHelper.toXMLByteArray(obj);
+   }
+
+   public static Document toDocument(byte[] data) throws TechnicalConnectorException {
+      try {
+         InputStream in = new ByteArrayInputStream(data);
+         Throwable var2 = null;
+
+         Document var3;
+         try {
+            var3 = getDocumentBuilder().parse(in);
+         } catch (Throwable var13) {
+            var2 = var13;
+            throw var13;
+         } finally {
+            if (in != null) {
+               if (var2 != null) {
+                  try {
+                     in.close();
+                  } catch (Throwable var12) {
+                     var2.addSuppressed(var12);
+                  }
+               } else {
+                  in.close();
+               }
+            }
+
+         }
+
+         return var3;
+      } catch (Exception e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{e.getMessage()});
+      }
+   }
+
+   public static Document toDocument(Source source) throws TechnicalConnectorException {
+      try {
+         DOMResult result = new DOMResult();
+         trfactory.newTransformer().transform(source, result);
+         return result.getNode().getOwnerDocument();
+      } catch (Exception e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{e.getMessage()});
+      }
+   }
+
+   public static Document toDocument(Object obj) {
+      MarshallerHelper marshallerHelper = new MarshallerHelper(obj.getClass(), obj.getClass());
+      return marshallerHelper.toDocument(obj);
+   }
+
+   public static Document toDocument(String xml) throws TechnicalConnectorException {
+      try {
+         return parseXmlFile(xml);
+      } catch (Exception e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{e.getMessage()});
+      }
+   }
+
+   public static Element toElement(byte[] data) throws TechnicalConnectorException {
+      return toDocument(data).getDocumentElement();
+   }
+
+   public static <T> T toObject(InputStream in, Class<T> clazz) {
+      MarshallerHelper<T, T> helper = new MarshallerHelper<T, T>(clazz, clazz);
+      return (T)helper.toObject(in);
+   }
+
+   public static <T> T toObject(byte[] in, Class<T> clazz) {
+      MarshallerHelper<T, T> helper = new MarshallerHelper<T, T>(clazz, clazz);
+      return (T)helper.toObject(in);
+   }
+
+   public static <T> T toObject(String xml, Class<T> clazz) {
+      MarshallerHelper<T, T> helper = new MarshallerHelper<T, T>(clazz, clazz);
+      return (T)helper.toObject(xml);
+   }
+
+   public static String toString(Object obj) {
+      MarshallerHelper marshallerHelper = new MarshallerHelper(obj.getClass(), obj.getClass());
+      return marshallerHelper.toString(obj);
+   }
+
+   public static String toString(Node node) throws TechnicalConnectorException {
+      return toString((Source)(new DOMSource(node)));
+   }
+
+   public static String toString(Source source) throws TechnicalConnectorException {
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+      String var4;
+      try {
+         Transformer tf = trfactory.newTransformer();
+         tf.setOutputProperty("omit-xml-declaration", "yes");
+         Result result = new StreamResult(outputStream);
+         tf.transform(source, result);
+         var4 = new String(outputStream.toByteArray(), "UTF-8");
+      } catch (Exception e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{e.getMessage()});
+      } finally {
+         ConnectorIOUtils.closeQuietly((Object)outputStream);
+      }
+
+      return var4;
+   }
+
+   public static String flatten(String xml) {
+      String result;
+      for(result = RegExUtils.replaceAll(xml, "[\t\n\r]", ""); result.contains(" <"); result = RegExUtils.replaceAll(result, " <", "<")) {
+      }
+
+      return result;
+   }
+
+   public static String format(String unformattedXml) {
+      return format(unformattedXml, (Source)null);
+   }
+
+   public static String format(String unformattedXml, Source xslt) {
+      return xslt(new DOMSource(parseXmlFile(unformattedXml)), xslt);
+   }
+
+   public static String xslt(Source doc, Source xslt) {
+      try {
+         StringWriter writer = new StringWriter();
+         StreamResult result = new StreamResult(writer);
+         Transformer transformer;
+         if (xslt != null) {
+            transformer = trfactory.newTransformer(xslt);
+         } else {
+            transformer = trfactory.newTransformer();
+         }
+
+         LOG.debug("Transformer implementation {}", transformer.getClass());
+         transformer.setOutputProperty("indent", "yes");
+         transformer.setOutputProperty("omit-xml-declaration", "yes");
+         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", String.valueOf(1));
+         transformer.transform(doc, result);
+         return writer.toString();
+      } catch (Exception e) {
+         throw new InstantiationException(e);
+      }
+   }
+
+   public static String sanitizePartId(String contentId) {
+      try {
+         String cid = URLDecoder.decode(contentId, StandardCharsets.UTF_8.name());
+         if (StringUtils.startsWith(cid, "<") && StringUtils.endsWith(cid, ">")) {
+            cid = StringUtils.substringBetween(cid, "<", ">");
+         }
+
+         return StringUtils.replace(cid, "cid:", "");
+      } catch (UnsupportedEncodingException e) {
+         throw new InstantiationException(e);
+      }
+   }
+
+   private static Document parseXmlFile(String in) {
+      try {
+         InputSource is = new InputSource(new StringReader(in));
+         return getDocumentBuilder().parse(is);
+      } catch (Exception e) {
+         throw new InstantiationException(e);
+      }
+   }
+}

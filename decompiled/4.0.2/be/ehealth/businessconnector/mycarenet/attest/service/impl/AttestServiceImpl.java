@@ -38,8 +38,8 @@ public class AttestServiceImpl implements AttestService, ConfigurationModuleBoot
          service.setPayload((Object)request);
          GenericResponse xmlResponse = be.ehealth.technicalconnector.ws.ServiceFactory.getGenericWsSender().send(service);
          return (SendAttestationResponse)xmlResponse.asObject(SendAttestationResponse.class);
-      } catch (SOAPException var5) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var5, new Object[]{var5.getMessage()});
+      } catch (SOAPException e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, e, new Object[]{e.getMessage()});
       }
    }
 

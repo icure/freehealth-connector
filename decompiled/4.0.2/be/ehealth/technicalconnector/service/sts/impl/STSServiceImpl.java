@@ -29,7 +29,6 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -127,8 +126,8 @@ public class STSServiceImpl extends AbstractSTSService {
          } else {
             return SAMLHelper.getAssertion(stsResponse);
          }
-      } catch (SOAPException var20) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var20, new Object[]{var20.getMessage()});
+      } catch (SOAPException e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, e, new Object[]{e.getMessage()});
       }
    }
 
@@ -142,33 +141,29 @@ public class STSServiceImpl extends AbstractSTSService {
       NodeList authenticationStatementList = samlToken.getElementsByTagNameNS("urn:oasis:names:tc:SAML:1.0:assertion", "AuthenticationStatement");
       Set<String> idenAttr = new HashSet();
 
-      String value;
-      String namespace;
       for(int i = 0; i < authenticationStatementList.getLength(); ++i) {
          NodeList attrList = ((Element)authenticationStatementList.item(i)).getElementsByTagNameNS("urn:oasis:names:tc:SAML:1.0:assertion", "Attribute");
 
          for(int j = 0; j < attrList.getLength(); ++j) {
             Element attr = (Element)attrList.item(j);
-            value = attr.getAttribute("AttributeNamespace");
-            namespace = attr.getAttribute("AttributeName");
+            String namespace = attr.getAttribute("AttributeNamespace");
+            String name = attr.getAttribute("AttributeName");
             String[] values = this.extractTextContent(attr.getElementsByTagNameNS("urn:oasis:names:tc:SAML:1.0:assertion", "AttributeValue"));
-            if (!"urn:be:fgov:certified-namespace:ehealth".equals(value)) {
-               attributes.add(new SAMLAttribute(namespace, value, values));
-               idenAttr.add(namespace);
+            if (!"urn:be:fgov:certified-namespace:ehealth".equals(namespace)) {
+               attributes.add(new SAMLAttribute(name, namespace, values));
+               idenAttr.add(name);
             }
          }
       }
 
       NodeList attributesList = samlToken.getElementsByTagNameNS("urn:oasis:names:tc:SAML:1.0:assertion", "AttributeStatement");
 
-      int i;
-      Element attr;
       for(int i = 0; i < attributesList.getLength(); ++i) {
          NodeList attrList = ((Element)attributesList.item(i)).getElementsByTagNameNS("urn:oasis:names:tc:SAML:1.0:assertion", "Attribute");
 
-         for(i = 0; i < attrList.getLength(); ++i) {
-            attr = (Element)attrList.item(i);
-            namespace = attr.getAttribute("AttributeNamespace");
+         for(int j = 0; j < attrList.getLength(); ++j) {
+            Element attr = (Element)attrList.item(j);
+            String namespace = attr.getAttribute("AttributeNamespace");
             String name = attr.getAttribute("AttributeName");
             designators.add(new SAMLAttributeDesignator(name, namespace));
             if (!idenAttr.contains(name)) {
@@ -183,13 +178,13 @@ public class STSServiceImpl extends AbstractSTSService {
       String subjectConfirmationMethod = samlToken.getElementsByTagNameNS("urn:oasis:names:tc:SAML:1.0:assertion", "ConfirmationMethod").item(0).getTextContent();
       String authenticationMethod = null;
 
-      for(i = 0; i < authenticationStatementList.getLength(); ++i) {
-         attr = (Element)authenticationStatementList.item(i);
-         authenticationMethod = attr.getAttribute("AuthenticationMethod");
+      for(int i = 0; i < authenticationStatementList.getLength(); ++i) {
+         Element authenticationStatement = (Element)authenticationStatementList.item(i);
+         authenticationMethod = authenticationStatement.getAttribute("AuthenticationMethod");
       }
 
       String nameQualifier = null;
-      value = null;
+      String value = null;
       NodeList nameIdentifierList = samlToken.getElementsByTagNameNS("urn:oasis:names:tc:SAML:1.0:assertion", "NameIdentifier");
 
       for(int i = 0; i < attributesList.getLength(); ++i) {
@@ -209,7 +204,7 @@ public class STSServiceImpl extends AbstractSTSService {
 
       for(int i = 0; i < nodelist.getLength(); ++i) {
          Element el = (Element)nodelist.item(i);
-         result = (String[])((String[])ArrayUtils.add(result, el.getTextContent()));
+         result = (String[])ArrayUtils.add(result, el.getTextContent());
       }
 
       return result;
@@ -234,23 +229,21 @@ public class STSServiceImpl extends AbstractSTSService {
                } else {
                   this.signRequest(doc.getDocumentElement(), hokCred.getPrivateKey(), hokCred.getCertificate());
                }
-            } catch (Exception var15) {
-               throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_SIGNATURE, new Object[]{"XML signature error: " + var15.getMessage(), var15});
+            } catch (Exception e) {
+               throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_SIGNATURE, new Object[]{"XML signature error: " + e.getMessage(), e});
             }
          }
 
          return doc;
-      } catch (CertificateEncodingException var16) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CRYPTO, var16, new Object[]{var16.getMessage()});
+      } catch (CertificateEncodingException e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_CRYPTO, e, new Object[]{e.getMessage()});
       }
    }
 
    private void processAttributes(List<SAMLAttribute> attributes, Document doc) {
       Element attributeStatement = (Element)doc.getElementsByTagNameNS("urn:oasis:names:tc:SAML:1.0:assertion", "AttributeStatement").item(0);
-      Iterator var4 = attributes.iterator();
 
-      while(var4.hasNext()) {
-         SAMLAttribute attr = (SAMLAttribute)var4.next();
+      for(SAMLAttribute attr : attributes) {
          Element attrEl = doc.createElementNS("urn:oasis:names:tc:SAML:1.0:assertion", "saml:Attribute");
          attrEl.setAttribute("AttributeName", attr.getName());
          attrEl.setAttribute("AttributeNamespace", attr.getNamespace());
@@ -262,10 +255,8 @@ public class STSServiceImpl extends AbstractSTSService {
 
    private void addDesignators(List<SAMLAttributeDesignator> designators, Document doc) {
       Element attributeQuery = (Element)doc.getElementsByTagNameNS("urn:oasis:names:tc:SAML:1.0:protocol", "AttributeQuery").item(0);
-      Iterator var4 = designators.iterator();
 
-      while(var4.hasNext()) {
-         SAMLAttributeDesignator attr = (SAMLAttributeDesignator)var4.next();
+      for(SAMLAttributeDesignator attr : designators) {
          Element attrEl = doc.createElementNS("urn:oasis:names:tc:SAML:1.0:assertion", "saml:AttributeDesignator");
          attrEl.setAttribute("AttributeName", attr.getName());
          attrEl.setAttribute("AttributeNamespace", attr.getNamespace());
@@ -298,11 +289,7 @@ public class STSServiceImpl extends AbstractSTSService {
    }
 
    private void processAttributeValues(Element attrEl, String[] attributeValues) {
-      String[] var3 = attributeValues;
-      int var4 = attributeValues.length;
-
-      for(int var5 = 0; var5 < var4; ++var5) {
-         String attributeValue = var3[var5];
+      for(String attributeValue : attributeValues) {
          Element attrVal = attrEl.getOwnerDocument().createElementNS("urn:oasis:names:tc:SAML:1.0:assertion", "saml:AttributeValue");
          attrVal.setTextContent(attributeValue);
          attrEl.appendChild(attrVal);
@@ -355,12 +342,12 @@ public class STSServiceImpl extends AbstractSTSService {
          Provider provider = (Provider)Class.forName(providerName).newInstance();
          LOG.info("Using the following provider: " + provider + " " + provider.getInfo());
          xmlSignatureFactory = XMLSignatureFactory.getInstance("DOM", provider);
-      } catch (IllegalAccessException var2) {
-         throw new InstantiationException(var2.getClass().getSimpleName() + ": " + var2.getMessage(), var2);
-      } catch (java.lang.InstantiationException var3) {
-         throw new InstantiationException(var3.getClass().getSimpleName() + ": " + var3.getMessage(), var3);
-      } catch (ClassNotFoundException var4) {
-         throw new InstantiationException(var4.getClass().getSimpleName() + ": " + var4.getMessage(), var4);
+      } catch (IllegalAccessException e) {
+         throw new InstantiationException(e.getClass().getSimpleName() + ": " + e.getMessage(), e);
+      } catch (java.lang.InstantiationException e) {
+         throw new InstantiationException(e.getClass().getSimpleName() + ": " + e.getMessage(), e);
+      } catch (ClassNotFoundException e) {
+         throw new InstantiationException(e.getClass().getSimpleName() + ": " + e.getMessage(), e);
       }
    }
 }

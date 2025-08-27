@@ -36,8 +36,8 @@ public final class ConnectorXmlUtils {
          DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
          dbf.setNamespaceAware(true);
          return dbf.newDocumentBuilder();
-      } catch (Exception var1) {
-         throw new IllegalArgumentException(var1);
+      } catch (Exception e) {
+         throw new IllegalArgumentException(e);
       }
    }
 
@@ -73,8 +73,8 @@ public final class ConnectorXmlUtils {
                String xmlString = toString(obj);
                LOG.debug("Contents of " + obj.getClass().getCanonicalName() + "  : " + xmlString + "");
             }
-         } catch (Exception var2) {
-            LOG.error("Error occured while logging contents of object " + obj.getClass().getCanonicalName() + ". Reason: " + var2.getMessage());
+         } catch (Exception e) {
+            LOG.error("Error occured while logging contents of object " + obj.getClass().getCanonicalName() + ". Reason: " + e.getMessage());
          }
       }
 
@@ -91,10 +91,10 @@ public final class ConnectorXmlUtils {
          transformer.transform(source, result);
          byte[] var5 = out.toByteArray();
          return var5;
-      } catch (TransformerConfigurationException var10) {
-         LOG.error(var10.getClass().getSimpleName() + ":" + var10.getMessage());
-      } catch (TransformerException var11) {
-         LOG.error(var11.getClass().getSimpleName() + ":" + var11.getMessage());
+      } catch (TransformerConfigurationException e) {
+         LOG.error(e.getClass().getSimpleName() + ":" + e.getMessage());
+      } catch (TransformerException e) {
+         LOG.error(e.getClass().getSimpleName() + ":" + e.getMessage());
       } finally {
          ConnectorIOUtils.closeQuietly((Object)out);
       }
@@ -114,8 +114,8 @@ public final class ConnectorXmlUtils {
       try {
          in = new ByteArrayInputStream(data);
          var2 = getDocumentBuilder().parse(in);
-      } catch (Exception var6) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var6, new Object[]{var6.getMessage()});
+      } catch (Exception e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{e.getMessage()});
       } finally {
          ConnectorIOUtils.closeQuietly((Object)in);
       }
@@ -128,8 +128,8 @@ public final class ConnectorXmlUtils {
          DOMResult result = new DOMResult();
          trfactory.newTransformer().transform(source, result);
          return result.getNode().getOwnerDocument();
-      } catch (Exception var2) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var2, new Object[]{var2.getMessage()});
+      } catch (Exception e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{e.getMessage()});
       }
    }
 
@@ -141,8 +141,8 @@ public final class ConnectorXmlUtils {
    public static Document toDocument(String xml) throws TechnicalConnectorException {
       try {
          return parseXmlFile(xml);
-      } catch (Exception var2) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var2, new Object[]{var2.getMessage()});
+      } catch (Exception e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{e.getMessage()});
       }
    }
 
@@ -151,18 +151,18 @@ public final class ConnectorXmlUtils {
    }
 
    public static <T> T toObject(InputStream in, Class<T> clazz) {
-      MarshallerHelper<T, T> helper = new MarshallerHelper(clazz, clazz);
-      return helper.toObject(in);
+      MarshallerHelper<T, T> helper = new MarshallerHelper<T, T>(clazz, clazz);
+      return (T)helper.toObject(in);
    }
 
    public static <T> T toObject(byte[] in, Class<T> clazz) {
-      MarshallerHelper<T, T> helper = new MarshallerHelper(clazz, clazz);
-      return helper.toObject(in);
+      MarshallerHelper<T, T> helper = new MarshallerHelper<T, T>(clazz, clazz);
+      return (T)helper.toObject(in);
    }
 
    public static <T> T toObject(String xml, Class<T> clazz) {
-      MarshallerHelper<T, T> helper = new MarshallerHelper(clazz, clazz);
-      return helper.toObject(xml);
+      MarshallerHelper<T, T> helper = new MarshallerHelper<T, T>(clazz, clazz);
+      return (T)helper.toObject(xml);
    }
 
    public static String toString(Object obj) {
@@ -184,8 +184,8 @@ public final class ConnectorXmlUtils {
          Result result = new StreamResult(outputStream);
          tf.transform(source, result);
          var4 = new String(outputStream.toByteArray(), "UTF-8");
-      } catch (Exception var8) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var8, new Object[]{var8.getMessage()});
+      } catch (Exception e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{e.getMessage()});
       } finally {
          ConnectorIOUtils.closeQuietly((Object)outputStream);
       }
@@ -226,8 +226,8 @@ public final class ConnectorXmlUtils {
          transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", String.valueOf(1));
          transformer.transform(doc, result);
          return writer.toString();
-      } catch (Exception var5) {
-         throw new InstantiationException(var5);
+      } catch (Exception e) {
+         throw new InstantiationException(e);
       }
    }
 
@@ -235,8 +235,8 @@ public final class ConnectorXmlUtils {
       try {
          InputSource is = new InputSource(new StringReader(in));
          return getDocumentBuilder().parse(is);
-      } catch (Exception var2) {
-         throw new InstantiationException(var2);
+      } catch (Exception e) {
+         throw new InstantiationException(e);
       }
    }
 }

@@ -54,11 +54,7 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
 
    private static void addKeyInfo(Credential signatureCredential, XMLSignature sig) throws TechnicalConnectorException, XMLSecurityException {
       if (signatureCredential.getCertificateChain() != null) {
-         Certificate[] arr$ = signatureCredential.getCertificateChain();
-         int len$ = arr$.length;
-
-         for(int i$ = 0; i$ < len$; ++i$) {
-            Certificate cert = arr$[i$];
+         for(Certificate cert : signatureCredential.getCertificateChain()) {
             if (sig.getKeyInfo().itemX509Data(0) == null) {
                X509Data x509data = new X509Data(sig.getDocument());
                sig.getKeyInfo().add(x509data);
@@ -100,8 +96,8 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
                } else {
                   LOG.warn("XPATH error: " + nodes.getLength() + "found at location [" + xpathLocation + "],using default.");
                }
-            } catch (XPathExpressionException var9) {
-               LOG.info("Unable to determine XPath Location, using default.", var9);
+            } catch (XPathExpressionException e) {
+               LOG.info("Unable to determine XPath Location, using default.", e);
             }
          } else {
             LOG.debug("Using default location (last child tag)");
@@ -114,10 +110,8 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
 
    private static Transforms transforms(List<String> tranformerList, Document doc) throws TransformationException {
       Transforms baseDocTransform = new Transforms(doc);
-      Iterator i$ = tranformerList.iterator();
 
-      while(i$.hasNext()) {
-         String transform = (String)i$.next();
+      for(String transform : tranformerList) {
          baseDocTransform.addTransform(transform);
       }
 
@@ -143,11 +137,11 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
       try {
          String xmldsigId = "xmldsig-" + IdGeneratorFactory.getIdGenerator("uuid").generateId();
          String baseURI = (String)SignatureUtils.getOption("baseURI", optionMap, "");
-         String signatureMethodURI = (String)SignatureUtils.getOption("signatureMethodURI", optionMap, "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+         String signatureMethodURI = (String)SignatureUtils.getOption("signatureMethodURI", optionMap, this.determineDefaultAlgo(signatureCredential));
          String canonicalizationMethodURI = (String)SignatureUtils.getOption("canonicalizationMethodURI", optionMap, "http://www.w3.org/2001/10/xml-exc-c14n#");
          String digestURI = (String)SignatureUtils.getOption("digestURI", optionMap, "http://www.w3.org/2001/04/xmlenc#sha256");
          String encapsulateLocation = (String)SignatureUtils.getOption("encapsulate-xpath", optionMap, (Object)null);
-         EncapsulationTransformer encapsulationTranformer = (EncapsulationTransformer)SignatureUtils.getOption("encapsulate-transformer", optionMap, new XmlSignatureBuilder.PassthroughEncapsulationTransformer());
+         EncapsulationTransformer encapsulationTranformer = (EncapsulationTransformer)SignatureUtils.getOption("encapsulate-transformer", optionMap, new PassthroughEncapsulationTransformer());
          List<String> transformerList = getTransformerList(optionMap);
          Document doc = ConnectorXmlUtils.toDocument(byteArrayToSign);
          XMLSignature sig = new XMLSignature(doc, baseURI, signatureMethodURI, canonicalizationMethodURI);
@@ -160,8 +154,8 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
          sig.setId(xmldsigId);
          handler.after();
          return transform(mustEncapsulate(transformerList), encapsulateLocation, encapsulationTranformer, doc, sig);
-      } catch (Exception var16) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var16, new Object[]{var16.getMessage()});
+      } catch (Exception e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{e.getMessage()});
       }
    }
 
@@ -177,7 +171,7 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
       } else {
          LOG.info("No signature found in signedContent");
          SignatureVerificationResult result = new SignatureVerificationResult();
-         result.getErrors().add(SignatureVerificationError.SIGNATURE_NOT_PRESENT);
+         result.addError(SignatureVerificationError.SIGNATURE_NOT_PRESENT);
          return result;
       }
    }
@@ -203,16 +197,25 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
 
       this.verifyXmlDsigSignature(result, sigElement, signedContent, optionMap);
       this.verifyManifest(result, sigElement, optionMap);
-      XadesSpecification[] arr$ = this.specs;
-      int len$ = arr$.length;
 
-      for(int i$ = 0; i$ < len$; ++i$) {
-         XadesSpecification spec = arr$[i$];
+      for(XadesSpecification spec : this.specs) {
          spec.verify(result, sigElement);
       }
 
       this.validateChain(result, options);
       return result;
+   }
+
+   protected String determineDefaultAlgo(Credential signatureCredential) throws TechnicalConnectorException {
+      String keyType = signatureCredential.getPrivateKey().getAlgorithm();
+      switch (keyType) {
+         case "RSA":
+            return "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+         case "EC":
+            return "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256";
+         default:
+            throw new IllegalArgumentException("Unsupported credential of type " + keyType);
+      }
    }
 
    private void verifyManifest(SignatureVerificationResult result, Element sigElement, Map<String, Object> options) {
@@ -225,7 +228,7 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
             Element reference = (Element)referencesList.item(i);
             String refType = reference.getAttribute("Type");
             if (refType.endsWith("Manifest") && !refType.equalsIgnoreCase("http://www.w3.org/2000/09/xmldsig#Manifest")) {
-               result.getErrors().add(SignatureVerificationError.SIGNATURE_MANIFEST_COULD_NOT_BE_VERIFIED);
+               result.addError(SignatureVerificationError.SIGNATURE_MANIFEST_COULD_NOT_BE_VERIFIED);
             }
          }
       }
@@ -246,11 +249,11 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
          X509Certificate signingCert = this.extractEndCertificate(result.getCertChain());
          result.setSigningCert(signingCert);
          if (!xmlSignature.checkSignatureValue(signingCert)) {
-            result.getErrors().add(SignatureVerificationError.SIGNATURE_COULD_NOT_BE_VERIFIED);
+            result.addError(SignatureVerificationError.SIGNATURE_COULD_NOT_BE_VERIFIED);
          }
-      } catch (Exception var11) {
-         LOG.error("Unable to verify XmlDsig Signature", var11);
-         result.getErrors().add(SignatureVerificationError.SIGNATURE_COULD_NOT_BE_VERIFIED);
+      } catch (Exception e) {
+         LOG.error("Unable to verify XmlDsig Signature", e);
+         result.addError(SignatureVerificationError.SIGNATURE_COULD_NOT_BE_VERIFIED);
       }
 
    }
@@ -266,21 +269,12 @@ public class XmlSignatureBuilder extends AbstractSignatureBuilder implements Sig
 
    }
 
-   // $FF: synthetic class
-   static class SyntheticClass_1 {
-   }
-
    private static class PassthroughEncapsulationTransformer implements EncapsulationTransformer {
       private PassthroughEncapsulationTransformer() {
       }
 
       public Node transform(Node signature) {
          return signature;
-      }
-
-      // $FF: synthetic method
-      PassthroughEncapsulationTransformer(XmlSignatureBuilder.SyntheticClass_1 x0) {
-         this();
       }
    }
 }
