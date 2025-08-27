@@ -1,19 +1,19 @@
 
 package be.fgov.ehealth.mediprima.protocol.v1;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * eHealth SOA Request Type for Services that require an author and pagination as input.
- * 
+ *
  * <p>Classe Java pour AuthorPaginationRequestType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="AuthorPaginationRequestType">
  *   &lt;complexContent>
@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AuthorPaginationRequestType", namespace = "urn:be:fgov:ehealth:commons:protocol:v2")
@@ -39,7 +39,7 @@ public class AuthorPaginationRequestType
 
     /**
      * Obtient la valeur de la propriété offset.
-     * 
+     *
      */
     public int getOffset() {
         return offset;
@@ -47,7 +47,7 @@ public class AuthorPaginationRequestType
 
     /**
      * Définit la valeur de la propriété offset.
-     * 
+     *
      */
     public void setOffset(int value) {
         this.offset = value;
@@ -55,7 +55,7 @@ public class AuthorPaginationRequestType
 
     /**
      * Obtient la valeur de la propriété maxElements.
-     * 
+     *
      */
     public int getMaxElements() {
         return maxElements;
@@ -63,7 +63,7 @@ public class AuthorPaginationRequestType
 
     /**
      * Définit la valeur de la propriété maxElements.
-     * 
+     *
      */
     public void setMaxElements(int value) {
         this.maxElements = value;

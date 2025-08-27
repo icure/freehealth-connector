@@ -6,7 +6,7 @@ import org.taktik.connector.technical.service.ws.ServiceFactory;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

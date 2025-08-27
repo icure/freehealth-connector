@@ -4,19 +4,19 @@ package be.fgov.ehealth.mediprima.protocol.v1;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * Refund Code defined by the POD MI / SPP IS
- * 
+ *
  * <p>Classe Java pour RefundPodmiSppisType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="RefundPodmiSppisType">
  *   &lt;complexContent>
@@ -33,8 +33,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RefundPodmiSppisType", namespace = "urn:be:fgov:ehealth:mediprima:core:v1", propOrder = {
@@ -62,11 +62,11 @@ public class RefundPodmiSppisType {
 
     /**
      * Obtient la valeur de la propriété refundCode.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getRefundCode() {
         return refundCode;
@@ -74,11 +74,11 @@ public class RefundPodmiSppisType {
 
     /**
      * Définit la valeur de la propriété refundCode.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setRefundCode(BigInteger value) {
         this.refundCode = value;
@@ -86,7 +86,7 @@ public class RefundPodmiSppisType {
 
     /**
      * Obtient la valeur de la propriété affiliedMutualityInd.
-     * 
+     *
      */
     public boolean isAffiliedMutualityInd() {
         return affiliedMutualityInd;
@@ -94,7 +94,7 @@ public class RefundPodmiSppisType {
 
     /**
      * Définit la valeur de la propriété affiliedMutualityInd.
-     * 
+     *
      */
     public void setAffiliedMutualityInd(boolean value) {
         this.affiliedMutualityInd = value;
@@ -102,11 +102,11 @@ public class RefundPodmiSppisType {
 
     /**
      * Obtient la valeur de la propriété beneficiaryStatus.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getBeneficiaryStatus() {
         return beneficiaryStatus;
@@ -114,11 +114,11 @@ public class RefundPodmiSppisType {
 
     /**
      * Définit la valeur de la propriété beneficiaryStatus.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setBeneficiaryStatus(String value) {
         this.beneficiaryStatus = value;
@@ -126,25 +126,25 @@ public class RefundPodmiSppisType {
 
     /**
      * Gets the value of the justification property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the justification property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getJustification().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link NameType }
-     * 
-     * 
+     *
+     *
      */
     public List<NameType> getJustification() {
         if (justification == null) {
@@ -155,11 +155,11 @@ public class RefundPodmiSppisType {
 
     /**
      * Obtient la valeur de la propriété podmiSppisPart.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PodmiSppisPartType }
-     *     
+     *
      */
     public PodmiSppisPartType getPodmiSppisPart() {
         return podmiSppisPart;
@@ -167,11 +167,11 @@ public class RefundPodmiSppisType {
 
     /**
      * Définit la valeur de la propriété podmiSppisPart.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PodmiSppisPartType }
-     *     
+     *
      */
     public void setPodmiSppisPart(PodmiSppisPartType value) {
         this.podmiSppisPart = value;
@@ -179,7 +179,7 @@ public class RefundPodmiSppisType {
 
     /**
      * Obtient la valeur de la propriété medicalUrgencyInd.
-     * 
+     *
      */
     public boolean isMedicalUrgencyInd() {
         return medicalUrgencyInd;
@@ -187,7 +187,7 @@ public class RefundPodmiSppisType {
 
     /**
      * Définit la valeur de la propriété medicalUrgencyInd.
-     * 
+     *
      */
     public void setMedicalUrgencyInd(boolean value) {
         this.medicalUrgencyInd = value;

@@ -1,8 +1,8 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2017.05.11 à 02:53:46 PM CEST 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2017.05.11 à 02:53:46 PM CEST
 //
 
 
@@ -12,11 +12,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENT;
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDDRUGCNK;
@@ -28,11 +28,11 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 
 /**
  * to specify the value of the item
- * 
+ *
  * <p>Classe Java pour contentType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="contentType">
  *   &lt;complexContent>
@@ -98,8 +98,8 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "contentType", propOrder = {
@@ -179,11 +179,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété location.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LocationBirthPlaceType }
-     *     
+     *
      */
     public LocationBirthPlaceType getLocation() {
         return location;
@@ -191,11 +191,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété location.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LocationBirthPlaceType }
-     *     
+     *
      */
     public void setLocation(LocationBirthPlaceType value) {
         this.location = value;
@@ -203,25 +203,25 @@ public class ContentType
 
     /**
      * Gets the value of the lnks property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the lnks property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLnks().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link LnkType }
-     * 
-     * 
+     *
+     *
      */
     public List<LnkType> getLnks() {
         if (lnks == null) {
@@ -232,11 +232,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété bacteriology.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TextType }
-     *     
+     *
      */
     public TextType getBacteriology() {
         return bacteriology;
@@ -244,11 +244,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété bacteriology.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TextType }
-     *     
+     *
      */
     public void setBacteriology(TextType value) {
         this.bacteriology = value;
@@ -256,11 +256,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété ecg.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TextType }
-     *     
+     *
      */
     public TextType getEcg() {
         return ecg;
@@ -268,11 +268,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété ecg.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TextType }
-     *     
+     *
      */
     public void setEcg(TextType value) {
         this.ecg = value;
@@ -280,11 +280,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété holter.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link HolterType }
-     *     
+     *
      */
     public HolterType getHolter() {
         return holter;
@@ -292,11 +292,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété holter.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link HolterType }
-     *     
+     *
      */
     public void setHolter(HolterType value) {
         this.holter = value;
@@ -304,11 +304,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété medication.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MedicationType }
-     *     
+     *
      */
     public MedicationType getMedication() {
         return medication;
@@ -316,11 +316,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété medication.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MedicationType }
-     *     
+     *
      */
     public void setMedication(MedicationType value) {
         this.medication = value;
@@ -328,11 +328,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété compoundprescription.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CompoundprescriptionType }
-     *     
+     *
      */
     public CompoundprescriptionType getCompoundprescription() {
         return compoundprescription;
@@ -340,11 +340,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété compoundprescription.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CompoundprescriptionType }
-     *     
+     *
      */
     public void setCompoundprescription(CompoundprescriptionType value) {
         this.compoundprescription = value;
@@ -352,11 +352,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété substanceproduct.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ContentType.Substanceproduct }
-     *     
+     *
      */
     public ContentType.Substanceproduct getSubstanceproduct() {
         return substanceproduct;
@@ -364,11 +364,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété substanceproduct.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ContentType.Substanceproduct }
-     *     
+     *
      */
     public void setSubstanceproduct(ContentType.Substanceproduct value) {
         this.substanceproduct = value;
@@ -376,11 +376,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété medicinalproduct.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MedicinalProductType }
-     *     
+     *
      */
     public MedicinalProductType getMedicinalproduct() {
         return medicinalproduct;
@@ -388,11 +388,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété medicinalproduct.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MedicinalProductType }
-     *     
+     *
      */
     public void setMedicinalproduct(MedicinalProductType value) {
         this.medicinalproduct = value;
@@ -400,11 +400,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété error.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ErrorType }
-     *     
+     *
      */
     public ErrorType getError() {
         return error;
@@ -412,11 +412,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété error.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ErrorType }
-     *     
+     *
      */
     public void setError(ErrorType value) {
         this.error = value;
@@ -424,11 +424,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété incapacity.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link IncapacityType }
-     *     
+     *
      */
     public IncapacityType getIncapacity() {
         return incapacity;
@@ -436,11 +436,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété incapacity.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link IncapacityType }
-     *     
+     *
      */
     public void setIncapacity(IncapacityType value) {
         this.incapacity = value;
@@ -448,11 +448,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété insurance.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link InsuranceType }
-     *     
+     *
      */
     public InsuranceType getInsurance() {
         return insurance;
@@ -460,11 +460,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété insurance.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link InsuranceType }
-     *     
+     *
      */
     public void setInsurance(InsuranceType value) {
         this.insurance = value;
@@ -472,11 +472,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété person.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PersonType }
-     *     
+     *
      */
     public PersonType getPerson() {
         return person;
@@ -484,11 +484,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété person.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PersonType }
-     *     
+     *
      */
     public void setPerson(PersonType value) {
         this.person = value;
@@ -496,11 +496,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété hcparty.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link HcpartyType }
-     *     
+     *
      */
     public HcpartyType getHcparty() {
         return hcparty;
@@ -508,11 +508,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété hcparty.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link HcpartyType }
-     *     
+     *
      */
     public void setHcparty(HcpartyType value) {
         this.hcparty = value;
@@ -520,11 +520,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété date.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getDate() {
         return date;
@@ -532,11 +532,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété date.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setDate(XMLGregorianCalendar value) {
         this.date = value;
@@ -544,11 +544,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété time.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getTime() {
         return time;
@@ -556,11 +556,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété time.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setTime(XMLGregorianCalendar value) {
         this.time = value;
@@ -568,11 +568,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété yearmonth.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getYearmonth() {
         return yearmonth;
@@ -580,11 +580,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété yearmonth.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setYearmonth(XMLGregorianCalendar value) {
         this.yearmonth = value;
@@ -592,11 +592,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété year.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getYear() {
         return year;
@@ -604,11 +604,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété year.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setYear(XMLGregorianCalendar value) {
         this.year = value;
@@ -616,25 +616,25 @@ public class ContentType
 
     /**
      * Gets the value of the texts property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the texts property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTexts().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TextType }
-     * 
-     * 
+     *
+     *
      */
     public List<TextType> getTexts() {
         if (texts == null) {
@@ -645,11 +645,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété boolean.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isBoolean() {
         return _boolean;
@@ -657,11 +657,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété boolean.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setBoolean(Boolean value) {
         this._boolean = value;
@@ -669,11 +669,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété unsignedInt.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Long }
-     *     
+     *
      */
     public Long getUnsignedInt() {
         return unsignedInt;
@@ -681,11 +681,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété unsignedInt.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Long }
-     *     
+     *
      */
     public void setUnsignedInt(Long value) {
         this.unsignedInt = value;
@@ -693,11 +693,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété decimal.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getDecimal() {
         return decimal;
@@ -705,11 +705,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété decimal.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setDecimal(BigDecimal value) {
         this.decimal = value;
@@ -717,25 +717,25 @@ public class ContentType
 
     /**
      * Gets the value of the cds property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the cds property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCds().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link CDCONTENT }
-     * 
-     * 
+     *
+     *
      */
     public List<CDCONTENT> getCds() {
         if (cds == null) {
@@ -746,25 +746,25 @@ public class ContentType
 
     /**
      * Gets the value of the ids property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the ids property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIds().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link IDKMEHR }
-     * 
-     * 
+     *
+     *
      */
     public List<IDKMEHR> getIds() {
         if (ids == null) {
@@ -775,11 +775,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété unit.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link UnitType }
-     *     
+     *
      */
     public UnitType getUnit() {
         return unit;
@@ -787,11 +787,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété unit.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link UnitType }
-     *     
+     *
      */
     public void setUnit(UnitType value) {
         this.unit = value;
@@ -799,11 +799,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété minref.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MinrefType }
-     *     
+     *
      */
     public MinrefType getMinref() {
         return minref;
@@ -811,11 +811,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété minref.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MinrefType }
-     *     
+     *
      */
     public void setMinref(MinrefType value) {
         this.minref = value;
@@ -823,11 +823,11 @@ public class ContentType
 
     /**
      * Obtient la valeur de la propriété maxref.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MaxrefType }
-     *     
+     *
      */
     public MaxrefType getMaxref() {
         return maxref;
@@ -835,11 +835,11 @@ public class ContentType
 
     /**
      * Définit la valeur de la propriété maxref.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MaxrefType }
-     *     
+     *
      */
     public void setMaxref(MaxrefType value) {
         this.maxref = value;
@@ -847,25 +847,25 @@ public class ContentType
 
     /**
      * Gets the value of the refscopes property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the refscopes property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRefscopes().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link RefscopeType }
-     * 
-     * 
+     *
+     *
      */
     public List<RefscopeType> getRefscopes() {
         if (refscopes == null) {
@@ -877,9 +877,9 @@ public class ContentType
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -894,8 +894,8 @@ public class ContentType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -918,11 +918,11 @@ public class ContentType
 
         /**
          * Obtient la valeur de la propriété intendedcd.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link CDINNCLUSTER }
-         *     
+         *
          */
         public CDINNCLUSTER getIntendedcd() {
             return intendedcd;
@@ -930,11 +930,11 @@ public class ContentType
 
         /**
          * Définit la valeur de la propriété intendedcd.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link CDINNCLUSTER }
-         *     
+         *
          */
         public void setIntendedcd(CDINNCLUSTER value) {
             this.intendedcd = value;
@@ -942,11 +942,11 @@ public class ContentType
 
         /**
          * Obtient la valeur de la propriété deliveredcd.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link CDDRUGCNK }
-         *     
+         *
          */
         public CDDRUGCNK getDeliveredcd() {
             return deliveredcd;
@@ -954,11 +954,11 @@ public class ContentType
 
         /**
          * Définit la valeur de la propriété deliveredcd.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link CDDRUGCNK }
-         *     
+         *
          */
         public void setDeliveredcd(CDDRUGCNK value) {
             this.deliveredcd = value;
@@ -966,11 +966,11 @@ public class ContentType
 
         /**
          * Obtient la valeur de la propriété intendedname.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getIntendedname() {
             return intendedname;
@@ -978,11 +978,11 @@ public class ContentType
 
         /**
          * Définit la valeur de la propriété intendedname.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setIntendedname(String value) {
             this.intendedname = value;
@@ -990,11 +990,11 @@ public class ContentType
 
         /**
          * Obtient la valeur de la propriété deliveredname.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Object }
-         *     
+         *
          */
         public Object getDeliveredname() {
             return deliveredname;
@@ -1002,11 +1002,11 @@ public class ContentType
 
         /**
          * Définit la valeur de la propriété deliveredname.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Object }
-         *     
+         *
          */
         public void setDeliveredname(Object value) {
             this.deliveredname = value;

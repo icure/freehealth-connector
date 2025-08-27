@@ -7,7 +7,7 @@ import org.taktik.connector.technical.service.ws.ServiceFactory;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPException;
 import oasis.names.tc.dss._1_0.core.schema.SignRequest;
 import oasis.names.tc.dss._1_0.core.schema.SignResponse;
 

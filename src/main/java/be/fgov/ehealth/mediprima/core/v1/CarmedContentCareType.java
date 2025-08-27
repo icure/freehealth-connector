@@ -1,17 +1,17 @@
 
 package be.fgov.ehealth.mediprima.core.v1;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * <p>Classe Java pour CarmedContentCareType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="CarmedContentCareType">
  *   &lt;complexContent>
@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CarmedContentCareType", namespace = "urn:be:fgov:ehealth:mediprima:core:v1", propOrder = {
@@ -41,11 +41,11 @@ public class CarmedContentCareType {
 
     /**
      * Obtient la valeur de la propriété medicalCover.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MedicalCoverType }
-     *     
+     *
      */
     public MedicalCoverType getMedicalCover() {
         return medicalCover;
@@ -53,11 +53,11 @@ public class CarmedContentCareType {
 
     /**
      * Définit la valeur de la propriété medicalCover.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MedicalCoverType }
-     *     
+     *
      */
     public void setMedicalCover(MedicalCoverType value) {
         this.medicalCover = value;
@@ -65,11 +65,11 @@ public class CarmedContentCareType {
 
     /**
      * Obtient la valeur de la propriété refundPodmiSppis.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RefundPodmiSppisType }
-     *     
+     *
      */
     public RefundPodmiSppisType getRefundPodmiSppis() {
         return refundPodmiSppis;
@@ -77,11 +77,11 @@ public class CarmedContentCareType {
 
     /**
      * Définit la valeur de la propriété refundPodmiSppis.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RefundPodmiSppisType }
-     *     
+     *
      */
     public void setRefundPodmiSppis(RefundPodmiSppisType value) {
         this.refundPodmiSppis = value;

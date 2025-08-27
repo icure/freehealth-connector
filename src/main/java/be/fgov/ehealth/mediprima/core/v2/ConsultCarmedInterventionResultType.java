@@ -1,17 +1,17 @@
 
 package be.fgov.ehealth.mediprima.core.v2;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * <p>Classe Java pour ConsultCarmedInterventionResultType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="ConsultCarmedInterventionResultType">
  *   &lt;complexContent>
@@ -26,8 +26,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ConsultCarmedInterventionResultType", propOrder = {
@@ -49,11 +49,11 @@ public class ConsultCarmedInterventionResultType {
 
     /**
      * Obtient la valeur de la propriété carmedIdentifier.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CarmedIdentifierType }
-     *     
+     *
      */
     public CarmedIdentifierType getCarmedIdentifier() {
         return carmedIdentifier;
@@ -61,11 +61,11 @@ public class ConsultCarmedInterventionResultType {
 
     /**
      * Définit la valeur de la propriété carmedIdentifier.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CarmedIdentifierType }
-     *     
+     *
      */
     public void setCarmedIdentifier(CarmedIdentifierType value) {
         this.carmedIdentifier = value;
@@ -73,11 +73,11 @@ public class ConsultCarmedInterventionResultType {
 
     /**
      * Obtient la valeur de la propriété carmedContent.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CarmedContentCareType }
-     *     
+     *
      */
     public CarmedContentCareType getCarmedContent() {
         return carmedContent;
@@ -85,11 +85,11 @@ public class ConsultCarmedInterventionResultType {
 
     /**
      * Définit la valeur de la propriété carmedContent.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CarmedContentCareType }
-     *     
+     *
      */
     public void setCarmedContent(CarmedContentCareType value) {
         this.carmedContent = value;
@@ -97,11 +97,11 @@ public class ConsultCarmedInterventionResultType {
 
     /**
      * Obtient la valeur de la propriété agreementNumber.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAgreementNumber() {
         return agreementNumber;
@@ -109,11 +109,11 @@ public class ConsultCarmedInterventionResultType {
 
     /**
      * Définit la valeur de la propriété agreementNumber.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAgreementNumber(String value) {
         this.agreementNumber = value;
@@ -121,11 +121,11 @@ public class ConsultCarmedInterventionResultType {
 
     /**
      * Obtient la valeur de la propriété urgentMedicalAidAttestationNumber.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUrgentMedicalAidAttestationNumber() {
         return urgentMedicalAidAttestationNumber;
@@ -133,11 +133,11 @@ public class ConsultCarmedInterventionResultType {
 
     /**
      * Définit la valeur de la propriété urgentMedicalAidAttestationNumber.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUrgentMedicalAidAttestationNumber(String value) {
         this.urgentMedicalAidAttestationNumber = value;

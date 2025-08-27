@@ -5,10 +5,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
-import javax.activation.DataHandler;
-import javax.xml.bind.attachment.AttachmentUnmarshaller;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.SOAPException;
+import jakarta.activation.DataHandler;
+import jakarta.xml.bind.attachment.AttachmentUnmarshaller;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.SOAPException;
 
 public class AttachmentUnmarshallerImpl extends AttachmentUnmarshaller {
    private Map<String, AttachmentPart> attachments = new HashMap();

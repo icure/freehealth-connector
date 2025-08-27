@@ -1,8 +1,8 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2015.03.05 à 11:47:59 AM CET 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2015.03.05 à 11:47:59 AM CET
 //
 
 
@@ -11,13 +11,13 @@ package org.taktik.connector.business.domain.kmehr.v20110701.be.fgov.ehealth.sta
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.taktik.connector.business.domain.kmehr.v20110701.be.fgov.ehealth.standards.kmehr.cd.v1.CDCOUNTRY;
@@ -27,9 +27,9 @@ import org.taktik.connector.business.domain.kmehr.v20110701.be.fgov.ehealth.stan
 
 /**
  * <p>Classe Java pour personType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="personType">
  *   &lt;complexContent>
@@ -67,8 +67,8 @@ import org.taktik.connector.business.domain.kmehr.v20110701.be.fgov.ehealth.stan
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "personType", propOrder = {
@@ -473,7 +473,7 @@ public class PersonType
      * @param value
      *     allowed object is
      *     {@link InsuranceType }
-     *     
+     *
      */
     public void setInsurancystatus(InsuranceType value) {
         this.insurancystatus = value;
@@ -481,11 +481,11 @@ public class PersonType
 
     /**
      * Obtient la valeur de la propriété insurancymembership.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MemberinsuranceType }
-     *     
+     *
      */
     public MemberinsuranceType getInsurancymembership() {
         return insurancymembership;
@@ -493,11 +493,11 @@ public class PersonType
 
     /**
      * Définit la valeur de la propriété insurancymembership.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MemberinsuranceType }
-     *     
+     *
      */
     public void setInsurancymembership(MemberinsuranceType value) {
         this.insurancymembership = value;
@@ -505,11 +505,11 @@ public class PersonType
 
     /**
      * Obtient la valeur de la propriété recorddatetime.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getRecorddatetime() {
         return recorddatetime;
@@ -517,11 +517,11 @@ public class PersonType
 
     /**
      * Définit la valeur de la propriété recorddatetime.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setRecorddatetime(XMLGregorianCalendar value) {
         this.recorddatetime = value;
@@ -529,25 +529,25 @@ public class PersonType
 
     /**
      * Gets the value of the texts property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the texts property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTexts().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TextType }
-     * 
-     * 
+     *
+     *
      */
     public List<TextType> getTexts() {
         if (texts == null) {
@@ -559,9 +559,9 @@ public class PersonType
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -573,8 +573,8 @@ public class PersonType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -590,11 +590,11 @@ public class PersonType
 
         /**
          * Obtient la valeur de la propriété cd.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link CDCOUNTRY }
-         *     
+         *
          */
         public CDCOUNTRY getCd() {
             return cd;
@@ -602,11 +602,11 @@ public class PersonType
 
         /**
          * Définit la valeur de la propriété cd.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link CDCOUNTRY }
-         *     
+         *
          */
         public void setCd(CDCOUNTRY value) {
             this.cd = value;

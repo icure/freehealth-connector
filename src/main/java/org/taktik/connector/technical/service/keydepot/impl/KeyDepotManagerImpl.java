@@ -1,7 +1,7 @@
 package org.taktik.connector.technical.service.keydepot.impl;
 
 import be.fgov.ehealth.technicalconnector.bootstrap.bcp.domain.CacheInformation;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.taktik.connector.technical.cache.Cache;

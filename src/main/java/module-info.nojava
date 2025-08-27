@@ -1,0 +1,27 @@
+module fhc {
+    requires org.joda.time;
+    requires ch.qos.logback.classic;
+    requires kotlin.stdlib;
+    requires java.logging;
+    requires java.smartcardio;
+    requires java.xml;
+    requires java.xml.ws;
+    requires java.xml.soap;
+    requires org.apache.commons.logging;
+    requires jakarta.activation;
+    requires jakarta.xml.bind;
+    requires jakarta.xml.ws;
+    requires jakarta.servlet;
+    requires org.apache.commons.lang3;
+    requires org.apache.commons.compress;
+    requires org.apache.commons.io;
+    requires org.apache.santuario.xmlsec;
+    requires org.apache.logging.log4j;
+    requires org.eclipse.jetty.client;
+    requires org.eclipse.jetty.util;
+    requires org.bouncycastle.provider;
+    requires org.bouncycastle.util;
+    requires org.bouncycastle.pkix;
+    requires com.fasterxml.jackson.core;
+    requires com.fasterxml.jackson.databind;
+}

@@ -2,7 +2,7 @@ package org.taktik.connector.business.kmehrcommons.builders.mycarenet;
 
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDHCPARTY;
 import be.fgov.ehealth.standards.kmehr.mycarenet.cd.v1.CDHCPARTYschemes;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 public class McnCd {
    private CDHCPARTY cd = new CDHCPARTY();

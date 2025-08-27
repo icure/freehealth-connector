@@ -5,9 +5,9 @@ import org.taktik.connector.technical.handler.domain.RequestContext;
 import org.taktik.connector.technical.utils.ConnectorIOUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 @Deprecated
 public class RequestContextHandler extends AbstractSOAPHandler {
    private static final Logger LOG = LoggerFactory.getLogger(RequestContextHandler.class);
-   private static final String MESSAGE_ENDPOINT_ADDRESS = "javax.xml.ws.service.endpoint.address";
+   private static final String MESSAGE_ENDPOINT_ADDRESS = "jakarta.xml.ws.service.endpoint.address";
    private String suffix = "";
 
    public RequestContextHandler() {
@@ -35,7 +35,7 @@ public class RequestContextHandler extends AbstractSOAPHandler {
          SOAPMessage msg = context.getMessage();
          RequestContext reqContext = RequestContext.getInstance();
          reqContext.clear();
-         String endPoint = (String)context.get("javax.xml.ws.service.endpoint.address");
+         String endPoint = (String)context.get("jakarta.xml.ws.service.endpoint.address");
          if (endPoint != null && !endPoint.isEmpty()) {
             reqContext.put("endpoint", endPoint);
          }

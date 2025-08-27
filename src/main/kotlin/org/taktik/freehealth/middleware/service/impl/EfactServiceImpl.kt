@@ -55,7 +55,7 @@ import java.text.DecimalFormat
 import java.util.ArrayList
 import java.util.LinkedList
 import java.util.UUID
-import javax.xml.ws.soap.SOAPFaultException
+import jakarta.xml.ws.soap.SOAPFaultException
 import kotlin.Comparator
 
 @Service

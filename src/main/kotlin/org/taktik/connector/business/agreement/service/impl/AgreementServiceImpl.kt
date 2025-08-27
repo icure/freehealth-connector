@@ -14,8 +14,8 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory
-import javax.xml.bind.JAXBElement
-import javax.xml.soap.SOAPException
+import jakarta.xml.bind.JAXBElement
+import jakarta.xml.soap.SOAPException
 
 class AgreementServiceImpl : AgreementService, ModuleBootstrapHook {
     init {

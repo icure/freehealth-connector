@@ -1,25 +1,25 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2015.03.05 à 11:48:09 AM CET 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2015.03.05 à 11:48:09 AM CET
 //
 
 
 package org.taktik.connector.business.domain.kmehr.v20130710.be.fgov.ehealth.standards.kmehr.schema.v1;
 
 import java.io.Serializable;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * <p>Classe Java pour holterType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="holterType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "holterType", propOrder = {
@@ -284,11 +284,11 @@ public class HolterType
 
     /**
      * Obtient la valeur de la propriété rrmin.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RRMINType }
-     *     
+     *
      */
     public RRMINType getRRMIN() {
         return rrmin;
@@ -296,11 +296,11 @@ public class HolterType
 
     /**
      * Définit la valeur de la propriété rrmin.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RRMINType }
-     *     
+     *
      */
     public void setRRMIN(RRMINType value) {
         this.rrmin = value;
@@ -308,11 +308,11 @@ public class HolterType
 
     /**
      * Obtient la valeur de la propriété qrstot.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getQRSTOT() {
         return qrstot;
@@ -320,11 +320,11 @@ public class HolterType
 
     /**
      * Définit la valeur de la propriété qrstot.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setQRSTOT(String value) {
         this.qrstot = value;
@@ -332,11 +332,11 @@ public class HolterType
 
     /**
      * Obtient la valeur de la propriété brady.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getBRADY() {
         return brady;
@@ -344,11 +344,11 @@ public class HolterType
 
     /**
      * Définit la valeur de la propriété brady.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setBRADY(String value) {
         this.brady = value;
@@ -356,11 +356,11 @@ public class HolterType
 
     /**
      * Obtient la valeur de la propriété pause.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPAUSE() {
         return pause;
@@ -368,11 +368,11 @@ public class HolterType
 
     /**
      * Définit la valeur de la propriété pause.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPAUSE(String value) {
         this.pause = value;
@@ -380,11 +380,11 @@ public class HolterType
 
     /**
      * Obtient la valeur de la propriété long.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLONG() {
         return _long;
@@ -392,11 +392,11 @@ public class HolterType
 
     /**
      * Définit la valeur de la propriété long.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLONG(String value) {
         this._long = value;
@@ -404,11 +404,11 @@ public class HolterType
 
     /**
      * Obtient la valeur de la propriété esv.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getESV() {
         return esv;
@@ -416,11 +416,11 @@ public class HolterType
 
     /**
      * Définit la valeur de la propriété esv.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setESV(String value) {
         this.esv = value;
@@ -428,11 +428,11 @@ public class HolterType
 
     /**
      * Obtient la valeur de la propriété dblv.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDBLV() {
         return dblv;
@@ -440,11 +440,11 @@ public class HolterType
 
     /**
      * Définit la valeur de la propriété dblv.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDBLV(String value) {
         this.dblv = value;
@@ -452,11 +452,11 @@ public class HolterType
 
     /**
      * Obtient la valeur de la propriété salvv.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSALVV() {
         return salvv;
@@ -464,11 +464,11 @@ public class HolterType
 
     /**
      * Définit la valeur de la propriété salvv.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSALVV(String value) {
         this.salvv = value;
@@ -476,11 +476,11 @@ public class HolterType
 
     /**
      * Obtient la valeur de la propriété bgv.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getBGV() {
         return bgv;
@@ -488,11 +488,11 @@ public class HolterType
 
     /**
      * Définit la valeur de la propriété bgv.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setBGV(String value) {
         this.bgv = value;
@@ -500,11 +500,11 @@ public class HolterType
 
     /**
      * Obtient la valeur de la propriété tgv.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTGV() {
         return tgv;
@@ -512,11 +512,11 @@ public class HolterType
 
     /**
      * Définit la valeur de la propriété tgv.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTGV(String value) {
         this.tgv = value;
@@ -524,11 +524,11 @@ public class HolterType
 
     /**
      * Obtient la valeur de la propriété tachy.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTACHY() {
         return tachy;
@@ -536,11 +536,11 @@ public class HolterType
 
     /**
      * Définit la valeur de la propriété tachy.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTACHY(String value) {
         this.tachy = value;
@@ -548,11 +548,11 @@ public class HolterType
 
     /**
      * Obtient la valeur de la propriété essv.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getESSV() {
         return essv;
@@ -560,11 +560,11 @@ public class HolterType
 
     /**
      * Définit la valeur de la propriété essv.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setESSV(String value) {
         this.essv = value;
@@ -572,11 +572,11 @@ public class HolterType
 
     /**
      * Obtient la valeur de la propriété dblsv.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDBLSV() {
         return dblsv;
@@ -584,11 +584,11 @@ public class HolterType
 
     /**
      * Définit la valeur de la propriété dblsv.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDBLSV(String value) {
         this.dblsv = value;
@@ -596,11 +596,11 @@ public class HolterType
 
     /**
      * Obtient la valeur de la propriété salvsv.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSALVSV() {
         return salvsv;
@@ -608,11 +608,11 @@ public class HolterType
 
     /**
      * Définit la valeur de la propriété salvsv.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSALVSV(String value) {
         this.salvsv = value;
@@ -620,11 +620,11 @@ public class HolterType
 
     /**
      * Obtient la valeur de la propriété bgsv.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getBGSV() {
         return bgsv;
@@ -632,11 +632,11 @@ public class HolterType
 
     /**
      * Définit la valeur de la propriété bgsv.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setBGSV(String value) {
         this.bgsv = value;
@@ -644,11 +644,11 @@ public class HolterType
 
     /**
      * Obtient la valeur de la propriété tgsv.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTGSV() {
         return tgsv;
@@ -656,11 +656,11 @@ public class HolterType
 
     /**
      * Définit la valeur de la propriété tgsv.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTGSV(String value) {
         this.tgsv = value;
@@ -668,11 +668,11 @@ public class HolterType
 
     /**
      * Obtient la valeur de la propriété tachysv.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTACHYSV() {
         return tachysv;
@@ -680,11 +680,11 @@ public class HolterType
 
     /**
      * Définit la valeur de la propriété tachysv.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTACHYSV(String value) {
         this.tachysv = value;
@@ -692,11 +692,11 @@ public class HolterType
 
     /**
      * Obtient la valeur de la propriété rrinst.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRRINST() {
         return rrinst;
@@ -704,11 +704,11 @@ public class HolterType
 
     /**
      * Définit la valeur de la propriété rrinst.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRRINST(String value) {
         this.rrinst = value;

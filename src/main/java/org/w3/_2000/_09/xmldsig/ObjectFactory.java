@@ -1,9 +1,9 @@
 package org.w3._2000._09.xmldsig;
 
 import java.math.BigInteger;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlElementDecl;
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.annotation.XmlElementDecl;
+import jakarta.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
 
 @XmlRegistry
@@ -46,14 +46,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.w3._2000._09.xmldsig_
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link org.w3._2000._09.xmldsig.X509Data }
-     * 
+     *
      */
     public org.w3._2000._09.xmldsig.X509Data createX509Data() {
         return new org.w3._2000._09.xmldsig.X509Data();
@@ -61,7 +61,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Transforms }
-     * 
+     *
      */
     public Transforms createTransforms() {
         return new Transforms();
@@ -69,7 +69,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RetrievalMethod }
-     * 
+     *
      */
     public RetrievalMethod createRetrievalMethod() {
         return new RetrievalMethod();
@@ -77,7 +77,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link org.w3._2000._09.xmldsig.DigestMethod }
-     * 
+     *
      */
     public org.w3._2000._09.xmldsig.DigestMethod createDigestMethod() {
         return new org.w3._2000._09.xmldsig.DigestMethod();
@@ -85,7 +85,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Object }
-     * 
+     *
      */
     public Object createObject() {
         return new Object();
@@ -93,7 +93,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Transform }
-     * 
+     *
      */
     public Transform createTransform() {
         return new Transform();
@@ -101,7 +101,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link org.w3._2000._09.xmldsig.SignatureProperty }
-     * 
+     *
      */
     public org.w3._2000._09.xmldsig.SignatureProperty createSignatureProperty() {
         return new org.w3._2000._09.xmldsig.SignatureProperty();
@@ -109,7 +109,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SignatureMethod }
-     * 
+     *
      */
     public SignatureMethod createSignatureMethod() {
         return new SignatureMethod();
@@ -117,7 +117,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link org.w3._2000._09.xmldsig.SignatureValue }
-     * 
+     *
      */
     public org.w3._2000._09.xmldsig.SignatureValue createSignatureValue() {
         return new org.w3._2000._09.xmldsig.SignatureValue();
@@ -125,7 +125,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link org.w3._2000._09.xmldsig.SPKIData }
-     * 
+     *
      */
     public org.w3._2000._09.xmldsig.SPKIData createSPKIData() {
         return new org.w3._2000._09.xmldsig.SPKIData();
@@ -133,7 +133,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link org.w3._2000._09.xmldsig.SignedInfo }
-     * 
+     *
      */
     public org.w3._2000._09.xmldsig.SignedInfo createSignedInfo() {
         return new org.w3._2000._09.xmldsig.SignedInfo();
@@ -141,7 +141,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link org.w3._2000._09.xmldsig.KeyInfo }
-     * 
+     *
      */
     public org.w3._2000._09.xmldsig.KeyInfo createKeyInfo() {
         return new org.w3._2000._09.xmldsig.KeyInfo();
@@ -149,7 +149,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link X509IssuerSerialType }
-     * 
+     *
      */
     public X509IssuerSerialType createX509IssuerSerialType() {
         return new X509IssuerSerialType();
@@ -157,7 +157,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Manifest }
-     * 
+     *
      */
     public Manifest createManifest() {
         return new Manifest();
@@ -165,7 +165,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link org.w3._2000._09.xmldsig.CanonicalizationMethod }
-     * 
+     *
      */
     public org.w3._2000._09.xmldsig.CanonicalizationMethod createCanonicalizationMethod() {
         return new org.w3._2000._09.xmldsig.CanonicalizationMethod();
@@ -173,7 +173,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DSAKeyValue }
-     * 
+     *
      */
     public DSAKeyValue createDSAKeyValue() {
         return new DSAKeyValue();
@@ -181,7 +181,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link org.w3._2000._09.xmldsig.Reference }
-     * 
+     *
      */
     public org.w3._2000._09.xmldsig.Reference createReference() {
         return new org.w3._2000._09.xmldsig.Reference();
@@ -189,7 +189,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link org.w3._2000._09.xmldsig.KeyValue }
-     * 
+     *
      */
     public org.w3._2000._09.xmldsig.KeyValue createKeyValue() {
         return new org.w3._2000._09.xmldsig.KeyValue();
@@ -197,7 +197,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link org.w3._2000._09.xmldsig.PGPData }
-     * 
+     *
      */
     public org.w3._2000._09.xmldsig.PGPData createPGPData() {
         return new org.w3._2000._09.xmldsig.PGPData();
@@ -205,7 +205,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link org.w3._2000._09.xmldsig.RSAKeyValue }
-     * 
+     *
      */
     public org.w3._2000._09.xmldsig.RSAKeyValue createRSAKeyValue() {
         return new org.w3._2000._09.xmldsig.RSAKeyValue();
@@ -213,7 +213,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link org.w3._2000._09.xmldsig.SignatureProperties }
-     * 
+     *
      */
     public org.w3._2000._09.xmldsig.SignatureProperties createSignatureProperties() {
         return new org.w3._2000._09.xmldsig.SignatureProperties();
@@ -221,7 +221,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Signature }
-     * 
+     *
      */
     public Signature createSignature() {
         return new Signature();
@@ -229,7 +229,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link org.w3._2000._09.xmldsig.KeyInfo }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "KeyInfo")
     public JAXBElement<org.w3._2000._09.xmldsig.KeyInfo> createKeyInfo(org.w3._2000._09.xmldsig.KeyInfo value) {
@@ -238,7 +238,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link org.w3._2000._09.xmldsig.SignatureProperty }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "SignatureProperty")
     public JAXBElement<org.w3._2000._09.xmldsig.SignatureProperty> createSignatureProperty(org.w3._2000._09.xmldsig.SignatureProperty value) {
@@ -247,7 +247,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link org.w3._2000._09.xmldsig.RSAKeyValue }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "RSAKeyValue")
     public JAXBElement<org.w3._2000._09.xmldsig.RSAKeyValue> createRSAKeyValue(org.w3._2000._09.xmldsig.RSAKeyValue value) {
@@ -256,7 +256,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SignatureMethod }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "SignatureMethod")
     public JAXBElement<SignatureMethod> createSignatureMethod(SignatureMethod value) {
@@ -265,7 +265,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "Object")
     public JAXBElement<Object> createObject(Object value) {
@@ -274,7 +274,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link org.w3._2000._09.xmldsig.PGPData }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "PGPData")
     public JAXBElement<org.w3._2000._09.xmldsig.PGPData> createPGPData(org.w3._2000._09.xmldsig.PGPData value) {
@@ -283,7 +283,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RetrievalMethod }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "RetrievalMethod")
     public JAXBElement<RetrievalMethod> createRetrievalMethod(RetrievalMethod value) {
@@ -292,7 +292,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DSAKeyValue }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "DSAKeyValue")
     public JAXBElement<DSAKeyValue> createDSAKeyValue(DSAKeyValue value) {
@@ -301,7 +301,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link org.w3._2000._09.xmldsig.SPKIData }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "SPKIData")
     public JAXBElement<org.w3._2000._09.xmldsig.SPKIData> createSPKIData(org.w3._2000._09.xmldsig.SPKIData value) {
@@ -310,7 +310,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link org.w3._2000._09.xmldsig.SignatureValue }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "SignatureValue")
     public JAXBElement<org.w3._2000._09.xmldsig.SignatureValue> createSignatureValue(org.w3._2000._09.xmldsig.SignatureValue value) {
@@ -319,7 +319,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link org.w3._2000._09.xmldsig.KeyValue }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "KeyValue")
     public JAXBElement<org.w3._2000._09.xmldsig.KeyValue> createKeyValue(org.w3._2000._09.xmldsig.KeyValue value) {
@@ -328,7 +328,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Transforms }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "Transforms")
     public JAXBElement<Transforms> createTransforms(Transforms value) {
@@ -337,7 +337,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link org.w3._2000._09.xmldsig.DigestMethod }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "DigestMethod")
     public JAXBElement<org.w3._2000._09.xmldsig.DigestMethod> createDigestMethod(org.w3._2000._09.xmldsig.DigestMethod value) {
@@ -346,7 +346,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link org.w3._2000._09.xmldsig.X509Data }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "X509Data")
     public JAXBElement<org.w3._2000._09.xmldsig.X509Data> createX509Data(org.w3._2000._09.xmldsig.X509Data value) {
@@ -355,7 +355,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "KeyName")
     public JAXBElement<String> createKeyName(String value) {
@@ -364,7 +364,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Signature }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "Signature")
     public JAXBElement<Signature> createSignature(Signature value) {
@@ -373,7 +373,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "MgmtData")
     public JAXBElement<String> createMgmtData(String value) {
@@ -382,7 +382,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link org.w3._2000._09.xmldsig.SignatureProperties }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "SignatureProperties")
     public JAXBElement<org.w3._2000._09.xmldsig.SignatureProperties> createSignatureProperties(org.w3._2000._09.xmldsig.SignatureProperties value) {
@@ -391,7 +391,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Transform }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "Transform")
     public JAXBElement<Transform> createTransform(Transform value) {
@@ -400,7 +400,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link org.w3._2000._09.xmldsig.Reference }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "Reference")
     public JAXBElement<org.w3._2000._09.xmldsig.Reference> createReference(org.w3._2000._09.xmldsig.Reference value) {
@@ -409,7 +409,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "DigestValue")
     public JAXBElement<byte[]> createDigestValue(byte[] value) {
@@ -418,7 +418,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link org.w3._2000._09.xmldsig.CanonicalizationMethod }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "CanonicalizationMethod")
     public JAXBElement<org.w3._2000._09.xmldsig.CanonicalizationMethod> createCanonicalizationMethod(org.w3._2000._09.xmldsig.CanonicalizationMethod value) {
@@ -427,7 +427,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link org.w3._2000._09.xmldsig.SignedInfo }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "SignedInfo")
     public JAXBElement<org.w3._2000._09.xmldsig.SignedInfo> createSignedInfo(org.w3._2000._09.xmldsig.SignedInfo value) {
@@ -436,7 +436,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Manifest }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "Manifest")
     public JAXBElement<Manifest> createManifest(Manifest value) {
@@ -445,7 +445,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "X509CRL", scope = org.w3._2000._09.xmldsig.X509Data.class)
     public JAXBElement<byte[]> createX509DataX509CRL(byte[] value) {
@@ -454,7 +454,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link X509IssuerSerialType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "X509IssuerSerial", scope = org.w3._2000._09.xmldsig.X509Data.class)
     public JAXBElement<X509IssuerSerialType> createX509DataX509IssuerSerial(X509IssuerSerialType value) {
@@ -463,7 +463,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "X509SubjectName", scope = org.w3._2000._09.xmldsig.X509Data.class)
     public JAXBElement<String> createX509DataX509SubjectName(String value) {
@@ -472,7 +472,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "X509SKI", scope = org.w3._2000._09.xmldsig.X509Data.class)
     public JAXBElement<byte[]> createX509DataX509SKI(byte[] value) {
@@ -481,7 +481,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "X509Certificate", scope = org.w3._2000._09.xmldsig.X509Data.class)
     public JAXBElement<byte[]> createX509DataX509Certificate(byte[] value) {
@@ -490,7 +490,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "PGPKeyID", scope = org.w3._2000._09.xmldsig.PGPData.class)
     public JAXBElement<byte[]> createPGPDataPGPKeyID(byte[] value) {
@@ -499,7 +499,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "PGPKeyPacket", scope = org.w3._2000._09.xmldsig.PGPData.class)
     public JAXBElement<byte[]> createPGPDataPGPKeyPacket(byte[] value) {
@@ -508,7 +508,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BigInteger }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "HMACOutputLength", scope = SignatureMethod.class)
     public JAXBElement<BigInteger> createSignatureMethodHMACOutputLength(BigInteger value) {
@@ -517,7 +517,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "SPKISexp", scope = org.w3._2000._09.xmldsig.SPKIData.class)
     public JAXBElement<byte[]> createSPKIDataSPKISexp(byte[] value) {
@@ -526,7 +526,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2000/09/xmldsig#", name = "XPath", scope = Transform.class)
     public JAXBElement<String> createTransformXPath(String value) {

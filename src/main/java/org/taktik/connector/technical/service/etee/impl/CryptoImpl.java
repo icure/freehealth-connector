@@ -11,7 +11,6 @@ import org.taktik.connector.technical.service.etee.domain.EncryptionToken;
 import org.taktik.connector.technical.service.etee.domain.UnsealedData;
 import org.taktik.connector.technical.service.kgss.domain.KeyResult;
 import org.taktik.connector.technical.service.sts.security.Credential;
-import org.taktik.connector.technical.service.sts.security.impl.BeIDCredential;
 import be.fgov.ehealth.etee.crypto.decrypt.DataUnsealer;
 import be.fgov.ehealth.etee.crypto.decrypt.DataUnsealerBuilder;
 import be.fgov.ehealth.etee.crypto.encrypt.DataSealer;
@@ -47,7 +46,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.crypto.SecretKey;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -216,25 +215,10 @@ public class CryptoImpl extends AbstractEndToEndCrypto {
 		SigningPolicy policy;
 		SigningCredential outerSigningCred;
 		SigningCredential innerSigningcredential;
-		if (encryption instanceof BeIDCredential) {
-			policy = SigningPolicy.EID;
-			KeyStore eid = encryption.getKeyStore();
-			outerSigningCred = this.retrieveSigningCredential("Authentication", eid);
-			switch (type) {
-				case WITH_NON_REPUDIATION:
-					innerSigningcredential = this.retrieveSigningCredential("Signature", eid);
-					break;
-				case WITHOUT_NON_REPUDIATION:
-					innerSigningcredential = outerSigningCred;
-					break;
-				default:
-					throw new IllegalArgumentException("Unsupported SigningPolicyType [ " + type + "]");
-			}
-		} else {
-			policy = SigningPolicy.EHEALTH_CERT;
-			outerSigningCred = SigningCredential.create(encryption.getPrivateKey(), Arrays.copyOf(encryption.getCertificateChain(), encryption.getCertificateChain().length, X509Certificate[].class));
-			innerSigningcredential = outerSigningCred;
-		}
+
+		policy = SigningPolicy.EHEALTH_CERT;
+		outerSigningCred = SigningCredential.create(encryption.getPrivateKey(), Arrays.copyOf(encryption.getCertificateChain(), encryption.getCertificateChain().length, X509Certificate[].class));
+		innerSigningcredential = outerSigningCred;
 
 		this.dataSealer.put(type, DataSealerBuilder.newBuilder().addOCSPPolicy(ocspPolicy, ocspOptionMap).addSigningPolicy(policy, outerSigningCred, innerSigningcredential).addPublicKeyPolicy(EncryptionPolicy.KNOWN_RECIPIENT).addSecretKeyPolicy(EncryptionPolicy.UNKNOWN_RECIPIENT).build());
 	}

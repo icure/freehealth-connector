@@ -390,7 +390,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                 else -> null
             }
 
-            override fun getPrefixes(namespaceURI: String?): Iterator<Any?> =
+            override fun getPrefixes(namespaceURI: String?): Iterator<String> =
                 when (namespaceURI) {
                     "http://www.ehealth.fgov.be/messageservices/core/v1" -> listOf("ns2").iterator()
                     "http://www.ehealth.fgov.be/standards/kmehr/schema/v1" -> listOf("ns3").iterator()

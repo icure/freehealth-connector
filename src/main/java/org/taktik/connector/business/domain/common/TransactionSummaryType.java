@@ -6,10 +6,7 @@ import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTION;
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTIONschemes;
 import be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR;
 import be.fgov.ehealth.standards.kmehr.schema.v1.AuthorType;
-import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.Transformer;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -138,31 +135,30 @@ public class TransactionSummaryType implements Serializable {
     }
 
     public void refreshAuthorsList() {
-        if (author!=null && author.getHcparties().size()>0) {
-            setAuthorsList(StringUtils.join(CollectionUtils.collect(author.getHcparties(), new Transformer<HcpartyType, String>() {
-                @Override
-                public String transform(HcpartyType hcpartyType) {
-                    String title = "";
-                    for (CDHCPARTY cd : hcpartyType.getCds()) {
-                        if (cd.getS().equals(CDHCPARTYschemes.CD_HCPARTY)) {
-                            title = cd.getValue();
-                            break;
-                        }
-                    }
-                    String name = hcpartyType.getName();
-                    String familyname = hcpartyType.getFamilyname();
-                    String firstname = hcpartyType.getFirstname();
+        if (author!=null && !author.getHcparties().isEmpty()) {
+            setAuthorsList(StringUtils.join(author.getHcparties().stream().map(
+                    hcpartyType -> {
+                       String title = "";
+                       for (CDHCPARTY cd : hcpartyType.getCds()) {
+                           if (cd.getS().equals(CDHCPARTYschemes.CD_HCPARTY)) {
+                               title = cd.getValue();
+                               break;
+                           }
+                       }
+                       String name = hcpartyType.getName();
+                       String familyname = hcpartyType.getFamilyname();
+                       String firstname = hcpartyType.getFirstname();
 
-                    StringBuilder sb = new StringBuilder();
+                       StringBuilder sb = new StringBuilder();
 
-                    if (!StringUtils.isEmpty(title)) {sb.append(title).append(" ");}
-                    if (!StringUtils.isEmpty(name)) {sb.append(name).append(" ");}
-                    if (!StringUtils.isEmpty(familyname)) {sb.append(familyname).append(" ");}
-                    if (!StringUtils.isEmpty(firstname)) {sb.append(firstname).append(" ");}
+                       if (!StringUtils.isEmpty(title)) {sb.append(title).append(" ");}
+                       if (!StringUtils.isEmpty(name)) {sb.append(name).append(" ");}
+                       if (!StringUtils.isEmpty(familyname)) {sb.append(familyname).append(" ");}
+                       if (!StringUtils.isEmpty(firstname)) {sb.append(firstname).append(" ");}
 
-                    return sb.toString();
-                }
-            }), ","));
+                       return sb.toString();
+                   })
+            , ","));
         } else {
             setAuthorsList("");
         }

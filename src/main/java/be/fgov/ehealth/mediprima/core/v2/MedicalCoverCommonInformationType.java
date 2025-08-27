@@ -1,18 +1,18 @@
 
 package be.fgov.ehealth.mediprima.core.v2;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * <p>Classe Java pour MedicalCoverCommonInformationType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="MedicalCoverCommonInformationType">
  *   &lt;complexContent>
@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MedicalCoverCommonInformationType", propOrder = {
@@ -59,11 +59,11 @@ public class MedicalCoverCommonInformationType {
 
     /**
      * Obtient la valeur de la propriété validityPeriod.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PeriodType }
-     *     
+     *
      */
     public PeriodType getValidityPeriod() {
         return validityPeriod;
@@ -71,11 +71,11 @@ public class MedicalCoverCommonInformationType {
 
     /**
      * Définit la valeur de la propriété validityPeriod.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PeriodType }
-     *     
+     *
      */
     public void setValidityPeriod(PeriodType value) {
         this.validityPeriod = value;
@@ -83,11 +83,11 @@ public class MedicalCoverCommonInformationType {
 
     /**
      * Obtient la valeur de la propriété pswcSupport.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PswcSupportType }
-     *     
+     *
      */
     public PswcSupportType getPswcSupport() {
         return pswcSupport;
@@ -95,11 +95,11 @@ public class MedicalCoverCommonInformationType {
 
     /**
      * Définit la valeur de la propriété pswcSupport.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PswcSupportType }
-     *     
+     *
      */
     public void setPswcSupport(PswcSupportType value) {
         this.pswcSupport = value;
@@ -107,11 +107,11 @@ public class MedicalCoverCommonInformationType {
 
     /**
      * Obtient la valeur de la propriété amountPatientPartMax.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getAmountPatientPartMax() {
         return amountPatientPartMax;
@@ -119,11 +119,11 @@ public class MedicalCoverCommonInformationType {
 
     /**
      * Définit la valeur de la propriété amountPatientPartMax.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setAmountPatientPartMax(Integer value) {
         this.amountPatientPartMax = value;
@@ -131,11 +131,11 @@ public class MedicalCoverCommonInformationType {
 
     /**
      * Obtient la valeur de la propriété allowedSupplements.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedSupplementsType }
-     *     
+     *
      */
     public AllowedSupplementsType getAllowedSupplements() {
         return allowedSupplements;
@@ -143,11 +143,11 @@ public class MedicalCoverCommonInformationType {
 
     /**
      * Définit la valeur de la propriété allowedSupplements.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedSupplementsType }
-     *     
+     *
      */
     public void setAllowedSupplements(AllowedSupplementsType value) {
         this.allowedSupplements = value;

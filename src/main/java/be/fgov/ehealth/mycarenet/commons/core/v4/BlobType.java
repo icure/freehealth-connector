@@ -1,25 +1,25 @@
 
 package be.fgov.ehealth.mycarenet.commons.core.v4;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlValue;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlValue;
+import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * Used to transfer (large) binary objects. 
- * 
+ * Used to transfer (large) binary objects.
+ *
  * A Binary Large Object with technical metadata. Can contain large abound of binary data, which can be transported via MTOM/XOP when used in web services. It contains attributes/fields that provide technical data. The content/value contains the binary data, first compressed via deflate and then base 64 encoded.
- * 
+ *
  * <p>Classe Java pour BlobType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="BlobType">
  *   &lt;simpleContent>
@@ -37,8 +37,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BlobType", namespace = "urn:be:fgov:ehealth:mycarenet:commons:core:v4", propOrder = {
@@ -72,7 +72,7 @@ public class BlobType {
 
     /**
      * Obtient la valeur de la propriété value.
-     * 
+     *
      * @return
      *     possible object is
      *     byte[]
@@ -83,7 +83,7 @@ public class BlobType {
 
     /**
      * Définit la valeur de la propriété value.
-     * 
+     *
      * @param value
      *     allowed object is
      *     byte[]
@@ -94,11 +94,11 @@ public class BlobType {
 
     /**
      * Obtient la valeur de la propriété contentType.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getContentType() {
         return contentType;
@@ -106,11 +106,11 @@ public class BlobType {
 
     /**
      * Définit la valeur de la propriété contentType.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setContentType(String value) {
         this.contentType = value;
@@ -118,11 +118,11 @@ public class BlobType {
 
     /**
      * Obtient la valeur de la propriété contentEncoding.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getContentEncoding() {
         if (contentEncoding == null) {
@@ -134,11 +134,11 @@ public class BlobType {
 
     /**
      * Définit la valeur de la propriété contentEncoding.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setContentEncoding(String value) {
         this.contentEncoding = value;
@@ -146,11 +146,11 @@ public class BlobType {
 
     /**
      * Obtient la valeur de la propriété contentEncryption.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getContentEncryption() {
         return contentEncryption;
@@ -158,11 +158,11 @@ public class BlobType {
 
     /**
      * Définit la valeur de la propriété contentEncryption.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setContentEncryption(String value) {
         this.contentEncryption = value;
@@ -170,7 +170,7 @@ public class BlobType {
 
     /**
      * Obtient la valeur de la propriété etk.
-     * 
+     *
      * @return
      *     possible object is
      *     byte[]
@@ -181,7 +181,7 @@ public class BlobType {
 
     /**
      * Définit la valeur de la propriété etk.
-     * 
+     *
      * @param value
      *     allowed object is
      *     byte[]
@@ -192,7 +192,7 @@ public class BlobType {
 
     /**
      * Obtient la valeur de la propriété hashValue.
-     * 
+     *
      * @return
      *     possible object is
      *     byte[]
@@ -203,7 +203,7 @@ public class BlobType {
 
     /**
      * Définit la valeur de la propriété hashValue.
-     * 
+     *
      * @param value
      *     allowed object is
      *     byte[]
@@ -214,11 +214,11 @@ public class BlobType {
 
     /**
      * Obtient la valeur de la propriété id.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -226,11 +226,11 @@ public class BlobType {
 
     /**
      * Définit la valeur de la propriété id.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(String value) {
         this.id = value;
@@ -238,11 +238,11 @@ public class BlobType {
 
     /**
      * Obtient la valeur de la propriété reference.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getReference() {
         return reference;
@@ -250,11 +250,11 @@ public class BlobType {
 
     /**
      * Définit la valeur de la propriété reference.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setReference(String value) {
         this.reference = value;
@@ -262,11 +262,11 @@ public class BlobType {
 
     /**
      * Obtient la valeur de la propriété issuer.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIssuer() {
         return issuer;
@@ -274,11 +274,11 @@ public class BlobType {
 
     /**
      * Définit la valeur de la propriété issuer.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIssuer(String value) {
         this.issuer = value;
@@ -286,11 +286,11 @@ public class BlobType {
 
     /**
      * Obtient la valeur de la propriété messageVersion.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMessageVersion() {
         return messageVersion;
@@ -298,11 +298,11 @@ public class BlobType {
 
     /**
      * Définit la valeur de la propriété messageVersion.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMessageVersion(String value) {
         this.messageVersion = value;

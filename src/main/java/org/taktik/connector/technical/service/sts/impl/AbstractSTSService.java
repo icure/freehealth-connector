@@ -7,9 +7,9 @@ import org.taktik.connector.technical.service.sts.domain.SAMLNameIdentifier;
 import org.taktik.connector.technical.service.sts.security.Credential;
 import org.taktik.connector.technical.utils.DateUtils;
 import java.security.cert.X509Certificate;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 

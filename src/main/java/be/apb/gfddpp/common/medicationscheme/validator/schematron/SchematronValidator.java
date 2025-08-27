@@ -1,6 +1,6 @@
 package be.apb.gfddpp.common.medicationscheme.validator.schematron;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.xml.sax.SAXException;

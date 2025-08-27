@@ -29,8 +29,6 @@ import java.security.NoSuchAlgorithmException
 import java.security.cert.CertificateException
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
-import java.util.*
-import javax.smartcardio.CardException
 
 /**
  * One BeIDCard instance represents one Belgian Electronic Identity Card,
@@ -94,7 +92,7 @@ class RemoteBeIDCard(private val card: CardConnection) {
         log.debug("closing eID card")
         try {
             card.disconnect()
-        } catch (e: CardException) {
+        } catch (e: Exception) {
             log.error(
                 "could not disconnect the card: "
                     + e.message
@@ -112,11 +110,11 @@ class RemoteBeIDCard(private val card: CardConnection) {
      * @param fileType
      * @return the certificate requested
      * @throws CertificateException
-     * @throws CardException
+     * @throws Exception
      * @throws IOException
      * @throws InterruptedException
      */
-    @Throws(CertificateException::class, CardException::class, IOException::class, InterruptedException::class)
+    @Throws(CertificateException::class, Exception::class, IOException::class, InterruptedException::class)
     fun getCertificate(fileName: String): X509Certificate =
         certificateFactory.generateCertificate(ByteArrayInputStream(card.readFile(fileName))) as X509Certificate
 
@@ -125,13 +123,13 @@ class RemoteBeIDCard(private val card: CardConnection) {
      * for `getCertificate(FileType.AuthentificationCertificate)`
      *
      * @return the X509 Authentication Certificate from the card.
-     * @throws CardException
+     * @throws Exception
      * @throws IOException
      * @throws CertificateException
      * @throws InterruptedException
      */
     @get:Throws(
-        CardException::class,
+        Exception::class,
         IOException::class,
         CertificateException::class,
         InterruptedException::class
@@ -145,13 +143,13 @@ class RemoteBeIDCard(private val card: CardConnection) {
      * `getCertificate(FileType.NonRepudiationCertificate)`
      *
      * @return
-     * @throws CardException
+     * @throws Exception
      * @throws IOException
      * @throws CertificateException
      * @throws InterruptedException
      */
     @get:Throws(
-        CardException::class,
+        Exception::class,
         IOException::class,
         CertificateException::class,
         InterruptedException::class
@@ -164,13 +162,13 @@ class RemoteBeIDCard(private val card: CardConnection) {
      * `getCertificate(FileType.CACertificate)`
      *
      * @return
-     * @throws CardException
+     * @throws Exception
      * @throws IOException
      * @throws CertificateException
      * @throws InterruptedException
      */
     @get:Throws(
-        CardException::class,
+        Exception::class,
         IOException::class,
         CertificateException::class,
         InterruptedException::class
@@ -183,13 +181,13 @@ class RemoteBeIDCard(private val card: CardConnection) {
      *
      * @return the Root CA X509 certificate.
      * @throws CertificateException
-     * @throws CardException
+     * @throws Exception
      * @throws IOException
      * @throws InterruptedException
      */
     @get:Throws(
         CertificateException::class,
-        CardException::class,
+        Exception::class,
         IOException::class,
         InterruptedException::class
     )
@@ -201,13 +199,13 @@ class RemoteBeIDCard(private val card: CardConnection) {
      * method for `getCertificate(FileType.RRNCertificate)`
      *
      * @return
-     * @throws CardException
+     * @throws Exception
      * @throws IOException
      * @throws CertificateException
      * @throws InterruptedException
      */
     @get:Throws(
-        CardException::class,
+        Exception::class,
         IOException::class,
         CertificateException::class,
         InterruptedException::class
@@ -226,11 +224,11 @@ class RemoteBeIDCard(private val card: CardConnection) {
      * which certificate's chain to return
      * @return the certificate's chain up to and including the Belgian Root Cert
      * @throws CertificateException
-     * @throws CardException
+     * @throws Exception
      * @throws IOException
      * @throws InterruptedException
      */
-    @Throws(CertificateException::class, CardException::class, IOException::class, InterruptedException::class)
+    @Throws(CertificateException::class, Exception::class, IOException::class, InterruptedException::class)
     fun getCertificateChain(fileName: String) = listOfNotNull(
         certificateFactory.generateCertificate(ByteArrayInputStream(card.readFile(fileName))) as X509Certificate,
         if (fileName == "Authentication" || fileName == "Signature") { certificateFactory.generateCertificate(ByteArrayInputStream(card.readFile("CA"))) as X509Certificate } else null,
@@ -243,13 +241,13 @@ class RemoteBeIDCard(private val card: CardConnection) {
      * `getCertificateChain(FileType.AuthentificationCertificate)`
      *
      * @return the authentication certificate chain
-     * @throws CardException
+     * @throws Exception
      * @throws IOException
      * @throws CertificateException
      * @throws InterruptedException
      */
     @get:Throws(
-        CardException::class,
+        Exception::class,
         IOException::class,
         CertificateException::class,
         InterruptedException::class
@@ -263,13 +261,13 @@ class RemoteBeIDCard(private val card: CardConnection) {
      * `getCertificateChain(FileType.NonRepudiationCertificate)`
      *
      * @return the non-repudiation certificate chain
-     * @throws CardException
+     * @throws Exception
      * @throws IOException
      * @throws CertificateException
      * @throws InterruptedException
      */
     @get:Throws(
-        CardException::class,
+        Exception::class,
         IOException::class,
         CertificateException::class,
         InterruptedException::class
@@ -283,13 +281,13 @@ class RemoteBeIDCard(private val card: CardConnection) {
      * `getCertificateChain(FileType.CACertificate)`
      *
      * @return the citizen ca certificate chain
-     * @throws CardException
+     * @throws Exception
      * @throws IOException
      * @throws CertificateException
      * @throws InterruptedException
      */
     @get:Throws(
-        CardException::class,
+        Exception::class,
         IOException::class,
         CertificateException::class,
         InterruptedException::class
@@ -303,13 +301,13 @@ class RemoteBeIDCard(private val card: CardConnection) {
      * `getCertificateChain(FileType.RRNCertificate)`
      *
      * @return the national registry certificate chain
-     * @throws CardException
+     * @throws Exception
      * @throws IOException
      * @throws CertificateException
      * @throws InterruptedException
      */
     @get:Throws(
-        CardException::class,
+        Exception::class,
         IOException::class,
         CertificateException::class,
         InterruptedException::class
@@ -330,7 +328,7 @@ class RemoteBeIDCard(private val card: CardConnection) {
      * @param applicationName
      * the optional application name.
      * @return
-     * @throws CardException
+     * @throws Exception
      * @throws IOException
      * @throws InterruptedException
      * @throws UserCancelledException
@@ -347,14 +345,14 @@ class RemoteBeIDCard(private val card: CardConnection) {
      * @param requireSecureReader
      * `true` if a secure pinpad reader is required.
      * @return
-     * @throws CardException
+     * @throws Exception
      * @throws IOException
      * @throws InterruptedException
      * @throws UserCancelledException
      */
     @JvmOverloads
     @Throws(
-        CardException::class,
+        Exception::class,
         IOException::class,
         InterruptedException::class,
         UserCancelledException::class
@@ -378,7 +376,7 @@ class RemoteBeIDCard(private val card: CardConnection) {
      * @return a SHA-1 digest of the input data signed by the citizen's
      * authentication key
      * @throws NoSuchAlgorithmException
-     * @throws CardException
+     * @throws Exception
      * @throws IOException
      * @throws InterruptedException
      * @throws UserCancelledException
@@ -396,7 +394,7 @@ class RemoteBeIDCard(private val card: CardConnection) {
      * @return a SHA-1 digest of the input data signed by the citizen's
      * authentication key
      * @throws NoSuchAlgorithmException
-     * @throws CardException
+     * @throws Exception
      * @throws IOException
      * @throws InterruptedException
      * @throws UserCancelledException
@@ -404,7 +402,7 @@ class RemoteBeIDCard(private val card: CardConnection) {
     @JvmOverloads
     @Throws(
         NoSuchAlgorithmException::class,
-        CardException::class,
+        Exception::class,
         IOException::class,
         InterruptedException::class,
         UserCancelledException::class
@@ -428,9 +426,9 @@ class RemoteBeIDCard(private val card: CardConnection) {
      * @param size
      * the size of the requested random data.
      * @return size bytes of random data
-     * @throws CardException
+     * @throws Exception
      */
-    @Throws(CardException::class)
+    @Throws(Exception::class)
     fun getChallenge(size: Int) = card.getChallenge(size)
 
     /**
@@ -442,13 +440,13 @@ class RemoteBeIDCard(private val card: CardConnection) {
      * the transaction message to be signed.
      * @param requireSecureReader
      * @return
-     * @throws CardException
+     * @throws Exception
      * @throws IOException
      * @throws InterruptedException
      * @throws UserCancelledException
      */
     @Throws(
-        CardException::class,
+        Exception::class,
         IOException::class,
         InterruptedException::class,
         UserCancelledException::class

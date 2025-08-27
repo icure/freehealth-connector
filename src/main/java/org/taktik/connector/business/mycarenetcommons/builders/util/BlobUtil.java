@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.w3._2005._05.xmlmime.Base64Binary;
 
 public class BlobUtil implements ConfigurationModuleBootstrap.ModuleBootstrapHook {

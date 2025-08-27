@@ -1,17 +1,17 @@
 
 package be.fgov.ehealth.mediprima.core.v2;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * <p>Classe Java pour DoctorType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="DoctorType">
  *   &lt;complexContent>
@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DoctorType", propOrder = {
@@ -39,11 +39,11 @@ public class DoctorType
 
     /**
      * Obtient la valeur de la propriété healthCareProviderList.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link NihiiNumberListType }
-     *     
+     *
      */
     public NihiiNumberListType getHealthCareProviderList() {
         return healthCareProviderList;
@@ -51,11 +51,11 @@ public class DoctorType
 
     /**
      * Définit la valeur de la propriété healthCareProviderList.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link NihiiNumberListType }
-     *     
+     *
      */
     public void setHealthCareProviderList(NihiiNumberListType value) {
         this.healthCareProviderList = value;

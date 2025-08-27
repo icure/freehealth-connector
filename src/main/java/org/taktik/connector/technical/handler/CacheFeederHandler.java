@@ -4,10 +4,10 @@ import org.taktik.connector.technical.utils.ConnectorXmlUtils;
 import be.fgov.ehealth.technicalconnector.bootstrap.bcp.EndpointDistributor;
 import be.fgov.ehealth.technicalconnector.bootstrap.bcp.domain.CacheInformation;
 import be.fgov.ehealth.technicalconnector.bootstrap.bcp.utils.CacheHelper;
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPException;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -19,7 +19,7 @@ public class CacheFeederHandler extends AbstractSOAPHandler {
    private Source request;
 
    public boolean handleOutbound(SOAPMessageContext context) {
-      this.endpoint = (String)context.get("javax.xml.ws.service.endpoint.address");
+      this.endpoint = (String)context.get("jakarta.xml.ws.service.endpoint.address");
       if (distributor.mustCache(this.endpoint)) {
          try {
             Node body = context.getMessage().getSOAPBody().cloneNode(true);

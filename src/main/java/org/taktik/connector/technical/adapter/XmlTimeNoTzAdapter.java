@@ -7,7 +7,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.ISODateTimeFormat;
 import org.taktik.connector.technical.utils.DateUtils;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import java.text.MessageFormat;
 
 public class XmlTimeNoTzAdapter extends XmlTimeAdapter {

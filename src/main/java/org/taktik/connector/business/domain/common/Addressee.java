@@ -2,7 +2,7 @@ package org.taktik.connector.business.domain.common;
 
 import java.io.Serializable;
 
-import static org.apache.commons.lang.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*;
 
 /**
  * Created by aduchate on 8/11/13, 16:16

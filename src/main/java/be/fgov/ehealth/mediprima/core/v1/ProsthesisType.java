@@ -1,17 +1,17 @@
 
 package be.fgov.ehealth.mediprima.core.v1;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * <p>Classe Java pour ProsthesisType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="ProsthesisType">
  *   &lt;complexContent>
@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ProsthesisType", namespace = "urn:be:fgov:ehealth:mediprima:core:v1", propOrder = {
@@ -39,11 +39,11 @@ public class ProsthesisType
 
     /**
      * Obtient la valeur de la propriété companyList.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CompanyListType }
-     *     
+     *
      */
     public CompanyListType getCompanyList() {
         return companyList;
@@ -51,11 +51,11 @@ public class ProsthesisType
 
     /**
      * Définit la valeur de la propriété companyList.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CompanyListType }
-     *     
+     *
      */
     public void setCompanyList(CompanyListType value) {
         this.companyList = value;

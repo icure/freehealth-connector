@@ -1,25 +1,25 @@
 
 package be.fgov.ehealth.mediprima.protocol.v1;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlElementDecl;
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.annotation.XmlElementDecl;
+import jakarta.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the be.fgov.ehealth.mediprima.protocol.v1 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the be.fgov.ehealth.mediprima.protocol.v1 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -39,14 +39,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: be.fgov.ehealth.mediprima.protocol.v1
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link ParamedicType }
-     * 
+     *
      */
     public ParamedicType createParamedicType() {
         return new ParamedicType();
@@ -54,7 +54,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ConsultCarmedInterventionRequestType }
-     * 
+     *
      */
     public ConsultCarmedInterventionRequestType createConsultCarmedInterventionRequestType() {
         return new ConsultCarmedInterventionRequestType();
@@ -62,7 +62,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ConsultCarmedInterventionResponseType }
-     * 
+     *
      */
     public ConsultCarmedInterventionResponseType createConsultCarmedInterventionResponseType() {
         return new ConsultCarmedInterventionResponseType();
@@ -70,7 +70,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CbssStatusType }
-     * 
+     *
      */
     public CbssStatusType createCbssStatusType() {
         return new CbssStatusType();
@@ -78,7 +78,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MedicalCardRegistryStatusType }
-     * 
+     *
      */
     public MedicalCardRegistryStatusType createMedicalCardRegistryStatusType() {
         return new MedicalCardRegistryStatusType();
@@ -86,7 +86,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ProsthesisType }
-     * 
+     *
      */
     public ProsthesisType createProsthesisType() {
         return new ProsthesisType();
@@ -94,7 +94,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RefundPodmiSppisType }
-     * 
+     *
      */
     public RefundPodmiSppisType createRefundPodmiSppisType() {
         return new RefundPodmiSppisType();
@@ -102,7 +102,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MiscellaneousType }
-     * 
+     *
      */
     public MiscellaneousType createMiscellaneousType() {
         return new MiscellaneousType();
@@ -110,7 +110,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PeriodType }
-     * 
+     *
      */
     public PeriodType createPeriodType() {
         return new PeriodType();
@@ -118,7 +118,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CompanyListType }
-     * 
+     *
      */
     public CompanyListType createCompanyListType() {
         return new CompanyListType();
@@ -126,7 +126,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BeneficiaryType }
-     * 
+     *
      */
     public BeneficiaryType createBeneficiaryType() {
         return new BeneficiaryType();
@@ -134,7 +134,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AllowedSupplementsType }
-     * 
+     *
      */
     public AllowedSupplementsType createAllowedSupplementsType() {
         return new AllowedSupplementsType();
@@ -142,7 +142,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CarmedAttributedListType }
-     * 
+     *
      */
     public CarmedAttributedListType createCarmedAttributedListType() {
         return new CarmedAttributedListType();
@@ -150,7 +150,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NameType }
-     * 
+     *
      */
     public NameType createNameType() {
         return new NameType();
@@ -158,7 +158,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link HospitalizationType }
-     * 
+     *
      */
     public HospitalizationType createHospitalizationType() {
         return new HospitalizationType();
@@ -166,7 +166,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SupplementTypeListType }
-     * 
+     *
      */
     public SupplementTypeListType createSupplementTypeListType() {
         return new SupplementTypeListType();
@@ -174,7 +174,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link InformationType }
-     * 
+     *
      */
     public InformationType createInformationType() {
         return new InformationType();
@@ -182,7 +182,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PharmaceuticalDrugType }
-     * 
+     *
      */
     public PharmaceuticalDrugType createPharmaceuticalDrugType() {
         return new PharmaceuticalDrugType();
@@ -190,7 +190,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PodmiSppisPartType }
-     * 
+     *
      */
     public PodmiSppisPartType createPodmiSppisPartType() {
         return new PodmiSppisPartType();
@@ -198,7 +198,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ConsultCarmedDataType }
-     * 
+     *
      */
     public ConsultCarmedDataType createConsultCarmedDataType() {
         return new ConsultCarmedDataType();
@@ -206,7 +206,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CarmedContentCareType }
-     * 
+     *
      */
     public CarmedContentCareType createCarmedContentCareType() {
         return new CarmedContentCareType();
@@ -214,7 +214,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PswcSupportType }
-     * 
+     *
      */
     public PswcSupportType createPswcSupportType() {
         return new PswcSupportType();
@@ -222,7 +222,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MedicalCardRegistryMessageType }
-     * 
+     *
      */
     public MedicalCardRegistryMessageType createMedicalCardRegistryMessageType() {
         return new MedicalCardRegistryMessageType();
@@ -230,7 +230,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ConsultCarmedInterventionResultType }
-     * 
+     *
      */
     public ConsultCarmedInterventionResultType createConsultCarmedInterventionResultType() {
         return new ConsultCarmedInterventionResultType();
@@ -238,7 +238,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ZivAmiPatientPartType }
-     * 
+     *
      */
     public ZivAmiPatientPartType createZivAmiPatientPartType() {
         return new ZivAmiPatientPartType();
@@ -246,7 +246,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BySsinType }
-     * 
+     *
      */
     public BySsinType createBySsinType() {
         return new BySsinType();
@@ -254,7 +254,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MedicalTransportationType }
-     * 
+     *
      */
     public MedicalTransportationType createMedicalTransportationType() {
         return new MedicalTransportationType();
@@ -262,7 +262,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NihiiNumberListType }
-     * 
+     *
      */
     public NihiiNumberListType createNihiiNumberListType() {
         return new NihiiNumberListType();
@@ -270,7 +270,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DoctorType }
-     * 
+     *
      */
     public DoctorType createDoctorType() {
         return new DoctorType();
@@ -278,7 +278,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OcmwCpasType }
-     * 
+     *
      */
     public OcmwCpasType createOcmwCpasType() {
         return new OcmwCpasType();
@@ -286,7 +286,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MedicalCoverType }
-     * 
+     *
      */
     public MedicalCoverType createMedicalCoverType() {
         return new MedicalCoverType();
@@ -294,7 +294,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MedicalCoverCommonInformationType }
-     * 
+     *
      */
     public MedicalCoverCommonInformationType createMedicalCoverCommonInformationType() {
         return new MedicalCoverCommonInformationType();
@@ -302,7 +302,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CarmedIdentifierType }
-     * 
+     *
      */
     public CarmedIdentifierType createCarmedIdentifierType() {
         return new CarmedIdentifierType();
@@ -310,7 +310,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StatusType }
-     * 
+     *
      */
     public StatusType createStatusType() {
         return new StatusType();
@@ -318,7 +318,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StatusDetailType }
-     * 
+     *
      */
     public StatusDetailType createStatusDetailType() {
         return new StatusDetailType();
@@ -326,7 +326,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AuthorType }
-     * 
+     *
      */
     public AuthorType createAuthorType() {
         return new AuthorType();
@@ -334,7 +334,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ActorType }
-     * 
+     *
      */
     public ActorType createActorType() {
         return new ActorType();
@@ -342,7 +342,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link IdType }
-     * 
+     *
      */
     public IdType createIdType() {
         return new IdType();
@@ -350,7 +350,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StatusCodeType }
-     * 
+     *
      */
     public StatusCodeType createStatusCodeType() {
         return new StatusCodeType();
@@ -358,7 +358,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PaginationResponseType }
-     * 
+     *
      */
     public PaginationResponseType createPaginationResponseType() {
         return new PaginationResponseType();
@@ -366,7 +366,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AuthorRequestType }
-     * 
+     *
      */
     public AuthorRequestType createAuthorRequestType() {
         return new AuthorRequestType();
@@ -374,7 +374,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AuthorPaginationRequestType }
-     * 
+     *
      */
     public AuthorPaginationRequestType createAuthorPaginationRequestType() {
         return new AuthorPaginationRequestType();
@@ -382,7 +382,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PaginationRequestType }
-     * 
+     *
      */
     public PaginationRequestType createPaginationRequestType() {
         return new PaginationRequestType();
@@ -390,7 +390,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PaginationStatusResponseType }
-     * 
+     *
      */
     public PaginationStatusResponseType createPaginationStatusResponseType() {
         return new PaginationStatusResponseType();
@@ -398,7 +398,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StatusResponseType }
-     * 
+     *
      */
     public StatusResponseType createStatusResponseType() {
         return new StatusResponseType();
@@ -406,7 +406,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link RequestType }
-     * 
+     *
      */
     public RequestType createRequestType() {
         return new RequestType();
@@ -414,7 +414,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResponseType }
-     * 
+     *
      */
     public ResponseType createResponseType() {
         return new ResponseType();
@@ -422,7 +422,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ParamedicType.ProviderList }
-     * 
+     *
      */
     public ParamedicType.ProviderList createParamedicTypeProviderList() {
         return new ParamedicType.ProviderList();
@@ -430,7 +430,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConsultCarmedInterventionResponseType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:be:fgov:ehealth:mediprima:protocol:v1", name = "ConsultCarmedInterventionResponse")
     public JAXBElement<ConsultCarmedInterventionResponseType> createConsultCarmedInterventionResponse(ConsultCarmedInterventionResponseType value) {
@@ -439,7 +439,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link StatusType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:be:fgov:ehealth:commons:core:v2", name = "Status")
     public JAXBElement<StatusType> createStatus(StatusType value) {
@@ -448,7 +448,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MedicalCardRegistryStatusType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:be:fgov:ehealth:mediprima:core:v1", name = "MedicalCardRegistryStatus")
     public JAXBElement<MedicalCardRegistryStatusType> createMedicalCardRegistryStatus(MedicalCardRegistryStatusType value) {
@@ -457,7 +457,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link StatusDetailType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:be:fgov:ehealth:commons:core:v2", name = "StatusDetail")
     public JAXBElement<StatusDetailType> createStatusDetail(StatusDetailType value) {
@@ -466,7 +466,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link IdType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:be:fgov:ehealth:commons:core:v2", name = "Id")
     public JAXBElement<IdType> createId(IdType value) {
@@ -475,7 +475,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AuthorType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:be:fgov:ehealth:commons:core:v2", name = "Author")
     public JAXBElement<AuthorType> createAuthor(AuthorType value) {
@@ -484,7 +484,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ActorType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:be:fgov:ehealth:commons:core:v2", name = "Patient")
     public JAXBElement<ActorType> createPatient(ActorType value) {
@@ -493,7 +493,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ActorType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:be:fgov:ehealth:commons:core:v2", name = "HcParty")
     public JAXBElement<ActorType> createHcParty(ActorType value) {
@@ -502,7 +502,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:be:fgov:ehealth:commons:core:v2", name = "StatusMessage")
     public JAXBElement<String> createStatusMessage(String value) {
@@ -511,7 +511,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConsultCarmedInterventionRequestType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:be:fgov:ehealth:mediprima:protocol:v1", name = "ConsultCarmedInterventionRequest")
     public JAXBElement<ConsultCarmedInterventionRequestType> createConsultCarmedInterventionRequest(ConsultCarmedInterventionRequestType value) {
@@ -520,7 +520,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CbssStatusType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:be:fgov:ehealth:mediprima:core:v1", name = "CbssStatus")
     public JAXBElement<CbssStatusType> createCbssStatus(CbssStatusType value) {
@@ -529,7 +529,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link StatusCodeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:be:fgov:ehealth:commons:core:v2", name = "StatusCode")
     public JAXBElement<StatusCodeType> createStatusCode(StatusCodeType value) {

@@ -7,7 +7,7 @@ import org.taktik.connector.technical.utils.ConnectorIOUtils;
 import org.taktik.connector.technical.utils.ConnectorXmlUtils;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;

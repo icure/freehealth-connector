@@ -168,7 +168,7 @@ class ConsultRnServiceImpl(private val stsService: STSService) : ConsultRnServic
                 this.gender =
                     mid.gender?.let {
                         be.fgov.ehealth.consultrn.commons.core.v3.GenderType()
-                            .apply { genderCode = it.substring(0, 1).toUpperCase() }
+                            .apply { genderCode = it.substring(0, 1).uppercase() }
                     }
                 this.residentialAddress = mid.residentialAddress?.let {
                     ResidentialAddressRequestType().apply {

@@ -17,7 +17,7 @@
  */
 package org.taktik.freehealth.middleware.pkcs11.beid
 
-import be.fedict.commons.eid.jca.BeIDManagerFactoryParameters
+import be.fedict.commons.eid.jca.ssl.BeIDManagerFactoryParameters
 import javax.net.ssl.X509ExtendedKeyManager
 import java.security.KeyStore
 import java.security.KeyStoreException

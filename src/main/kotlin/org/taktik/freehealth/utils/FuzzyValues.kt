@@ -20,9 +20,9 @@
 
 package org.taktik.freehealth.utils
 
-import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
 import org.apache.commons.lang3.math.NumberUtils
 import org.joda.time.DateTime
+import org.taktik.connector.business.domain.newXMLGregorianCalendar
 import java.time.Instant
 
 import java.time.LocalDateTime
@@ -31,6 +31,7 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalUnit
 import javax.xml.datatype.DatatypeConstants
+import javax.xml.datatype.XMLGregorianCalendar
 
 /**
  * This utility class provides methods to detect the type of value submitted to it (dates, ssin,...) and handle the
@@ -175,11 +176,11 @@ object FuzzyValues {
         }
     }
 
-    fun getXMLGregorianCalendarFromFuzzyLong(date : Long?) : XMLGregorianCalendarImpl? {
+    fun getXMLGregorianCalendarFromFuzzyLong(date : Long?) : XMLGregorianCalendar? {
         return date?.let {
             if (it%10000000000 == 0L) it/10000000000 else if (it%100000000 == 0L) it/100000000 else if (it<99991231 && it%10000 == 0L) it/10000 else if (it<99991231 && it%100 == 0L) it/100 else it /*normalize*/
         }?.let { d ->
-            XMLGregorianCalendarImpl().apply {
+            newXMLGregorianCalendar().apply {
                 millisecond = DatatypeConstants.FIELD_UNDEFINED
                 timezone = DatatypeConstants.FIELD_UNDEFINED
                 when (d) {
@@ -199,7 +200,7 @@ object FuzzyValues {
         }
     }
 
-    fun XMLGregorianCalendarImpl?.justDate() = this?.let { XMLGregorianCalendarImpl().apply {
+    fun XMLGregorianCalendar?.justDate() = this?.let { newXMLGregorianCalendar().apply {
         this.year = it.year
         this.month = it.month
         this.day = it.day
@@ -210,7 +211,7 @@ object FuzzyValues {
         this.millisecond = DatatypeConstants.FIELD_UNDEFINED
     } }
 
-    fun XMLGregorianCalendarImpl?.justTime() = this?.let { XMLGregorianCalendarImpl().apply {
+    fun XMLGregorianCalendar?.justTime() = this?.let { newXMLGregorianCalendar().apply {
         this.year = DatatypeConstants.FIELD_UNDEFINED
         this.month = DatatypeConstants.FIELD_UNDEFINED
         this.day = DatatypeConstants.FIELD_UNDEFINED

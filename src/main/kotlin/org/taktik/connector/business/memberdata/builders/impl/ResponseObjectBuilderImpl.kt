@@ -29,8 +29,8 @@ import org.w3c.dom.Document
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.JAXBException
+import jakarta.xml.bind.JAXBContext
+import jakarta.xml.bind.JAXBException
 import javax.xml.transform.Transformer
 import javax.xml.transform.TransformerException
 import javax.xml.transform.TransformerFactory

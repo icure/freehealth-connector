@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2018 Taktik SA
  *
@@ -21,14 +20,15 @@
 package org.taktik.freehealth.middleware
 
 import org.eclipse.jetty.client.HttpClient
-import org.springframework.cache.CacheManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.authentication.ProviderManager
+import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -37,48 +37,70 @@ import org.springframework.security.web.FilterChainProxy
 import org.springframework.security.web.access.ExceptionTranslationFilter
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+import org.springframework.security.web.util.matcher.AnyRequestMatcher
 import org.taktik.freehealth.middleware.dao.CouchDbProperties
 import org.taktik.freehealth.middleware.dao.CouchdbUserDetailsService
 import org.taktik.freehealth.middleware.web.Http401UnauthorizedEntryPoint
 import org.taktik.freehealth.middleware.web.LoginUrlAuthenticationEntryPoint
 
 @Configuration
+@EnableWebSecurity
 class SecurityConfig {
-	@Bean fun securityConfigAdapter(httpClient: HttpClient, couchDbProperties: CouchDbProperties, authenticationProperties: AuthenticationProperties, cacheManager: CacheManager, userDetailsService: UserDetailsService) = SecurityConfigAdapter(httpClient, couchDbProperties, authenticationProperties, cacheManager, userDetailsService)
-    @Bean fun httpClient() = HttpClient().apply { start() }
-    @Bean fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder(8)
-    @Bean fun userDetailsService(passwordEncoder: PasswordEncoder, httpClient: HttpClient, couchDbProperties: CouchDbProperties, authenticationProperties: AuthenticationProperties): CouchdbUserDetailsService = CouchdbUserDetailsService(httpClient, couchDbProperties, authenticationProperties, passwordEncoder)
-}
-
-class SecurityConfigAdapter(val httpClient: HttpClient, val couchDbProperties: CouchDbProperties, val authenticationProperties: AuthenticationProperties, val cacheManager: CacheManager, private val userDetailsService: UserDetailsService) : WebSecurityConfigurerAdapter(false) {
     @Bean
-    override fun authenticationManagerBean(): AuthenticationManager {
-        return super.authenticationManagerBean()
-    }
+    fun httpClient() = HttpClient().apply { start() }
 
-    override fun configure(auth: AuthenticationManagerBuilder?) {
-        val passwordEncoder = BCryptPasswordEncoder(8)
-		auth!!.authenticationProvider(DaoAuthenticationProvider().apply {
-            setPasswordEncoder(passwordEncoder)
+    @Bean
+    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder(8)
+
+    @Bean
+    fun userDetailsService(
+        passwordEncoder: PasswordEncoder,
+        httpClient: HttpClient,
+        couchDbProperties: CouchDbProperties,
+        authenticationProperties: AuthenticationProperties
+    ): CouchdbUserDetailsService = CouchdbUserDetailsService(httpClient, couchDbProperties, authenticationProperties, passwordEncoder)
+
+    @Bean
+    fun authenticationProvider(userDetailsService: UserDetailsService): AuthenticationProvider =
+        DaoAuthenticationProvider().apply {
+            setPasswordEncoder(BCryptPasswordEncoder(8))
             setUserDetailsService(userDetailsService)
-        })
-	}
+        }
 
-	override fun configure(http: HttpSecurity?) {
-        val authenticationManager = authenticationManager()
+    @Bean
+    fun authenticationManager(authenticationProvider: AuthenticationProvider): AuthenticationManager =
+        ProviderManager(listOf(authenticationProvider))
+
+    @Bean
+    fun securityFilterChain(
+        http: HttpSecurity,
+        authenticationManager: AuthenticationManager
+    ): SecurityFilterChain {
         val loginUrlAuthenticationEntryPoint = LoginUrlAuthenticationEntryPoint("/", mapOf("/api" to "api/login.html"))
 
-        http!!.csrf().disable().addFilterBefore(FilterChainProxy(listOf(
-            DefaultSecurityFilterChain(AntPathRequestMatcher("/**"), BasicAuthenticationFilter(authenticationManager), ExceptionTranslationFilter(Http401UnauthorizedEntryPoint())))), FilterSecurityInterceptor::class.java)
-				.authorizeRequests()
-
-				.antMatchers("/api/login.html").permitAll()
-				.antMatchers("/api/css/**").permitAll()
-				.antMatchers("/api/**").permitAll() //.hasRole("USER")
-
-				.antMatchers("/").permitAll()
-                .antMatchers("/ws/**").permitAll() //.hasRole("USER")
-				.antMatchers("/**").permitAll() //.hasRole("USER")
-	}
+        http
+            .csrf { it.disable() }
+            .addFilterBefore(
+                FilterChainProxy(
+                    listOf(
+                        DefaultSecurityFilterChain(
+                            AnyRequestMatcher.INSTANCE,
+                            BasicAuthenticationFilter(authenticationManager),
+                            ExceptionTranslationFilter(Http401UnauthorizedEntryPoint())
+                        )
+                    )
+                ),
+                FilterSecurityInterceptor::class.java
+            )
+            .authorizeHttpRequests {
+                it
+                    .requestMatchers("/api/login.html").permitAll()
+                    .requestMatchers("/api/css/**").permitAll()
+                    .requestMatchers("/api/**").permitAll()
+                    .requestMatchers("/").permitAll()
+                    .requestMatchers("/ws/**").permitAll()
+                    .requestMatchers("/**").permitAll()
+            }
+        return http.build()
+    }
 }

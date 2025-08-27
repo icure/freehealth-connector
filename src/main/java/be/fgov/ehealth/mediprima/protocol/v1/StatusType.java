@@ -1,19 +1,19 @@
 
 package be.fgov.ehealth.mediprima.protocol.v1;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * StatusType of the requests
- * 
+ *
  * <p>Classe Java pour StatusType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="StatusType">
  *   &lt;complexContent>
@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "StatusType", namespace = "urn:be:fgov:ehealth:commons:core:v2", propOrder = {
@@ -47,11 +47,11 @@ public class StatusType {
 
     /**
      * Obtient la valeur de la propriété statusCode.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StatusCodeType }
-     *     
+     *
      */
     public StatusCodeType getStatusCode() {
         return statusCode;
@@ -59,11 +59,11 @@ public class StatusType {
 
     /**
      * Définit la valeur de la propriété statusCode.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StatusCodeType }
-     *     
+     *
      */
     public void setStatusCode(StatusCodeType value) {
         this.statusCode = value;
@@ -71,11 +71,11 @@ public class StatusType {
 
     /**
      * Obtient la valeur de la propriété statusMessage.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStatusMessage() {
         return statusMessage;
@@ -83,11 +83,11 @@ public class StatusType {
 
     /**
      * Définit la valeur de la propriété statusMessage.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStatusMessage(String value) {
         this.statusMessage = value;
@@ -95,11 +95,11 @@ public class StatusType {
 
     /**
      * Obtient la valeur de la propriété statusDetail.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StatusDetailType }
-     *     
+     *
      */
     public StatusDetailType getStatusDetail() {
         return statusDetail;
@@ -107,11 +107,11 @@ public class StatusType {
 
     /**
      * Définit la valeur de la propriété statusDetail.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StatusDetailType }
-     *     
+     *
      */
     public void setStatusDetail(StatusDetailType value) {
         this.statusDetail = value;

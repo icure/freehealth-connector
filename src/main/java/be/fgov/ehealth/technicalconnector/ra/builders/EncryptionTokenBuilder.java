@@ -5,8 +5,8 @@ import org.taktik.connector.technical.service.sts.security.Credential;
 import be.fgov.ehealth.technicalconnector.ra.utils.CertificateUtils;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.Validate;
 
 public final class EncryptionTokenBuilder {
    private EncryptionTokenBuilder() {

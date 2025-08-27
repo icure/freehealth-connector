@@ -8,7 +8,7 @@ import be.fgov.ehealth.technicalconnector.signature.impl.xades.domain.Qualifying
 import be.fgov.ehealth.technicalconnector.signature.impl.xades.domain.UnsignedPropertiesBuilder;
 import be.fgov.ehealth.technicalconnector.signature.resolvers.DocumentResolver;
 import java.util.Map;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.xml.security.exceptions.XMLSecurityException;
 import org.apache.xml.security.signature.ObjectContainer;
 import org.apache.xml.security.signature.XMLSignature;

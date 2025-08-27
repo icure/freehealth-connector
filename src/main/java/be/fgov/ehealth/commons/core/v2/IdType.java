@@ -1,6 +1,6 @@
 package be.fgov.ehealth.commons.core.v2;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "IdType", namespace = "urn:be:fgov:ehealth:commons:core:v2")

@@ -1,7 +1,7 @@
 package org.taktik.connector.business.therlink.domain
 
 import java.io.Serializable
-import org.apache.commons.lang.builder.ToStringBuilder
+import org.apache.commons.lang3.builder.ToStringBuilder
 
 class Author : Serializable {
     var hcParties: MutableSet<HcParty> = HashSet()

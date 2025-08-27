@@ -4,8 +4,8 @@ import be.fgov.ehealth.commons.protocol.SoapConversationLogger;
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import javax.xml.bind.annotation.*;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.bind.annotation.*;
+import jakarta.xml.soap.SOAPMessage;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(

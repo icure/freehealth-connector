@@ -1,10 +1,10 @@
 package org.taktik.connector.business.therlink.domain.requests
 
 import java.io.Serializable
-import org.apache.commons.lang.ArrayUtils
-import org.apache.commons.lang.builder.EqualsBuilder
-import org.apache.commons.lang.builder.HashCodeBuilder
-import org.apache.commons.lang.builder.ToStringBuilder
+import org.apache.commons.lang3.ArrayUtils
+import org.apache.commons.lang3.builder.EqualsBuilder
+import org.apache.commons.lang3.builder.HashCodeBuilder
+import org.apache.commons.lang3.builder.ToStringBuilder
 import org.bouncycastle.util.Arrays
 
 class BinaryProof(var method: String?, binary: ByteArray) : Serializable {

@@ -1,7 +1,5 @@
 package org.taktik.freehealth.middleware.service.impl
 
-import com.sun.org.apache.xerces.internal.dom.ElementNSImpl
-import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
 import oasis.names.tc.saml._2_0.assertion.Assertion
 import oasis.names.tc.saml._2_0.assertion.Attribute
 import oasis.names.tc.saml._2_0.assertion.AttributeStatement
@@ -11,7 +9,6 @@ import oasis.names.tc.saml._2_0.assertion.Subject
 import oasis.names.tc.saml._2_0.assertion.SubjectConfirmation
 import oasis.names.tc.saml._2_0.assertion.SubjectConfirmationDataType
 import oasis.names.tc.saml._2_0.protocol.AttributeQuery
-import oasis.names.tc.saml._2_0.protocol.Response
 import org.joda.time.DateTime
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.daas.impl.AttributeServiceImpl
@@ -21,6 +18,7 @@ import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.DataAttributeService
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.utils.FuzzyValues
+import org.w3c.dom.Element
 import org.w3c.dom.Node
 import java.text.DecimalFormat
 import java.util.*
@@ -85,7 +83,7 @@ class DataAttributeServiceImpl(private val stsService: STSService) : DataAttribu
             attributes
                 .firstOrNull()?.let { attribute ->
                     fun collectSiblings(acc: Collection<Node>, node: Node): Collection<Node> = (acc + node).let { nodes -> node.nextSibling?.let { collectSiblings(nodes, it)} ?: nodes }
-                    val data = collectSiblings(listOf(), (attribute.attributeValues.first() as ElementNSImpl).firstChild.firstChild)
+                    val data = collectSiblings(listOf(), (attribute.attributeValues.first() as Element).firstChild.firstChild)
                     val destinations = data.firstOrNull { it.localName == "Destinations" }?.let { collectSiblings(listOf(), it.firstChild) }?.map { dest ->
                         (dest.firstChild?.let { collectSiblings(listOf(), it) }?.map {
                             (it.attributes.getNamedItemNS("http://www.w3.org/XML/1998/namespace", "lang")?.textContent?.let { lng -> "${it.nodeName}:$lng" } ?: it.nodeName) to it.textContent

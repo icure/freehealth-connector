@@ -2,7 +2,7 @@ package org.taktik.connector.business.therlink.domain
 
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
-import org.apache.commons.lang.builder.EqualsBuilder
+import org.apache.commons.lang3.builder.EqualsBuilder
 import org.taktik.connector.business.therlink.exception.TherLinkBusinessConnectorException
 import org.taktik.connector.business.therlink.exception.TherLinkBusinessConnectorExceptionValues
 

@@ -82,7 +82,7 @@ abstract class AbstractIntegrationModule(val keyDepotService: KeyDepotService) {
             Security.addProvider(BouncyCastleProvider())
 
             MessageDumper.getInstance().init(propertyHandler)
-            System.setProperty("javax.xml.soap.SOAPFactory", "com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl")
+            System.setProperty("jakarta.xml.soap.SOAPFactory", "com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl")
 
             try {
                 log.info("Init recipe encryption - create symmKey")

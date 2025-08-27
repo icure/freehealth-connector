@@ -1,27 +1,27 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2017.05.11 à 02:53:46 PM CEST 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2017.05.11 à 02:53:46 PM CEST
 //
 
 
 package org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1;
 
 import java.io.Serializable;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * to specify the value of the item
- * 
+ *
  * <p>Classe Java pour recipecontentType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="recipecontentType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "recipecontentType", propOrder = {
@@ -74,11 +74,11 @@ public class RecipecontentType
 
     /**
      * Obtient la valeur de la propriété compoundprescription.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipecompoundprescriptionType }
-     *     
+     *
      */
     public RecipecompoundprescriptionType getCompoundprescription() {
         return compoundprescription;
@@ -86,11 +86,11 @@ public class RecipecontentType
 
     /**
      * Définit la valeur de la propriété compoundprescription.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipecompoundprescriptionType }
-     *     
+     *
      */
     public void setCompoundprescription(RecipecompoundprescriptionType value) {
         this.compoundprescription = value;
@@ -98,11 +98,11 @@ public class RecipecontentType
 
     /**
      * Obtient la valeur de la propriété substanceproduct.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipecontentType.Substanceproduct }
-     *     
+     *
      */
     public RecipecontentType.Substanceproduct getSubstanceproduct() {
         return substanceproduct;
@@ -110,11 +110,11 @@ public class RecipecontentType
 
     /**
      * Définit la valeur de la propriété substanceproduct.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipecontentType.Substanceproduct }
-     *     
+     *
      */
     public void setSubstanceproduct(RecipecontentType.Substanceproduct value) {
         this.substanceproduct = value;
@@ -122,11 +122,11 @@ public class RecipecontentType
 
     /**
      * Obtient la valeur de la propriété medicinalproduct.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipemedicinalProductType }
-     *     
+     *
      */
     public RecipemedicinalProductType getMedicinalproduct() {
         return medicinalproduct;
@@ -134,11 +134,11 @@ public class RecipecontentType
 
     /**
      * Définit la valeur de la propriété medicinalproduct.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipemedicinalProductType }
-     *     
+     *
      */
     public void setMedicinalproduct(RecipemedicinalProductType value) {
         this.medicinalproduct = value;
@@ -147,9 +147,9 @@ public class RecipecontentType
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -162,8 +162,8 @@ public class RecipecontentType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -182,11 +182,11 @@ public class RecipecontentType
 
         /**
          * Obtient la valeur de la propriété intendedcd.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link RecipeCDINNCLUSTER }
-         *     
+         *
          */
         public RecipeCDINNCLUSTER getIntendedcd() {
             return intendedcd;
@@ -194,11 +194,11 @@ public class RecipecontentType
 
         /**
          * Définit la valeur de la propriété intendedcd.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link RecipeCDINNCLUSTER }
-         *     
+         *
          */
         public void setIntendedcd(RecipeCDINNCLUSTER value) {
             this.intendedcd = value;
@@ -206,11 +206,11 @@ public class RecipecontentType
 
         /**
          * Obtient la valeur de la propriété intendedname.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getIntendedname() {
             return intendedname;
@@ -218,11 +218,11 @@ public class RecipecontentType
 
         /**
          * Définit la valeur de la propriété intendedname.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setIntendedname(String value) {
             this.intendedname = value;

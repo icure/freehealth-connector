@@ -2,7 +2,7 @@ package org.taktik.connector.business.therlink.domain.responses
 
 import org.taktik.connector.business.therlink.domain.Author
 import org.taktik.connector.business.therlink.domain.TherapeuticLinkRequestType
-import org.apache.commons.lang.builder.ToStringBuilder
+import org.apache.commons.lang3.builder.ToStringBuilder
 import org.joda.time.DateTime
 
 class GetTherapeuticLinkResponse(

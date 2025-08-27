@@ -1,20 +1,20 @@
 
 package org.taktik.connector.business.vaccinnet;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * Each request contains the same base information
- * 
+ *
  * <p>Java class for RequestType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RequestType">
  *   &lt;complexContent>
@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RequestType", propOrder = {
@@ -49,11 +49,11 @@ public class RequestType {
 
     /**
      * Gets the value of the softwareId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSoftwareId() {
         return softwareId;
@@ -61,11 +61,11 @@ public class RequestType {
 
     /**
      * Sets the value of the softwareId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSoftwareId(String value) {
         this.softwareId = value;
@@ -73,11 +73,11 @@ public class RequestType {
 
     /**
      * Gets the value of the vaccinnetId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVaccinnetId() {
         return vaccinnetId;
@@ -85,11 +85,11 @@ public class RequestType {
 
     /**
      * Sets the value of the vaccinnetId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVaccinnetId(String value) {
         this.vaccinnetId = value;

@@ -9,8 +9,8 @@ import org.taktik.freehealth.middleware.exception.MissingKeystoreException
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.exception.UnauthorizedException
 import java.io.EOFException
-import javax.servlet.http.HttpServletRequest
-import javax.xml.ws.soap.SOAPFaultException
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.xml.ws.soap.SOAPFaultException
 
 /**
  * Defines custom exception handlers.

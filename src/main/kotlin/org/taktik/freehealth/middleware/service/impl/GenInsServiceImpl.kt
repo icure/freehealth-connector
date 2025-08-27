@@ -238,7 +238,7 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
 
             return genInsResponseDTO
 
-        } catch (e: javax.xml.ws.soap.SOAPFaultException) {
+        } catch (e: jakarta.xml.ws.soap.SOAPFaultException) {
             InsurabilityInfoDto(
                 faultMessage = e.fault.faultString,
                 faultSource = e.message,
@@ -292,7 +292,7 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
         } ?: setOf()
     }
 
-    private fun extractError(e: javax.xml.ws.soap.SOAPFaultException): Set<MycarenetError> {
+    private fun extractError(e: jakarta.xml.ws.soap.SOAPFaultException): Set<MycarenetError> {
         val result = mutableSetOf<MycarenetError>()
 
         e.fault.detail.detailEntries.forEach { it ->
@@ -329,7 +329,7 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
                 else -> null
             }
 
-            override fun getPrefixes(namespaceURI: String?): Iterator<Any?> =
+            override fun getPrefixes(namespaceURI: String?): Iterator<String> =
                 when (namespaceURI) {
                     "urn:be:fgov:ehealth:genericinsurability:core:v1" -> listOf("gic").iterator()
                     "urn:be:fgov:ehealth:genericinsurability:protocol:v1" -> listOf("gip").iterator()

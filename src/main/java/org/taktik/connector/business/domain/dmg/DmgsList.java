@@ -1,13 +1,13 @@
 package org.taktik.connector.business.domain.dmg;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -35,7 +35,14 @@ public class DmgsList extends DmgMessage implements Serializable {
     }
 
     public List<? extends DmgMessage> getMessages() {
-        return ListUtils.union(ListUtils.union(this.lists, this.inscriptions), ListUtils.union(this.closures, this.extensions));
+        // Concatenate lists, inscriptions, closures and extensions into a single list
+        Set<DmgMessage> allMessages = new HashSet<>();
+        allMessages.addAll(this.lists);
+        allMessages.addAll(this.inscriptions);
+        allMessages.addAll(this.closures);
+        allMessages.addAll(this.extensions);
+
+        return new ArrayList<>(allMessages);
     }
 
     public List<DmgsList> getLists() {

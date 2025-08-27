@@ -33,7 +33,7 @@ import org.taktik.freehealth.middleware.dto.eattest.SendAttestResult
 import org.taktik.freehealth.middleware.service.EattestService
 import org.taktik.freehealth.middleware.service.EattestV2Service
 import java.util.UUID
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/eattest")

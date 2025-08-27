@@ -3,8 +3,8 @@ package org.taktik.connector.technical.utils.impl;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import javax.activation.DataHandler;
-import javax.xml.bind.attachment.AttachmentMarshaller;
+import jakarta.activation.DataHandler;
+import jakarta.xml.bind.attachment.AttachmentMarshaller;
 
 public class AttachmentMarshallerImpl extends AttachmentMarshaller {
    private Map<String, DataHandler> attachments;

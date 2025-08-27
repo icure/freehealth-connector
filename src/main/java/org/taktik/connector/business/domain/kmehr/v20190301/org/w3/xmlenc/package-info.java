@@ -5,5 +5,5 @@
 // Generated on: 2019.06.14 at 03:49:41 PM CEST
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.w3.org/2001/04/xmlenc#", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.w3.org/2001/04/xmlenc#", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.taktik.connector.business.domain.kmehr.v20190301.org.w3.xmlenc;

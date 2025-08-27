@@ -1,6 +1,6 @@
 package be.cin.nippin.memberdata.saml.extension;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 @XmlRegistry
 public class ObjectFactory {

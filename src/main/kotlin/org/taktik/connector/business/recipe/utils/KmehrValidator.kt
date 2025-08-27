@@ -9,7 +9,7 @@ import org.taktik.freehealth.middleware.service.RecipeV4Service
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.util.Properties
-import javax.xml.bind.JAXBContext
+import jakarta.xml.bind.JAXBContext
 import javax.xml.transform.stream.StreamSource
 import javax.xml.validation.SchemaFactory
 

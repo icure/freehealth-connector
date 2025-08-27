@@ -21,8 +21,8 @@ import java.io.StringWriter
 import java.time.Instant
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.Marshaller
+import jakarta.xml.bind.JAXBContext
+import jakarta.xml.bind.Marshaller
 
 @RunWith(SpringRunner::class)
 @Import(MyTestsConfiguration::class)

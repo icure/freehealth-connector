@@ -5,10 +5,10 @@ import be.fgov.ehealth.globalmedicalfile.core.v1.BlobType;
 import be.fgov.ehealth.globalmedicalfile.core.v1.CommonInputType;
 import be.fgov.ehealth.globalmedicalfile.core.v1.RoutingType;
 import java.io.Serializable;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.w3._2005._05.xmlmime.Base64Binary;
 
 @XmlAccessorType(XmlAccessType.FIELD)

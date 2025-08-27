@@ -28,9 +28,9 @@ import org.taktik.freehealth.middleware.exception.MissingKeystoreException
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import java.util.*
 import javax.xml.namespace.QName
-import javax.xml.soap.SOAPConstants
-import javax.xml.soap.SOAPFactory
-import javax.xml.ws.soap.SOAPFaultException
+import jakarta.xml.soap.SOAPConstants
+import jakarta.xml.soap.SOAPFactory
+import jakarta.xml.ws.soap.SOAPFaultException
 
 @RunWith(SpringRunner::class)
 @Import(MyTestsConfiguration::class)

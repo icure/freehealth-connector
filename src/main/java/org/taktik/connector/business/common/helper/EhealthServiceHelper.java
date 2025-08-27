@@ -13,7 +13,7 @@ import be.fgov.ehealth.commons.protocol.v2.StatusResponseType;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPException;
 import org.apache.commons.collections.CollectionUtils;
 import org.w3c.dom.Node;
 

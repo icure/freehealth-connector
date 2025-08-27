@@ -20,7 +20,7 @@ import org.taktik.connector.technical.utils.IdentifierType;
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Date;

@@ -47,7 +47,6 @@ import org.taktik.connector.business.therlink.mappers.RequestObjectMapper
 import org.taktik.connector.business.therlink.mappers.ResponseObjectMapper
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.service.sts.security.SAMLToken
-import org.taktik.connector.technical.service.sts.security.impl.BeIDCredential
 import org.taktik.connector.technical.ws.domain.GenericRequest
 import org.taktik.connector.technical.ws.domain.TokenType
 import org.taktik.freehealth.middleware.exception.MissingTokenException
@@ -62,7 +61,7 @@ import org.taktik.connector.business.therlink.domain.HasTherapeuticLinkMessage
 import org.taktik.connector.business.therlink.domain.requests.HasTherapeuticLinkRequest
 import org.taktik.connector.business.therlink.exception.TherLinkBusinessConnectorException
 import org.taktik.freehealth.utils.hcpTypeFromSamlToken
-import javax.xml.soap.SOAPException
+import jakarta.xml.soap.SOAPException
 
 
 @Service
@@ -455,21 +454,6 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
     private fun getNihii(hcParty: HcParty?) =
         hcParty?.ids?.find { id -> IDHCPARTYschemes.ID_HCPARTY == id.s }?.value ?: hcParty?.nihii
 
-    private fun makeProofForEidSigning(patient: Patient, hcp: HcParty, signature: BeIDCredential): Proof {
-        val proof = Proof(ProofTypeValues.EIDSIGNING.value)
-
-        val therapeuticLink = makeTherapeuticLink("ignored", hcp, patient, DateTime(), DateTime().plusMinutes(5), null)
-        val contentToSign = requestObjectMapper.createTherapeuticLinkAsXmlString(therapeuticLink)
-        val signatureBuilder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.CAdES)
-        val options = HashMap<String, Any>()
-        options["encapsulate"] = java.lang.Boolean.TRUE
-        val signatureBytes = signatureBuilder.sign(signature, contentToSign.toByteArray(), options)
-        val binaryProof = BinaryProof("CMS", signatureBytes)
-        proof.binaryProof = binaryProof
-
-        return proof
-    }
-
     private fun makeTherapeuticLink(
         therLinkType: String,
         hcParty: HcParty,
@@ -500,11 +484,6 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         requireNotNull(hcParty)
 
         return when {
-            sign -> makeProofForEidSigning(
-                patient,
-                hcParty,
-                BeIDCredential.getInstance("Therapeutic Link", "Signature")
-                                          )
             patient.eidCardNumber != null -> Proof((proofType ?: ProofTypeValues.EIDREADING).value)
             patient.isiCardNumber != null -> Proof((proofType ?: ProofTypeValues.ISIREADING).value)
             else -> null

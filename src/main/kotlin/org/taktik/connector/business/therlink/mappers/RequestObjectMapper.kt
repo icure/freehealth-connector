@@ -26,7 +26,7 @@ import be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENTschemes
 import be.fgov.ehealth.standards.kmehr.schema.v1.Base64EncryptedDataType
 import be.fgov.ehealth.standards.kmehr.schema.v1.Base64EncryptedValueType
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.joda.time.DateTime
 import org.joda.time.LocalTime
 import org.slf4j.LoggerFactory
@@ -141,7 +141,7 @@ class RequestObjectMapper {
                     value = link.type
                 })
             }
-            it.status?.let { therapeuticlinkstatus = it.toString().toLowerCase(Locale.getDefault()) }
+            it.status?.let { therapeuticlinkstatus = it.toString().lowercase(Locale.getDefault()) }
             it.patient?.let { patientsAndHcparties.add(mapPatient(it)) }
             it.hcParty?.let { patientsAndHcparties.add(mapHcPartyIdType(it)) }
         }

@@ -1,33 +1,33 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2015.03.05 à 11:47:59 AM CET 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2015.03.05 à 11:47:59 AM CET
 //
 
 
 package org.taktik.connector.business.domain.kmehr.v20110701.org.w3.xmlenc;
 
 import java.io.Serializable;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlID;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.taktik.connector.business.domain.kmehr.v20110701.org.w3.xmldsig.KeyInfo;
 
 
 /**
  * <p>Classe Java pour EncryptedType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="EncryptedType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.taktik.connector.business.domain.kmehr.v20110701.org.w3.xmldsig.KeyIn
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EncryptedType", propOrder = {
@@ -153,7 +153,7 @@ public abstract class EncryptedType
      * @param value
      *     allowed object is
      *     {@link CipherData }
-     *     
+     *
      */
     public void setCipherData(CipherData value) {
         this.cipherData = value;
@@ -161,11 +161,11 @@ public abstract class EncryptedType
 
     /**
      * Obtient la valeur de la propriété encryptionProperties.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EncryptionProperties }
-     *     
+     *
      */
     public EncryptionProperties getEncryptionProperties() {
         return encryptionProperties;
@@ -173,11 +173,11 @@ public abstract class EncryptedType
 
     /**
      * Définit la valeur de la propriété encryptionProperties.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EncryptionProperties }
-     *     
+     *
      */
     public void setEncryptionProperties(EncryptionProperties value) {
         this.encryptionProperties = value;
@@ -185,11 +185,11 @@ public abstract class EncryptedType
 
     /**
      * Obtient la valeur de la propriété id.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -197,11 +197,11 @@ public abstract class EncryptedType
 
     /**
      * Définit la valeur de la propriété id.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(String value) {
         this.id = value;
@@ -209,11 +209,11 @@ public abstract class EncryptedType
 
     /**
      * Obtient la valeur de la propriété type.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -221,11 +221,11 @@ public abstract class EncryptedType
 
     /**
      * Définit la valeur de la propriété type.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -233,11 +233,11 @@ public abstract class EncryptedType
 
     /**
      * Obtient la valeur de la propriété mimeType.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMimeType() {
         return mimeType;
@@ -245,11 +245,11 @@ public abstract class EncryptedType
 
     /**
      * Définit la valeur de la propriété mimeType.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMimeType(String value) {
         this.mimeType = value;
@@ -257,11 +257,11 @@ public abstract class EncryptedType
 
     /**
      * Obtient la valeur de la propriété encoding.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getEncoding() {
         return encoding;
@@ -269,11 +269,11 @@ public abstract class EncryptedType
 
     /**
      * Définit la valeur de la propriété encoding.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setEncoding(String value) {
         this.encoding = value;

@@ -14,7 +14,7 @@ import be.fgov.ehealth.technicalconnector.signature.transformers.EncapsulationTr
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import org.apache.commons.codec.binary.Base64
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.joda.time.DateTime
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
@@ -58,7 +58,7 @@ import org.w3c.dom.NodeList
 import java.io.StringWriter
 import java.util.*
 import java.util.function.Consumer
-import javax.xml.bind.JAXBContext
+import jakarta.xml.bind.JAXBContext
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.TransformerException
 import javax.xml.transform.TransformerFactory

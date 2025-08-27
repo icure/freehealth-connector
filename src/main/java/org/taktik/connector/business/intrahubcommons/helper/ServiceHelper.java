@@ -3,7 +3,7 @@ package org.taktik.connector.business.intrahubcommons.helper;
 import org.taktik.connector.business.intrahubcommons.exception.FolderDecryptionRuntimeException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 
 public class ServiceHelper {
    public static TechnicalConnectorException handleWebServiceException(WebServiceException e) {

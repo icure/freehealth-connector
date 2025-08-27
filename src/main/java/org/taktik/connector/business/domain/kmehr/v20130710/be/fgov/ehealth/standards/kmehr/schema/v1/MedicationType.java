@@ -1,8 +1,8 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2015.03.05 à 11:48:09 AM CET 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2015.03.05 à 11:48:09 AM CET
 //
 
 
@@ -10,10 +10,10 @@ package org.taktik.connector.business.domain.kmehr.v20130710.be.fgov.ehealth.sta
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.taktik.connector.business.domain.kmehr.v20130710.be.fgov.ehealth.standards.kmehr.cd.v1.CDMEDICATION;
 import org.taktik.connector.business.domain.kmehr.v20130710.be.fgov.ehealth.standards.kmehr.dt.v1.TextType;
@@ -21,11 +21,11 @@ import org.taktik.connector.business.domain.kmehr.v20130710.be.fgov.ehealth.stan
 
 /**
  * Deprecated at 01/01/2009, this complex type has been retained for backward compatibility only
- * 
+ *
  * <p>Classe Java pour medicationType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="medicationType">
  *   &lt;complexContent>
@@ -55,8 +55,8 @@ import org.taktik.connector.business.domain.kmehr.v20130710.be.fgov.ehealth.stan
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "medicationType", propOrder = {
@@ -332,7 +332,7 @@ public class MedicationType
      * @param value
      *     allowed object is
      *     {@link PackageType }
-     *     
+     *
      */
     public void setPackage(PackageType value) {
         this._package = value;
@@ -340,11 +340,11 @@ public class MedicationType
 
     /**
      * Obtient la valeur de la propriété quantityperpackage.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getQuantityperpackage() {
         return quantityperpackage;
@@ -352,11 +352,11 @@ public class MedicationType
 
     /**
      * Définit la valeur de la propriété quantityperpackage.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setQuantityperpackage(BigDecimal value) {
         this.quantityperpackage = value;
@@ -364,11 +364,11 @@ public class MedicationType
 
     /**
      * Obtient la valeur de la propriété instructionforoverdosing.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TextType }
-     *     
+     *
      */
     public TextType getInstructionforoverdosing() {
         return instructionforoverdosing;
@@ -376,11 +376,11 @@ public class MedicationType
 
     /**
      * Définit la valeur de la propriété instructionforoverdosing.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TextType }
-     *     
+     *
      */
     public void setInstructionforoverdosing(TextType value) {
         this.instructionforoverdosing = value;
@@ -388,11 +388,11 @@ public class MedicationType
 
     /**
      * Obtient la valeur de la propriété instructionforpatient.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TextType }
-     *     
+     *
      */
     public TextType getInstructionforpatient() {
         return instructionforpatient;
@@ -400,11 +400,11 @@ public class MedicationType
 
     /**
      * Définit la valeur de la propriété instructionforpatient.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TextType }
-     *     
+     *
      */
     public void setInstructionforpatient(TextType value) {
         this.instructionforpatient = value;
@@ -412,11 +412,11 @@ public class MedicationType
 
     /**
      * Obtient la valeur de la propriété instructionforreimbursement.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TextType }
-     *     
+     *
      */
     public TextType getInstructionforreimbursement() {
         return instructionforreimbursement;
@@ -424,11 +424,11 @@ public class MedicationType
 
     /**
      * Définit la valeur de la propriété instructionforreimbursement.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TextType }
-     *     
+     *
      */
     public void setInstructionforreimbursement(TextType value) {
         this.instructionforreimbursement = value;
@@ -436,11 +436,11 @@ public class MedicationType
 
     /**
      * Obtient la valeur de la propriété issubstitutionallowed.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isIssubstitutionallowed() {
         return issubstitutionallowed;
@@ -448,11 +448,11 @@ public class MedicationType
 
     /**
      * Définit la valeur de la propriété issubstitutionallowed.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setIssubstitutionallowed(Boolean value) {
         this.issubstitutionallowed = value;

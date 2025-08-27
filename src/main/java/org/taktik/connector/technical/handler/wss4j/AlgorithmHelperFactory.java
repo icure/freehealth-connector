@@ -3,7 +3,7 @@ package org.taktik.connector.technical.handler.wss4j;
 import org.taktik.connector.technical.service.sts.security.Credential;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 
 public class AlgorithmHelperFactory {
    private static final List<AlgorithmHelper> defaultHelpers = new ArrayList();

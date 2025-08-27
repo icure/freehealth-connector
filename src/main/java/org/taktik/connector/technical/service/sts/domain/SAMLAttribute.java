@@ -1,6 +1,6 @@
 package org.taktik.connector.technical.service.sts.domain;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class SAMLAttribute {
    private String name;

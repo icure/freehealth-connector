@@ -19,29 +19,27 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
-import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.activation.DataHandler;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPConnection;
-import javax.xml.soap.SOAPConnectionFactory;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import jakarta.activation.DataHandler;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPConnection;
+import jakarta.xml.soap.SOAPConnectionFactory;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPPart;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public abstract class AbstractWsSender {
-   public static final String MESSAGECONTEXT_ENDPOINT_ADDRESS = "javax.xml.ws.service.endpoint.address";
+   public static final String MESSAGECONTEXT_ENDPOINT_ADDRESS = "jakarta.xml.ws.service.endpoint.address";
    /** @deprecated */
    @Deprecated
    public static final String PROP_RETRY_STRATEGY = "org.taktik.connector.technical.ws.genericsender.invokestrategy";
@@ -50,7 +48,7 @@ public abstract class AbstractWsSender {
    private static SOAPConnectionFactory scf;
 
    public GenericResponse send(GenericRequest genericRequest) throws TechnicalConnectorException {
-      List<InvokeStrategy> strategies = InvokeStrategyFactory.getList((String)genericRequest.getRequestMap().get("javax.xml.ws.service.endpoint.address"));
+      List<InvokeStrategy> strategies = InvokeStrategyFactory.getList((String)genericRequest.getRequestMap().get("jakarta.xml.ws.service.endpoint.address"));
       InvokeStrategyContext ctx = new InvokeStrategyContext(genericRequest);
 
       for (InvokeStrategy strategy : strategies) {
@@ -75,13 +73,13 @@ public abstract class AbstractWsSender {
       try {
          SOAPMessageContext request = this.createSOAPMessageCtx(genericRequest);
          request.putAll(genericRequest.getRequestMap());
-         request.put("javax.xml.ws.handler.message.outbound", true);
+         request.put("jakarta.xml.ws.handler.message.outbound", true);
          executeHandlers(chain, request);
          conn = scf.createConnection();
          SOAPMessage message = request.getMessage();
          SOAPMessageContext reply = createSOAPMessageCtx(conn.call(message, generateEndpoint(request)));
          reply.putAll(genericRequest.getRequestMap());
-         reply.put("javax.xml.ws.handler.message.outbound", false);
+         reply.put("jakarta.xml.ws.handler.message.outbound", false);
          ArrayUtils.reverse(chain);
          executeHandlers(chain, reply);
          genericResponse = new GenericResponse(reply.getMessage());
@@ -128,13 +126,13 @@ public abstract class AbstractWsSender {
    }
 
    protected String getCurrentEndpoint(GenericRequest genericRequest) {
-      return (String)genericRequest.getRequestMap().get("javax.xml.ws.service.endpoint.address");
+      return (String)genericRequest.getRequestMap().get("jakarta.xml.ws.service.endpoint.address");
    }
 
    private static URL generateEndpoint(final SOAPMessageContext request) throws MalformedURLException {
-      String requestedTarget = (String)request.get("javax.xml.ws.service.endpoint.address");
+      String requestedTarget = (String)request.get("jakarta.xml.ws.service.endpoint.address");
       String target = EndpointDistributor.getInstance().getActiveEndpoint(requestedTarget);
-      request.put("javax.xml.ws.service.endpoint.address", target);
+      request.put("jakarta.xml.ws.service.endpoint.address", target);
       URL targetURL = new URL(target);
       StringBuilder context = new StringBuilder();
       context.append(targetURL.getProtocol());
@@ -172,9 +170,8 @@ public abstract class AbstractWsSender {
          Map<String, DataHandler> handlers = genericRequest.getDataHandlerMap();
 
          AttachmentPart part;
-         for(Iterator i$ = handlers.entrySet().iterator(); i$.hasNext(); soapMessage.addAttachmentPart(part)) {
-            Entry<String, DataHandler> handlerEntry = (Entry)i$.next();
-            DataHandler handler = (DataHandler)handlerEntry.getValue();
+         for(Entry<String, DataHandler>  handlerEntry : handlers.entrySet()) {
+            DataHandler handler = handlerEntry.getValue();
             part = soapMessage.createAttachmentPart(handler);
             part.setContentType(handler.getContentType());
             if (genericRequest.isXopEnabled()) {
@@ -183,6 +180,7 @@ public abstract class AbstractWsSender {
             } else {
                part.setContentId((String)handlerEntry.getKey());
             }
+            soapMessage.addAttachmentPart(part);
          }
 
          return createSOAPMessageCtx(soapMessage);

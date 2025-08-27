@@ -1,6 +1,5 @@
 package be.fgov.ehealth.technicalconnector.ra.utils;
 
-import be.fgov.ehealth.technicalconnector.ra.domain.DistinguishedName;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.KeyUsage;
@@ -41,31 +40,6 @@ public class CertificateUtils {
    private static final String PROVIDER = "BC";
    private static final CertificateFactory CF;
 
-   public static KeyPair generateKeyPair() {
-      String authKeyAlgorithm = RaPropertiesLoader.getProperty("authentication.key.algorithm");
-      Integer authKeySize = Integer.parseInt(RaPropertiesLoader.getProperty("authentication.key.size", "0"));
-
-      try {
-         KeyPairGenerator kg = KeyPairGenerator.getInstance(authKeyAlgorithm);
-         kg.initialize(authKeySize, new SecureRandom());
-         return kg.generateKeyPair();
-      } catch (NoSuchAlgorithmException var3) {
-         throw new IllegalArgumentException(authKeyAlgorithm + " key algorithm is unknown to the security provider", var3);
-      }
-   }
-
-   public static byte[] createCSR(DistinguishedName distingueshedName, KeyPair keyPair) {
-      String csrSignatureAlgorithm = RaPropertiesLoader.getProperty("csr.signature.algorithm");
-
-      try {
-         X500Principal x500Principal = new X500Principal(distingueshedName.asNormalizedEhealthDN());
-         JcaPKCS10CertificationRequestBuilder csrBuilder = new JcaPKCS10CertificationRequestBuilder(x500Principal, keyPair.getPublic());
-         PKCS10CertificationRequest csr = csrBuilder.build((new JcaContentSignerBuilder(csrSignatureAlgorithm)).setProvider(new BouncyCastleProvider()).build(keyPair.getPrivate()));
-         return csr.getEncoded();
-      } catch (OperatorCreationException | IOException ex) {
-         throw new IllegalArgumentException(ex);
-      }
-   }
 
    public static byte[] createCSR(String dn, KeyPair keyPair) {
       String csrSignatureAlgorithm = RaPropertiesLoader.getProperty("csr.signature.algorithm");

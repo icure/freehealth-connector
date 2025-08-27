@@ -3,7 +3,7 @@ package org.taktik.connector.technical.handler;
 import org.taktik.connector.technical.config.ConfigFactory;
 import org.taktik.connector.technical.config.Configuration;
 import java.util.concurrent.TimeUnit;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ public class ConnectionTimeOutHandler extends AbstractSOAPHandler {
    private Configuration config = ConfigFactory.getConfigValidator();
 
    public boolean handleOutbound(SOAPMessageContext context) {
-      String endpoint = (String) context.get("javax.xml.ws.service.endpoint.address");
+      String endpoint = (String) context.get("jakarta.xml.ws.service.endpoint.address");
       String[] parts = endpoint != null ? endpoint.split("/+") : null;
       String endpointProperty = (parts != null && parts.length>=4) ? parts[parts.length-2] + "." + parts[parts.length-1] : null;
 

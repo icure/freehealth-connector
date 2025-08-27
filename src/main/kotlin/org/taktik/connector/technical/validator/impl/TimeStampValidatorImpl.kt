@@ -11,7 +11,7 @@ import java.security.MessageDigest
 import java.security.cert.X509Certificate
 import java.util.ArrayList
 import java.util.Collections
-import org.apache.commons.lang.Validate
+import org.apache.commons.lang3.Validate
 import org.bouncycastle.asn1.cms.Attribute
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers
 import org.bouncycastle.cert.X509CertificateHolder

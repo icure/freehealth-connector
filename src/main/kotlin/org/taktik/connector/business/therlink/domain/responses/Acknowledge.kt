@@ -1,7 +1,7 @@
 package org.taktik.connector.business.therlink.domain.responses
 
 import java.util.ArrayList
-import org.apache.commons.lang.builder.ToStringBuilder
+import org.apache.commons.lang3.builder.ToStringBuilder
 
 class Acknowledge {
     var isComplete: Boolean = false

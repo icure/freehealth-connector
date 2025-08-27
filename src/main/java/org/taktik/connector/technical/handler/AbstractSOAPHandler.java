@@ -5,10 +5,10 @@ import org.taktik.connector.technical.utils.ConnectorXmlUtils;
 import java.util.HashSet;
 import java.util.Set;
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.soap.SOAPHandler;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.soap.SOAPHandler;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
 
@@ -18,7 +18,7 @@ public abstract class AbstractSOAPHandler implements SOAPHandler<SOAPMessageCont
    private static final int BLOCK = 1024;
 
    public boolean handleMessage(SOAPMessageContext context) {
-      return (Boolean) context.get("javax.xml.ws.handler.message.outbound") ? this.handleOutbound(context) : this.handleInbound(context);
+      return (Boolean) context.get("jakarta.xml.ws.handler.message.outbound") ? this.handleOutbound(context) : this.handleInbound(context);
    }
 
    public boolean handleOutbound(SOAPMessageContext context) {

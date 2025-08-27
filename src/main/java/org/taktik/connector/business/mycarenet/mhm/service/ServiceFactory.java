@@ -1,6 +1,6 @@
 package org.taktik.connector.business.mycarenet.mhm.service;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.taktik.connector.technical.config.ConfigFactory;
 import org.taktik.connector.technical.config.Configuration;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;

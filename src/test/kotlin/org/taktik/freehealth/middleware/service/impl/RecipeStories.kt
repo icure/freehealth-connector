@@ -34,7 +34,7 @@ import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExampl
 import java.io.Serializable
 import java.util.UUID
 import java.util.regex.Pattern
-import javax.xml.bind.JAXBElement
+import jakarta.xml.bind.JAXBElement
 
 /**
  * @author Bernard Paulus on 18/04/17.

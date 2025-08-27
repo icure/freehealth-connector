@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,52 +21,52 @@ import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationM
  * The Class CertificateParser.
  */
 public class CertificateParser {
-		
+
 	  /** The Constant LOG. */
   	private static final Logger LOG = LogManager.getLogger(CertificateParser.class);
-	  
+
   	/** The Constant ORGANIZATION_UNIT_NAME_ATTRIBUTE_TYPE. */
   	private static final String ORGANIZATION_UNIT_NAME_ATTRIBUTE_TYPE = "OU";
-	  
+
   	/** The Constant COMMON_NAME_ATTRIBUTE_TYPE. */
   	private static final String COMMON_NAME_ATTRIBUTE_TYPE = "CN";
-	  
+
   	/** The Constant REGXP_VALIDATION. */
   	private static final String REGXP_VALIDATION= "([A-Z(-|_)]+=[0-9]+)";
-	  
+
   	/** The Constant FEDERAL_GOVERMENT. */
   	private static final String FEDERAL_GOVERMENT= "Federal Government";
-	  
+
   	/** The Constant EHEALTH_PLATFORM. */
   	private static final String EHEALTH_PLATFORM= "eHealth-platform Belgium";
-	  
+
 	/** The Constant ESCAPE_CHAR. */
 	private static final String ESCAPE_CHAR = "=";
-	
+
 	  /** The Constant X500_KEY_VALUE_SEPARATOR. */
   	private static final String X500_KEY_VALUE_SEPARATOR = "=";
-	  
+
   	/** The Constant X500_FIELD_SEPARATOR. */
   	private static final String X500_FIELD_SEPARATOR = ",";
-	  
+
   	/** The Constant X500_START_STRING_DELIMITER. */
   	private static final String X500_START_STRING_DELIMITER = "=\"";
-	  
+
   	/** The Constant X500_END_STRING_DELIMITER. */
   	private static final String X500_END_STRING_DELIMITER = "\", ";
-	  
+
   	/** The Constant X500_ESCAPE_CHARACTER. */
   	private static final String X500_ESCAPE_CHARACTER = "\\";
-	  
+
   	/** The Constant X500_ESCAPED_QUOTE. */
   	//private static final String X500_ESCAPED_QUOTE = "\"";
-	  
+
   	/** The Constant SAN_ESCAPE_CHAR. */
   	private static final String SAN_ESCAPE_CHAR = "&bksp;";
-	  
+
   	/** The Constant SAN_ESCAPED_QUOTE. */
   	private static final String SAN_ESCAPED_QUOTE = "&bkqt;";
-	  
+
 	  /** The type. */
   	private String type = "";
 
@@ -78,9 +78,9 @@ public class CertificateParser {
 
 	  /**
   	 * Instantiates a new certificate parser.
-  	 * 
+  	 *
   	 * @param cert the cert
-	 * @throws IntegrationModuleException 
+	 * @throws IntegrationModuleException
   	 */
   	public CertificateParser(X509Certificate cert) throws IntegrationModuleException
 	  {
@@ -89,25 +89,25 @@ public class CertificateParser {
 
 	  /**
   	 * Instantiates a new certificate parser.
-  	 * 
+  	 *
   	 * @param subject the subject
-	 * @throws IntegrationModuleException 
+	 * @throws IntegrationModuleException
   	 */
   	public CertificateParser(String subject) throws IntegrationModuleException
 	  {
   		LOG.info("CertificateParser subject: " + subject );
-		HashMap<String, ArrayList<String>> subjects = splitCertificateString(subject);	
-	
+		HashMap<String, ArrayList<String>> subjects = splitCertificateString(subject);
+
 			String commonName = (String) ((ArrayList<String>) subjects.get(COMMON_NAME_ATTRIBUTE_TYPE)).get(0);
 			LOG.debug("Certificate CN:" + commonName);
 
 			ArrayList<String> ouList = (ArrayList<String>) subjects.get(ORGANIZATION_UNIT_NAME_ATTRIBUTE_TYPE);
 			LOG.debug("Certificate OUList loaded");
-			
+
 			if(ouList ==null || ouList.size() == 0){
 				throw new IntegrationModuleException(I18nHelper.getLabel("error.corrupt.system.certificate"));
 			}
-			
+
 			for (Iterator<String> iterator = ouList.iterator(); iterator.hasNext();) {
 				String ou = (String) iterator.next();
 				LOG.debug("OU:" + ou);
@@ -127,10 +127,10 @@ public class CertificateParser {
 				}
 			}
 		}
-	  
+
 	 /**
  	 * Split certificate string.
- 	 * 
+ 	 *
  	 * @param x500PrincipalName the x500 principal name
  	 * @return the hash map
  	 */
@@ -147,24 +147,24 @@ public class CertificateParser {
 	    } else {
 	      workString = x500PrincipalName;
 	    }
-	    
+
 	    LOG.debug("The certificatestring in splitCertificateString 1: " + workString);
 	    int indexOfStringDelimiter = x500PrincipalName.indexOf(X500_START_STRING_DELIMITER);
 	    if (indexOfStringDelimiter == -1)
 	    {
 	      String[] x500Fields = workString.split(X500_FIELD_SEPARATOR);
 	      for (int i = 0; i < x500Fields.length; i++){
-	    	  
+
 	    	 String x500Field = x500Fields[i];
-	    	  
+
 	    	 //Specialy for the application for retrieving the application id
-	    	 
+
 	    	  if(StringUtils.isNotEmpty(x500Field) && x500Field.split(X500_KEY_VALUE_SEPARATOR).length == 3){
 	    		  LOG.debug("x500Field has several = in his value: " + x500Field + " and we check the next field for the application id");
 	    		  if((i +1)< x500Fields.length){
 	    			  i =  i + 1;
 	    		  String x500Field2 = x500Fields[i];
-	    		  
+
 		    		  if(StringUtils.isNotEmpty(x500Field2) && x500Field2.split(X500_KEY_VALUE_SEPARATOR).length > 1){
 		    			  LOG.debug("x500Field has several = in his value: " + x500Field + " and we didn't find the application id");
 		    			  addX500Field(x500Field, items);
@@ -175,7 +175,7 @@ public class CertificateParser {
 		    		  }
 	    		  }else{
 	    			  addX500Field(x500Field, items);
-	    		  } 
+	    		  }
 	    	  }else{
 	    		  addX500Field(x500Field, items);
 	    	  }
@@ -184,7 +184,7 @@ public class CertificateParser {
 	    else {
 	    	 LOG.debug("The workstring had seceral quotes. The method will be used: splitStringWithquotes");
 	      String[] x500Fields = (String[])splitStringWithquotes(workString).toArray(new String[0]);
-	     
+
 	      for (int i = 0; i < x500Fields.length; i++) {
 	        addX500Field(x500Fields[i], items);
 	      }
@@ -194,7 +194,7 @@ public class CertificateParser {
 
 	  /**
   	 * Split string withquotes.
-  	 * 
+  	 *
   	 * @param x500PrincipalName the x500 principal name
   	 * @return the list
   	 */
@@ -224,7 +224,7 @@ public class CertificateParser {
 	      }else if(workString.indexOf(X500_FIELD_SEPARATOR) != -1 && workString.indexOf(X500_KEY_VALUE_SEPARATOR) != -1){
 	    	  LOG.debug("splitStringWithquotes: if statement three");
 	    	  tempList.add(workString);
-		      workString = workString.substring(workString.length()); 
+		      workString = workString.substring(workString.length());
 	      }
 
 	      indexOfStringDelimiter = workString.indexOf(X500_START_STRING_DELIMITER);
@@ -243,7 +243,7 @@ public class CertificateParser {
 
 	  /**
   	 * Adds the x500 field.
-  	 * 
+  	 *
   	 * @param x500Field the x500 field
   	 * @param x500Fields the x500 fields
   	 */
@@ -270,10 +270,10 @@ public class CertificateParser {
 	      LOG.info("X500Field [" + x500Field + "] has invalid structure. Ignoring ...");
 	    }
 	  }
-	  
+
 	  /**
 	  	 * Gets the type.
-	  	 * 
+	  	 *
 	  	 * @return the type
 	  	 */
 	  	public String getType()
@@ -283,7 +283,7 @@ public class CertificateParser {
 
 		  /**
 	  	 * Gets the value.
-	  	 * 
+	  	 *
 	  	 * @return the value
 	  	 */
 	  	public String getValue()
@@ -293,7 +293,7 @@ public class CertificateParser {
 
 		  /**
 	  	 * Gets the application.
-	  	 * 
+	  	 *
 	  	 * @return the application
 	  	 */
 	  	public String getApplication()

@@ -5,8 +5,8 @@ import org.taktik.connector.technical.enumeration.Charset;
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
 
 public final class WrappedObjectMarshallerHelper {
    public static byte[] toXMLByteArray(WrappedXmlObject<?> wrappedXmlObject) {

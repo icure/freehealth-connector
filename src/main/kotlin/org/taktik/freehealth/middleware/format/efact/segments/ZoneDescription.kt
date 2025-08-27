@@ -18,7 +18,7 @@
 
 package org.taktik.freehealth.middleware.format.efact.segments
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import java.lang.IllegalArgumentException
 
 class ZoneDescription private constructor(

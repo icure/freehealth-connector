@@ -2,11 +2,11 @@ package org.taktik.connector.technical.handler;
 
 import org.taktik.connector.technical.utils.SOAPFaultFactory;
 import org.taktik.connector.technical.validator.ValidatorHelper;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPFault;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
-import org.apache.commons.lang.Validate;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;

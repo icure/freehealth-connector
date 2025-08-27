@@ -9,5 +9,5 @@
 // Generated on: 2019.06.14 at 03:48:48 PM CEST
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.ehealth.fgov.be/standards/kmehr/schema/v1", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.ehealth.fgov.be/standards/kmehr/schema/v1", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.taktik.connector.business.domain.kmehr.v20120701.be.fgov.ehealth.standards.kmehr.schema.v1;

@@ -5,9 +5,9 @@ import be.fgov.ehealth.commons.core.v2.*;
 import be.fgov.ehealth.commons.protocol.v2.*;
 import be.fgov.ehealth.mediprima.core.v2.*;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlElementDecl;
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.annotation.XmlElementDecl;
+import jakarta.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
 
 

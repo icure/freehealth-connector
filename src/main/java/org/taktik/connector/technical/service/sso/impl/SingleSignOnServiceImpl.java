@@ -1,7 +1,7 @@
 package org.taktik.connector.technical.service.sso.impl;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.bouncycastle.util.encoders.Base64;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ import org.taktik.connector.technical.ws.domain.TokenType;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;

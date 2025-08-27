@@ -20,7 +20,7 @@
 
 package org.taktik.connector.business.ehbox.api.utils
 
-import javax.activation.DataHandler
+import jakarta.activation.DataHandler
 
 class SigningValue {
     var signingDownloadFileName: String? = null

@@ -1,8 +1,8 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2015.11.10 à 11:53:46 AM CET 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2015.11.10 à 11:53:46 AM CET
 //
 
 
@@ -11,13 +11,13 @@ package org.taktik.connector.business.domain.kmehr.v20150901.be.fgov.ehealth.sta
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.taktik.connector.business.domain.kmehr.v20150901.be.fgov.ehealth.standards.kmehr.cd.v1.CDCIVILSTATE;
@@ -28,9 +28,9 @@ import org.taktik.connector.business.domain.kmehr.v20150901.be.fgov.ehealth.stan
 
 /**
  * <p>Classe Java pour personType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="personType">
  *   &lt;complexContent>
@@ -79,8 +79,8 @@ import org.taktik.connector.business.domain.kmehr.v20150901.be.fgov.ehealth.stan
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "personType", propOrder = {
@@ -597,9 +597,9 @@ public class PersonType
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -611,8 +611,8 @@ public class PersonType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -628,11 +628,11 @@ public class PersonType
 
         /**
          * Obtient la valeur de la propriété cd.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link CDCIVILSTATE }
-         *     
+         *
          */
         public CDCIVILSTATE getCd() {
             return cd;
@@ -640,11 +640,11 @@ public class PersonType
 
         /**
          * Définit la valeur de la propriété cd.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link CDCIVILSTATE }
-         *     
+         *
          */
         public void setCd(CDCIVILSTATE value) {
             this.cd = value;
@@ -655,9 +655,9 @@ public class PersonType
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -669,8 +669,8 @@ public class PersonType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -686,11 +686,11 @@ public class PersonType
 
         /**
          * Obtient la valeur de la propriété cd.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link CDCOUNTRY }
-         *     
+         *
          */
         public CDCOUNTRY getCd() {
             return cd;
@@ -698,11 +698,11 @@ public class PersonType
 
         /**
          * Définit la valeur de la propriété cd.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link CDCOUNTRY }
-         *     
+         *
          */
         public void setCd(CDCOUNTRY value) {
             this.cd = value;

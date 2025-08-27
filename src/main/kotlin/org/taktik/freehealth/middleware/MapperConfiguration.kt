@@ -162,7 +162,7 @@ class MapperConfiguration {
             override fun convert(source: AddressType, destinationType: Type<out Address>): Address {
                 return Address(addressType = source.cds.firstOrNull()?.value?.let {
                     org.taktik.freehealth.middleware.dto.AddressType.valueOf(
-                        it.toLowerCase()
+                        it.lowercase()
                     )
                 } ?: org.taktik.freehealth.middleware.dto.AddressType.home,
                                street = source.street,

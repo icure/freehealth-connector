@@ -1,6 +1,6 @@
 package org.taktik.connector.business.recipeprojects.common.services.pcdh;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +34,7 @@ public class PcdhServiceImpl implements PcdhService {
 
 	/**
 	 * Gets the singleton instance of PcdhServiceImpl.
-	 * 
+	 *
 	 * @return singleton instance of PcdhServiceImpl
 	 */
 	public static PcdhService getInstance() {

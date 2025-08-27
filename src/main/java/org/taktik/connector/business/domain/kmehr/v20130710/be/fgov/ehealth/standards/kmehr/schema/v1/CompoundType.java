@@ -1,8 +1,8 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2015.03.05 à 11:48:09 AM CET 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2015.03.05 à 11:48:09 AM CET
 //
 
 
@@ -11,10 +11,10 @@ package org.taktik.connector.business.domain.kmehr.v20130710.be.fgov.ehealth.sta
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.taktik.connector.business.domain.kmehr.v20130710.be.fgov.ehealth.standards.kmehr.cd.v1.CDDRUGCNK;
 import org.taktik.connector.business.domain.kmehr.v20130710.be.fgov.ehealth.standards.kmehr.cd.v1.CDQUANTITYPREFIX;
@@ -23,9 +23,9 @@ import org.taktik.connector.business.domain.kmehr.v20130710.be.fgov.ehealth.stan
 
 /**
  * <p>Classe Java pour compoundType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="compoundType">
  *   &lt;complexContent>
@@ -66,8 +66,8 @@ import org.taktik.connector.business.domain.kmehr.v20130710.be.fgov.ehealth.stan
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "compoundType", propOrder = {
@@ -192,11 +192,11 @@ public class CompoundType
 
     /**
      * Obtient la valeur de la propriété quantity.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QuantityType }
-     *     
+     *
      */
     public QuantityType getQuantity() {
         return quantity;
@@ -204,11 +204,11 @@ public class CompoundType
 
     /**
      * Définit la valeur de la propriété quantity.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QuantityType }
-     *     
+     *
      */
     public void setQuantity(QuantityType value) {
         this.quantity = value;
@@ -216,18 +216,18 @@ public class CompoundType
 
 
     /**
-     * 
+     *
      *                   a medicinal product can be identified
      *                   unambiguously by a CNK code identifying
      *                   a package. The descriptive
      *                   identification is only mandatory in case
      *                   of absence of a package ID.
-     *                     
-     * 
+     *
+     *
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -242,8 +242,8 @@ public class CompoundType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -266,11 +266,11 @@ public class CompoundType
 
         /**
          * Obtient la valeur de la propriété intendedcd.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link CDDRUGCNK }
-         *     
+         *
          */
         public CDDRUGCNK getIntendedcd() {
             return intendedcd;
@@ -278,11 +278,11 @@ public class CompoundType
 
         /**
          * Définit la valeur de la propriété intendedcd.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link CDDRUGCNK }
-         *     
+         *
          */
         public void setIntendedcd(CDDRUGCNK value) {
             this.intendedcd = value;
@@ -290,11 +290,11 @@ public class CompoundType
 
         /**
          * Obtient la valeur de la propriété deliveredcd.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link CDDRUGCNK }
-         *     
+         *
          */
         public CDDRUGCNK getDeliveredcd() {
             return deliveredcd;
@@ -302,11 +302,11 @@ public class CompoundType
 
         /**
          * Définit la valeur de la propriété deliveredcd.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link CDDRUGCNK }
-         *     
+         *
          */
         public void setDeliveredcd(CDDRUGCNK value) {
             this.deliveredcd = value;
@@ -314,11 +314,11 @@ public class CompoundType
 
         /**
          * Obtient la valeur de la propriété intendedname.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getIntendedname() {
             return intendedname;
@@ -326,11 +326,11 @@ public class CompoundType
 
         /**
          * Définit la valeur de la propriété intendedname.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setIntendedname(String value) {
             this.intendedname = value;
@@ -338,11 +338,11 @@ public class CompoundType
 
         /**
          * Obtient la valeur de la propriété deliveredname.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Object }
-         *     
+         *
          */
         public Object getDeliveredname() {
             return deliveredname;
@@ -350,11 +350,11 @@ public class CompoundType
 
         /**
          * Définit la valeur de la propriété deliveredname.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Object }
-         *     
+         *
          */
         public void setDeliveredname(Object value) {
             this.deliveredname = value;
@@ -365,9 +365,9 @@ public class CompoundType
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -379,8 +379,8 @@ public class CompoundType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -396,11 +396,11 @@ public class CompoundType
 
         /**
          * Obtient la valeur de la propriété cd.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link CDQUANTITYPREFIX }
-         *     
+         *
          */
         public CDQUANTITYPREFIX getCd() {
             return cd;
@@ -408,11 +408,11 @@ public class CompoundType
 
         /**
          * Définit la valeur de la propriété cd.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link CDQUANTITYPREFIX }
-         *     
+         *
          */
         public void setCd(CDQUANTITYPREFIX value) {
             this.cd = value;

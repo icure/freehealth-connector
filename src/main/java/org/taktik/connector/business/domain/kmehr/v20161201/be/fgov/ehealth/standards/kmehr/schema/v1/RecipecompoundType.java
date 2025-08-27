@@ -1,25 +1,25 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2017.05.11 à 02:53:46 PM CEST 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2017.05.11 à 02:53:46 PM CEST
 //
 
 
 package org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1;
 
 import java.io.Serializable;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * <p>Classe Java pour recipecompoundType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="recipecompoundType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "recipecompoundType", propOrder = {
@@ -72,11 +72,11 @@ public class RecipecompoundType
 
     /**
      * Obtient la valeur de la propriété id.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipenumericIDKMEHR }
-     *     
+     *
      */
     public RecipenumericIDKMEHR getId() {
         return id;
@@ -84,11 +84,11 @@ public class RecipecompoundType
 
     /**
      * Définit la valeur de la propriété id.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipenumericIDKMEHR }
-     *     
+     *
      */
     public void setId(RecipenumericIDKMEHR value) {
         this.id = value;
@@ -96,11 +96,11 @@ public class RecipecompoundType
 
     /**
      * Obtient la valeur de la propriété substance.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipesubstanceType }
-     *     
+     *
      */
     public RecipesubstanceType getSubstance() {
         return substance;
@@ -108,11 +108,11 @@ public class RecipecompoundType
 
     /**
      * Définit la valeur de la propriété substance.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipesubstanceType }
-     *     
+     *
      */
     public void setSubstance(RecipesubstanceType value) {
         this.substance = value;
@@ -120,11 +120,11 @@ public class RecipecompoundType
 
     /**
      * Obtient la valeur de la propriété medicinalproduct.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipemedicinalProductType }
-     *     
+     *
      */
     public RecipemedicinalProductType getMedicinalproduct() {
         return medicinalproduct;
@@ -132,11 +132,11 @@ public class RecipecompoundType
 
     /**
      * Définit la valeur de la propriété medicinalproduct.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipemedicinalProductType }
-     *     
+     *
      */
     public void setMedicinalproduct(RecipemedicinalProductType value) {
         this.medicinalproduct = value;
@@ -144,11 +144,11 @@ public class RecipecompoundType
 
     /**
      * Obtient la valeur de la propriété quantityprefix.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipecompoundType.Quantityprefix }
-     *     
+     *
      */
     public RecipecompoundType.Quantityprefix getQuantityprefix() {
         return quantityprefix;
@@ -156,11 +156,11 @@ public class RecipecompoundType
 
     /**
      * Définit la valeur de la propriété quantityprefix.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipecompoundType.Quantityprefix }
-     *     
+     *
      */
     public void setQuantityprefix(RecipecompoundType.Quantityprefix value) {
         this.quantityprefix = value;
@@ -168,11 +168,11 @@ public class RecipecompoundType
 
     /**
      * Obtient la valeur de la propriété quantity.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipequantityType }
-     *     
+     *
      */
     public RecipequantityType getQuantity() {
         return quantity;
@@ -180,11 +180,11 @@ public class RecipecompoundType
 
     /**
      * Définit la valeur de la propriété quantity.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipequantityType }
-     *     
+     *
      */
     public void setQuantity(RecipequantityType value) {
         this.quantity = value;
@@ -193,9 +193,9 @@ public class RecipecompoundType
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -207,8 +207,8 @@ public class RecipecompoundType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -224,11 +224,11 @@ public class RecipecompoundType
 
         /**
          * Obtient la valeur de la propriété cd.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link RecipeCDQUANTITYPREFIX }
-         *     
+         *
          */
         public RecipeCDQUANTITYPREFIX getCd() {
             return cd;
@@ -236,11 +236,11 @@ public class RecipecompoundType
 
         /**
          * Définit la valeur de la propriété cd.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link RecipeCDQUANTITYPREFIX }
-         *     
+         *
          */
         public void setCd(RecipeCDQUANTITYPREFIX value) {
             this.cd = value;

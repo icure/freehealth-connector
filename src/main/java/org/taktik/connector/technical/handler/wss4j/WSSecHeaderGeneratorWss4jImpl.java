@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.xml.crypto.dsig.Reference;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPPart;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -121,7 +121,7 @@ public class WSSecHeaderGeneratorWss4jImpl implements AbstractWsSecurityHandler.
     private void determineDigestAlgo() {
         if (this.ctx != null && StringUtils.isNotBlank((String) this.ctx.get("digest.method.algorithm"))) {
             this.sign.setDigestAlgo((String) this.ctx.get("digest.method.algorithm"));
-        }/* else if (this.ctx != null && this.ctx.get("javax.xml.ws.soap.http.soapaction.uri") != null && ((String) this.ctx.get("javax.xml.ws.soap.http.soapaction.uri")).contains(":recipe:")) {
+        }/* else if (this.ctx != null && this.ctx.get("jakarta.xml.ws.soap.http.soapaction.uri") != null && ((String) this.ctx.get("jakarta.xml.ws.soap.http.soapaction.uri")).contains(":recipe:")) {
          this.sign.setDigestAlgo(this.config.getProperty("default.digest.method.algorithm", "http://www.w3.org/2000/09/xmldsig#sha1"));
       }*/ else {
             this.sign.setDigestAlgo(this.config.getProperty("default.digest.method.algorithm", "http://www.w3.org/2001/04/xmlenc#sha256"));
@@ -131,7 +131,7 @@ public class WSSecHeaderGeneratorWss4jImpl implements AbstractWsSecurityHandler.
     private void determineSignatureAlgorithm() {
         if (this.ctx != null && StringUtils.isNotBlank((String) this.ctx.get("signature.method.algorithm"))) {
             this.sign.setSignatureAlgorithm((String) this.ctx.get("signature.method.algorithm"));
-        }/* else if (this.ctx != null && this.ctx.get("javax.xml.ws.soap.http.soapaction.uri") != null && ((String) this.ctx.get("javax.xml.ws.soap.http.soapaction.uri")).contains(":recipe:")) {
+        }/* else if (this.ctx != null && this.ctx.get("jakarta.xml.ws.soap.http.soapaction.uri") != null && ((String) this.ctx.get("jakarta.xml.ws.soap.http.soapaction.uri")).contains(":recipe:")) {
          this.sign.setSignatureAlgorithm(this.config.getProperty("default.signature.method.algorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha1"));
       }*/ else {
             this.sign.setSignatureAlgorithm(this.config.getProperty("default.signature.method.algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"));

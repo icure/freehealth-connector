@@ -1,8 +1,8 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2017.05.11 à 02:53:46 PM CEST 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2017.05.11 à 02:53:46 PM CEST
 //
 
 
@@ -13,12 +13,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElements;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDITEM;
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.LnkType;
@@ -28,11 +28,11 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 
 /**
  * the item is used to describe atomic medical information.
- * 
+ *
  * <p>Classe Java pour itemType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="itemType">
  *   &lt;complexContent>
@@ -155,8 +155,8 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "itemType", propOrder = {
@@ -252,11 +252,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété confidentiality.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ConfidentialityType }
-     *     
+     *
      */
     public ConfidentialityType getConfidentiality() {
         return confidentiality;
@@ -264,11 +264,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété confidentiality.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ConfidentialityType }
-     *     
+     *
      */
     public void setConfidentiality(ConfidentialityType value) {
         this.confidentiality = value;
@@ -276,25 +276,25 @@ public class ItemType implements Serializable
 
     /**
      * Gets the value of the ids property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the ids property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIds().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link IDKMEHR }
-     * 
-     * 
+     *
+     *
      */
     public List<IDKMEHR> getIds() {
         if (ids == null) {
@@ -305,25 +305,25 @@ public class ItemType implements Serializable
 
     /**
      * Gets the value of the cds property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the cds property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCds().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link CDITEM }
-     * 
-     * 
+     *
+     *
      */
     public List<CDITEM> getCds() {
         if (cds == null) {
@@ -334,25 +334,25 @@ public class ItemType implements Serializable
 
     /**
      * Gets the value of the contents property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the contents property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getContents().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ContentType }
-     * 
-     * 
+     *
+     *
      */
     public List<ContentType> getContents() {
         if (contents == null) {
@@ -363,25 +363,25 @@ public class ItemType implements Serializable
 
     /**
      * Gets the value of the texts property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the texts property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTexts().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TextType }
-     * 
-     * 
+     *
+     *
      */
     public List<TextType> getTexts() {
         if (texts == null) {
@@ -392,11 +392,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété author.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AuthorType }
-     *     
+     *
      */
     public AuthorType getAuthor() {
         return author;
@@ -404,11 +404,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété author.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AuthorType }
-     *     
+     *
      */
     public void setAuthor(AuthorType value) {
         this.author = value;
@@ -416,11 +416,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété beginmoment.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MomentType }
-     *     
+     *
      */
     public MomentType getBeginmoment() {
         return beginmoment;
@@ -428,11 +428,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété beginmoment.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MomentType }
-     *     
+     *
      */
     public void setBeginmoment(MomentType value) {
         this.beginmoment = value;
@@ -440,11 +440,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété endmoment.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MomentType }
-     *     
+     *
      */
     public MomentType getEndmoment() {
         return endmoment;
@@ -452,11 +452,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété endmoment.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MomentType }
-     *     
+     *
      */
     public void setEndmoment(MomentType value) {
         this.endmoment = value;
@@ -464,11 +464,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété iscomplete.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isIscomplete() {
         return iscomplete;
@@ -476,11 +476,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété iscomplete.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setIscomplete(Boolean value) {
         this.iscomplete = value;
@@ -488,11 +488,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété isvalidated.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isIsvalidated() {
         return isvalidated;
@@ -500,11 +500,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété isvalidated.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setIsvalidated(Boolean value) {
         this.isvalidated = value;
@@ -512,11 +512,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété lifecycle.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LifecycleType }
-     *     
+     *
      */
     public LifecycleType getLifecycle() {
         return lifecycle;
@@ -524,11 +524,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété lifecycle.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LifecycleType }
-     *     
+     *
      */
     public void setLifecycle(LifecycleType value) {
         this.lifecycle = value;
@@ -536,11 +536,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété isrelevant.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isIsrelevant() {
         return isrelevant;
@@ -548,11 +548,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété isrelevant.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setIsrelevant(Boolean value) {
         this.isrelevant = value;
@@ -560,11 +560,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété severity.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SeverityType }
-     *     
+     *
      */
     public SeverityType getSeverity() {
         return severity;
@@ -572,11 +572,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété severity.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SeverityType }
-     *     
+     *
      */
     public void setSeverity(SeverityType value) {
         this.severity = value;
@@ -584,11 +584,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété certainty.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CertaintyType }
-     *     
+     *
      */
     public CertaintyType getCertainty() {
         return certainty;
@@ -596,11 +596,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété certainty.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CertaintyType }
-     *     
+     *
      */
     public void setCertainty(CertaintyType value) {
         this.certainty = value;
@@ -608,11 +608,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété temporality.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TemporalityType }
-     *     
+     *
      */
     public TemporalityType getTemporality() {
         return temporality;
@@ -620,11 +620,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété temporality.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TemporalityType }
-     *     
+     *
      */
     public void setTemporality(TemporalityType value) {
         this.temporality = value;
@@ -632,11 +632,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété urgency.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link UrgencyType }
-     *     
+     *
      */
     public UrgencyType getUrgency() {
         return urgency;
@@ -644,11 +644,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété urgency.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link UrgencyType }
-     *     
+     *
      */
     public void setUrgency(UrgencyType value) {
         this.urgency = value;
@@ -656,11 +656,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété quantity.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QuantityType }
-     *     
+     *
      */
     public QuantityType getQuantity() {
         return quantity;
@@ -668,11 +668,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété quantity.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QuantityType }
-     *     
+     *
      */
     public void setQuantity(QuantityType value) {
         this.quantity = value;
@@ -680,11 +680,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété strength.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StrengthType }
-     *     
+     *
      */
     public StrengthType getStrength() {
         return strength;
@@ -692,11 +692,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété strength.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StrengthType }
-     *     
+     *
      */
     public void setStrength(StrengthType value) {
         this.strength = value;
@@ -704,11 +704,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété frequency.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FrequencyType }
-     *     
+     *
      */
     public FrequencyType getFrequency() {
         return frequency;
@@ -716,11 +716,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété frequency.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FrequencyType }
-     *     
+     *
      */
     public void setFrequency(FrequencyType value) {
         this.frequency = value;
@@ -728,25 +728,25 @@ public class ItemType implements Serializable
 
     /**
      * Gets the value of the sites property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the sites property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSites().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link SiteType }
-     * 
-     * 
+     *
+     *
      */
     public List<SiteType> getSites() {
         if (sites == null) {
@@ -757,11 +757,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété cost.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CostType }
-     *     
+     *
      */
     public CostType getCost() {
         return cost;
@@ -769,11 +769,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété cost.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CostType }
-     *     
+     *
      */
     public void setCost(CostType value) {
         this.cost = value;
@@ -781,25 +781,25 @@ public class ItemType implements Serializable
 
     /**
      * Gets the value of the dayperiods property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the dayperiods property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDayperiods().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DayperiodType }
-     * 
-     * 
+     *
+     *
      */
     public List<DayperiodType> getDayperiods() {
         if (dayperiods == null) {
@@ -810,11 +810,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété duration.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DurationType }
-     *     
+     *
      */
     public DurationType getDuration() {
         return duration;
@@ -822,11 +822,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété duration.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DurationType }
-     *     
+     *
      */
     public void setDuration(DurationType value) {
         this.duration = value;
@@ -834,11 +834,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété posology.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ItemType.Posology }
-     *     
+     *
      */
     public ItemType.Posology getPosology() {
         return posology;
@@ -846,11 +846,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété posology.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ItemType.Posology }
-     *     
+     *
      */
     public void setPosology(ItemType.Posology value) {
         this.posology = value;
@@ -858,11 +858,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété regimen.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ItemType.Regimen }
-     *     
+     *
      */
     public ItemType.Regimen getRegimen() {
         return regimen;
@@ -870,11 +870,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété regimen.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ItemType.Regimen }
-     *     
+     *
      */
     public void setRegimen(ItemType.Regimen value) {
         this.regimen = value;
@@ -882,11 +882,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété deliverydate.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getDeliverydate() {
         return deliverydate;
@@ -894,11 +894,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété deliverydate.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setDeliverydate(XMLGregorianCalendar value) {
         this.deliverydate = value;
@@ -906,11 +906,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété renewal.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RenewalType }
-     *     
+     *
      */
     public RenewalType getRenewal() {
         return renewal;
@@ -918,11 +918,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété renewal.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RenewalType }
-     *     
+     *
      */
     public void setRenewal(RenewalType value) {
         this.renewal = value;
@@ -930,11 +930,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété route.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RouteType }
-     *     
+     *
      */
     public RouteType getRoute() {
         return route;
@@ -942,11 +942,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété route.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RouteType }
-     *     
+     *
      */
     public void setRoute(RouteType value) {
         this.route = value;
@@ -954,11 +954,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété batch.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getBatch() {
         return batch;
@@ -966,11 +966,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété batch.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setBatch(String value) {
         this.batch = value;
@@ -978,11 +978,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété instructionforoverdosing.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TextType }
-     *     
+     *
      */
     public TextType getInstructionforoverdosing() {
         return instructionforoverdosing;
@@ -990,11 +990,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété instructionforoverdosing.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TextType }
-     *     
+     *
      */
     public void setInstructionforoverdosing(TextType value) {
         this.instructionforoverdosing = value;
@@ -1002,11 +1002,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété instructionforpatient.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TextType }
-     *     
+     *
      */
     public TextType getInstructionforpatient() {
         return instructionforpatient;
@@ -1014,11 +1014,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété instructionforpatient.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TextType }
-     *     
+     *
      */
     public void setInstructionforpatient(TextType value) {
         this.instructionforpatient = value;
@@ -1026,11 +1026,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété instructionforreimbursement.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TextType }
-     *     
+     *
      */
     public TextType getInstructionforreimbursement() {
         return instructionforreimbursement;
@@ -1038,11 +1038,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété instructionforreimbursement.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TextType }
-     *     
+     *
      */
     public void setInstructionforreimbursement(TextType value) {
         this.instructionforreimbursement = value;
@@ -1050,11 +1050,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété issubstitutionallowed.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isIssubstitutionallowed() {
         return issubstitutionallowed;
@@ -1062,11 +1062,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété issubstitutionallowed.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setIssubstitutionallowed(Boolean value) {
         this.issubstitutionallowed = value;
@@ -1074,11 +1074,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété feedback.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ItemType.Feedback }
-     *     
+     *
      */
     public ItemType.Feedback getFeedback() {
         return feedback;
@@ -1086,11 +1086,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété feedback.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ItemType.Feedback }
-     *     
+     *
      */
     public void setFeedback(ItemType.Feedback value) {
         this.feedback = value;
@@ -1098,25 +1098,25 @@ public class ItemType implements Serializable
 
     /**
      * Gets the value of the locals property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the locals property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLocals().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link LocalitemattributeType }
-     * 
-     * 
+     *
+     *
      */
     public List<LocalitemattributeType> getLocals() {
         if (locals == null) {
@@ -1127,11 +1127,11 @@ public class ItemType implements Serializable
 
     /**
      * Obtient la valeur de la propriété recorddatetime.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getRecorddatetime() {
         return recorddatetime;
@@ -1139,11 +1139,11 @@ public class ItemType implements Serializable
 
     /**
      * Définit la valeur de la propriété recorddatetime.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setRecorddatetime(XMLGregorianCalendar value) {
         this.recorddatetime = value;
@@ -1151,25 +1151,25 @@ public class ItemType implements Serializable
 
     /**
      * Gets the value of the lnks property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the lnks property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLnks().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link LnkType }
-     * 
-     * 
+     *
+     *
      */
     public List<LnkType> getLnks() {
         if (lnks == null) {
@@ -1181,9 +1181,9 @@ public class ItemType implements Serializable
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -1196,8 +1196,8 @@ public class ItemType implements Serializable
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -1214,7 +1214,7 @@ public class ItemType implements Serializable
 
         /**
          * Obtient la valeur de la propriété reportrequested.
-         * 
+         *
          */
         public boolean isReportrequested() {
             return reportrequested;
@@ -1222,7 +1222,7 @@ public class ItemType implements Serializable
 
         /**
          * Définit la valeur de la propriété reportrequested.
-         * 
+         *
          */
         public void setReportrequested(boolean value) {
             this.reportrequested = value;
@@ -1230,11 +1230,11 @@ public class ItemType implements Serializable
 
         /**
          * Obtient la valeur de la propriété text.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TextType }
-         *     
+         *
          */
         public TextType getText() {
             return text;
@@ -1242,11 +1242,11 @@ public class ItemType implements Serializable
 
         /**
          * Définit la valeur de la propriété text.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TextType }
-         *     
+         *
          */
         public void setText(TextType value) {
             this.text = value;
@@ -1257,9 +1257,9 @@ public class ItemType implements Serializable
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -1288,8 +1288,8 @@ public class ItemType implements Serializable
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -1312,11 +1312,11 @@ public class ItemType implements Serializable
 
         /**
          * Obtient la valeur de la propriété text.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TextType }
-         *     
+         *
          */
         public TextType getText() {
             return text;
@@ -1324,11 +1324,11 @@ public class ItemType implements Serializable
 
         /**
          * Définit la valeur de la propriété text.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TextType }
-         *     
+         *
          */
         public void setText(TextType value) {
             this.text = value;
@@ -1336,11 +1336,11 @@ public class ItemType implements Serializable
 
         /**
          * Obtient la valeur de la propriété low.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link BigDecimal }
-         *     
+         *
          */
         public BigDecimal getLow() {
             return low;
@@ -1348,11 +1348,11 @@ public class ItemType implements Serializable
 
         /**
          * Définit la valeur de la propriété low.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link BigDecimal }
-         *     
+         *
          */
         public void setLow(BigDecimal value) {
             this.low = value;
@@ -1360,11 +1360,11 @@ public class ItemType implements Serializable
 
         /**
          * Obtient la valeur de la propriété high.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link BigDecimal }
-         *     
+         *
          */
         public BigDecimal getHigh() {
             return high;
@@ -1372,11 +1372,11 @@ public class ItemType implements Serializable
 
         /**
          * Définit la valeur de la propriété high.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link BigDecimal }
-         *     
+         *
          */
         public void setHigh(BigDecimal value) {
             this.high = value;
@@ -1384,11 +1384,11 @@ public class ItemType implements Serializable
 
         /**
          * Obtient la valeur de la propriété unit.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link AdministrationunitType }
-         *     
+         *
          */
         public AdministrationunitType getUnit() {
             return unit;
@@ -1396,11 +1396,11 @@ public class ItemType implements Serializable
 
         /**
          * Définit la valeur de la propriété unit.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link AdministrationunitType }
-         *     
+         *
          */
         public void setUnit(AdministrationunitType value) {
             this.unit = value;
@@ -1408,11 +1408,11 @@ public class ItemType implements Serializable
 
         /**
          * Obtient la valeur de la propriété takes.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link ItemType.Posology.Takes }
-         *     
+         *
          */
         public ItemType.Posology.Takes getTakes() {
             return takes;
@@ -1420,11 +1420,11 @@ public class ItemType implements Serializable
 
         /**
          * Définit la valeur de la propriété takes.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link ItemType.Posology.Takes }
-         *     
+         *
          */
         public void setTakes(ItemType.Posology.Takes value) {
             this.takes = value;
@@ -1433,9 +1433,9 @@ public class ItemType implements Serializable
 
         /**
          * <p>Classe Java pour anonymous complex type.
-         * 
+         *
          * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -1448,8 +1448,8 @@ public class ItemType implements Serializable
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -1467,11 +1467,11 @@ public class ItemType implements Serializable
 
             /**
              * Obtient la valeur de la propriété low.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link BigDecimal }
-             *     
+             *
              */
             public BigDecimal getLow() {
                 return low;
@@ -1479,11 +1479,11 @@ public class ItemType implements Serializable
 
             /**
              * Définit la valeur de la propriété low.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link BigDecimal }
-             *     
+             *
              */
             public void setLow(BigDecimal value) {
                 this.low = value;
@@ -1491,11 +1491,11 @@ public class ItemType implements Serializable
 
             /**
              * Obtient la valeur de la propriété high.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link BigDecimal }
-             *     
+             *
              */
             public BigDecimal getHigh() {
                 return high;
@@ -1503,11 +1503,11 @@ public class ItemType implements Serializable
 
             /**
              * Définit la valeur de la propriété high.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link BigDecimal }
-             *     
+             *
              */
             public void setHigh(BigDecimal value) {
                 this.high = value;
@@ -1520,9 +1520,9 @@ public class ItemType implements Serializable
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -1561,8 +1561,8 @@ public class ItemType implements Serializable
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -1584,20 +1584,20 @@ public class ItemType implements Serializable
 
         /**
          * Gets the value of the daynumbersAndQuantitiesAndDates property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the daynumbersAndQuantitiesAndDates property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getDaynumbersAndQuantitiesAndDates().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link BigInteger }
@@ -1605,8 +1605,8 @@ public class ItemType implements Serializable
          * {@link XMLGregorianCalendar }
          * {@link ItemType.Regimen.Weekday }
          * {@link ItemType.Regimen.Daytime }
-         * 
-         * 
+         *
+         *
          */
         public List<Object> getDaynumbersAndQuantitiesAndDates() {
             if (daynumbersAndQuantitiesAndDates == null) {
@@ -1618,9 +1618,9 @@ public class ItemType implements Serializable
 
         /**
          * <p>Classe Java pour anonymous complex type.
-         * 
+         *
          * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -1633,8 +1633,8 @@ public class ItemType implements Serializable
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -1651,11 +1651,11 @@ public class ItemType implements Serializable
 
             /**
              * Obtient la valeur de la propriété dayperiod.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link DayperiodType }
-             *     
+             *
              */
             public DayperiodType getDayperiod() {
                 return dayperiod;
@@ -1663,11 +1663,11 @@ public class ItemType implements Serializable
 
             /**
              * Définit la valeur de la propriété dayperiod.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link DayperiodType }
-             *     
+             *
              */
             public void setDayperiod(DayperiodType value) {
                 this.dayperiod = value;
@@ -1675,11 +1675,11 @@ public class ItemType implements Serializable
 
             /**
              * Obtient la valeur de la propriété time.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link XMLGregorianCalendar }
-             *     
+             *
              */
             public XMLGregorianCalendar getTime() {
                 return time;
@@ -1687,11 +1687,11 @@ public class ItemType implements Serializable
 
             /**
              * Définit la valeur de la propriété time.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link XMLGregorianCalendar }
-             *     
+             *
              */
             public void setTime(XMLGregorianCalendar value) {
                 this.time = value;
@@ -1702,9 +1702,9 @@ public class ItemType implements Serializable
 
         /**
          * <p>Classe Java pour anonymous complex type.
-         * 
+         *
          * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -1716,8 +1716,8 @@ public class ItemType implements Serializable
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -1734,11 +1734,11 @@ public class ItemType implements Serializable
 
             /**
              * Obtient la valeur de la propriété weeknumber.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link BigInteger }
-             *     
+             *
              */
             public BigInteger getWeeknumber() {
                 return weeknumber;
@@ -1746,11 +1746,11 @@ public class ItemType implements Serializable
 
             /**
              * Définit la valeur de la propriété weeknumber.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link BigInteger }
-             *     
+             *
              */
             public void setWeeknumber(BigInteger value) {
                 this.weeknumber = value;

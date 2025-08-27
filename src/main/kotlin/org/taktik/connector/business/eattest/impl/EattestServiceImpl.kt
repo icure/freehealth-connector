@@ -33,7 +33,7 @@ import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValue
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory
 
-import javax.xml.soap.SOAPException
+import jakarta.xml.soap.SOAPException
 
 class EattestServiceImpl : EattestService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
     private val log = LoggerFactory.getLogger(EattestServiceImpl::class.java)

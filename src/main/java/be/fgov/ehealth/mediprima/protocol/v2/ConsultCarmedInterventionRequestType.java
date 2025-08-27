@@ -4,7 +4,7 @@ package be.fgov.ehealth.mediprima.protocol.v2;
 import be.fgov.ehealth.commons.protocol.v2.RequestType;
 import be.fgov.ehealth.mediprima.core.v2.ConsultCarmedDataType;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 
 
 /**

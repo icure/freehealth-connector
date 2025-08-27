@@ -1,5 +1,7 @@
 package be.fgov.ehealth.technicalconnector.signature.impl.xades.impl;
 
+import org.apache.xml.security.signature.XMLSignatureByteInput;
+import org.apache.xml.security.signature.XMLSignatureNodeInput;
 import org.taktik.connector.technical.exception.InvalidTimeStampException;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.service.sts.security.Credential;
@@ -109,13 +111,9 @@ public class XadesTSpecification implements XadesSpecification {
       try {
          Node signatureValue = DomUtils.getMatchingChilds(baseElement, "http://www.w3.org/2000/09/xmldsig#", "SignatureValue").item(0);
          Transform transform = new Transform(signatureValue.getOwnerDocument(), c14nMethodValue);
-         XMLSignatureInput refData = transform.performTransform(new XMLSignatureInput(signatureValue), true);
+         XMLSignatureInput refData = transform.performTransform(new XMLSignatureNodeInput(signatureValue), true);
          ByteArrayOutputStream baos = new ByteArrayOutputStream();
-         if (refData.isByteArray()) {
-            baos.write(refData.getBytes());
-         } else if (refData.isOctetStream()) {
-            baos.write(ConnectorIOUtils.getBytes(refData.getOctetStream()));
-         }
+         baos.write(refData.getBytes());
 
          return baos.toByteArray();
       } catch (Exception var7) {

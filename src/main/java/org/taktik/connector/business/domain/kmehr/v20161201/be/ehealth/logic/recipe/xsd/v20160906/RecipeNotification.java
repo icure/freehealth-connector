@@ -2,7 +2,7 @@ package org.taktik.connector.business.domain.kmehr.v20161201.be.ehealth.logic.re
 
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.RecipeKmehrmessageType;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "notificationType", propOrder = {"text", "kmehrmessage"})

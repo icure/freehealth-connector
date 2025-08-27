@@ -12,7 +12,7 @@
 
 package org.taktik.connector.business.domain.kmehr.v20120701.be.fgov.ehealth.standards.kmehr.dt.v1;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 
 /**

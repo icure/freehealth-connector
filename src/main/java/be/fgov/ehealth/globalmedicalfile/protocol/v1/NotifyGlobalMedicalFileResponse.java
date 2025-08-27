@@ -1,9 +1,9 @@
 package be.fgov.ehealth.globalmedicalfile.protocol.v1;
 
 import be.fgov.ehealth.commons.protocol.SoapConversationLogger;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.soap.SOAPMessage;
 
 @XmlRootElement(
         name = "NotifyGlobalMedicalFileResponse",

@@ -20,8 +20,8 @@ package org.taktik.freehealth.middleware.web
 
 import org.springframework.security.core.AuthenticationException
 
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
 class LoginUrlAuthenticationEntryPoint(loginFormUrl: String,
                                        internal var prefixedLoginUrls: Map<String, String>) : org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint(loginFormUrl) {

@@ -1,8 +1,8 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2017.05.11 à 02:53:46 PM CEST 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2017.05.11 à 02:53:46 PM CEST
 //
 
 
@@ -11,19 +11,19 @@ package org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.sta
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDQUANTITYPREFIX;
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR;
 
 
 /**
  * <p>Classe Java pour compoundType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="compoundType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "compoundType", propOrder = {
@@ -76,25 +76,25 @@ public class CompoundType
 
     /**
      * Gets the value of the ids property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the ids property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIds().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link IDKMEHR }
-     * 
-     * 
+     *
+     *
      */
     public List<IDKMEHR> getIds() {
         if (ids == null) {
@@ -105,11 +105,11 @@ public class CompoundType
 
     /**
      * Obtient la valeur de la propriété substance.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SubstanceType }
-     *     
+     *
      */
     public SubstanceType getSubstance() {
         return substance;
@@ -117,11 +117,11 @@ public class CompoundType
 
     /**
      * Définit la valeur de la propriété substance.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SubstanceType }
-     *     
+     *
      */
     public void setSubstance(SubstanceType value) {
         this.substance = value;
@@ -129,11 +129,11 @@ public class CompoundType
 
     /**
      * Obtient la valeur de la propriété medicinalproduct.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MedicinalProductType }
-     *     
+     *
      */
     public MedicinalProductType getMedicinalproduct() {
         return medicinalproduct;
@@ -141,11 +141,11 @@ public class CompoundType
 
     /**
      * Définit la valeur de la propriété medicinalproduct.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MedicinalProductType }
-     *     
+     *
      */
     public void setMedicinalproduct(MedicinalProductType value) {
         this.medicinalproduct = value;
@@ -153,11 +153,11 @@ public class CompoundType
 
     /**
      * Obtient la valeur de la propriété quantityprefix.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CompoundType.Quantityprefix }
-     *     
+     *
      */
     public CompoundType.Quantityprefix getQuantityprefix() {
         return quantityprefix;
@@ -165,11 +165,11 @@ public class CompoundType
 
     /**
      * Définit la valeur de la propriété quantityprefix.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CompoundType.Quantityprefix }
-     *     
+     *
      */
     public void setQuantityprefix(CompoundType.Quantityprefix value) {
         this.quantityprefix = value;
@@ -177,11 +177,11 @@ public class CompoundType
 
     /**
      * Obtient la valeur de la propriété quantity.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QuantityType }
-     *     
+     *
      */
     public QuantityType getQuantity() {
         return quantity;
@@ -189,11 +189,11 @@ public class CompoundType
 
     /**
      * Définit la valeur de la propriété quantity.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QuantityType }
-     *     
+     *
      */
     public void setQuantity(QuantityType value) {
         this.quantity = value;
@@ -202,9 +202,9 @@ public class CompoundType
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -216,8 +216,8 @@ public class CompoundType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -233,11 +233,11 @@ public class CompoundType
 
         /**
          * Obtient la valeur de la propriété cd.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link CDQUANTITYPREFIX }
-         *     
+         *
          */
         public CDQUANTITYPREFIX getCd() {
             return cd;
@@ -245,11 +245,11 @@ public class CompoundType
 
         /**
          * Définit la valeur de la propriété cd.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link CDQUANTITYPREFIX }
-         *     
+         *
          */
         public void setCd(CDQUANTITYPREFIX value) {
             this.cd = value;

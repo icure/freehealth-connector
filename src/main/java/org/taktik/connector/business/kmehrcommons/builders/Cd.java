@@ -2,7 +2,7 @@ package org.taktik.connector.business.kmehrcommons.builders;
 
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY;
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 public class Cd {
    private CDHCPARTY cd = new CDHCPARTY();

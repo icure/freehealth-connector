@@ -11,7 +11,7 @@ import org.taktik.connector.technical.ws.domain.GenericRequest
 import org.taktik.connector.technical.ws.domain.GenericResponse
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationRequest
 import be.fgov.ehealth.mycarenet.memberdata.protocol.v1.MemberDataConsultationResponse
-import javax.xml.soap.SOAPException
+import jakarta.xml.soap.SOAPException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

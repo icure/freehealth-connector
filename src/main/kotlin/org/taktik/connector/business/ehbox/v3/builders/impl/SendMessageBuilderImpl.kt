@@ -57,7 +57,7 @@ import java.io.IOException
 import java.io.UnsupportedEncodingException
 import java.security.KeyStore
 import java.util.HashSet
-import javax.activation.DataHandler
+import jakarta.activation.DataHandler
 import org.bouncycastle.cms.CMSException
 import org.bouncycastle.util.encoders.Base64
 import org.slf4j.LoggerFactory

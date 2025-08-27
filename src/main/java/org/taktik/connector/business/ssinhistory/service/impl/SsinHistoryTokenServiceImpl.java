@@ -15,7 +15,7 @@ import org.taktik.connector.technical.validator.EhealthReplyValidator;
 import org.taktik.connector.technical.ws.ServiceFactory;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPException;
 import java.util.HashMap;
 import java.util.Map;
 

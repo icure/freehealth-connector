@@ -3,4 +3,4 @@
 )
 package be.fgov.ehealth.dics.core.v4.compounding.common;
 
-import javax.xml.bind.annotation.XmlSchema;
+import jakarta.xml.bind.annotation.XmlSchema;

@@ -2,7 +2,7 @@ package be.fgov.ehealth.standards.kmehr.schema.v1;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import org.joda.time.DateTime;
 
 public class RegimenFactory {

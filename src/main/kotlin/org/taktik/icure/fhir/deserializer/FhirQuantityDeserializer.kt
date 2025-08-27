@@ -13,7 +13,7 @@ class FhirQuantityDeserializer : JsonObjectDeserializer<Quantity>() {
         context: DeserializationContext,
         codec: ObjectCodec,
         tree: JsonNode): Quantity {
-        return when(tree["unit"]?.asText()?.toLowerCase()) {
+        return when(tree["unit"]?.asText()?.lowercase()) {
             "year" -> codec.treeToValue(tree, org.taktik.icure.fhir.entities.r4.age.Age::class.java)
             else -> codec.treeToValue(tree, org.taktik.icure.fhir.entities.r4.count.Count::class.java)
         }

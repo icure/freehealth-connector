@@ -7,8 +7,8 @@ import be.fgov.ehealth.consultrn._1_0.core.GenderType
 import be.fgov.ehealth.consultrn._1_0.core.NameType
 import be.fgov.ehealth.consultrn._1_0.core.NationalityType
 
-import javax.xml.bind.annotation.XmlAccessType
-import javax.xml.bind.annotation.XmlAccessorType
+import jakarta.xml.bind.annotation.XmlAccessType
+import jakarta.xml.bind.annotation.XmlAccessorType
 import java.io.Serializable
 
 class ConsultRnPersonDataDto(var birth: BirthDeceaseType? = null,

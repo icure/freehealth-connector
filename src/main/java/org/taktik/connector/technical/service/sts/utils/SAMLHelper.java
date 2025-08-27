@@ -2,7 +2,7 @@ package org.taktik.connector.technical.service.sts.utils;
 
 import org.taktik.connector.technical.utils.DateUtils;
 import java.util.Calendar;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.xml.bind.DatatypeConverter;
 import org.joda.time.DateTime;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;

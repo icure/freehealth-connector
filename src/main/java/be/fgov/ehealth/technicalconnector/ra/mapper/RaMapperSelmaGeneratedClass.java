@@ -7,11 +7,7 @@ import be.fgov.ehealth.certra.core.v2.OrganizationType;
 import be.fgov.ehealth.certra.core.v2.RevocationContractType;
 import be.fgov.ehealth.certra.core.v2.TextType;
 import be.fgov.ehealth.certra.protocol.v2.GenerateCertificateResponse;
-import be.fgov.ehealth.certra.protocol.v2.GenerateContractRequest;
-import be.fgov.ehealth.certra.protocol.v2.GenerateRevocationContractRequest;
 import be.fgov.ehealth.certra.protocol.v2.GetActorQualitiesResponse;
-import be.fgov.ehealth.certra.protocol.v2.RevokeRequest;
-import be.fgov.ehealth.certra.protocol.v2.SubmitCSRForForeignerRequest;
 import be.fgov.ehealth.certra.protocol.v2.SubmitCSRForForeignerResponse;
 import be.fgov.ehealth.commons.core.v2.ActorType;
 import be.fgov.ehealth.commons.core.v2.Id;
@@ -21,16 +17,11 @@ import be.fgov.ehealth.technicalconnector.ra.domain.ActorQualities;
 import be.fgov.ehealth.technicalconnector.ra.domain.Certificate;
 import be.fgov.ehealth.technicalconnector.ra.domain.CertificateIdentifier;
 import be.fgov.ehealth.technicalconnector.ra.domain.ContactData;
-import be.fgov.ehealth.technicalconnector.ra.domain.ContractRequest;
-import be.fgov.ehealth.technicalconnector.ra.domain.ForeignerRequest;
 import be.fgov.ehealth.technicalconnector.ra.domain.GeneratedContract;
 import be.fgov.ehealth.technicalconnector.ra.domain.GeneratedRevocationContract;
 import be.fgov.ehealth.technicalconnector.ra.domain.LocalizedString;
 import be.fgov.ehealth.technicalconnector.ra.domain.LocalizedText;
-import be.fgov.ehealth.technicalconnector.ra.domain.NewCertificateContract;
 import be.fgov.ehealth.technicalconnector.ra.domain.Organization;
-import be.fgov.ehealth.technicalconnector.ra.domain.RevocationContractRequest;
-import be.fgov.ehealth.technicalconnector.ra.domain.RevocationRequest;
 import be.fgov.ehealth.technicalconnector.ra.domain.SubmitCSRForForeignerResponseInfo;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -87,18 +78,6 @@ public final class RaMapperSelmaGeneratedClass implements RaMapper {
          out = new ActorId();
          out.setType(inId.getType());
          out.setValue(inId.getValue());
-      }
-
-      return out;
-   }
-
-   public final ContractType asContractType(NewCertificateContract inNewCertificateContract) {
-      ContractType out = null;
-      if (inNewCertificateContract != null) {
-         out = new ContractType();
-         out.setDN(inNewCertificateContract.getDn());
-         out.setSigner(this.asActorType(inNewCertificateContract.getSigner()));
-         out.setText(this.asTextType(inNewCertificateContract.getText()));
       }
 
       return out;
@@ -171,19 +150,6 @@ public final class RaMapperSelmaGeneratedClass implements RaMapper {
          out = new Id();
          out.setType(inActorId.getType());
          out.setValue(inActorId.getValue());
-      }
-
-      return out;
-   }
-
-   public final GenerateContractRequest asGenerateContractRequest(ContractRequest inContractRequest) {
-      GenerateContractRequest out = null;
-      if (inContractRequest != null) {
-         out = new GenerateContractRequest();
-         out.setCertificateIdentifier(this.asCertificateIdentifierType(inContractRequest.getCertificateIdentifier()));
-         out.setContactData(this.asContactDataType(inContractRequest.getContactData()));
-         out.setId(inContractRequest.getId());
-         out.setSigner(this.asActorType(inContractRequest.getSigner()));
       }
 
       return out;
@@ -275,25 +241,6 @@ public final class RaMapperSelmaGeneratedClass implements RaMapper {
       return out;
    }
 
-   public final SubmitCSRForForeignerRequest asSubmitCSRForForeignerRequest(ForeignerRequest inForeignerRequest) {
-      SubmitCSRForForeignerRequest out = null;
-      if (inForeignerRequest != null) {
-         out = new SubmitCSRForForeignerRequest();
-         out.setContactData(this.asContactDataType(inForeignerRequest.getContactData()));
-         if (inForeignerRequest.getCsr() != null) {
-            out.setCSR(new byte[inForeignerRequest.getCsr().length]);
-            System.arraycopy(inForeignerRequest.getCsr(), 0, out.getCSR(), 0, inForeignerRequest.getCsr().length);
-         } else {
-            out.setCSR((byte[])null);
-         }
-
-         out.setForeignPerson(this.asActorType(inForeignerRequest.getForeignPerson()));
-         out.setId(inForeignerRequest.getId());
-      }
-
-      return out;
-   }
-
    public final ContactDataType asContactDataType(ContactData inContactData) {
       ContactDataType out = null;
       if (inContactData != null) {
@@ -354,41 +301,6 @@ public final class RaMapperSelmaGeneratedClass implements RaMapper {
       return out;
    }
 
-   public final GenerateRevocationContractRequest asGenerateContractRequest(RevocationContractRequest inRevocationContractRequest) {
-      GenerateRevocationContractRequest out = null;
-      if (inRevocationContractRequest != null) {
-         out = new GenerateRevocationContractRequest();
-         out.setId(inRevocationContractRequest.getId());
-         if (inRevocationContractRequest.getPublicKeyIdentifier() != null) {
-            out.setPublicKeyIdentifier(new byte[inRevocationContractRequest.getPublicKeyIdentifier().length]);
-            System.arraycopy(inRevocationContractRequest.getPublicKeyIdentifier(), 0, out.getPublicKeyIdentifier(), 0, inRevocationContractRequest.getPublicKeyIdentifier().length);
-         } else {
-            out.setPublicKeyIdentifier((byte[])null);
-         }
-
-         out.setRevocationReason(inRevocationContractRequest.getRevocationReason());
-         out.setSigner(this.asActorType(inRevocationContractRequest.getSigner()));
-      }
-
-      return out;
-   }
-
-   public final RevokeRequest asRevokeRequest(RevocationRequest inRevocationRequest) {
-      RevokeRequest out = null;
-      if (inRevocationRequest != null) {
-         out = new RevokeRequest();
-         out.setContract(this.asRevocationContractType(inRevocationRequest.getContract()));
-         out.setId(inRevocationRequest.getId());
-         if (inRevocationRequest.getPublicKeyIdentifier() != null) {
-            out.setPublicKeyIdentifier(new byte[inRevocationRequest.getPublicKeyIdentifier().length]);
-            System.arraycopy(inRevocationRequest.getPublicKeyIdentifier(), 0, out.getPublicKeyIdentifier(), 0, inRevocationRequest.getPublicKeyIdentifier().length);
-         } else {
-            out.setPublicKeyIdentifier((byte[])null);
-         }
-      }
-
-      return out;
-   }
 
    public final RevocationContractType asRevocationContractType(GeneratedRevocationContract inGeneratedRevocationContract) {
       RevocationContractType out = null;

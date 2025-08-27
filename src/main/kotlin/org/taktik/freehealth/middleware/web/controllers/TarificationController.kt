@@ -95,7 +95,7 @@ class TarificationController(val tarificationService: TarificationService, val m
         relatedServices = if (relatedService?.contains(',') == true) relatedService.split(',').also {
             if (it.size != codes.size) throw IllegalArgumentException("Related services length must match codes length.")
         } else codes.map { relatedService }).let { mapper.map(it, TarificationConsultationResult::class.java) } }
-    catch (e: javax.xml.ws.soap.SOAPFaultException) {
+    catch (e: jakarta.xml.ws.soap.SOAPFaultException) {
          TarificationConsultationResult().apply {
              errors = extractError(e).toMutableList()
          }
@@ -110,7 +110,7 @@ class TarificationController(val tarificationService: TarificationService, val m
         }
     }
 
-    private fun extractError(e: javax.xml.ws.soap.SOAPFaultException): Set<MycarenetError> {
+    private fun extractError(e: jakarta.xml.ws.soap.SOAPFaultException): Set<MycarenetError> {
         val result = mutableSetOf<MycarenetError>()
 
         e.fault.detail.detailEntries.forEach { it ->

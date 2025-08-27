@@ -1,6 +1,6 @@
 package be.fgov.ehealth.rn.registries.commons.v1;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 @XmlRegistry
 public class ObjectFactory {

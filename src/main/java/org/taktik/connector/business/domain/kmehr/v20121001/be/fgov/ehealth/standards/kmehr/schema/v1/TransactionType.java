@@ -1,8 +1,8 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2015.03.05 à 11:48:06 AM CET 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2015.03.05 à 11:48:06 AM CET
 //
 
 
@@ -11,12 +11,12 @@ package org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.sta
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElements;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDTRANSACTION;
@@ -27,11 +27,11 @@ import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.stan
 
 /**
  * a transaction is a set of medical information validated by one healthcare professional at one given moment.
- * 
+ *
  * <p>Classe Java pour transactionType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="transactionType">
  *   &lt;complexContent>
@@ -60,8 +60,8 @@ import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.stan
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "transactionType", propOrder = {
@@ -114,11 +114,11 @@ public class TransactionType
 
     /**
      * Obtient la valeur de la propriété confidentiality.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ConfidentialityType }
-     *     
+     *
      */
     public ConfidentialityType getConfidentiality() {
         return confidentiality;
@@ -126,11 +126,11 @@ public class TransactionType
 
     /**
      * Définit la valeur de la propriété confidentiality.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ConfidentialityType }
-     *     
+     *
      */
     public void setConfidentiality(ConfidentialityType value) {
         this.confidentiality = value;
@@ -138,25 +138,25 @@ public class TransactionType
 
     /**
      * Gets the value of the ids property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the ids property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIds().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link IDKMEHR }
-     * 
-     * 
+     *
+     *
      */
     public List<IDKMEHR> getIds() {
         if (ids == null) {
@@ -167,25 +167,25 @@ public class TransactionType
 
     /**
      * Gets the value of the cds property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the cds property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCds().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link CDTRANSACTION }
-     * 
-     * 
+     *
+     *
      */
     public List<CDTRANSACTION> getCds() {
         if (cds == null) {
@@ -196,11 +196,11 @@ public class TransactionType
 
     /**
      * Obtient la valeur de la propriété date.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getDate() {
         return date;
@@ -208,11 +208,11 @@ public class TransactionType
 
     /**
      * Définit la valeur de la propriété date.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setDate(XMLGregorianCalendar value) {
         this.date = value;
@@ -220,11 +220,11 @@ public class TransactionType
 
     /**
      * Obtient la valeur de la propriété time.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getTime() {
         return time;
@@ -232,11 +232,11 @@ public class TransactionType
 
     /**
      * Définit la valeur de la propriété time.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setTime(XMLGregorianCalendar value) {
         this.time = value;
@@ -244,11 +244,11 @@ public class TransactionType
 
     /**
      * Obtient la valeur de la propriété author.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AuthorType }
-     *     
+     *
      */
     public AuthorType getAuthor() {
         return author;
@@ -256,11 +256,11 @@ public class TransactionType
 
     /**
      * Définit la valeur de la propriété author.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AuthorType }
-     *     
+     *
      */
     public void setAuthor(AuthorType value) {
         this.author = value;
@@ -268,11 +268,11 @@ public class TransactionType
 
     /**
      * Obtient la valeur de la propriété redactor.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AuthorType }
-     *     
+     *
      */
     public AuthorType getRedactor() {
         return redactor;
@@ -280,11 +280,11 @@ public class TransactionType
 
     /**
      * Définit la valeur de la propriété redactor.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AuthorType }
-     *     
+     *
      */
     public void setRedactor(AuthorType value) {
         this.redactor = value;
@@ -292,7 +292,7 @@ public class TransactionType
 
     /**
      * Obtient la valeur de la propriété iscomplete.
-     * 
+     *
      */
     public boolean isIscomplete() {
         return iscomplete;
@@ -300,7 +300,7 @@ public class TransactionType
 
     /**
      * Définit la valeur de la propriété iscomplete.
-     * 
+     *
      */
     public void setIscomplete(boolean value) {
         this.iscomplete = value;
@@ -308,7 +308,7 @@ public class TransactionType
 
     /**
      * Obtient la valeur de la propriété isvalidated.
-     * 
+     *
      */
     public boolean isIsvalidated() {
         return isvalidated;
@@ -316,7 +316,7 @@ public class TransactionType
 
     /**
      * Définit la valeur de la propriété isvalidated.
-     * 
+     *
      */
     public void setIsvalidated(boolean value) {
         this.isvalidated = value;
@@ -324,11 +324,11 @@ public class TransactionType
 
     /**
      * Obtient la valeur de la propriété expirationdate.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getExpirationdate() {
         return expirationdate;
@@ -336,11 +336,11 @@ public class TransactionType
 
     /**
      * Définit la valeur de la propriété expirationdate.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setExpirationdate(XMLGregorianCalendar value) {
         this.expirationdate = value;
@@ -348,20 +348,20 @@ public class TransactionType
 
     /**
      * Gets the value of the headingsAndItemsAndTexts property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the headingsAndItemsAndTexts property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getHeadingsAndItemsAndTexts().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link HeadingType }
@@ -369,8 +369,8 @@ public class TransactionType
      * {@link TextType }
      * {@link TextWithLayoutType }
      * {@link LnkType }
-     * 
-     * 
+     *
+     *
      */
     public List<Serializable> getHeadingsAndItemsAndTexts() {
         if (headingsAndItemsAndTexts == null) {
@@ -381,11 +381,11 @@ public class TransactionType
 
     /**
      * Obtient la valeur de la propriété recorddatetime.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getRecorddatetime() {
         return recorddatetime;
@@ -393,11 +393,11 @@ public class TransactionType
 
     /**
      * Définit la valeur de la propriété recorddatetime.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setRecorddatetime(XMLGregorianCalendar value) {
         this.recorddatetime = value;

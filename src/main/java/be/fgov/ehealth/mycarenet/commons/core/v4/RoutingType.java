@@ -1,21 +1,21 @@
 
 package be.fgov.ehealth.mycarenet.commons.core.v4;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 
 /**
  * Information used to determine the health insurance organization. NIP-PIN uses it if the HIO is not defined explicitely in the WS-Addressing "To" element.
- * 
+ *
  * <p>Classe Java pour RoutingType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="RoutingType">
  *   &lt;complexContent>
@@ -32,8 +32,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RoutingType", namespace = "urn:be:fgov:ehealth:mycarenet:commons:core:v4", propOrder = {
@@ -56,11 +56,11 @@ public class RoutingType {
 
     /**
      * Obtient la valeur de la propriété careReceiver.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CareReceiverIdType }
-     *     
+     *
      */
     public CareReceiverIdType getCareReceiver() {
         return careReceiver;
@@ -68,11 +68,11 @@ public class RoutingType {
 
     /**
      * Définit la valeur de la propriété careReceiver.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CareReceiverIdType }
-     *     
+     *
      */
     public void setCareReceiver(CareReceiverIdType value) {
         this.careReceiver = value;
@@ -80,11 +80,11 @@ public class RoutingType {
 
     /**
      * Obtient la valeur de la propriété subject.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SubjectType }
-     *     
+     *
      */
     public SubjectType getSubject() {
         return subject;
@@ -92,11 +92,11 @@ public class RoutingType {
 
     /**
      * Définit la valeur de la propriété subject.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SubjectType }
-     *     
+     *
      */
     public void setSubject(SubjectType value) {
         this.subject = value;
@@ -104,11 +104,11 @@ public class RoutingType {
 
     /**
      * Obtient la valeur de la propriété referenceDate.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getReferenceDate() {
         return referenceDate;
@@ -116,11 +116,11 @@ public class RoutingType {
 
     /**
      * Définit la valeur de la propriété referenceDate.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setReferenceDate(XMLGregorianCalendar value) {
         this.referenceDate = value;
@@ -128,11 +128,11 @@ public class RoutingType {
 
     /**
      * Obtient la valeur de la propriété period.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PeriodType }
-     *     
+     *
      */
     public PeriodType getPeriod() {
         return period;
@@ -140,11 +140,11 @@ public class RoutingType {
 
     /**
      * Définit la valeur de la propriété period.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PeriodType }
-     *     
+     *
      */
     public void setPeriod(PeriodType value) {
         this.period = value;

@@ -40,7 +40,6 @@ import java.security.cert.Certificate
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
 import java.util.*
-import javax.swing.JFrame
 
 /**
  * eID based JCA [KeyStore]. Used to load eID key material via standard
@@ -102,7 +101,7 @@ class RemoteBeIDKeyStoreSpi(val beIDCard: RemoteBeIDCard) : KeyStoreSpi() {
     @Throws(NoSuchAlgorithmException::class, UnrecoverableKeyException::class)
     override fun engineGetKey(alias: String, password: CharArray?): Key? {
         log.debug("engineGetKey: $alias")
-        return when (alias.toLowerCase()) {
+        return when (alias.lowercase()) {
             "authentication" -> RemoteBeIDPrivateKey(FileType.AuthentificationCertificate, beIDCard)
             "signature" -> RemoteBeIDPrivateKey(FileType.NonRepudiationCertificate, beIDCard)
             else -> null
@@ -112,7 +111,7 @@ class RemoteBeIDKeyStoreSpi(val beIDCard: RemoteBeIDCard) : KeyStoreSpi() {
     override fun engineGetCertificateChain(alias: String): Array<Certificate>? {
         log.debug("engineGetCertificateChain: $alias")
         return try {
-            when (alias.toLowerCase()) {
+            when (alias.lowercase()) {
                 "signature" -> signCertificateChain ?: beIDCard.signingCertificateChain.also { signCertificateChain = it }
                 "authentication" -> authnCertificateChain ?: beIDCard.authenticationCertificateChain.also { authnCertificateChain = it }
                 "rrn" -> rrnCertificateChain ?: beIDCard.rRNCertificateChain.also { rrnCertificateChain = it }
@@ -127,7 +126,7 @@ class RemoteBeIDKeyStoreSpi(val beIDCard: RemoteBeIDCard) : KeyStoreSpi() {
     override fun engineGetCertificate(alias: String): Certificate? {
         log.debug("engineGetCertificate: $alias")
         return try {
-            when (alias.toLowerCase()) {
+            when (alias.lowercase()) {
                 "signature" -> signCertificate ?: beIDCard.signingCertificate.also { signCertificate = it }
                 "authentication" -> authnCertificate ?: beIDCard.authenticationCertificate.also { authnCertificate = it }
                 "ca" -> citizenCaCertificate ?: beIDCard.cACertificate.also { citizenCaCertificate = it }

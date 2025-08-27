@@ -1,5 +1,6 @@
 package be.fgov.ehealth.technicalconnector.signature.resolvers;
 
+import org.apache.xml.security.signature.XMLSignatureNodeInput;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.utils.ConnectorXmlUtils;
 import javax.xml.transform.Source;
@@ -65,7 +66,7 @@ public class DocumentResolver extends ResourceResolverSpi {
       }
 
       this.processElement(context.attr, context.baseUri, selectedElem, id);
-      XMLSignatureInput result = new XMLSignatureInput(selectedElem);
+      XMLSignatureInput result = new XMLSignatureNodeInput(selectedElem);
       result.setExcludeComments(true);
       result.setMIMEType("text/xml");
       result.setSourceURI(context.baseUri != null ? context.baseUri.concat(context.attr.getNodeValue()) : context.attr.getNodeValue());

@@ -22,8 +22,8 @@ package org.taktik.freehealth.middleware.dto.common
 
 import java.io.Serializable
 
-import org.apache.commons.lang.StringUtils.defaultString
-import org.apache.commons.lang.StringUtils.isEmpty
+import org.apache.commons.lang3.StringUtils.defaultString
+import org.apache.commons.lang3.StringUtils.isEmpty
 
 /**
  * Created by aduchate on 8/11/13, 16:16

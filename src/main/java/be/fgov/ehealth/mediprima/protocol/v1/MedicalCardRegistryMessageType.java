@@ -3,18 +3,18 @@ package be.fgov.ehealth.mediprima.protocol.v1;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * <p>Classe Java pour MedicalCardRegistryMessageType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="MedicalCardRegistryMessageType">
  *   &lt;complexContent>
@@ -29,8 +29,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MedicalCardRegistryMessageType", namespace = "urn:be:fgov:ehealth:mediprima:core:v1", propOrder = {
@@ -51,11 +51,11 @@ public class MedicalCardRegistryMessageType {
 
     /**
      * Obtient la valeur de la propriété reasonCode.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getReasonCode() {
         return reasonCode;
@@ -63,11 +63,11 @@ public class MedicalCardRegistryMessageType {
 
     /**
      * Définit la valeur de la propriété reasonCode.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setReasonCode(String value) {
         this.reasonCode = value;
@@ -75,11 +75,11 @@ public class MedicalCardRegistryMessageType {
 
     /**
      * Obtient la valeur de la propriété source.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSource() {
         return source;
@@ -87,11 +87,11 @@ public class MedicalCardRegistryMessageType {
 
     /**
      * Définit la valeur de la propriété source.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSource(String value) {
         this.source = value;
@@ -99,25 +99,25 @@ public class MedicalCardRegistryMessageType {
 
     /**
      * Gets the value of the communication property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the communication property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCommunication().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link NameType }
-     * 
-     * 
+     *
+     *
      */
     public List<NameType> getCommunication() {
         if (communication == null) {
@@ -128,11 +128,11 @@ public class MedicalCardRegistryMessageType {
 
     /**
      * Obtient la valeur de la propriété severity.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSeverity() {
         return severity;
@@ -140,11 +140,11 @@ public class MedicalCardRegistryMessageType {
 
     /**
      * Définit la valeur de la propriété severity.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSeverity(String value) {
         this.severity = value;

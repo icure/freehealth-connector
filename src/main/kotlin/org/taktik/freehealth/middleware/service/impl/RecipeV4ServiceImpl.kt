@@ -9,7 +9,7 @@ import be.recipe.services.prescriber.PutVisionResult
 import be.recipe.services.prescriber.UpdateFeedbackFlagResult
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.domain.kmehr.v20161201.be.ehealth.logic.recipe.xsd.v20160906.RecipeNotification
@@ -98,7 +98,6 @@ import org.taktik.freehealth.middleware.dao.CodeDao
 import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.domain.recipe.*
 import org.taktik.freehealth.middleware.drugs.dto.MppId
-import org.taktik.freehealth.middleware.drugs.logic.DrugsLogic
 import org.taktik.freehealth.middleware.dto.Address
 import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.HealthcareParty
@@ -122,8 +121,8 @@ import java.util.concurrent.Callable
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.zip.DataFormatException
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.JAXBException
+import jakarta.xml.bind.JAXBContext
+import jakarta.xml.bind.JAXBException
 import javax.xml.datatype.XMLGregorianCalendar
 import be.recipe.services.feedback.Feedback as FeedbackText
 
@@ -131,7 +130,6 @@ import be.recipe.services.feedback.Feedback as FeedbackText
 class RecipeV4ServiceImpl(
     private val codeDao: CodeDao,
     private val stsService: STSService,
-    private val drugsLogic: DrugsLogic,
     keyDepotService: KeyDepotService
 ) : RecipeV4Service {
     val log = LoggerFactory.getLogger(this.javaClass)!!
@@ -648,43 +646,11 @@ class RecipeV4ServiceImpl(
             return prescriptionType
         }
 
-        medications.filter { isAnyReimbursedMedicinalProduct(it.medicinalProduct?.intendedcds) }
-            .forEach { return "P1" }
-
-        medications.filter { isAnyReimbursedSubstanceProduct(it.substanceProduct?.intendedcds) }
-            .forEach { return "P1" }
-
         return if (medications.any { it.options?.get(Medication.REIMBURSED)?.booleanValue == true }) {
             "P1"
         } else {
             "P0"
         }
-    }
-
-    private fun isAnyReimbursedMedicinalProduct(intendedcds: List<Code>?): Boolean {
-        intendedcds?.filter { c -> c.type == "CD-DRUG-CNK" }
-            ?.forEach { c ->
-                val infos = drugsLogic.getInfos(MppId(c.code, "fr"))
-                if (infos != null && !StringUtils.isEmpty(infos.ssec) && !infos.ssec.equals("chr", ignoreCase = true)) {
-                    return true
-                }
-            }
-        return false
-    }
-
-    private fun isAnyReimbursedSubstanceProduct(intendedcds: List<Code>?): Boolean {
-        intendedcds?.filter { c -> c.type == "CD-INNCLUSTER" }
-            ?.forEach { c ->
-                drugsLogic.getMedecinePackagesFromInn(c.code, "fr")
-                    .map { c -> drugsLogic.getInfos(c.id) }
-                    .filter { info -> !StringUtils.isEmpty(info.ssec) }
-                    .filter { info -> !info.ssec.equals("chr", ignoreCase = true) }
-                    .forEach { return true }
-            }
-        intendedcds?.filter { c -> c.type == "CD-VMPGROUP" }?.forEach {
-            return true
-        }
-        return false
     }
 
     override fun getKmehrPrescription(
@@ -813,7 +779,7 @@ class RecipeV4ServiceImpl(
                                     cd = CDCOUNTRY().apply {
                                         s = CDCOUNTRYschemes.CD_FED_COUNTRY
                                         value = address.country?.let {
-                                            codeDao.getCodeByLabel(it, "CD-FED-COUNTRY")?.code ?: it.toLowerCase()
+                                            codeDao.getCodeByLabel(it, "CD-FED-COUNTRY")?.code ?: it.lowercase()
                                         } ?: "be"
                                     }
                                 }

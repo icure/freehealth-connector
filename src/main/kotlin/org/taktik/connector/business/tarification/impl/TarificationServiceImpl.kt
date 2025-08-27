@@ -9,7 +9,7 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory
-import javax.xml.soap.SOAPException
+import jakarta.xml.soap.SOAPException
 
 class TarificationServiceImpl : TarificationService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
     @Throws(TechnicalConnectorException::class)

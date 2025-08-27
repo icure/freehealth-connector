@@ -3,4 +3,4 @@
 )
 package be.fgov.ehealth.recipe.core.v4;
 
-import javax.xml.bind.annotation.XmlSchema;
+import jakarta.xml.bind.annotation.XmlSchema;

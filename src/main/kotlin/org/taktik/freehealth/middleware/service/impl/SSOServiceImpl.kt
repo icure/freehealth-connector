@@ -11,18 +11,15 @@ import com.nimbusds.oauth2.sdk.http.HTTPRequest
 import com.nimbusds.oauth2.sdk.id.Audience
 import com.nimbusds.oauth2.sdk.id.ClientID
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
 import org.apache.commons.lang3.time.DateUtils.addMinutes
 import org.springframework.http.MediaType
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.technical.enumeration.SsoProfile
-import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.sso.SingleSignOnService
 import org.taktik.connector.technical.service.sso.impl.SingleSignOnServiceImpl
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
-import org.taktik.freehealth.middleware.dao.CouchdbUserDetailsService
 import org.taktik.freehealth.middleware.dao.KeystoreProviderService
 import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.domain.sts.BearerToken
@@ -31,6 +28,7 @@ import org.taktik.freehealth.middleware.service.SSOService
 import org.taktik.freehealth.middleware.service.STSService
 import java.net.URI
 import java.security.Key
+import java.security.PrivateKey
 import java.security.interfaces.RSAPrivateKey
 import java.util.*
 import java.util.UUID
@@ -52,20 +50,20 @@ class SSOServiceImpl(private val stsService: STSService, private val userDetails
         return ssosi.signin(profile?.let { SsoProfile.valueOf(it) } ?: SsoProfile.SAML2_POST, samlToken)?.let { BearerToken(it) }
     }
 
-    fun generateClientToken(clientId:String, kid:String, urlOfRealm: String, key: Key): String? {
+    fun generateClientToken(clientId:String, kid:String, urlOfRealm: String, key: PrivateKey): String? {
         val now = Date()
-        val header: MutableMap<String, Any> = Jwts.header().setType("JWT")
+        val header: MutableMap<String, Any> = Jwts.header().type("JWT").build()
         header["kid"] = kid
         return Jwts.builder()
-            .setId(UUID.randomUUID().toString())
-            .setHeader(header)
-            .setIssuedAt(now)
-            .setIssuer(clientId)
-            .setSubject(clientId)
-            .setAudience(urlOfRealm)
-            .setNotBefore(addMinutes(now, -5))
-            .setExpiration(addMinutes(now, 5))
-            .signWith(SignatureAlgorithm.RS256, key).compact()
+            .id(UUID.randomUUID().toString())
+            .header().add(header).and()
+            .issuedAt(now)
+            .issuer(clientId)
+            .subject(clientId)
+            .audience().add(urlOfRealm).and()
+            .notBefore(addMinutes(now, -5))
+            .expiration(addMinutes(now, 5))
+            .signWith(key, Jwts.SIG.RS256).compact()
     }
 
     override fun getOauth2Token(tokenId: UUID, keystoreId: UUID, passPhrase: String, cbe: String, kid: String): TokenResponse {

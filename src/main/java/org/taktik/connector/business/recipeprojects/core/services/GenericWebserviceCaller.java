@@ -22,7 +22,7 @@ import org.taktik.connector.technical.ws.domain.GenericResponse;
 import org.taktik.connector.technical.ws.domain.HandlerChain;
 import org.taktik.connector.technical.ws.domain.HandlerPosition;
 
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPException;
 
 public abstract class GenericWebserviceCaller {
 

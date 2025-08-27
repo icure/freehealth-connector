@@ -1,7 +1,7 @@
 package be.fgov.ehealth.commons.protocol;
 
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 
 public interface SoapConversationLogger {
 	Integer getUpstreamTiming();

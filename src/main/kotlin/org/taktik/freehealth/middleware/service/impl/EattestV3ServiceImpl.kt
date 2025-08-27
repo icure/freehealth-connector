@@ -45,7 +45,7 @@ import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerification
 import be.fgov.ehealth.technicalconnector.signature.transformers.EncapsulationTransformer
 import com.google.gson.Gson
 import org.apache.commons.codec.binary.Base64
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
@@ -91,7 +91,7 @@ import java.io.StringWriter
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.*
-import javax.xml.bind.JAXBContext
+import jakarta.xml.bind.JAXBContext
 import javax.xml.datatype.DatatypeConstants
 import javax.xml.datatype.DatatypeFactory
 import javax.xml.namespace.NamespaceContext
@@ -1464,7 +1464,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         xpath.namespaceContext = object : NamespaceContext {
             override fun getNamespaceURI(prefix: String?) = "http://www.ehealth.fgov.be/standards/kmehr/schema/v1"
             override fun getPrefix(namespaceURI: String?) = "ns1"
-            override fun getPrefixes(namespaceURI: String?): Iterator<Any?> =
+            override fun getPrefixes(namespaceURI: String?): Iterator<String> =
                 if (namespaceURI == "http://www.ehealth.fgov.be/standards/kmehr/schema/v1") listOf("ns1").iterator() else listOf<String>().iterator()
         }
         return when {

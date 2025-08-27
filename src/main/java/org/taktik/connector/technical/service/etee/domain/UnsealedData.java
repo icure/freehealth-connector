@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class UnsealedData {
    private InputStream content;

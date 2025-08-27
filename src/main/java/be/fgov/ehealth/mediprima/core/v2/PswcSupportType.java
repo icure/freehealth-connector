@@ -1,19 +1,19 @@
 
 package be.fgov.ehealth.mediprima.core.v2;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * Support of a CPAS / OCMW
- * 
+ *
  * <p>Classe Java pour PswcSupportType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="PswcSupportType">
  *   &lt;complexContent>
@@ -29,8 +29,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PswcSupportType", propOrder = {
@@ -55,11 +55,11 @@ public class PswcSupportType {
 
     /**
      * Obtient la valeur de la propriété zivAmiPart.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getZivAmiPart() {
         return zivAmiPart;
@@ -67,11 +67,11 @@ public class PswcSupportType {
 
     /**
      * Définit la valeur de la propriété zivAmiPart.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setZivAmiPart(String value) {
         this.zivAmiPart = value;
@@ -79,11 +79,11 @@ public class PswcSupportType {
 
     /**
      * Obtient la valeur de la propriété patientPart.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPatientPart() {
         return patientPart;
@@ -91,11 +91,11 @@ public class PswcSupportType {
 
     /**
      * Définit la valeur de la propriété patientPart.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPatientPart(String value) {
         this.patientPart = value;
@@ -103,11 +103,11 @@ public class PswcSupportType {
 
     /**
      * Obtient la valeur de la propriété supplement.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSupplement() {
         return supplement;
@@ -115,11 +115,11 @@ public class PswcSupportType {
 
     /**
      * Définit la valeur de la propriété supplement.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSupplement(String value) {
         this.supplement = value;
@@ -127,11 +127,11 @@ public class PswcSupportType {
 
     /**
      * Obtient la valeur de la propriété convention.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isConvention() {
         return convention;
@@ -139,11 +139,11 @@ public class PswcSupportType {
 
     /**
      * Définit la valeur de la propriété convention.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setConvention(Boolean value) {
         this.convention = value;
@@ -151,11 +151,11 @@ public class PswcSupportType {
 
     /**
      * Obtient la valeur de la propriété prescription.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isPrescription() {
         return prescription;
@@ -163,11 +163,11 @@ public class PswcSupportType {
 
     /**
      * Définit la valeur de la propriété prescription.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setPrescription(Boolean value) {
         this.prescription = value;

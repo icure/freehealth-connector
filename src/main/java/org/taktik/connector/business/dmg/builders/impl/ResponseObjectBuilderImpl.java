@@ -70,7 +70,7 @@ public class ResponseObjectBuilderImpl implements ResponseObjectBuilder, Configu
 
       if (xadesT != null && xadesT.getValue() != null && !ArrayUtils.isEmpty(xadesT.getValue())) {
          result.put("result.has.signature", true);
-         byte[] xadesTByteArray = org.apache.commons.lang.ArrayUtils.clone(xadesT.getValue());
+         byte[] xadesTByteArray = org.apache.commons.lang3.ArrayUtils.clone(xadesT.getValue());
          SignatureBuilder builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES);
          Element sigElement = ConnectorXmlUtils.toElement(xadesTByteArray);
          Map<String, Object> optionMap = new HashMap();

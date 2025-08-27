@@ -8,7 +8,7 @@ import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValue
 import org.taktik.connector.technical.utils.ConnectorIOUtils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;

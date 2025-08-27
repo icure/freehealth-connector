@@ -1,7 +1,7 @@
 package org.taktik.connector.technical.validator.impl.handler
 
 import java.util.ArrayList
-import org.apache.commons.lang.ArrayUtils
+import org.apache.commons.lang3.ArrayUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.xml.sax.ErrorHandler

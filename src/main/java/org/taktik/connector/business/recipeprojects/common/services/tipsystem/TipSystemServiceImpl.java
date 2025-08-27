@@ -1,6 +1,6 @@
 package org.taktik.connector.business.recipeprojects.common.services.tipsystem;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,10 +21,10 @@ import org.taktik.connector.technical.service.sts.security.Credential;
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
 
 public class TipSystemServiceImpl implements TipSystemService {
-	
+
 	/** The Constant LOG. */
 	private final static Logger LOG = LogManager.getLogger(TipSystemServiceImpl.class);
-	
+
 	public static final String ENDPOINT_NAME = "endpoint.tipsystem";
 
 	private static TipSystemService tipSystemService;
@@ -34,7 +34,7 @@ public class TipSystemServiceImpl implements TipSystemService {
 
 	/**
 	 * Gets the singleton instance of TipSystemServiceImpl.
-	 * 
+	 *
 	 * @return singleton instance of TipSystemServiceImpl
 	 */
 	public static TipSystemService getInstance() {
@@ -43,7 +43,7 @@ public class TipSystemServiceImpl implements TipSystemService {
 		}
 		return tipSystemService;
 	}
-	
+
 	@Override
 	public SimpleResponseType registerData(SAMLToken samlToken, Credential credential, SealedMessageRequestType sealedMessageRequestType) throws IntegrationModuleException, TechnicalConnectorException {
 		ObjectFactory objectFactory = new ObjectFactory();

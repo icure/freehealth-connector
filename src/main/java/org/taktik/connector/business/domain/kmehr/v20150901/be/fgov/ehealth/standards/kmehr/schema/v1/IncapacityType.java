@@ -1,8 +1,8 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2015.11.10 à 11:53:46 AM CET 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2015.11.10 à 11:53:46 AM CET
 //
 
 
@@ -12,19 +12,19 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.taktik.connector.business.domain.kmehr.v20150901.be.fgov.ehealth.standards.kmehr.cd.v1.CDINCAPACITY;
 
 
 /**
  * <p>Classe Java pour incapacityType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="incapacityType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import org.taktik.connector.business.domain.kmehr.v20150901.be.fgov.ehealth.stan
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "incapacityType", propOrder = {
@@ -115,11 +115,11 @@ public class IncapacityType
 
     /**
      * Obtient la valeur de la propriété percentage.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getPercentage() {
         return percentage;
@@ -127,11 +127,11 @@ public class IncapacityType
 
     /**
      * Définit la valeur de la propriété percentage.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setPercentage(BigDecimal value) {
         this.percentage = value;
@@ -139,11 +139,11 @@ public class IncapacityType
 
     /**
      * Obtient la valeur de la propriété outofhomeallowed.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isOutofhomeallowed() {
         return outofhomeallowed;
@@ -151,11 +151,11 @@ public class IncapacityType
 
     /**
      * Définit la valeur de la propriété outofhomeallowed.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setOutofhomeallowed(Boolean value) {
         this.outofhomeallowed = value;

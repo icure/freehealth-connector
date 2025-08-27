@@ -1,26 +1,26 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2017.05.11 à 02:53:46 PM CEST 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2017.05.11 à 02:53:46 PM CEST
 //
 
 
 package org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1;
 
 import java.io.Serializable;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDENCRYPTIONMETHOD;
 
 
 /**
  * <p>Classe Java pour Base64EncryptedDataType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="Base64EncryptedDataType">
  *   &lt;complexContent>
@@ -33,8 +33,8 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Base64EncryptedDataType", propOrder = {
@@ -53,11 +53,11 @@ public class Base64EncryptedDataType
 
     /**
      * Obtient la valeur de la propriété cd.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CDENCRYPTIONMETHOD }
-     *     
+     *
      */
     public CDENCRYPTIONMETHOD getCd() {
         return cd;
@@ -65,11 +65,11 @@ public class Base64EncryptedDataType
 
     /**
      * Définit la valeur de la propriété cd.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CDENCRYPTIONMETHOD }
-     *     
+     *
      */
     public void setCd(CDENCRYPTIONMETHOD value) {
         this.cd = value;
@@ -77,11 +77,11 @@ public class Base64EncryptedDataType
 
     /**
      * Obtient la valeur de la propriété base64EncryptedValue.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Base64EncryptedValueType }
-     *     
+     *
      */
     public Base64EncryptedValueType getBase64EncryptedValue() {
         return base64EncryptedValue;
@@ -89,11 +89,11 @@ public class Base64EncryptedDataType
 
     /**
      * Définit la valeur de la propriété base64EncryptedValue.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Base64EncryptedValueType }
-     *     
+     *
      */
     public void setBase64EncryptedValue(Base64EncryptedValueType value) {
         this.base64EncryptedValue = value;

@@ -1,21 +1,21 @@
 
 package be.fgov.ehealth.mediprima.core.v1;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * URI code of the status
- * 
+ *
  * <p>Classe Java pour StatusCodeType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="StatusCodeType">
  *   &lt;complexContent>
@@ -28,8 +28,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "StatusCodeType", namespace = "urn:be:fgov:ehealth:commons:core:v2", propOrder = {
@@ -45,11 +45,11 @@ public class StatusCodeType {
 
     /**
      * Obtient la valeur de la propriété statusCode.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StatusCodeType }
-     *     
+     *
      */
     public StatusCodeType getStatusCode() {
         return statusCode;
@@ -57,11 +57,11 @@ public class StatusCodeType {
 
     /**
      * Définit la valeur de la propriété statusCode.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StatusCodeType }
-     *     
+     *
      */
     public void setStatusCode(StatusCodeType value) {
         this.statusCode = value;
@@ -69,11 +69,11 @@ public class StatusCodeType {
 
     /**
      * Obtient la valeur de la propriété value.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValue() {
         return value;
@@ -81,11 +81,11 @@ public class StatusCodeType {
 
     /**
      * Définit la valeur de la propriété value.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(String value) {
         this.value = value;

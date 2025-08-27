@@ -18,7 +18,6 @@
 package org.taktik.freehealth.middleware.pkcs11.beid
 
 import java.security.SecureRandomSpi
-import javax.smartcardio.CardException
 import java.lang.RuntimeException
 import org.slf4j.LoggerFactory
 
@@ -48,7 +47,7 @@ class RemoteBeIDSecureRandom(val beIDCard: RemoteBeIDCard) : SecureRandomSpi() {
         System.arraycopy(
             try {
                 beIDCard.getChallenge(bytes.size)
-            } catch (e: CardException) {
+            } catch (e: Exception) {
                 throw RuntimeException(e)
             }, 0, bytes, 0, bytes.size
         )
@@ -58,7 +57,7 @@ class RemoteBeIDSecureRandom(val beIDCard: RemoteBeIDCard) : SecureRandomSpi() {
         log.debug("engineGenerateSeed: $numBytes bytes")
         return try {
             beIDCard.getChallenge(numBytes)
-        } catch (e: CardException) {
+        } catch (e: Exception) {
             throw RuntimeException(e)
         }
     }

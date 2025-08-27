@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Properties;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.SAXException;
 
 public class MedicationSchemeValidator {

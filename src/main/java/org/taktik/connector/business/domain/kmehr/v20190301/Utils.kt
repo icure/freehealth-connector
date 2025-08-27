@@ -1,6 +1,5 @@
 package org.taktik.connector.business.domain.kmehr.v20190301
 
-import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESS
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESSschemes
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.cd.v1.CDCONTENT
@@ -24,30 +23,21 @@ import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.cd.v1.CDUNIT
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.cd.v1.CDUNITschemes
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.DateType
+import org.taktik.connector.business.domain.newXMLGregorianCalendar
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.temporal.ChronoField
-import java.time.temporal.ChronoUnit
-import java.util.Date
-import java.util.GregorianCalendar
+import java.util.*
 import javax.xml.datatype.DatatypeConstants
 import javax.xml.datatype.DatatypeFactory
 import javax.xml.datatype.XMLGregorianCalendar
 
-fun makeXMLGregorianCalendarFromHHMMSSLong(date: Long): XMLGregorianCalendarImpl? {
-    return XMLGregorianCalendarImpl().apply {
-        hour = (date / 10000 % 100).toInt()
-        minute = (date / 100 % 100).toInt()
-        second = (date % 100).toInt()
-    }
-}
 
-fun makeXMLGregorianCalendarFromFuzzyLong(date: Long?): XMLGregorianCalendarImpl? {
+fun makeXMLGregorianCalendarFromFuzzyLong(date: Long?): XMLGregorianCalendar? {
     return date?.let {
         if (it % 10000000000 == 0L) it / 10000000000 else if (it % 100000000 == 0L) it / 100000000 else if (it < 99991231 && it % 10000 == 0L) it / 10000 else if (it < 99991231 && it % 100 == 0L) it / 100 else it /*normalize*/
     }?.let { d ->
-        XMLGregorianCalendarImpl().apply {
+        newXMLGregorianCalendar().apply {
             millisecond = DatatypeConstants.FIELD_UNDEFINED
             timezone = DatatypeConstants.FIELD_UNDEFINED
 
@@ -124,11 +114,11 @@ fun makeXGC(epochMillisTimestamp: Long?, unsetMillis: Boolean = false): XMLGrego
 
 fun makeXmlGregorianCalendar(instant: Instant): XMLGregorianCalendar {
     val dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
-    return XMLGregorianCalendarImpl.createDateTime(dateTime.year, dateTime.monthValue, dateTime.dayOfMonth, dateTime.hour, dateTime.minute, dateTime.second, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED)
+    return newXMLGregorianCalendar(dateTime.year, dateTime.monthValue, dateTime.dayOfMonth, dateTime.hour, dateTime.minute, dateTime.second, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED)
 }
 
 fun makeXmlGregorianCalendar(dateTime: LocalDateTime): XMLGregorianCalendar {
-    return XMLGregorianCalendarImpl.createDateTime(dateTime.year, dateTime.monthValue, dateTime.dayOfMonth, dateTime.hour, dateTime.minute, dateTime.second, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED)
+    return newXMLGregorianCalendar(dateTime.year, dateTime.monthValue, dateTime.dayOfMonth, dateTime.hour, dateTime.minute, dateTime.second, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED)
 }
 
 fun makeFuzzyLongFromXMLGregorianCalendar(cal: XMLGregorianCalendar?): Long? {

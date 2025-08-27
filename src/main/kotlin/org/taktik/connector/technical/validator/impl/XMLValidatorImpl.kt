@@ -1,6 +1,6 @@
 package org.taktik.connector.technical.validator.impl
 
-import org.apache.commons.lang.mutable.Mutable
+import org.apache.commons.lang3.mutable.Mutable
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.validator.ValidatorHelper

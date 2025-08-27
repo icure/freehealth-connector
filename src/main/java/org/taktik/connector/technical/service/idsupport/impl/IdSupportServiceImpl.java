@@ -14,7 +14,7 @@ import be.fgov.ehealth.idsupport.core.v2.IdentificationData;
 import be.fgov.ehealth.idsupport.protocol.v2.VerifyIdRequest;
 import be.fgov.ehealth.idsupport.protocol.v2.VerifyIdResponse;
 import java.util.Arrays;
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPException;
 import org.joda.time.DateTime;
 
 public class IdSupportServiceImpl implements IdSupportService {

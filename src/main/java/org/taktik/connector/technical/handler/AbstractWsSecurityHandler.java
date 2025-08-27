@@ -9,9 +9,9 @@ import org.taktik.connector.technical.service.sts.security.Credential;
 import org.taktik.connector.technical.service.sts.security.SAMLToken;
 import org.taktik.connector.technical.utils.ConfigurableFactoryHelper;
 import java.util.concurrent.TimeUnit;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.ProtocolException;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.ws.ProtocolException;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 import org.apache.commons.logging.Log;
 
 public abstract class AbstractWsSecurityHandler extends AbstractSOAPHandler {

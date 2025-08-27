@@ -16,7 +16,7 @@ import org.taktik.connector.technical.validator.EhealthReplyValidator;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 import org.taktik.connector.technical.ws.domain.GenericResponse;
 
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPException;
 
 public class MhmServiceImpl implements MhmService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
    private static final Logger LOG = LoggerFactory.getLogger(MhmServiceImpl.class);

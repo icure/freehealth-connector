@@ -1,17 +1,17 @@
 
 package be.fgov.ehealth.mediprima.core.v1;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * <p>Classe Java pour BeneficiaryType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="BeneficiaryType">
  *   &lt;complexContent>
@@ -28,8 +28,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BeneficiaryType", namespace = "urn:be:fgov:ehealth:mediprima:core:v1", propOrder = {
@@ -57,11 +57,11 @@ public class BeneficiaryType {
 
     /**
      * Obtient la valeur de la propriété ssin.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSsin() {
         return ssin;
@@ -69,11 +69,11 @@ public class BeneficiaryType {
 
     /**
      * Définit la valeur de la propriété ssin.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSsin(String value) {
         this.ssin = value;
@@ -81,11 +81,11 @@ public class BeneficiaryType {
 
     /**
      * Obtient la valeur de la propriété lastName.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLastName() {
         return lastName;
@@ -93,11 +93,11 @@ public class BeneficiaryType {
 
     /**
      * Définit la valeur de la propriété lastName.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLastName(String value) {
         this.lastName = value;
@@ -105,11 +105,11 @@ public class BeneficiaryType {
 
     /**
      * Obtient la valeur de la propriété firstName.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFirstName() {
         return firstName;
@@ -117,11 +117,11 @@ public class BeneficiaryType {
 
     /**
      * Définit la valeur de la propriété firstName.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFirstName(String value) {
         this.firstName = value;
@@ -129,11 +129,11 @@ public class BeneficiaryType {
 
     /**
      * Obtient la valeur de la propriété gender.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getGender() {
         return gender;
@@ -141,11 +141,11 @@ public class BeneficiaryType {
 
     /**
      * Définit la valeur de la propriété gender.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setGender(String value) {
         this.gender = value;
@@ -153,11 +153,11 @@ public class BeneficiaryType {
 
     /**
      * Obtient la valeur de la propriété birthDate.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getBirthDate() {
         return birthDate;
@@ -165,11 +165,11 @@ public class BeneficiaryType {
 
     /**
      * Définit la valeur de la propriété birthDate.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setBirthDate(String value) {
         this.birthDate = value;
@@ -177,11 +177,11 @@ public class BeneficiaryType {
 
     /**
      * Obtient la valeur de la propriété deathDate.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDeathDate() {
         return deathDate;
@@ -189,11 +189,11 @@ public class BeneficiaryType {
 
     /**
      * Définit la valeur de la propriété deathDate.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDeathDate(String value) {
         this.deathDate = value;

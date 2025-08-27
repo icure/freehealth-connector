@@ -2,9 +2,9 @@ package org.taktik.connector.business.therlink.domain
 
 import org.taktik.connector.business.therlink.domain.requests.TherapeuticLinkStatus
 import java.io.Serializable
-import org.apache.commons.lang.builder.EqualsBuilder
-import org.apache.commons.lang.builder.HashCodeBuilder
-import org.apache.commons.lang.builder.ToStringBuilder
+import org.apache.commons.lang3.builder.EqualsBuilder
+import org.apache.commons.lang3.builder.HashCodeBuilder
+import org.apache.commons.lang3.builder.ToStringBuilder
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
 import org.taktik.connector.business.common.domain.Patient

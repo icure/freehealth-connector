@@ -2,7 +2,7 @@ package be.fgov.ehealth.technicalconnector.ra.domain;
 
 import org.taktik.connector.technical.utils.IdentifierType;
 import java.io.Serializable;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 public final class Organization implements Serializable {
    private static final long serialVersionUID = 1L;

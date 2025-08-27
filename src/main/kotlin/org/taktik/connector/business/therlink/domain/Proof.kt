@@ -2,9 +2,9 @@ package org.taktik.connector.business.therlink.domain
 
 import org.taktik.connector.business.therlink.domain.requests.BinaryProof
 import java.io.Serializable
-import org.apache.commons.lang.builder.EqualsBuilder
-import org.apache.commons.lang.builder.HashCodeBuilder
-import org.apache.commons.lang.builder.ToStringBuilder
+import org.apache.commons.lang3.builder.EqualsBuilder
+import org.apache.commons.lang3.builder.HashCodeBuilder
+import org.apache.commons.lang3.builder.ToStringBuilder
 
 class Proof @JvmOverloads constructor(var type: String?, var binaryProof: BinaryProof? = null) : Serializable {
 

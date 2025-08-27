@@ -37,7 +37,7 @@ class AddressbookControllerTest : EhealthTest() {
         Assertions.assertThat(searchHcp != null && searchHcp.length>2 && searchHcp.startsWith("["))
         val hcps: List<HealthcareParty> = gson.fromJson(searchHcp, object : TypeToken<ArrayList<HealthcareParty>>() {}.getType())
         Assertions.assertThat(20).isLessThan(hcps.size)
-        Assertions.assertThat(hcps.map { it.lastName?.toUpperCase() }).contains("DUCHATEAU")
+        Assertions.assertThat(hcps.map { it.lastName?.uppercase() }).contains("DUCHATEAU")
     }
 
     @Test
@@ -47,7 +47,7 @@ class AddressbookControllerTest : EhealthTest() {
         Assertions.assertThat(searchOrg != null && searchOrg.length>2 && searchOrg.startsWith("["))
         val hcps: List<HealthcareParty> = gson.fromJson(searchOrg, object : TypeToken<ArrayList<HealthcareParty>>() {}.getType())
         Assertions.assertThat(10).isLessThan(hcps.size)
-        Assertions.assertThat(hcps.map { it.name?.toUpperCase() }).contains("CLINIQUE ST.-LUC")
+        Assertions.assertThat(hcps.map { it.name?.uppercase() }).contains("CLINIQUE ST.-LUC")
     }
 
     @Test

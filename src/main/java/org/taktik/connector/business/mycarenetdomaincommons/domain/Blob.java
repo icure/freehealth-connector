@@ -1,6 +1,6 @@
 package org.taktik.connector.business.mycarenetdomaincommons.domain;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.util.Arrays;
 
 public class Blob {

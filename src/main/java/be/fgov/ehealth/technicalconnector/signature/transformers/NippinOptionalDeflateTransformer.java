@@ -1,6 +1,7 @@
 package be.fgov.ehealth.technicalconnector.signature.transformers;
 
 import org.apache.xml.security.c14n.InvalidCanonicalizerException;
+import org.apache.xml.security.signature.XMLSignatureByteInput;
 import org.taktik.connector.technical.enumeration.Charset;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.utils.ConnectorIOUtils;
@@ -27,33 +28,14 @@ public class NippinOptionalDeflateTransformer extends TransformSpi {
       try {
          if (input.isElement()) {
             return this.processElement(input, os);
-         } else if (!input.isOctetStream() && !input.isNodeSet()) {
-            try {
-               DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-               dbf.setFeature("http://javax.xml.XMLConstants/feature/secure-processing", Boolean.TRUE);
-               Document doc = dbf.newDocumentBuilder().parse(input.getOctetStream());
-               Element rootNode = doc.getDocumentElement();
-               StringBuilder sb = new StringBuilder();
-               this.traverseElement(rootNode, sb);
-               byte[] decodedBytes = ConnectorIOUtils.decompress(ConnectorIOUtils.toBytes(sb.toString(), Charset.UTF_8));
-               return new XMLSignatureInput(decodedBytes);
-            } catch (ParserConfigurationException var9) {
-               throw new TransformationException("c14n.Canonicalizer.Exception", var9);
-            } catch (SAXException var10) {
-               throw new TransformationException("SAX exception", var10);
-            }
          } else if (os == null) {
             byte[] base64Bytes = input.getBytes();
             byte[] decodedBytes = ConnectorIOUtils.decompress(base64Bytes);
-            return new XMLSignatureInput(decodedBytes);
+            return new XMLSignatureByteInput(decodedBytes);
          } else {
-            if (!input.isByteArray() && !input.isNodeSet()) {
-               os.write(ConnectorIOUtils.decompress(ConnectorIOUtils.getBytes(new BufferedInputStream(input.getOctetStreamReal()))));
-            } else {
-               os.write(ConnectorIOUtils.decompress(input.getBytes()));
-            }
+            os.write(ConnectorIOUtils.decompress(input.getBytes()));
 
-            XMLSignatureInput output = new XMLSignatureInput((byte[])null);
+            XMLSignatureInput output = new XMLSignatureByteInput((byte[])null);
             output.setOutputStream(os);
             return output;
          }
@@ -76,10 +58,10 @@ public class NippinOptionalDeflateTransformer extends TransformSpi {
       this.traverseElement((Element)el, sb);
       if (os == null) {
          byte[] decodedBytes = ConnectorIOUtils.decompress(ConnectorIOUtils.toBytes(sb.toString(), Charset.UTF_8));
-         return new XMLSignatureInput(decodedBytes);
+         return new XMLSignatureByteInput(decodedBytes);
       } else {
          os.write(ConnectorIOUtils.decompress(ConnectorIOUtils.toBytes(sb.toString(), Charset.UTF_8)));
-         XMLSignatureInput output = new XMLSignatureInput((byte[])null);
+         XMLSignatureInput output = new XMLSignatureByteInput((byte[])null);
          output.setOutputStream(os);
          return output;
       }

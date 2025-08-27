@@ -14,28 +14,17 @@ import be.fgov.ehealth.certra.protocol.v2.SubmitCSRForForeignerResponse;
 import be.fgov.ehealth.technicalconnector.ra.domain.ActorQualities;
 import be.fgov.ehealth.technicalconnector.ra.domain.Certificate;
 import be.fgov.ehealth.technicalconnector.ra.domain.ContactData;
-import be.fgov.ehealth.technicalconnector.ra.domain.ContractRequest;
-import be.fgov.ehealth.technicalconnector.ra.domain.ForeignerRequest;
 import be.fgov.ehealth.technicalconnector.ra.domain.GeneratedContract;
 import be.fgov.ehealth.technicalconnector.ra.domain.GeneratedRevocationContract;
-import be.fgov.ehealth.technicalconnector.ra.domain.NewCertificateContract;
 import be.fgov.ehealth.technicalconnector.ra.domain.Organization;
-import be.fgov.ehealth.technicalconnector.ra.domain.RevocationContractRequest;
-import be.fgov.ehealth.technicalconnector.ra.domain.RevocationRequest;
 import be.fgov.ehealth.technicalconnector.ra.domain.SubmitCSRForForeignerResponseInfo;
 
 public interface RaMapper {
    Organization asOrganization(OrganizationType var1);
 
-   ContractType asContractType(NewCertificateContract var1);
-
-   GenerateContractRequest asGenerateContractRequest(ContractRequest var1);
-
    Certificate asCertificate(GenerateCertificateResponse var1);
 
    GeneratedContract asGeneratedContract(ContractType var1);
-
-   SubmitCSRForForeignerRequest asSubmitCSRForForeignerRequest(ForeignerRequest var1);
 
    ContactDataType asContactDataType(ContactData var1);
 
@@ -45,7 +34,4 @@ public interface RaMapper {
 
    ActorQualities asActorQualities(GetActorQualitiesResponse var1);
 
-   GenerateRevocationContractRequest asGenerateContractRequest(RevocationContractRequest var1);
-
-   RevokeRequest asRevokeRequest(RevocationRequest var1);
 }

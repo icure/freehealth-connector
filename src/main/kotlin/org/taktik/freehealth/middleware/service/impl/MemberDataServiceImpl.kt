@@ -52,7 +52,6 @@ import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
 import be.fgov.ehealth.standards.kmehr.schema.v1.AuthorType
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
 import com.google.gson.Gson
-import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
 import com.sun.xml.messaging.saaj.soap.impl.ElementImpl
 import com.sun.xml.messaging.saaj.soap.ver1_1.DetailEntry1_1Impl
 import ma.glasnost.orika.MapperFacade
@@ -64,6 +63,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.domain.common.GenAsyncResponse
+import org.taktik.connector.business.domain.newXMLGregorianCalendar
 import org.taktik.connector.business.genericasync.builders.BuilderFactory
 import org.taktik.connector.business.genericasync.service.impl.GenAsyncServiceImpl
 import org.taktik.connector.business.memberdata.builders.impl.ResponseObjectBuilderImpl
@@ -120,9 +120,10 @@ import java.io.ByteArrayInputStream
 import java.net.URI
 import java.time.Instant
 import java.util.*
+import javax.xml.datatype.XMLGregorianCalendar
 import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.ws.soap.SOAPFaultException
+import jakarta.xml.ws.soap.SOAPFaultException
 import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathConstants
 
@@ -195,7 +196,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         }
 
         val issueInstantDateTime = DateTime()
-        val issueInstant = XMLGregorianCalendarImpl(issueInstantDateTime.toGregorianCalendar())
+        val issueInstant = newXMLGregorianCalendar(issueInstantDateTime.toGregorianCalendar())
         val samlFacets = mdaRequest.facets?.map { mapper.map(it, Facet::class.java) }
 
         val attrQueries = mdaRequest.members.map {
@@ -605,7 +606,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         val requestId = IdGeneratorFactory.getIdGenerator("xsid").generateId()
 
         val issueInstantDateTime = DateTime()
-        val issueInstant = XMLGregorianCalendarImpl(issueInstantDateTime.toGregorianCalendar())
+        val issueInstant = newXMLGregorianCalendar(issueInstantDateTime.toGregorianCalendar())
 
         val blobBuilder = BlobBuilderFactory.getBlobBuilder("memberdata")
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId();
@@ -741,9 +742,9 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                             for (i in 0 until it.length) {
                                 details.details.add(DetailType().apply {
                                     it.item(i).let {
-                                        detailCode = (it as Element).getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailCode").item(0)?.textContent
-                                        detailSource = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailSource").item(0)?.textContent
-                                        location = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Location").item(0)?.textContent
+                                        detailCode = (it as Element).getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailCode").item(0)?.getTextContent()
+                                        detailSource = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailSource").item(0)?.getTextContent()
+                                        location = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Location").item(0)?.getTextContent()
                                         message = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message").item(0)?.let {
                                             StringLangType().apply {
                                                 value = it.textContent
@@ -797,7 +798,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
     }
 
     private fun getAttrQuery(inputRef: String,
-                             issueInstant: XMLGregorianCalendarImpl,
+                             issueInstant: XMLGregorianCalendar,
                              facets: List<Facet>?,
                              hospitalized: Boolean?,
                              requestType: String?,
@@ -864,11 +865,11 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 subjectConfirmationData = SubjectConfirmationDataType().apply {
                     startDate.let {
                         notBefore =
-                            XMLGregorianCalendarImpl(DateTime(it.toEpochMilli(), DateTimeZone.forID(mcnTimezone)).toGregorianCalendar())
+                            newXMLGregorianCalendar(gc =DateTime(it.toEpochMilli(), DateTimeZone.forID(mcnTimezone)).toGregorianCalendar())
                     }
                     endDate.let {
                         notOnOrAfter =
-                            XMLGregorianCalendarImpl(DateTime(it.toEpochMilli(), DateTimeZone.forID(mcnTimezone)).toGregorianCalendar())
+                            newXMLGregorianCalendar(gc =DateTime(it.toEpochMilli(), DateTimeZone.forID(mcnTimezone)).toGregorianCalendar())
                     }
                 }
             })
@@ -937,7 +938,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         return result
     }
 
-    private fun extractError(e: javax.xml.ws.soap.SOAPFaultException): Set<MycarenetError> {
+    private fun extractError(e: jakarta.xml.ws.soap.SOAPFaultException): Set<MycarenetError> {
         val result = mutableSetOf<MycarenetError>()
 
         e.fault.detail.detailEntries.forEach { it ->
@@ -971,7 +972,7 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
                 else -> null
             }
 
-            override fun getPrefixes(namespaceURI: String?): Iterator<Any?> =
+            override fun getPrefixes(namespaceURI: String?): Iterator<String> =
                 when (namespaceURI) {
                     else -> listOf<String>().iterator()
                 }

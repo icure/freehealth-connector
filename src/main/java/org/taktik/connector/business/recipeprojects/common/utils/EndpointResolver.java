@@ -2,7 +2,7 @@ package org.taktik.connector.business.recipeprojects.common.utils;
 
 
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.taktik.connector.business.recipeprojects.core.exceptions.IntegrationModuleException;
 import org.taktik.connector.business.recipeprojects.core.utils.I18nHelper;

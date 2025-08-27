@@ -1,8 +1,8 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2017.05.11 à 02:53:46 PM CEST 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2017.05.11 à 02:53:46 PM CEST
 //
 
 
@@ -10,21 +10,21 @@ package org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.sta
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.bind.annotation.XmlType;
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.dt.v1.TextType;
 
 
 /**
  * frequency of applying the periodic posology, only in case of a constant scheme during a period of time
- * 
+ *
  * <p>Classe Java pour frequencyType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="frequencyType">
  *   &lt;complexContent>
@@ -65,8 +65,8 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "frequencyType", propOrder = {
@@ -94,11 +94,11 @@ public class FrequencyType
 
     /**
      * Obtient la valeur de la propriété periodicity.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PeriodicityType }
-     *     
+     *
      */
     public PeriodicityType getPeriodicity() {
         return periodicity;
@@ -106,11 +106,11 @@ public class FrequencyType
 
     /**
      * Définit la valeur de la propriété periodicity.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PeriodicityType }
-     *     
+     *
      */
     public void setPeriodicity(PeriodicityType value) {
         this.periodicity = value;
@@ -118,11 +118,11 @@ public class FrequencyType
 
     /**
      * Obtient la valeur de la propriété text.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TextType }
-     *     
+     *
      */
     public TextType getText() {
         return text;
@@ -130,11 +130,11 @@ public class FrequencyType
 
     /**
      * Définit la valeur de la propriété text.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TextType }
-     *     
+     *
      */
     public void setText(TextType value) {
         this.text = value;
@@ -142,11 +142,11 @@ public class FrequencyType
 
     /**
      * Obtient la valeur de la propriété decimal.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getDecimal() {
         return decimal;
@@ -154,11 +154,11 @@ public class FrequencyType
 
     /**
      * Définit la valeur de la propriété decimal.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setDecimal(BigDecimal value) {
         this.decimal = value;
@@ -166,11 +166,11 @@ public class FrequencyType
 
     /**
      * Obtient la valeur de la propriété unit.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link UnitType }
-     *     
+     *
      */
     public UnitType getUnit() {
         return unit;
@@ -178,11 +178,11 @@ public class FrequencyType
 
     /**
      * Définit la valeur de la propriété unit.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link UnitType }
-     *     
+     *
      */
     public void setUnit(UnitType value) {
         this.unit = value;
@@ -190,11 +190,11 @@ public class FrequencyType
 
     /**
      * Obtient la valeur de la propriété nominator.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FrequencyType.Nominator }
-     *     
+     *
      */
     public FrequencyType.Nominator getNominator() {
         return nominator;
@@ -202,11 +202,11 @@ public class FrequencyType
 
     /**
      * Définit la valeur de la propriété nominator.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FrequencyType.Nominator }
-     *     
+     *
      */
     public void setNominator(FrequencyType.Nominator value) {
         this.nominator = value;
@@ -214,11 +214,11 @@ public class FrequencyType
 
     /**
      * Obtient la valeur de la propriété denominator.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FrequencyType.Denominator }
-     *     
+     *
      */
     public FrequencyType.Denominator getDenominator() {
         return denominator;
@@ -226,11 +226,11 @@ public class FrequencyType
 
     /**
      * Définit la valeur de la propriété denominator.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FrequencyType.Denominator }
-     *     
+     *
      */
     public void setDenominator(FrequencyType.Denominator value) {
         this.denominator = value;
@@ -239,9 +239,9 @@ public class FrequencyType
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -253,8 +253,8 @@ public class FrequencyType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -270,11 +270,11 @@ public class FrequencyType
 
         /**
          * Obtient la valeur de la propriété quantity.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TimequantityType }
-         *     
+         *
          */
         public TimequantityType getQuantity() {
             return quantity;
@@ -282,11 +282,11 @@ public class FrequencyType
 
         /**
          * Définit la valeur de la propriété quantity.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TimequantityType }
-         *     
+         *
          */
         public void setQuantity(TimequantityType value) {
             this.quantity = value;
@@ -297,9 +297,9 @@ public class FrequencyType
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -311,8 +311,8 @@ public class FrequencyType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -328,11 +328,11 @@ public class FrequencyType
 
         /**
          * Obtient la valeur de la propriété quantity.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TimequantityType }
-         *     
+         *
          */
         public TimequantityType getQuantity() {
             return quantity;
@@ -340,11 +340,11 @@ public class FrequencyType
 
         /**
          * Définit la valeur de la propriété quantity.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TimequantityType }
-         *     
+         *
          */
         public void setQuantity(TimequantityType value) {
             this.quantity = value;

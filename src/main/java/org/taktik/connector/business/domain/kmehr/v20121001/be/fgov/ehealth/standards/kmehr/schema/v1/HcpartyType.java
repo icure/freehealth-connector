@@ -1,8 +1,8 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2015.03.05 à 11:48:06 AM CET 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2015.03.05 à 11:48:06 AM CET
 //
 
 
@@ -11,10 +11,10 @@ package org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.sta
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY;
 import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY;
@@ -22,9 +22,9 @@ import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.stan
 
 /**
  * <p>Classe Java pour hcpartyType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="hcpartyType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.taktik.connector.business.domain.kmehr.v20121001.be.fgov.ehealth.stan
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "hcpartyType", propOrder = {
@@ -78,25 +78,25 @@ public class HcpartyType
 
     /**
      * Gets the value of the ids property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the ids property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIds().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link IDHCPARTY }
-     * 
-     * 
+     *
+     *
      */
     public List<IDHCPARTY> getIds() {
         if (ids == null) {
@@ -107,25 +107,25 @@ public class HcpartyType
 
     /**
      * Gets the value of the cds property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the cds property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCds().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link CDHCPARTY }
-     * 
-     * 
+     *
+     *
      */
     public List<CDHCPARTY> getCds() {
         if (cds == null) {
@@ -136,11 +136,11 @@ public class HcpartyType
 
     /**
      * Obtient la valeur de la propriété firstname.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFirstname() {
         return firstname;
@@ -148,11 +148,11 @@ public class HcpartyType
 
     /**
      * Définit la valeur de la propriété firstname.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFirstname(String value) {
         this.firstname = value;
@@ -160,11 +160,11 @@ public class HcpartyType
 
     /**
      * Obtient la valeur de la propriété familyname.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFamilyname() {
         return familyname;
@@ -172,11 +172,11 @@ public class HcpartyType
 
     /**
      * Définit la valeur de la propriété familyname.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFamilyname(String value) {
         this.familyname = value;
@@ -184,11 +184,11 @@ public class HcpartyType
 
     /**
      * Obtient la valeur de la propriété name.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -196,11 +196,11 @@ public class HcpartyType
 
     /**
      * Définit la valeur de la propriété name.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -208,25 +208,25 @@ public class HcpartyType
 
     /**
      * Gets the value of the addresses property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the addresses property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAddresses().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AddressType }
-     * 
-     * 
+     *
+     *
      */
     public List<AddressType> getAddresses() {
         if (addresses == null) {
@@ -237,25 +237,25 @@ public class HcpartyType
 
     /**
      * Gets the value of the telecoms property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the telecoms property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTelecoms().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TelecomType }
-     * 
-     * 
+     *
+     *
      */
     public List<TelecomType> getTelecoms() {
         if (telecoms == null) {

@@ -1,8 +1,8 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2017.05.11 à 02:53:46 PM CEST 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2017.05.11 à 02:53:46 PM CEST
 //
 
 
@@ -11,11 +11,11 @@ package org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.sta
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.bind.annotation.XmlType;
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDADDRESS;
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.dt.v1.TextType;
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.id.v1.IDKMEHR;
@@ -23,9 +23,9 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 
 /**
  * <p>Classe Java pour addressTypeBase complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="addressTypeBase">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "addressTypeBase", propOrder = {
@@ -89,25 +89,25 @@ public class AddressTypeBase
 
     /**
      * Gets the value of the ids property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the ids property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIds().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link IDKMEHR }
-     * 
-     * 
+     *
+     *
      */
     public List<IDKMEHR> getIds() {
         if (ids == null) {
@@ -118,25 +118,25 @@ public class AddressTypeBase
 
     /**
      * Gets the value of the cds property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the cds property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCds().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link CDADDRESS }
-     * 
-     * 
+     *
+     *
      */
     public List<CDADDRESS> getCds() {
         if (cds == null) {
@@ -147,11 +147,11 @@ public class AddressTypeBase
 
     /**
      * Obtient la valeur de la propriété country.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CountryType }
-     *     
+     *
      */
     public CountryType getCountry() {
         return country;
@@ -159,11 +159,11 @@ public class AddressTypeBase
 
     /**
      * Définit la valeur de la propriété country.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CountryType }
-     *     
+     *
      */
     public void setCountry(CountryType value) {
         this.country = value;
@@ -171,11 +171,11 @@ public class AddressTypeBase
 
     /**
      * Obtient la valeur de la propriété zip.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getZip() {
         return zip;
@@ -183,11 +183,11 @@ public class AddressTypeBase
 
     /**
      * Définit la valeur de la propriété zip.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setZip(String value) {
         this.zip = value;
@@ -195,11 +195,11 @@ public class AddressTypeBase
 
     /**
      * Obtient la valeur de la propriété nis.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getNis() {
         return nis;
@@ -207,11 +207,11 @@ public class AddressTypeBase
 
     /**
      * Définit la valeur de la propriété nis.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setNis(String value) {
         this.nis = value;
@@ -219,11 +219,11 @@ public class AddressTypeBase
 
     /**
      * Obtient la valeur de la propriété city.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCity() {
         return city;
@@ -231,11 +231,11 @@ public class AddressTypeBase
 
     /**
      * Définit la valeur de la propriété city.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCity(String value) {
         this.city = value;
@@ -243,11 +243,11 @@ public class AddressTypeBase
 
     /**
      * Obtient la valeur de la propriété district.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDistrict() {
         return district;
@@ -255,11 +255,11 @@ public class AddressTypeBase
 
     /**
      * Définit la valeur de la propriété district.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDistrict(String value) {
         this.district = value;
@@ -267,11 +267,11 @@ public class AddressTypeBase
 
     /**
      * Obtient la valeur de la propriété street.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStreet() {
         return street;
@@ -279,11 +279,11 @@ public class AddressTypeBase
 
     /**
      * Définit la valeur de la propriété street.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStreet(String value) {
         this.street = value;
@@ -291,11 +291,11 @@ public class AddressTypeBase
 
     /**
      * Obtient la valeur de la propriété housenumber.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHousenumber() {
         return housenumber;
@@ -303,11 +303,11 @@ public class AddressTypeBase
 
     /**
      * Définit la valeur de la propriété housenumber.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHousenumber(String value) {
         this.housenumber = value;
@@ -315,11 +315,11 @@ public class AddressTypeBase
 
     /**
      * Obtient la valeur de la propriété postboxnumber.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPostboxnumber() {
         return postboxnumber;
@@ -327,11 +327,11 @@ public class AddressTypeBase
 
     /**
      * Définit la valeur de la propriété postboxnumber.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPostboxnumber(String value) {
         this.postboxnumber = value;
@@ -339,25 +339,25 @@ public class AddressTypeBase
 
     /**
      * Gets the value of the texts property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the texts property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTexts().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TextType }
-     * 
-     * 
+     *
+     *
      */
     public List<TextType> getTexts() {
         if (texts == null) {

@@ -9,9 +9,6 @@ import org.taktik.freehealth.middleware.drugs.dto.MppPreview
 import java.util.UUID
 
 interface Chapter4Service {
-    fun getAddedDocuments(chapterName: String, paragraphName: String): List<AddedDocumentPreview>
-    fun findParagraphs(searchString: String, language: String): List<ParagraphPreview>
-    fun findParagraphsWithCnk(cnk: Long?, language: String): List<ParagraphPreview>
     fun agreementRequestsConsultation(keystoreId: UUID,
                                       tokenId: UUID,
                                       hcpNihii: String,
@@ -78,8 +75,4 @@ interface Chapter4Service {
                         patientLastName: String,
                         patientGender: String,
                        decisionReference: String): AgreementResponse
-
-    fun getParagraphInfos(chapterName: String, paragraphName: String): ParagraphInfos?
-    fun getMppsForParagraph(chapterName: String, paragraphName: String): List<MppPreview>
-    fun getVtmNamesForParagraph(chapterName: String, paragraphName: String, language: String): List<String>
 }

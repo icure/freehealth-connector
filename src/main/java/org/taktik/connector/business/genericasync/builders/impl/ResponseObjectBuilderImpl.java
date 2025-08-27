@@ -18,7 +18,7 @@ import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerification
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

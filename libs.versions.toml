@@ -1,0 +1,172 @@
+[versions]
+springBoot = "3.5.5"
+springSecurity = "6.5.1"
+springFramework = "6.2.8"
+springSession = "3.5.1"
+jackson = "2.19.1"
+caffeine = "3.2.1"
+kotlinx = "1.8.1"
+kotest = "5.9.1"
+hibernateValidator = "8.0.1.Final"
+kmap = "0.1.84-g107c985e93"
+bouncyCastle = "1.81"
+jwt = "0.11.5"
+kotlin = "2.2.0"
+ksp = "2.2.0-2.0.2"
+reactorNettyVersion = "1.2.7"
+nettyVersion = "4.1.122.Final"
+jupiter = "5.12.2"
+kotlinStdlibJdk8 = "1.8.0"
+junit = "1.12.2"
+slf4j = "2.0.17"
+
+[libraries]
+activation = { group = "jakarta.activation", name = "activation", version = "1.1.1" }
+apacheCommonsCodec = { group = "org.apache.commons", name = "commons-codec", version = "1.18.0" }
+apacheCommonsCompress = { group = "org.apache.commons", name = "commons-compress", version = "1.27.1" }
+apacheCommonsLang3 = { group = "org.apache.commons", name = "commons-lang3", version = "3.16.0" }
+apacheCommonsMath3 = { group = "org.apache.commons", name = "commons-math3", version = "3.6.1" }
+apacheCommonsText = { group = "org.apache.commons", name = "commons-text", version = "1.12.0" }
+asyncJacksonHttpClient = { group = "io.icure", name = "async-jackson-http-client", version = "0.2.21-g0020856bdb" }
+betterParse = { group = "com.github.h0tk3y.betterParse", name = "better-parse", version = "0.4.4" }
+bouncyCastleBcmail = { group = "org.bouncycastle", name = "bcmail-jdk18on", version.ref = "bouncyCastle" }
+bouncyCastleBcprov = { group = "org.bouncycastle", name = "bcprov-jdk18on", version.ref = "bouncyCastle" }
+byteBuddy = { group = "net.bytebuddy", name = "byte-buddy", version = "1.10.22" }
+caffeine = { group = "com.github.ben-manes.caffeine", name = "caffeine", version.ref = "caffeine" }
+checkerFramework = { group = "org.checkerframework", name = "checker-qual", version = "3.49.0" }
+commonsBeanUtils = { group = "commons-beanutils", name = "commons-beanutils", version = "1.9.4" }
+commonsCodec = { group = "commons-codec", name = "commons-codec", version = "1.17.1" }
+commonsIO = { group = "commons-io", name = "commons-io", version = "2.16.1" }
+gcpAuthProvider = { group = "com.icure", name = "icure-gcp_auth_provider", version = "1.0.13-gb7ba77828a" }
+googleApiClient = { group = "com.google.api-client", name = "google-api-client", version = "2.8.0" }
+googleErrorProneAnnotations = { group = "com.google.errorprone", name = "error_prone_annotations", version = "2.38.0" }
+googleGson = { group = "com.google.code.gson", name = "gson", version = "2.12.1" }
+googleHttpClient = { group = "com.google.http-client", name = "google-http-client", version = "1.47.1" }
+googleHttpClientGson = { group = "com.google.http-client", name = "google-http-client-gson", version = "1.47.1" }
+googleOAuthLibraryCredential = { group = "com.google.auth", name = "google-auth-library-credentials", version = "1.37.1" }
+googleOAuthLibraryHttp = { group = "com.google.auth", name = "google-auth-library-oauth2-http", version = "1.37.1" }
+grpcApi = { group = "io.grpc", name = "grpc-api", version = "1.71.0" }
+grpcContext = { group = "io.grpc", name = "grpc-context", version = "1.71.0" }
+guava = { group = "com.google.guava", name = "guava", version = "33.4.8-jre" }
+guavaFailureAccess = { group = "com.google.guava", name = "failureaccess", version = "1.0.3" }
+hibernateValidator = { group = "org.hibernate.validator", name = "hibernate-validator" }
+hibernateValidatorAnnotationProcessor = { group = "org.hibernate.validator", name = "hibernate-validator-annotation-processor", version.ref = "hibernateValidator" }
+hibernateValidatorCdi = { group = "org.hibernate.validator", name = "hibernate-validator-cdi", version.ref = "hibernateValidator" }
+jacksonAnnotations = { group = "com.fasterxml.jackson.core", name = "jackson-annotations", version.ref = "jackson" }
+jacksonCore = { group = "com.fasterxml.jackson.core", name = "jackson-core", version.ref = "jackson" }
+jacksonDatabind = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version.ref = "jackson" }
+jacksonDataformatYaml = { group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version.ref = "jackson" }
+jacksonJsr310 = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version.ref = "jackson" }
+jacksonKotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version.ref = "jackson" }
+jacksonSmile = { group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-smile", version.ref = "jackson" }
+jakartaServlet = { group = "jakarta.servlet", name = "jakarta.servlet-api", version = "6.0.0" }
+jakartaValidation = { group = "jakarta.validation", name = "jakarta.validation-api", version = "3.0.2" }
+jetBrainAnnotations = { group = "org.jetbrains", name = "annotations", version = "24.0.0" }
+jsonWebTokenApi = { group = "io.jsonwebtoken", name = "jjwt-api", version.ref = "jwt" }
+jsonWebTokenImpl = { group = "io.jsonwebtoken", name = "jjwt-impl", version.ref = "jwt" }
+jsonWebTokenJackson = { group = "io.jsonwebtoken", name = "jjwt-jackson", version.ref = "jwt" }
+julToSlf4j = { group = "org.slf4j", name = "jul-to-slf4j", version.ref = "slf4j" }
+junitBom = { group = "org.junit", name = "junit-bom", version.ref = "jupiter" }
+junitJupiterApi = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "jupiter" }
+junitPlatformEngine = { group = "org.junit.platform", name = "junit-platform-engine", version.ref = "junit" }
+junitPlatformLauncher = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junit" }
+junitPlatformSuiteApi = { group = "org.junit.platform", name = "junit-platform-suite-api", version.ref = "junit" }
+jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "jupiter" }
+kmapKsp = { group = "io.icure", name = "kmap", version.ref = "kmap" }
+kotestAssertionsCore = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest" }
+kotestExtensionsSpring = { group = "io.kotest.extensions", name = "kotest-extensions-spring", version = "1.3.0" }
+kotestRunnerJunit5 = { group = "io.kotest", name = "kotest-runner-junit5", version.ref = "kotest" }
+kotlinDateTime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version = "0.6.0-RC.2" }
+kotlinGradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlinMultiplatformPlugin = { group = "org.jetbrains.kotlin.multiplatform", name = "org.jetbrains.kotlin.multiplatform.gradle.plugin", version.ref = "kotlin" }
+kotlinReflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
+kotlinStandardLibrary = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
+kotlinStandardLibraryJdk7 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk7", version.ref = "kotlin" }
+kotlinStandardLibraryJdk8 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version.ref = "kotlin" }
+kotlinxCollectionsImmutableJvm = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable-jvm", version = "0.3.8" }
+kotlinxCoroutinesBom = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-bom", version.ref = "kotlinx" }
+kotlinxCoroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx" }
+kotlinxCoroutinesCoreJvm = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core-jvm", version.ref = "kotlinx" }
+kotlinxCoroutinesDebug = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-debug", version.ref = "kotlinx" }
+kotlinxCoroutinesJdk8 = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version.ref = "kotlinx" }
+kotlinxCoroutinesReactive = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactive", version.ref = "kotlinx" }
+kotlinxCoroutinesReactor = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactor", version.ref = "kotlinx" }
+kotlinxCoroutinesTest = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx" }
+kotlinxIoCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-io-core", version = "0.7.0" }
+kotlinxSerializationBom = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-bom", version.ref = "kotlinx" }
+kotlinxSerializationCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinx" }
+kotlinxSerializationCoreJvm = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core-jvm", version.ref = "kotlinx" }
+kotlinxSerializationJson = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version = "1.6.2" }
+kotlinxSerializationJsonJvm = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json-jvm", version.ref = "kotlinx" }
+kotlinxSerializationPlugin = { group = "org.jetbrains.kotlin.plugin.serialization", name = "org.jetbrains.kotlin.plugin.serialization.gradle.plugin", version.ref = "kotlin" }
+kotp = { group = "com.icure.kotp", name = "kotp", version = "1.0.2" } # 2FA
+krouch = { group = "org.taktik.couchdb", name = "krouch", version = "1.2.64-g515cfc19e1" }
+libRecur = { group = "org.dmfs", name = "lib-recur", version = "0.13.0" }
+mockk = { group = "io.mockk", name = "mockk", version = "1.13.8" }
+mockkJvm = { group = "io.mockk", name = "mockk-jvm", version = "1.13.8" }
+nettyBuffer = { group = "io.netty", name = "netty-buffer", version.ref = "nettyVersion" }
+nettyCodec = { group = "io.netty", name = "netty-codec", version.ref = "nettyVersion" }
+nettyCommon = { group = "io.netty", name = "netty-common", version.ref = "nettyVersion" }
+nettyHandler = { group = "io.netty", name = "netty-handler", version.ref = "nettyVersion" }
+nettyTransport = { group = "io.netty", name = "netty-transport", version.ref = "nettyVersion" }
+reactiveStreams = { group = "org.reactivestreams", name = "reactive-streams", version = "1.0.4" }
+reactorCore = { group = "io.projectreactor", name = "reactor-core", version = "3.7.7" }
+reactorNetty = { group = "io.projectreactor.netty", name = "reactor-netty", version.ref = "reactorNettyVersion" }
+reflections = { group = "org.reflections", name = "reflections", version = "0.9.12" }
+snakeYaml = { group = "org.yaml", name = "snakeyaml", version = "2.4" }
+springAop = { group = "org.springframework", name = "spring-aop", version.ref = "springFramework" }
+springAspects = { group = "org.springframework", name = "spring-aspects", version.ref = "springFramework" }
+springBeans = { group = "org.springframework", name = "spring-beans", version.ref = "springFramework" }
+springBootActuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator", version.ref = "springBoot"  }
+springBootAutoConfigure = { group = "org.springframework.boot", name = "spring-boot-autoconfigure", version.ref = "springBoot" }
+springBootCache = { group = "org.springframework.boot", name = "spring-boot-starter-cache", version.ref = "springBoot"  }
+springBootOauth2 = { group = "org.springframework.boot", name = "spring-boot-starter-oauth2-client", version.ref = "springBoot" }
+springBootSecurity = { group = "org.springframework.boot", name = "spring-boot-starter-security", version.ref = "springBoot"  }
+springBootTest = { group = "org.springframework.boot", name = "spring-boot-starter-test", version.ref = "springBoot" }
+springBootWebflux = { group = "org.springframework.boot", name = "spring-boot-starter-webflux", version.ref = "springBoot" }
+springContext = { group = "org.springframework", name = "spring-context", version.ref = "springFramework" }
+springCore = { group = "org.springframework", name = "spring-core", version.ref = "springFramework" }
+springExpression = { group = "org.springframework", name = "spring-expression", version.ref = "springFramework" }
+springMessaging = { group = "org.springframework", name = "spring-messaging", version.ref = "springFramework" }
+springSecurityMessaging = { group = "org.springframework.security", name = "spring-security-messaging", version.ref = "springSecurity" }
+springSession = { group = "org.springframework.session", name = "spring-session-core", version.ref = "springSession" }
+springWeb = { group = "org.springframework", name = "spring-web", version.ref = "springFramework" }
+springWebflux = { group = "org.springframework", name = "spring-webflux", version.ref = "springFramework" }
+springWebsocket = { group = "org.springframework", name = "spring-websocket", version.ref = "springFramework" }
+springdocCommon = { group = "org.springdoc", name = "springdoc-openapi-common", version = "1.8.0" }
+springdocKotlin = { group = "org.springdoc", name = "springdoc-openapi-kotlin", version = "1.5.13" }
+springdocWebflux = { group = "org.springdoc", name = "springdoc-openapi-webflux-ui", version = "1.8.0" }
+springmockk = { group = "com.ninja-squad", name = "springmockk", version = "4.0.2" }
+taktikBoot = { group = "com.taktik.boot", name = "spring-boot-starter-gke-logging", version = "3.4.33-gb7f9ffd2e8" }
+taktikCommons = { group = "org.taktik.commons", name = "commons-uti", version = "3.0.285-g159ed766b7" }
+websocketCommons = { group = "com.icure", name = "kraken-websocket-common", version = "0.1.1-g2e7e958d75"}
+
+[bundles]
+springBootLibs = ["springBootWebflux", "springBootSecurity", "springBootActuator", "springBootCache"]
+jacksonLibs = ["jacksonKotlin", "jacksonDatabind", "jacksonSmile", "jacksonJsr310"]
+kotlinxCoroutinesLibs = ["kotlinxCoroutinesCore", "kotlinxCoroutinesJdk8", "kotlinxCoroutinesCoreJvm", "kotlinxCoroutinesReactive", "kotlinxCoroutinesReactor"]
+kotestLibs = ["kotestAssertionsCore", "kotestRunnerJunit5", "kotestExtensionsSpring"]
+hibernateValidatorLibs = ["hibernateValidator", "hibernateValidatorAnnotationProcessor", "hibernateValidatorCdi"]
+springSecurityLibs = ["springSecurityMessaging"]
+springLibs = ["springAspects", "springWebsocket", "springMessaging"]
+krouchLibs = ["krouch", "asyncJacksonHttpClient"]
+commonsLibs = ["commonsBeanUtils", "commonsIO", "apacheCommonsLang3", "apacheCommonsCompress", "apacheCommonsMath3", "taktikCommons", "apacheCommonsText"]
+xmlLibs = ["activation"]
+swaggerLibs = ["springdocWebflux", "springdocKotlin"]
+bouncyCastleLibs = ["bouncyCastleBcprov", "bouncyCastleBcmail"]
+jsonWebTokenLibs = ["jsonWebTokenApi", "jsonWebTokenImpl", "jsonWebTokenJackson"]
+
+[plugins]
+kotlin = { id = "org.jetbrains.kotlin", version.ref = "kotlin" }
+kotlinAllOpen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
+kotlinSpring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+springBootPlugin = { id = "org.springframework.boot", version.ref = "springBoot" }
+springBootDependenciesManagement = { id = "io.spring.dependency-management", version = "1.1.4" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+mavenRepository = { id = "com.taktik.gradle.maven-repository", version = "1.0.7" }
+gitVersion = { id = "com.taktik.gradle.git-version", version = "2.0.8-gb47b2d0e35" }
+helmRepository = { id = "com.taktik.gradle.helm-repository", version = "0.2.24-g9f69211aad" }
+kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+licenceReport = { id = "com.github.jk1.dependency-license-report", version = "2.0"}
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version = "12.1.0" }
+gradleTestLogger = { id = "com.adarshr.test-logger", version  = "4.0.0" }

@@ -1,8 +1,8 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2017.05.11 à 02:53:46 PM CEST 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2017.05.11 à 02:53:46 PM CEST
 //
 
 
@@ -11,14 +11,14 @@ package org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.sta
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDCIVILSTATE;
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDCOUNTRY;
@@ -28,9 +28,9 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 
 /**
  * <p>Classe Java pour personType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="personType">
  *   &lt;complexContent>
@@ -79,8 +79,8 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "personType", propOrder = {
@@ -142,25 +142,25 @@ public class PersonType
 
     /**
      * Gets the value of the ids property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the ids property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIds().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link IDPATIENT }
-     * 
-     * 
+     *
+     *
      */
     public List<IDPATIENT> getIds() {
         if (ids == null) {
@@ -171,25 +171,25 @@ public class PersonType
 
     /**
      * Gets the value of the firstnames property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the firstnames property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFirstnames().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getFirstnames() {
         if (firstnames == null) {
@@ -200,11 +200,11 @@ public class PersonType
 
     /**
      * Obtient la valeur de la propriété familyname.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFamilyname() {
         return familyname;
@@ -212,11 +212,11 @@ public class PersonType
 
     /**
      * Définit la valeur de la propriété familyname.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFamilyname(String value) {
         this.familyname = value;
@@ -224,11 +224,11 @@ public class PersonType
 
     /**
      * Obtient la valeur de la propriété birthdate.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DateType }
-     *     
+     *
      */
     public DateType getBirthdate() {
         return birthdate;
@@ -236,11 +236,11 @@ public class PersonType
 
     /**
      * Définit la valeur de la propriété birthdate.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DateType }
-     *     
+     *
      */
     public void setBirthdate(DateType value) {
         this.birthdate = value;
@@ -248,11 +248,11 @@ public class PersonType
 
     /**
      * Obtient la valeur de la propriété birthlocation.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AddressTypeBase }
-     *     
+     *
      */
     public AddressTypeBase getBirthlocation() {
         return birthlocation;
@@ -260,11 +260,11 @@ public class PersonType
 
     /**
      * Définit la valeur de la propriété birthlocation.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AddressTypeBase }
-     *     
+     *
      */
     public void setBirthlocation(AddressTypeBase value) {
         this.birthlocation = value;
@@ -272,11 +272,11 @@ public class PersonType
 
     /**
      * Obtient la valeur de la propriété deathdate.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DateType }
-     *     
+     *
      */
     public DateType getDeathdate() {
         return deathdate;
@@ -284,11 +284,11 @@ public class PersonType
 
     /**
      * Définit la valeur de la propriété deathdate.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DateType }
-     *     
+     *
      */
     public void setDeathdate(DateType value) {
         this.deathdate = value;
@@ -296,11 +296,11 @@ public class PersonType
 
     /**
      * Obtient la valeur de la propriété deathlocation.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AddressTypeBase }
-     *     
+     *
      */
     public AddressTypeBase getDeathlocation() {
         return deathlocation;
@@ -308,11 +308,11 @@ public class PersonType
 
     /**
      * Définit la valeur de la propriété deathlocation.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AddressTypeBase }
-     *     
+     *
      */
     public void setDeathlocation(AddressTypeBase value) {
         this.deathlocation = value;
@@ -320,11 +320,11 @@ public class PersonType
 
     /**
      * Obtient la valeur de la propriété sex.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SexType }
-     *     
+     *
      */
     public SexType getSex() {
         return sex;
@@ -332,11 +332,11 @@ public class PersonType
 
     /**
      * Définit la valeur de la propriété sex.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SexType }
-     *     
+     *
      */
     public void setSex(SexType value) {
         this.sex = value;
@@ -344,11 +344,11 @@ public class PersonType
 
     /**
      * Obtient la valeur de la propriété nationality.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PersonType.Nationality }
-     *     
+     *
      */
     public PersonType.Nationality getNationality() {
         return nationality;
@@ -356,11 +356,11 @@ public class PersonType
 
     /**
      * Définit la valeur de la propriété nationality.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PersonType.Nationality }
-     *     
+     *
      */
     public void setNationality(PersonType.Nationality value) {
         this.nationality = value;
@@ -368,25 +368,25 @@ public class PersonType
 
     /**
      * Gets the value of the addresses property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the addresses property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAddresses().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AddressType }
-     * 
-     * 
+     *
+     *
      */
     public List<AddressType> getAddresses() {
         if (addresses == null) {
@@ -397,25 +397,25 @@ public class PersonType
 
     /**
      * Gets the value of the telecoms property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the telecoms property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTelecoms().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TelecomType }
-     * 
-     * 
+     *
+     *
      */
     public List<TelecomType> getTelecoms() {
         if (telecoms == null) {
@@ -426,11 +426,11 @@ public class PersonType
 
     /**
      * Obtient la valeur de la propriété usuallanguage.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUsuallanguage() {
         return usuallanguage;
@@ -438,11 +438,11 @@ public class PersonType
 
     /**
      * Définit la valeur de la propriété usuallanguage.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUsuallanguage(String value) {
         this.usuallanguage = value;
@@ -450,11 +450,11 @@ public class PersonType
 
     /**
      * Obtient la valeur de la propriété profession.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ProfessionType }
-     *     
+     *
      */
     public ProfessionType getProfession() {
         return profession;
@@ -462,11 +462,11 @@ public class PersonType
 
     /**
      * Définit la valeur de la propriété profession.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ProfessionType }
-     *     
+     *
      */
     public void setProfession(ProfessionType value) {
         this.profession = value;
@@ -474,11 +474,11 @@ public class PersonType
 
     /**
      * Obtient la valeur de la propriété insurancystatus.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link InsuranceType }
-     *     
+     *
      */
     public InsuranceType getInsurancystatus() {
         return insurancystatus;
@@ -486,11 +486,11 @@ public class PersonType
 
     /**
      * Définit la valeur de la propriété insurancystatus.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link InsuranceType }
-     *     
+     *
      */
     public void setInsurancystatus(InsuranceType value) {
         this.insurancystatus = value;
@@ -498,11 +498,11 @@ public class PersonType
 
     /**
      * Obtient la valeur de la propriété insurancymembership.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MemberinsuranceType }
-     *     
+     *
      */
     public MemberinsuranceType getInsurancymembership() {
         return insurancymembership;
@@ -510,11 +510,11 @@ public class PersonType
 
     /**
      * Définit la valeur de la propriété insurancymembership.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MemberinsuranceType }
-     *     
+     *
      */
     public void setInsurancymembership(MemberinsuranceType value) {
         this.insurancymembership = value;
@@ -522,11 +522,11 @@ public class PersonType
 
     /**
      * Obtient la valeur de la propriété recorddatetime.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getRecorddatetime() {
         return recorddatetime;
@@ -534,11 +534,11 @@ public class PersonType
 
     /**
      * Définit la valeur de la propriété recorddatetime.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setRecorddatetime(XMLGregorianCalendar value) {
         this.recorddatetime = value;
@@ -546,25 +546,25 @@ public class PersonType
 
     /**
      * Gets the value of the texts property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the texts property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTexts().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TextType }
-     * 
-     * 
+     *
+     *
      */
     public List<TextType> getTexts() {
         if (texts == null) {
@@ -575,11 +575,11 @@ public class PersonType
 
     /**
      * Obtient la valeur de la propriété civilstate.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PersonType.Civilstate }
-     *     
+     *
      */
     public PersonType.Civilstate getCivilstate() {
         return civilstate;
@@ -587,11 +587,11 @@ public class PersonType
 
     /**
      * Définit la valeur de la propriété civilstate.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PersonType.Civilstate }
-     *     
+     *
      */
     public void setCivilstate(PersonType.Civilstate value) {
         this.civilstate = value;
@@ -600,9 +600,9 @@ public class PersonType
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -614,8 +614,8 @@ public class PersonType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -631,11 +631,11 @@ public class PersonType
 
         /**
          * Obtient la valeur de la propriété cd.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link CDCIVILSTATE }
-         *     
+         *
          */
         public CDCIVILSTATE getCd() {
             return cd;
@@ -643,11 +643,11 @@ public class PersonType
 
         /**
          * Définit la valeur de la propriété cd.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link CDCIVILSTATE }
-         *     
+         *
          */
         public void setCd(CDCIVILSTATE value) {
             this.cd = value;
@@ -658,9 +658,9 @@ public class PersonType
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -672,8 +672,8 @@ public class PersonType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -689,11 +689,11 @@ public class PersonType
 
         /**
          * Obtient la valeur de la propriété cd.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link CDCOUNTRY }
-         *     
+         *
          */
         public CDCOUNTRY getCd() {
             return cd;
@@ -701,11 +701,11 @@ public class PersonType
 
         /**
          * Définit la valeur de la propriété cd.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link CDCOUNTRY }
-         *     
+         *
          */
         public void setCd(CDCOUNTRY value) {
             this.cd = value;

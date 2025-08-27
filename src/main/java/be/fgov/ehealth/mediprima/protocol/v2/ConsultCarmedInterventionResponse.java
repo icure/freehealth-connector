@@ -4,9 +4,9 @@ import be.fgov.ehealth.commons.protocol.SoapConversationLogger;
 import be.fgov.ehealth.commons.protocol.v2.ResponseType;
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.soap.SOAPMessage;
 
 @XmlRootElement(
         name = "ConsultCarmedInterventionResponse"

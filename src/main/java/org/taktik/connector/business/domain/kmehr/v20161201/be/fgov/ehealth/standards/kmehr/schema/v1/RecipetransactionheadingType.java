@@ -1,8 +1,8 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2017.05.11 à 02:53:46 PM CEST 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2017.05.11 à 02:53:46 PM CEST
 //
 
 
@@ -11,19 +11,19 @@ package org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.sta
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * a heading is used to organise the content of a transaction among chapters or paragraphs.
- * 
+ *
  * <p>Classe Java pour recipetransactionheadingType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="recipetransactionheadingType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "recipetransactionheadingType", propOrder = {
@@ -62,11 +62,11 @@ public class RecipetransactionheadingType
 
     /**
      * Obtient la valeur de la propriété id.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipebasicIDKMEHR }
-     *     
+     *
      */
     public RecipebasicIDKMEHR getId() {
         return id;
@@ -74,11 +74,11 @@ public class RecipetransactionheadingType
 
     /**
      * Définit la valeur de la propriété id.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipebasicIDKMEHR }
-     *     
+     *
      */
     public void setId(RecipebasicIDKMEHR value) {
         this.id = value;
@@ -86,11 +86,11 @@ public class RecipetransactionheadingType
 
     /**
      * Obtient la valeur de la propriété cd.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipeCDHEADING }
-     *     
+     *
      */
     public RecipeCDHEADING getCd() {
         return cd;
@@ -98,11 +98,11 @@ public class RecipetransactionheadingType
 
     /**
      * Définit la valeur de la propriété cd.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipeCDHEADING }
-     *     
+     *
      */
     public void setCd(RecipeCDHEADING value) {
         this.cd = value;
@@ -110,25 +110,25 @@ public class RecipetransactionheadingType
 
     /**
      * Gets the value of the items property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the items property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getItems().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link RecipeitemType }
-     * 
-     * 
+     *
+     *
      */
     public List<RecipeitemType> getItems() {
         if (items == null) {

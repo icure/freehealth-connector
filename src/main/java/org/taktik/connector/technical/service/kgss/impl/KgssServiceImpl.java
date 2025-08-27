@@ -42,8 +42,8 @@ import java.util.UUID;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.soap.SOAPException;
-import javax.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.ws.soap.SOAPFaultException;
 
 import org.bouncycastle.util.encoders.Base64;
 import org.w3c.dom.Element;

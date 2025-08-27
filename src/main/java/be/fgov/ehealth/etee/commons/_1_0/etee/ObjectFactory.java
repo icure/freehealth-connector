@@ -1,6 +1,6 @@
 package be.fgov.ehealth.etee.commons._1_0.etee;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 @XmlRegistry
 public class ObjectFactory {

@@ -5,7 +5,7 @@ import org.taktik.connector.business.therlink.domain.HcParty
 import org.taktik.connector.business.therlink.domain.OperationContext
 import org.taktik.connector.business.therlink.domain.TherapeuticLink
 import java.text.SimpleDateFormat
-import org.apache.commons.lang.builder.ToStringBuilder
+import org.apache.commons.lang3.builder.ToStringBuilder
 
 class TherapeuticLinkComplete(
     patient: Patient,

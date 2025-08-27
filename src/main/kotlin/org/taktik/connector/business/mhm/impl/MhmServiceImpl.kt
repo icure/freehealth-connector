@@ -13,7 +13,7 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 
-import javax.xml.soap.SOAPException
+import jakarta.xml.soap.SOAPException
 
 class MhmServiceImpl : MhmService {
     @Throws(TechnicalConnectorException::class)

@@ -4,11 +4,11 @@ import be.fgov.ehealth.commons.protocol.v1.RequestType;
 import be.fgov.ehealth.insurability.core.v1.CommonInputType;
 import be.fgov.ehealth.insurability.core.v1.InsurabilityForPharmacistRequestType;
 import be.fgov.ehealth.insurability.core.v1.RecordCommonInputType;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(

@@ -1,6 +1,6 @@
 package org.taktik.connector.business.recipeprojects.common.services.recipe;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +31,7 @@ public class RecipeTechnicalServiceImpl implements RecipeTechnicalService {
 
 	/**
 	 * Gets the singleton instance of RecipeTechnicalServiceImpl.
-	 * 
+	 *
 	 * @return singleton instance of RecipeTechnicalServiceImpl
 	 */
 	public static RecipeTechnicalService getInstance() {

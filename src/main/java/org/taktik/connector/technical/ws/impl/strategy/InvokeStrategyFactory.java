@@ -4,7 +4,7 @@ import be.fgov.ehealth.technicalconnector.bootstrap.bcp.EndpointDistributor;
 import be.fgov.ehealth.technicalconnector.bootstrap.bcp.domain.CacheInformation;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public final class InvokeStrategyFactory {
    private static EndpointDistributor distributor = EndpointDistributor.getInstance();

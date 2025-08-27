@@ -9,5 +9,5 @@
 // Generated on: 2019.06.14 at 03:48:48 PM CEST
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.ehealth.fgov.be/standards/kmehr/id/v1")
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.ehealth.fgov.be/standards/kmehr/id/v1")
 package org.taktik.connector.business.domain.kmehr.v20120701.be.fgov.ehealth.standards.kmehr.id.v1;

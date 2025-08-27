@@ -3,9 +3,9 @@ package be.fgov.ehealth.mycarenet.mhm.protocol.v1;
 import be.fgov.ehealth.commons.protocol.SoapConversationLogger;
 import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendResponseType;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.soap.SOAPMessage;
 
 @XmlRootElement(
 		name = "SendSubscriptionResponse",

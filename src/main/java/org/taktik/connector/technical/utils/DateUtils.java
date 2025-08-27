@@ -3,7 +3,7 @@ package org.taktik.connector.technical.utils;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.xml.bind.DatatypeConverter;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.ISODateTimeFormat;

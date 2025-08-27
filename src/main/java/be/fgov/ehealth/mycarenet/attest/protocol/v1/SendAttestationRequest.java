@@ -1,7 +1,7 @@
 package be.fgov.ehealth.mycarenet.attest.protocol.v1;
 
 import be.fgov.ehealth.mycarenet.commons.protocol.v3.SendRequestType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(
    name = "SendAttestationRequest",

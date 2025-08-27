@@ -1,19 +1,19 @@
 
 package be.fgov.ehealth.mediprima.core.v1;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 
 /**
  * <p>Classe Java pour PeriodType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="PeriodType">
  *   &lt;complexContent>
@@ -26,8 +26,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PeriodType", namespace = "urn:be:fgov:ehealth:mediprima:core:v1", propOrder = {
@@ -45,11 +45,11 @@ public class PeriodType {
 
     /**
      * Obtient la valeur de la propriété startDate.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getStartDate() {
         return startDate;
@@ -57,11 +57,11 @@ public class PeriodType {
 
     /**
      * Définit la valeur de la propriété startDate.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setStartDate(XMLGregorianCalendar value) {
         this.startDate = value;
@@ -69,11 +69,11 @@ public class PeriodType {
 
     /**
      * Obtient la valeur de la propriété endDate.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getEndDate() {
         return endDate;
@@ -81,11 +81,11 @@ public class PeriodType {
 
     /**
      * Définit la valeur de la propriété endDate.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setEndDate(XMLGregorianCalendar value) {
         this.endDate = value;

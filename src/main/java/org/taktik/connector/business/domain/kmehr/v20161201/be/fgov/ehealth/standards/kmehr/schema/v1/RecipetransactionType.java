@@ -1,29 +1,29 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2017.05.11 à 02:53:46 PM CEST 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2017.05.11 à 02:53:46 PM CEST
 //
 
 
 package org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1;
 
 import java.io.Serializable;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 
 /**
  * a transaction is a set of medical information validated by one healthcare professional at one given moment.
- * 
+ *
  * <p>Classe Java pour recipetransactionType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="recipetransactionType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "recipetransactionType", propOrder = {
@@ -81,11 +81,11 @@ public class RecipetransactionType
 
     /**
      * Obtient la valeur de la propriété id.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipebasicIDKMEHR }
-     *     
+     *
      */
     public RecipebasicIDKMEHR getId() {
         return id;
@@ -93,11 +93,11 @@ public class RecipetransactionType
 
     /**
      * Définit la valeur de la propriété id.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipebasicIDKMEHR }
-     *     
+     *
      */
     public void setId(RecipebasicIDKMEHR value) {
         this.id = value;
@@ -105,11 +105,11 @@ public class RecipetransactionType
 
     /**
      * Obtient la valeur de la propriété cd.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipeCDTRANSACTION }
-     *     
+     *
      */
     public RecipeCDTRANSACTION getCd() {
         return cd;
@@ -117,11 +117,11 @@ public class RecipetransactionType
 
     /**
      * Définit la valeur de la propriété cd.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipeCDTRANSACTION }
-     *     
+     *
      */
     public void setCd(RecipeCDTRANSACTION value) {
         this.cd = value;
@@ -129,11 +129,11 @@ public class RecipetransactionType
 
     /**
      * Obtient la valeur de la propriété date.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getDate() {
         return date;
@@ -141,11 +141,11 @@ public class RecipetransactionType
 
     /**
      * Définit la valeur de la propriété date.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setDate(XMLGregorianCalendar value) {
         this.date = value;
@@ -153,11 +153,11 @@ public class RecipetransactionType
 
     /**
      * Obtient la valeur de la propriété time.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getTime() {
         return time;
@@ -165,11 +165,11 @@ public class RecipetransactionType
 
     /**
      * Définit la valeur de la propriété time.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setTime(XMLGregorianCalendar value) {
         this.time = value;
@@ -177,11 +177,11 @@ public class RecipetransactionType
 
     /**
      * Obtient la valeur de la propriété author.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipeauthorType }
-     *     
+     *
      */
     public RecipeauthorType getAuthor() {
         return author;
@@ -189,11 +189,11 @@ public class RecipetransactionType
 
     /**
      * Définit la valeur de la propriété author.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipeauthorType }
-     *     
+     *
      */
     public void setAuthor(RecipeauthorType value) {
         this.author = value;
@@ -201,7 +201,7 @@ public class RecipetransactionType
 
     /**
      * Obtient la valeur de la propriété iscomplete.
-     * 
+     *
      */
     public boolean isIscomplete() {
         return iscomplete;
@@ -209,7 +209,7 @@ public class RecipetransactionType
 
     /**
      * Définit la valeur de la propriété iscomplete.
-     * 
+     *
      */
     public void setIscomplete(boolean value) {
         this.iscomplete = value;
@@ -217,7 +217,7 @@ public class RecipetransactionType
 
     /**
      * Obtient la valeur de la propriété isvalidated.
-     * 
+     *
      */
     public boolean isIsvalidated() {
         return isvalidated;
@@ -225,7 +225,7 @@ public class RecipetransactionType
 
     /**
      * Définit la valeur de la propriété isvalidated.
-     * 
+     *
      */
     public void setIsvalidated(boolean value) {
         this.isvalidated = value;
@@ -233,11 +233,11 @@ public class RecipetransactionType
 
     /**
      * Obtient la valeur de la propriété heading.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link RecipetransactionheadingType }
-     *     
+     *
      */
     public RecipetransactionheadingType getHeading() {
         return heading;
@@ -245,11 +245,11 @@ public class RecipetransactionType
 
     /**
      * Définit la valeur de la propriété heading.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link RecipetransactionheadingType }
-     *     
+     *
      */
     public void setHeading(RecipetransactionheadingType value) {
         this.heading = value;

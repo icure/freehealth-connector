@@ -1,6 +1,6 @@
 package org.taktik.connector.technical.exception;
 
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 
 public class RetryNextEndpointException extends RuntimeException {
    private static final long serialVersionUID = 1L;

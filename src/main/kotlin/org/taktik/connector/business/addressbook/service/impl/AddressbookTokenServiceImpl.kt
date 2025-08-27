@@ -38,7 +38,7 @@ import be.fgov.ehealth.addressbook.protocol.v1.SearchProfessionalsResponse
 import be.fgov.ehealth.commons.protocol.v2.RequestType
 import be.fgov.ehealth.commons.protocol.v2.StatusResponseType
 import java.util.HashMap
-import javax.xml.soap.SOAPException
+import jakarta.xml.soap.SOAPException
 
 class AddressbookTokenServiceImpl @Throws(TechnicalConnectorException::class) constructor(
     private val ehealthReplyValidator: EhealthReplyValidator

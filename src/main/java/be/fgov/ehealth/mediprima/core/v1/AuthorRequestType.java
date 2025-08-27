@@ -1,20 +1,20 @@
 
 package be.fgov.ehealth.mediprima.core.v1;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * eHealth SOA Request Type for Services that require an Author as input.
- * 
+ *
  * <p>Classe Java pour AuthorRequestType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="AuthorRequestType">
  *   &lt;complexContent>
@@ -26,8 +26,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AuthorRequestType", namespace = "urn:be:fgov:ehealth:commons:protocol:v2", propOrder = {
@@ -45,11 +45,11 @@ public class AuthorRequestType
 
     /**
      * Obtient la valeur de la propriété author.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AuthorType }
-     *     
+     *
      */
     public AuthorType getAuthor() {
         return author;
@@ -57,11 +57,11 @@ public class AuthorRequestType
 
     /**
      * Définit la valeur de la propriété author.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AuthorType }
-     *     
+     *
      */
     public void setAuthor(AuthorType value) {
         this.author = value;

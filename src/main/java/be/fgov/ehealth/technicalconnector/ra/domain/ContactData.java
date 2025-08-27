@@ -2,7 +2,7 @@ package be.fgov.ehealth.technicalconnector.ra.domain;
 
 import java.io.Serializable;
 import java.util.regex.Pattern;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 

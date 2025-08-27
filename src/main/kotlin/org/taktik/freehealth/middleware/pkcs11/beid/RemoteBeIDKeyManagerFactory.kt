@@ -17,7 +17,7 @@
  */
 package org.taktik.freehealth.middleware.pkcs11.beid
 
-import be.fedict.commons.eid.jca.BeIDManagerFactoryParameters
+import be.fedict.commons.eid.jca.ssl.BeIDManagerFactoryParameters
 import org.slf4j.LoggerFactory
 import java.lang.Exception
 import java.lang.IllegalStateException

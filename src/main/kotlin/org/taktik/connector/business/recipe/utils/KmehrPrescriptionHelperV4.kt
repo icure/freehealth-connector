@@ -56,7 +56,7 @@ import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.stan
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.QuantityType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.SubstanceType
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.UnitType
-import org.taktik.connector.business.domain.kmehr.v20190301.makeXMLGregorianCalendarFromHHMMSSLong
+import org.taktik.connector.business.domain.kmehr.v20190301.makeXMLGregorianCalendarFromFuzzyLong
 import org.taktik.freehealth.middleware.domain.recipe.CompoundPrescription
 import org.taktik.freehealth.middleware.domain.recipe.Duration
 import org.taktik.freehealth.middleware.domain.recipe.GalenicForm
@@ -70,9 +70,10 @@ import java.time.temporal.ChronoUnit
 import java.time.temporal.ChronoUnit.DAYS
 import java.time.temporal.ChronoUnit.SECONDS
 import java.time.temporal.ChronoUnit.WEEKS
-import javax.xml.bind.JAXBElement
+import jakarta.xml.bind.JAXBElement
 import javax.xml.namespace.QName
 import org.taktik.connector.business.domain.kmehr.v20190301.s
+import org.taktik.connector.business.domain.newXMLGregorianCalendar
 
 object KmehrPrescriptionHelperV4 {
     fun mapPeriodToFrequency(period: Period): FrequencyType {
@@ -182,13 +183,13 @@ object KmehrPrescriptionHelperV4 {
     fun toDaytime(intake: RegimenItem): ItemType.Regimen.Daytime {
         return ItemType.Regimen.Daytime().apply {
             if (intake.timeOfDay != null) {
-                time = makeXMLGregorianCalendarFromHHMMSSLong(intake.timeOfDay!!)
+                time = makeXMLGregorianCalendarFromFuzzyLong(intake.timeOfDay!!)
             } else {
                 val timeOfDay = intake.dayPeriod?.code ?: CDDAYPERIODvalues.DURINGLUNCH.value()
                 when (timeOfDay) {
-                    CDDAYPERIODvalues.AFTERNOON.value() -> time = XMLGregorianCalendarImpl.parse("16:00:00")
-                    CDDAYPERIODvalues.EVENING.value() -> time = XMLGregorianCalendarImpl.parse("19:00:00")
-                    CDDAYPERIODvalues.NIGHT.value() -> time = XMLGregorianCalendarImpl.parse("22:00:00")
+                    CDDAYPERIODvalues.AFTERNOON.value() -> time = newXMLGregorianCalendar("16:00:00")
+                    CDDAYPERIODvalues.EVENING.value() -> time = newXMLGregorianCalendar("19:00:00")
+                    CDDAYPERIODvalues.NIGHT.value() -> time = newXMLGregorianCalendar("22:00:00")
                     CDDAYPERIODvalues.AFTERMEAL.value(), CDDAYPERIODvalues.BETWEENMEALS.value() -> throw IllegalArgumentException("$timeOfDay not supported: corresponds to multiple possible moments in a day")
                     else -> dayperiod = DayperiodType().apply {
                         cd = CDDAYPERIOD().apply {  value = CDDAYPERIODvalues.fromValue(timeOfDay) }

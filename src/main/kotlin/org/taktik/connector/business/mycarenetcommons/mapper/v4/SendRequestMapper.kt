@@ -30,11 +30,10 @@ import be.fgov.ehealth.mycarenet.commons.core.v4.RequestType
 import be.fgov.ehealth.mycarenet.commons.core.v4.RoutingType
 import be.fgov.ehealth.mycarenet.commons.core.v4.ValueRefString
 import java.io.IOException
-import javax.activation.DataHandler
+import jakarta.activation.DataHandler
 import org.apache.commons.io.IOUtils
 import java.util.*
 import javax.xml.datatype.DatatypeFactory
-import javax.xml.datatype.XMLGregorianCalendar
 
 class SendRequestMapper : ConfigurationModuleBootstrap.ModuleBootstrapHook {
 

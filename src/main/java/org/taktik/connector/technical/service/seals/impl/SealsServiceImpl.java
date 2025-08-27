@@ -13,7 +13,7 @@ import be.fgov.ehealth.seals.protocol.v1.EncodeRequest;
 import be.fgov.ehealth.seals.protocol.v1.EncodeResponse;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPException;
 
 public class SealsServiceImpl implements SealsService {
    private EhealthReplyValidator validator;

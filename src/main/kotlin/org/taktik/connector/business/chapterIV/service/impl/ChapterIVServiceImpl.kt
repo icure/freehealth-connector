@@ -13,7 +13,7 @@ import be.fgov.ehealth.chap4.protocol.v1.AskChap4MedicalAdvisorAgreementResponse
 import be.fgov.ehealth.chap4.protocol.v1.ConsultChap4MedicalAdvisorAgreementRequest
 import be.fgov.ehealth.chap4.protocol.v1.ConsultChap4MedicalAdvisorAgreementResponse
 import java.net.MalformedURLException
-import javax.xml.soap.SOAPException
+import jakarta.xml.soap.SOAPException
 
 class ChapterIVServiceImpl(private val replyValidator: EhealthReplyValidator) : ChapterIVService {
 

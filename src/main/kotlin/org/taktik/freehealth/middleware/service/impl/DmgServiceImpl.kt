@@ -30,7 +30,7 @@ import be.fgov.ehealth.standards.kmehr.schema.v1.*
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
 import com.google.gson.Gson
-import org.apache.commons.lang.ArrayUtils
+import org.apache.commons.lang3.ArrayUtils
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.springframework.security.core.context.SecurityContextHolder
@@ -81,7 +81,7 @@ import java.time.Instant
 import java.util.*
 import javax.xml.namespace.NamespaceContext
 import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.ws.soap.SOAPFaultException
+import jakarta.xml.ws.soap.SOAPFaultException
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathExpression
 import javax.xml.xpath.XPathExpressionException
@@ -145,7 +145,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                                                 DateTime().toString("yyyy-MM-dd")
                                                )
                 .replace("replaceWithNihiiNumber".toRegex(), hcpNihii).replace("replaceWithBic".toRegex(), bic)
-                .replace("replaceWithIban".toRegex(), iban.toUpperCase())
+                .replace("replaceWithIban".toRegex(), iban.uppercase())
 
         val sysProp =
             java.lang.System.getProperty("javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema")
@@ -618,13 +618,13 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
             } ?: listOf())
             response.sendTransactionResponse.kmehrmessage?.let {
                 it.folders.forEach {
-                    it.transactions.find { it.cds.any { it.value.toLowerCase() == "gmd" } }?.let {
+                    it.transactions.find { it.cds.any { it.value.lowercase() == "gmd" } }?.let {
                         it.item.forEach {
-                            if (it.cds.any { it.value.toLowerCase() == "gmdmanager" }) {
+                            if (it.cds.any { it.value.lowercase() == "gmdmanager" }) {
                                 from = it.beginmoment?.date?.toInstant()?.millis?.let { Instant.ofEpochMilli(it) }
                                 hcParty = it.contents.map { it.hcparty }.filterNotNull().first()
                             }
-                            if (it.cds.any { it.value.toLowerCase() == "payment" }) {
+                            if (it.cds.any { it.value.lowercase() == "payment" }) {
                                 payment = it.contents.map { it.isBoolean }.filterNotNull().first()
                             }
                         }
@@ -781,14 +781,14 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                             }
                             }
                         }
-                        it.transactions.find { it.cds.any { it.value.toLowerCase() == "gmd" } }?.let {
+                        it.transactions.find { it.cds.any { it.value.lowercase() == "gmd" } }?.let {
                             it.item.forEach {
-                                if (it.cds.any { it.value.toLowerCase() == "gmdmanager" }) {
+                                if (it.cds.any { it.value.lowercase() == "gmdmanager" }) {
                                     it.beginmoment?.date?.let { from = Instant.ofEpochMilli(it.millis) }
                                     it.endmoment?.date?.let { to = Instant.ofEpochMilli(it.millis) }
                                     hcParty = it.contents.map { it.hcparty }.filterNotNull().first()
                                 }
-                                if (it.cds.any { it.value.toLowerCase() == "payment" }) {
+                                if (it.cds.any { it.value.lowercase() == "payment" }) {
                                     payment = it.contents.map { it.isBoolean }.filterNotNull().first()
                                 }
                             }
@@ -958,13 +958,13 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                             f.patient?.let { fillDmgMessage(this, it) }
                             reference = nipReference
                             valueHash = encodedHashValue
-                            t.item.find { it.cds.any { it.value.toLowerCase() == "gmdmanager" } }?.let {
+                            t.item.find { it.cds.any { it.value.lowercase() == "gmdmanager" } }?.let {
                                 hcParty = it.contents.map { it.hcparty }.filterNotNull().first()
                             }
-                            t.item.find { it.cds.any { it.value.toLowerCase() == "encounterdatetime" } }?.let {
+                            t.item.find { it.cds.any { it.value.lowercase() == "encounterdatetime" } }?.let {
                                 it.contents.find { it.date != null }?.let { encounterDate = it.date.toDate() }
                             }
-                            t.item.find { it.cds.any { it.value.toLowerCase() == "claim" } }?.let {
+                            t.item.find { it.cds.any { it.value.lowercase() == "claim" } }?.let {
                                 it.contents.forEach {
                                     it.cds?.find { it.s == CDCONTENTschemes.CD_NIHDI }
                                         ?.let { claim = it.value }
@@ -977,7 +977,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                             f.patient?.let { fillDmgMessage(this, it) }
                             reference = nipReference
                             valueHash = encodedHashValue
-                            t.item.filter { it.cds.any { it.value.toLowerCase() == "gmdmanager" } }.forEach {
+                            t.item.filter { it.cds.any { it.value.lowercase() == "gmdmanager" } }.forEach {
                                 it.contents.map { it.hcparty }.firstOrNull()?.let { hcp ->
                                     it.beginmoment?.date?.let { beginOfNewDmg = it.toDate(); newHcParty = hcp }
                                     it.endmoment?.date?.let {
@@ -1019,14 +1019,14 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                     inscriptions.addAll(km.folders?.map {
                         DmgInscription().apply {
                             it.patient?.let { fillDmgMessage(this, it) }
-                            it.transactions.find { it.cds.any { it.value.toLowerCase() == "gmd" } }?.let {
-                                it.item.find { it.cds.any { it.value.toLowerCase() == "gmdmanager" } }
+                            it.transactions.find { it.cds.any { it.value.lowercase() == "gmd" } }?.let {
+                                it.item.find { it.cds.any { it.value.lowercase() == "gmdmanager" } }
                                     ?.let {
                                         it.beginmoment?.date?.let { from = it.toDate() }
                                         it.endmoment?.date?.let { to = it.toDate() }
                                         hcParty = it.contents.map { it.hcparty }.filterNotNull().first()
                                     }
-                                it.item.filter { it.cds.any { it.value.toLowerCase() == "payment" } }
+                                it.item.filter { it.cds.any { it.value.lowercase() == "payment" } }
                                     .forEachIndexed { idx, i ->
                                         i.cost?.decimal?.let { setPaymentAmount(idx + 1, it.toDouble()) }
                                         i.cost?.unit?.let { setPaymentCurrency(idx + 1, it.cd?.value) }
@@ -1294,7 +1294,7 @@ class DmgServiceImpl(private val stsService: STSService) : DmgService {
                 else -> null
             }
 
-            override fun getPrefixes(namespaceURI: String?): Iterator<Any?> =
+            override fun getPrefixes(namespaceURI: String?): Iterator<String> =
                 when (namespaceURI) {
                     "http://www.ehealth.fgov.be/standards/kmehr/schema/v1" -> listOf("ns3").iterator()
                     else -> listOf<String>().iterator()

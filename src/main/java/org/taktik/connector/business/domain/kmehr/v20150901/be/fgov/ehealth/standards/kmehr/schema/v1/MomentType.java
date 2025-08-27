@@ -1,19 +1,19 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2015.11.10 à 11:53:46 AM CET 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2015.11.10 à 11:53:46 AM CET
 //
 
 
 package org.taktik.connector.business.domain.kmehr.v20150901.be.fgov.ehealth.standards.kmehr.schema.v1;
 
 import java.io.Serializable;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.taktik.connector.business.domain.kmehr.v20150901.be.fgov.ehealth.standards.kmehr.dt.v1.TextType;
@@ -21,9 +21,9 @@ import org.taktik.connector.business.domain.kmehr.v20150901.be.fgov.ehealth.stan
 
 /**
  * <p>Classe Java pour momentType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="momentType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.taktik.connector.business.domain.kmehr.v20150901.be.fgov.ehealth.stan
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "momentType", propOrder = {
@@ -74,11 +74,11 @@ public class MomentType
 
     /**
      * Obtient la valeur de la propriété text.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TextType }
-     *     
+     *
      */
     public TextType getText() {
         return text;
@@ -86,11 +86,11 @@ public class MomentType
 
     /**
      * Définit la valeur de la propriété text.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TextType }
-     *     
+     *
      */
     public void setText(TextType value) {
         this.text = value;
@@ -98,11 +98,11 @@ public class MomentType
 
     /**
      * Obtient la valeur de la propriété date.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getDate() {
         return date;
@@ -110,11 +110,11 @@ public class MomentType
 
     /**
      * Définit la valeur de la propriété date.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setDate(XMLGregorianCalendar value) {
         this.date = value;
@@ -122,11 +122,11 @@ public class MomentType
 
     /**
      * Obtient la valeur de la propriété time.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getTime() {
         return time;
@@ -134,11 +134,11 @@ public class MomentType
 
     /**
      * Définit la valeur de la propriété time.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setTime(XMLGregorianCalendar value) {
         this.time = value;
@@ -146,11 +146,11 @@ public class MomentType
 
     /**
      * Obtient la valeur de la propriété yearmonth.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getYearmonth() {
         return yearmonth;
@@ -158,11 +158,11 @@ public class MomentType
 
     /**
      * Définit la valeur de la propriété yearmonth.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setYearmonth(XMLGregorianCalendar value) {
         this.yearmonth = value;
@@ -170,11 +170,11 @@ public class MomentType
 
     /**
      * Obtient la valeur de la propriété year.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getYear() {
         return year;
@@ -182,11 +182,11 @@ public class MomentType
 
     /**
      * Définit la valeur de la propriété year.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setYear(XMLGregorianCalendar value) {
         this.year = value;

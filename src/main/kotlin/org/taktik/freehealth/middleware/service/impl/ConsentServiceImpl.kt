@@ -30,7 +30,7 @@ import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONSENT
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDCONSENTvalues
 import be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENT
 import be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENTschemes
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.joda.time.DateTime
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.common.util.HandlerChainUtil

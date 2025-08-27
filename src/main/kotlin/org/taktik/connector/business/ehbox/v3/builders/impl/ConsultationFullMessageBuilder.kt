@@ -27,7 +27,7 @@ import be.fgov.ehealth.ehbox.consultation.protocol.v3.ContentContextType
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.DestinationContextType
 import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetFullMessageResponse
 import be.fgov.ehealth.ehbox.core.v3.FreeInformationsType
-import org.apache.commons.lang.ArrayUtils
+import org.apache.commons.lang3.ArrayUtils
 import org.slf4j.LoggerFactory
 import org.taktik.connector.business.ehbox.api.domain.*
 import org.taktik.connector.business.ehbox.api.domain.exception.EhboxBusinessConnectorException
@@ -39,7 +39,7 @@ import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredenti
 import org.taktik.connector.technical.utils.ConnectorIOUtils
 import org.taktik.connector.technical.utils.IdentifierType
 
-import javax.activation.DataHandler
+import jakarta.activation.DataHandler
 import java.io.IOException
 import java.io.InputStream
 

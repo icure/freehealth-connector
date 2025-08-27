@@ -2,17 +2,17 @@
 package be.fgov.ehealth.mediprima.core.v2;
 
 import java.math.BigInteger;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * <p>Classe Java pour CarmedIdentifierType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="CarmedIdentifierType">
  *   &lt;complexContent>
@@ -28,8 +28,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CarmedIdentifierType", propOrder = {
@@ -54,11 +54,11 @@ public class CarmedIdentifierType {
 
     /**
      * Obtient la valeur de la propriété carmedNumber.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCarmedNumber() {
         return carmedNumber;
@@ -66,11 +66,11 @@ public class CarmedIdentifierType {
 
     /**
      * Définit la valeur de la propriété carmedNumber.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCarmedNumber(String value) {
         this.carmedNumber = value;
@@ -78,11 +78,11 @@ public class CarmedIdentifierType {
 
     /**
      * Obtient la valeur de la propriété versionNumber.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getVersionNumber() {
         return versionNumber;
@@ -90,11 +90,11 @@ public class CarmedIdentifierType {
 
     /**
      * Définit la valeur de la propriété versionNumber.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setVersionNumber(BigInteger value) {
         this.versionNumber = value;
@@ -102,11 +102,11 @@ public class CarmedIdentifierType {
 
     /**
      * Obtient la valeur de la propriété beneficiary.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BeneficiaryType }
-     *     
+     *
      */
     public BeneficiaryType getBeneficiary() {
         return beneficiary;
@@ -114,11 +114,11 @@ public class CarmedIdentifierType {
 
     /**
      * Définit la valeur de la propriété beneficiary.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BeneficiaryType }
-     *     
+     *
      */
     public void setBeneficiary(BeneficiaryType value) {
         this.beneficiary = value;
@@ -126,11 +126,11 @@ public class CarmedIdentifierType {
 
     /**
      * Obtient la valeur de la propriété validityPeriod.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PeriodType }
-     *     
+     *
      */
     public PeriodType getValidityPeriod() {
         return validityPeriod;
@@ -138,11 +138,11 @@ public class CarmedIdentifierType {
 
     /**
      * Définit la valeur de la propriété validityPeriod.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PeriodType }
-     *     
+     *
      */
     public void setValidityPeriod(PeriodType value) {
         this.validityPeriod = value;
@@ -150,11 +150,11 @@ public class CarmedIdentifierType {
 
     /**
      * Obtient la valeur de la propriété pswc.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OcmwCpasType }
-     *     
+     *
      */
     public OcmwCpasType getPswc() {
         return pswc;
@@ -162,11 +162,11 @@ public class CarmedIdentifierType {
 
     /**
      * Définit la valeur de la propriété pswc.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OcmwCpasType }
-     *     
+     *
      */
     public void setPswc(OcmwCpasType value) {
         this.pswc = value;

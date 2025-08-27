@@ -2,11 +2,11 @@ package org.taktik.connector.technical.ws.impl;
 
 import java.util.HashMap;
 import java.util.Set;
-import javax.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.handler.MessageContext.Scope;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.ws.handler.MessageContext.Scope;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 
 public final class SOAPMessageContextImpl extends HashMap<String, Object> implements SOAPMessageContext {
    private static final long serialVersionUID = 1L;

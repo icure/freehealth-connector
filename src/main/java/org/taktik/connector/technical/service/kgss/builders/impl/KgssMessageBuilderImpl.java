@@ -27,7 +27,7 @@ import java.security.PrivateKey;
 import java.text.MessageFormat;
 import java.util.Map;
 import javax.crypto.SecretKey;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

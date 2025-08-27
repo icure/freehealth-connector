@@ -5,7 +5,7 @@ import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues;
 import org.taktik.connector.technical.utils.ByteArrayDatasource;
 import java.io.IOException;
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import org.apache.commons.io.IOUtils;
 import org.w3._2005._05.xmlmime.Base64Binary;
 

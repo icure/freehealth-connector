@@ -63,7 +63,7 @@ import org.w3c.dom.NamedNodeMap
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.util.UUID
-import javax.xml.ws.soap.SOAPFaultException
+import jakarta.xml.ws.soap.SOAPFaultException
 
 @Service
 class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyDepotService) : EhboxService {

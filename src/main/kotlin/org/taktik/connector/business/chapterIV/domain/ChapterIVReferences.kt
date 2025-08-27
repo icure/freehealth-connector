@@ -3,7 +3,7 @@ package org.taktik.connector.business.chapterIV.domain
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import java.io.Serializable
-import org.apache.commons.lang.builder.EqualsBuilder
+import org.apache.commons.lang3.builder.EqualsBuilder
 
 class ChapterIVReferences @Throws(TechnicalConnectorException::class) constructor(init: Boolean) : Serializable {
     var commonReference: String? = null

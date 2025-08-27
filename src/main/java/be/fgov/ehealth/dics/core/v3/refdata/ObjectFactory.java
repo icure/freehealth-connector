@@ -1,6 +1,6 @@
 package be.fgov.ehealth.dics.core.v3.refdata;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 @XmlRegistry
 public class ObjectFactory {

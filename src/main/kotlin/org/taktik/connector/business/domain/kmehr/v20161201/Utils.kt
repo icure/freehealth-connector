@@ -23,6 +23,7 @@ package org.taktik.connector.business.domain.kmehr.v20161201
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.MomentType
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.schema.v1.DateType
+import org.taktik.connector.business.domain.newXMLGregorianCalendar
 import java.util.Date
 import java.util.GregorianCalendar
 
@@ -34,7 +35,7 @@ class Utils {
 
     companion object {
         @JvmStatic
-        fun makeXMLGregorianCalendarFromFuzzyLong(date: Long?): XMLGregorianCalendarImpl? {
+        fun makeXMLGregorianCalendarFromFuzzyLong(date: Long?): XMLGregorianCalendar? {
             return date?.let { date ->
                 /*normalize*/
                 when {
@@ -45,7 +46,7 @@ class Utils {
                     else -> date
                 }
             }?.let { d ->
-                XMLGregorianCalendarImpl().apply {
+                newXMLGregorianCalendar().apply {
                     millisecond = FIELD_UNDEFINED
                     timezone = FIELD_UNDEFINED
                     when (d) {
@@ -72,8 +73,8 @@ class Utils {
         }
 
         @JvmStatic
-        fun makeXMLGregorianCalendarFromHHMMSSLong(date: Long): XMLGregorianCalendarImpl? {
-            return XMLGregorianCalendarImpl().apply {
+        fun makeXMLGregorianCalendarFromHHMMSSLong(date: Long): XMLGregorianCalendar? {
+            return newXMLGregorianCalendar().apply {
                 hour = (date / 10000 % 100).toInt()
                 minute = (date / 100 % 100).toInt()
                 second = (date % 100).toInt()

@@ -95,8 +95,8 @@ import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.connector.technical.utils.impl.JaxbContextFactory
 import java.security.KeyStore
 import java.util.UUID
-import javax.xml.soap.SOAPException
-import javax.xml.ws.WebServiceException
+import jakarta.xml.soap.SOAPException
+import jakarta.xml.ws.WebServiceException
 
 class HubTokenServiceImpl(keyDepotService: KeyDepotService) : HubTokenService, ConfigurationModuleBootstrap.ModuleBootstrapHook {
 

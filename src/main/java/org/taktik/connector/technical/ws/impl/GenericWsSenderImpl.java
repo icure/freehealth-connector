@@ -14,7 +14,7 @@ import org.taktik.connector.technical.ws.domain.HandlerChain;
 import org.taktik.connector.technical.ws.domain.HandlerPosition;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

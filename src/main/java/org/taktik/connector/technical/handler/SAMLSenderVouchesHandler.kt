@@ -5,7 +5,7 @@ import org.apache.commons.logging.LogFactory
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.service.sts.security.impl.SAMLSenderVouchesCredential
 import java.util.concurrent.TimeUnit
-import javax.xml.ws.handler.soap.SOAPMessageContext
+import jakarta.xml.ws.handler.soap.SOAPMessageContext
 
 class SAMLSenderVouchesHandler(private var token: SAMLSenderVouchesCredential) : AbstractWsSecurityHandler() {
 

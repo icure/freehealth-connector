@@ -11,7 +11,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 public class SecureString {
    private static final String ALGO_NAME = "PBEWithMD5AndDES";

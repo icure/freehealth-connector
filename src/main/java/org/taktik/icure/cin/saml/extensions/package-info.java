@@ -5,5 +5,5 @@
 // Generated on: 2019.05.29 at 05:57:25 PM CEST
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "urn:be:cin:nippin:memberdata:saml:extension", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "urn:be:cin:nippin:memberdata:saml:extension", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.taktik.icure.cin.saml.extensions;

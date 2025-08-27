@@ -5,7 +5,7 @@ import be.fgov.ehealth.commons.protocol.v2.StatusResponseType;
 import be.fgov.ehealth.mediprima.core.v2.CarmedAttributedListType;
 import be.fgov.ehealth.mediprima.core.v2.ConsultCarmedDataType;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 
 
 /**

@@ -21,19 +21,19 @@ import java.io.StringWriter;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Node;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
+import jakarta.xml.soap.Node;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPPart;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.soap.SOAPHandler;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.soap.SOAPHandler;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,28 +44,28 @@ public class InsurabilityHandler implements SOAPHandler<SOAPMessageContext> {
 	private final static Logger LOG = LogManager.getLogger(InsurabilityHandler.class);
 	private static String insurability;
 	private static String messageId;
-	
+
 	/** {@inheritDoc} */
 	public Set<QName> getHeaders() {
 		return null;
 	}
-	
+
 	/** {@inheritDoc} */
 	public void close(MessageContext arg0) {}
-	
+
 	/** {@inheritDoc} */
 	public boolean handleFault(SOAPMessageContext c) {
 		handleMessage(c);
 		return true;
 	}
-	
+
 	/** {@inheritDoc} */
 	public boolean handleMessage(SOAPMessageContext c) {
 		try {
 			final Boolean outboundProperty = (Boolean) c.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 			if (outboundProperty == false) {
 				SOAPMessage msg = c.getMessage();
-				
+
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				msg.writeTo(out);
 				Node elementsGetPrescriptionForExecutorResponse = (Node) msg.getSOAPBody().getChildElements().next();
@@ -89,14 +89,14 @@ public class InsurabilityHandler implements SOAPHandler<SOAPMessageContext> {
 		}
 		return true;
 	}
-	
+
 	private static void initMessageID(SOAPMessage msg) throws SOAPException {
 		SOAPPart part = msg.getSOAPPart();
 		if (part != null) {
 			SOAPEnvelope soapEnvelope = part.getEnvelope();
 			if (soapEnvelope != null) {
 				SOAPHeader header = soapEnvelope.getHeader();
-				
+
 				if (header != null && header.getChildElements().hasNext()) {
 					Node elementsResponseHeader = (Node) header.getChildElements().next();
 					if (elementsResponseHeader != null && elementsResponseHeader.getLocalName() != null && elementsResponseHeader.getLocalName().equals("MessageID")) {
@@ -109,19 +109,19 @@ public class InsurabilityHandler implements SOAPHandler<SOAPMessageContext> {
 			}
 		}
 	}
-	
+
 	public static void setMessageId(String messageId) {
 		InsurabilityHandler.messageId = messageId;
 	}
-	
+
 	public static String getMessageId() {
 		return messageId;
 	}
-	
+
 	public static void setInsurability(String insurability) {
 		InsurabilityHandler.insurability = insurability;
 	}
-	
+
 	public static String getInsurability() {
 		return insurability;
 	}

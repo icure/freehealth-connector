@@ -81,7 +81,7 @@ abstract class Message<T> : Serializable {
                 ).generateId()
         } catch (var5: TechnicalConnectorException) {
             val time = System.nanoTime()
-            val identifier = java.lang.Long.toString(time, 36).toUpperCase()
+            val identifier = java.lang.Long.toString(time, 36).uppercase()
             this.publicationId = identifier
         }
     }

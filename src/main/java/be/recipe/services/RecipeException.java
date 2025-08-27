@@ -1,6 +1,6 @@
 package be.recipe.services;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 @WebFault(
    name = "RecipeException",

@@ -23,11 +23,13 @@ package org.taktik.connector.business.domain.kmehr.v20130710
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
 import org.taktik.connector.business.domain.kmehr.v20130710.be.fgov.ehealth.standards.kmehr.schema.v1.MomentType
 import org.taktik.connector.business.domain.kmehr.v20130710.be.fgov.ehealth.standards.kmehr.schema.v1.DateType
+import org.taktik.connector.business.domain.newXMLGregorianCalendar
 
 import javax.xml.datatype.DatatypeConstants.FIELD_UNDEFINED
+import javax.xml.datatype.XMLGregorianCalendar
 
 class Utils {
-    fun makeXMLGregorianCalendarFromFuzzyLong(date: Long?): XMLGregorianCalendarImpl? {
+    fun makeXMLGregorianCalendarFromFuzzyLong(date: Long?): XMLGregorianCalendar? {
         return date?.let {
             when {
                 it % 10000000000 == 0L -> it / 10000000000
@@ -37,7 +39,7 @@ class Utils {
                 else -> it
             } /*normalize*/
         }?.let { d ->
-            XMLGregorianCalendarImpl().apply {
+            newXMLGregorianCalendar().apply {
                 millisecond = FIELD_UNDEFINED
                 timezone = FIELD_UNDEFINED
                 when (d) {

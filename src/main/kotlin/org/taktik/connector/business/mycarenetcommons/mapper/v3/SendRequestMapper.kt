@@ -30,7 +30,7 @@ import be.fgov.ehealth.mycarenet.commons.core.v3.RequestType
 import be.fgov.ehealth.mycarenet.commons.core.v3.RoutingType
 import be.fgov.ehealth.mycarenet.commons.core.v3.ValueRefString
 import java.io.IOException
-import javax.activation.DataHandler
+import jakarta.activation.DataHandler
 import org.apache.commons.io.IOUtils
 
 class SendRequestMapper : ConfigurationModuleBootstrap.ModuleBootstrapHook {

@@ -8,7 +8,7 @@ import org.taktik.connector.technical.service.sts.security.impl.KeyPairCredentia
 import java.security.PrivateKey
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
-import javax.xml.ws.handler.soap.SOAPMessageContext
+import jakarta.xml.ws.handler.soap.SOAPMessageContext
 
 class CertificateCallback : AbstractWsSecurityHandler {
     private var cred: Credential? = null

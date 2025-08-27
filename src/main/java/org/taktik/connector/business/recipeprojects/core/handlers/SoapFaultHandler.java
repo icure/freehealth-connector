@@ -19,17 +19,17 @@ package org.taktik.connector.business.recipeprojects.core.handlers;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.soap.SOAPHandler;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPPart;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.soap.SOAPHandler;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -55,7 +55,7 @@ public class SoapFaultHandler  implements SOAPHandler<SOAPMessageContext> {
 	}
 
 	/** {@inheritDoc} */
-	public boolean handleFault(SOAPMessageContext c) {	
+	public boolean handleFault(SOAPMessageContext c) {
 		handleMessage(c);
 		return true;
 	}
@@ -76,10 +76,10 @@ public class SoapFaultHandler  implements SOAPHandler<SOAPMessageContext> {
 		}
 		return null;
     }
-	
+
 	/** {@inheritDoc} */
 	public boolean handleMessage(SOAPMessageContext c) {
-		
+
 		SOAPMessage msg = c.getMessage();
 
 		try {
@@ -89,7 +89,7 @@ public class SoapFaultHandler  implements SOAPHandler<SOAPMessageContext> {
 		} catch (SOAPException e) {
 			LOG.error(e.getMessage(), e);
 		}
-		
+
 		return true;
 	}
 

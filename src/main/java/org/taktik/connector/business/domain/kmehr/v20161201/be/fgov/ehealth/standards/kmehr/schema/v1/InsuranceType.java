@@ -1,8 +1,8 @@
 //
-// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802 
-// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source. 
-// Généré le : 2017.05.11 à 02:53:46 PM CEST 
+// Ce fichier a été généré par l'implémentation de référence JavaTM Architecture for XML Binding (JAXB), v2.2.8-b130911.1802
+// Voir <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Toute modification apportée à ce fichier sera perdue lors de la recompilation du schéma source.
+// Généré le : 2017.05.11 à 02:53:46 PM CEST
 //
 
 
@@ -11,11 +11,11 @@ package org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.sta
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDCARENETPERSONALPART;
 import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.standards.kmehr.cd.v1.CDCARENETTHIRDPAYERCONTRACT;
@@ -25,9 +25,9 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
 
 /**
  * <p>Classe Java pour insuranceType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="insuranceType">
  *   &lt;complexContent>
@@ -74,8 +74,8 @@ import org.taktik.connector.business.domain.kmehr.v20161201.be.fgov.ehealth.stan
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "insuranceType", propOrder = {
@@ -120,11 +120,11 @@ public class InsuranceType
 
     /**
      * Obtient la valeur de la propriété id.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link IDINSURANCE }
-     *     
+     *
      */
     public IDINSURANCE getId() {
         return id;
@@ -132,11 +132,11 @@ public class InsuranceType
 
     /**
      * Définit la valeur de la propriété id.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link IDINSURANCE }
-     *     
+     *
      */
     public void setId(IDINSURANCE value) {
         this.id = value;
@@ -144,11 +144,11 @@ public class InsuranceType
 
     /**
      * Obtient la valeur de la propriété membership.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMembership() {
         return membership;
@@ -156,11 +156,11 @@ public class InsuranceType
 
     /**
      * Définit la valeur de la propriété membership.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMembership(String value) {
         this.membership = value;
@@ -168,11 +168,11 @@ public class InsuranceType
 
     /**
      * Obtient la valeur de la propriété siscard.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSiscard() {
         return siscard;
@@ -180,11 +180,11 @@ public class InsuranceType
 
     /**
      * Définit la valeur de la propriété siscard.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSiscard(String value) {
         this.siscard = value;
@@ -192,11 +192,11 @@ public class InsuranceType
 
     /**
      * Obtient la valeur de la propriété begindate.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getBegindate() {
         return begindate;
@@ -204,11 +204,11 @@ public class InsuranceType
 
     /**
      * Définit la valeur de la propriété begindate.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setBegindate(XMLGregorianCalendar value) {
         this.begindate = value;
@@ -216,11 +216,11 @@ public class InsuranceType
 
     /**
      * Obtient la valeur de la propriété enddate.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getEnddate() {
         return enddate;
@@ -228,11 +228,11 @@ public class InsuranceType
 
     /**
      * Définit la valeur de la propriété enddate.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setEnddate(XMLGregorianCalendar value) {
         this.enddate = value;
@@ -240,11 +240,11 @@ public class InsuranceType
 
     /**
      * Obtient la valeur de la propriété cg1.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCg1() {
         return cg1;
@@ -252,11 +252,11 @@ public class InsuranceType
 
     /**
      * Définit la valeur de la propriété cg1.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCg1(String value) {
         this.cg1 = value;
@@ -264,11 +264,11 @@ public class InsuranceType
 
     /**
      * Obtient la valeur de la propriété cg2.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCg2() {
         return cg2;
@@ -276,11 +276,11 @@ public class InsuranceType
 
     /**
      * Définit la valeur de la propriété cg2.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCg2(String value) {
         this.cg2 = value;
@@ -288,11 +288,11 @@ public class InsuranceType
 
     /**
      * Obtient la valeur de la propriété socialfranchiseperiod1.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSocialfranchiseperiod1() {
         return socialfranchiseperiod1;
@@ -300,11 +300,11 @@ public class InsuranceType
 
     /**
      * Définit la valeur de la propriété socialfranchiseperiod1.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSocialfranchiseperiod1(String value) {
         this.socialfranchiseperiod1 = value;
@@ -312,11 +312,11 @@ public class InsuranceType
 
     /**
      * Obtient la valeur de la propriété socialfranchiseperiod2.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSocialfranchiseperiod2() {
         return socialfranchiseperiod2;
@@ -324,11 +324,11 @@ public class InsuranceType
 
     /**
      * Définit la valeur de la propriété socialfranchiseperiod2.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSocialfranchiseperiod2(String value) {
         this.socialfranchiseperiod2 = value;
@@ -336,25 +336,25 @@ public class InsuranceType
 
     /**
      * Gets the value of the personalparts property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the personalparts property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPersonalparts().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link InsuranceType.Personalpart }
-     * 
-     * 
+     *
+     *
      */
     public List<InsuranceType.Personalpart> getPersonalparts() {
         if (personalparts == null) {
@@ -365,11 +365,11 @@ public class InsuranceType
 
     /**
      * Obtient la valeur de la propriété thirdpayercontract.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link InsuranceType.Thirdpayercontract }
-     *     
+     *
      */
     public InsuranceType.Thirdpayercontract getThirdpayercontract() {
         return thirdpayercontract;
@@ -377,11 +377,11 @@ public class InsuranceType
 
     /**
      * Définit la valeur de la propriété thirdpayercontract.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link InsuranceType.Thirdpayercontract }
-     *     
+     *
      */
     public void setThirdpayercontract(InsuranceType.Thirdpayercontract value) {
         this.thirdpayercontract = value;
@@ -389,11 +389,11 @@ public class InsuranceType
 
     /**
      * Obtient la valeur de la propriété begindatepayment.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getBegindatepayment() {
         return begindatepayment;
@@ -401,11 +401,11 @@ public class InsuranceType
 
     /**
      * Définit la valeur de la propriété begindatepayment.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setBegindatepayment(XMLGregorianCalendar value) {
         this.begindatepayment = value;
@@ -413,11 +413,11 @@ public class InsuranceType
 
     /**
      * Obtient la valeur de la propriété approvalnumber.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getApprovalnumber() {
         return approvalnumber;
@@ -425,11 +425,11 @@ public class InsuranceType
 
     /**
      * Définit la valeur de la propriété approvalnumber.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setApprovalnumber(String value) {
         this.approvalnumber = value;
@@ -438,9 +438,9 @@ public class InsuranceType
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -455,8 +455,8 @@ public class InsuranceType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -481,11 +481,11 @@ public class InsuranceType
 
         /**
          * Obtient la valeur de la propriété id.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link IDKMEHR }
-         *     
+         *
          */
         public IDKMEHR getId() {
             return id;
@@ -493,11 +493,11 @@ public class InsuranceType
 
         /**
          * Définit la valeur de la propriété id.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link IDKMEHR }
-         *     
+         *
          */
         public void setId(IDKMEHR value) {
             this.id = value;
@@ -505,11 +505,11 @@ public class InsuranceType
 
         /**
          * Obtient la valeur de la propriété cd.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link CDCARENETPERSONALPART }
-         *     
+         *
          */
         public CDCARENETPERSONALPART getCd() {
             return cd;
@@ -517,11 +517,11 @@ public class InsuranceType
 
         /**
          * Définit la valeur de la propriété cd.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link CDCARENETPERSONALPART }
-         *     
+         *
          */
         public void setCd(CDCARENETPERSONALPART value) {
             this.cd = value;
@@ -529,11 +529,11 @@ public class InsuranceType
 
         /**
          * Obtient la valeur de la propriété date.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link XMLGregorianCalendar }
-         *     
+         *
          */
         public XMLGregorianCalendar getDate() {
             return date;
@@ -541,11 +541,11 @@ public class InsuranceType
 
         /**
          * Définit la valeur de la propriété date.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link XMLGregorianCalendar }
-         *     
+         *
          */
         public void setDate(XMLGregorianCalendar value) {
             this.date = value;
@@ -553,11 +553,11 @@ public class InsuranceType
 
         /**
          * Obtient la valeur de la propriété time.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link XMLGregorianCalendar }
-         *     
+         *
          */
         public XMLGregorianCalendar getTime() {
             return time;
@@ -565,11 +565,11 @@ public class InsuranceType
 
         /**
          * Définit la valeur de la propriété time.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link XMLGregorianCalendar }
-         *     
+         *
          */
         public void setTime(XMLGregorianCalendar value) {
             this.time = value;
@@ -580,9 +580,9 @@ public class InsuranceType
 
     /**
      * <p>Classe Java pour anonymous complex type.
-     * 
+     *
      * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -594,8 +594,8 @@ public class InsuranceType
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -611,11 +611,11 @@ public class InsuranceType
 
         /**
          * Obtient la valeur de la propriété cd.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link CDCARENETTHIRDPAYERCONTRACT }
-         *     
+         *
          */
         public CDCARENETTHIRDPAYERCONTRACT getCd() {
             return cd;
@@ -623,11 +623,11 @@ public class InsuranceType
 
         /**
          * Définit la valeur de la propriété cd.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link CDCARENETTHIRDPAYERCONTRACT }
-         *     
+         *
          */
         public void setCd(CDCARENETTHIRDPAYERCONTRACT value) {
             this.cd = value;

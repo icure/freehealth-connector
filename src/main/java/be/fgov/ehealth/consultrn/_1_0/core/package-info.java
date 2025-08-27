@@ -3,4 +3,4 @@
 )
 package be.fgov.ehealth.consultrn._1_0.core;
 
-import javax.xml.bind.annotation.XmlSchema;
+import jakarta.xml.bind.annotation.XmlSchema;

@@ -1,19 +1,19 @@
 
 package be.fgov.ehealth.mycarenet.commons.core.v4;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * Information about a care provider. This is a person or institution that provides health care service to persons.
- * 
+ *
  * <p>Classe Java pour CareProviderType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="CareProviderType">
  *   &lt;complexContent>
@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CareProviderType", namespace = "urn:be:fgov:ehealth:mycarenet:commons:core:v4", propOrder = {
@@ -47,11 +47,11 @@ public class CareProviderType {
 
     /**
      * Obtient la valeur de la propriété nihii.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link NihiiType }
-     *     
+     *
      */
     public NihiiType getNihii() {
         return nihii;
@@ -59,11 +59,11 @@ public class CareProviderType {
 
     /**
      * Définit la valeur de la propriété nihii.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link NihiiType }
-     *     
+     *
      */
     public void setNihii(NihiiType value) {
         this.nihii = value;
@@ -71,11 +71,11 @@ public class CareProviderType {
 
     /**
      * Obtient la valeur de la propriété physicalPerson.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link IdType }
-     *     
+     *
      */
     public IdType getPhysicalPerson() {
         return physicalPerson;
@@ -83,11 +83,11 @@ public class CareProviderType {
 
     /**
      * Définit la valeur de la propriété physicalPerson.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link IdType }
-     *     
+     *
      */
     public void setPhysicalPerson(IdType value) {
         this.physicalPerson = value;
@@ -95,11 +95,11 @@ public class CareProviderType {
 
     /**
      * Obtient la valeur de la propriété organization.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link IdType }
-     *     
+     *
      */
     public IdType getOrganization() {
         return organization;
@@ -107,11 +107,11 @@ public class CareProviderType {
 
     /**
      * Définit la valeur de la propriété organization.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link IdType }
-     *     
+     *
      */
     public void setOrganization(IdType value) {
         this.organization = value;

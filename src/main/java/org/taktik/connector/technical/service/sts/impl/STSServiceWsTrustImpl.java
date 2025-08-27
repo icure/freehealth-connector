@@ -19,11 +19,11 @@ import java.security.cert.CertificateEncodingException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.validation.constraints.NotNull;
-import javax.xml.soap.SOAPException;
+import jakarta.validation.constraints.NotNull;
+import jakarta.xml.soap.SOAPException;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.encoders.Base64;
 import org.joda.time.DateTime;
 import org.w3c.dom.DOMException;

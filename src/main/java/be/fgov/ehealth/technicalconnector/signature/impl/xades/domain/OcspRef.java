@@ -4,7 +4,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.xml.security.utils.RFC2253Parser;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -69,7 +69,7 @@ class OcspRef extends Ref {
       if (2 == derTaggedObject.getTagNo()) {
          return null;
       } else {
-         ASN1Primitive derObject = derTaggedObject.getObject();
+         ASN1Primitive derObject = derTaggedObject.getLoadedObject();
          X500Name name = X500Name.getInstance(derObject);
          return RFC2253Parser.normalize(name.toString());
       }
@@ -79,7 +79,7 @@ class OcspRef extends Ref {
       ResponderID responderID = this.ocsp.getResponderId().toASN1Primitive();
       DERTaggedObject derTaggedObject = (DERTaggedObject)responderID.toASN1Primitive();
       if (2 == derTaggedObject.getTagNo()) {
-         ASN1OctetString keyHashOctetString = (ASN1OctetString)derTaggedObject.getObject();
+         ASN1OctetString keyHashOctetString = (ASN1OctetString)derTaggedObject.getLoadedObject();
          return keyHashOctetString.getOctets();
       } else {
          return new byte[0];

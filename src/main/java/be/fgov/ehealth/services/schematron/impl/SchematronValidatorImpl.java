@@ -6,7 +6,7 @@ import be.fgov.ehealth.schematron.domain.SchematronConfig;
 import be.fgov.ehealth.schematron.domain.SchematronResult;
 import be.fgov.ehealth.schematron.exception.InitialisationException;
 import java.io.InputStream;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import be.fgov.ehealth.services.schematron.SchematronValidationResult;
 import be.fgov.ehealth.services.schematron.SchematronValidator;

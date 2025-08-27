@@ -2,10 +2,10 @@ package be.fgov.ehealth.mycarenet.commons.protocol.v2;
 
 import be.fgov.ehealth.commons.protocol.SoapConversationLogger;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 
 @XmlRootElement(
    name = "TarificationConsultationResponse",

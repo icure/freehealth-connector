@@ -5,8 +5,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import javax.activation.DataSource;
-import org.apache.commons.lang.ArrayUtils;
+import jakarta.activation.DataSource;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class ByteArrayDatasource implements DataSource {
    private byte[] byteArray;

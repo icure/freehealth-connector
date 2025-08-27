@@ -34,7 +34,7 @@ import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExampl
 import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample8
 import org.taktik.icure.be.ehealth.logic.recipe.impl.examples.prescriptionExample9
 import java.io.ByteArrayOutputStream
-import javax.xml.bind.JAXBContext
+import jakarta.xml.bind.JAXBContext
 import javax.xml.datatype.DatatypeFactory
 
 /**

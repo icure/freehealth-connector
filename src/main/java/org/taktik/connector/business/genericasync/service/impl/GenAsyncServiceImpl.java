@@ -31,7 +31,7 @@ import org.taktik.connector.technical.ws.domain.HandlerChain;
 import org.taktik.connector.technical.ws.domain.HandlerPosition;
 import org.taktik.connector.technical.ws.feature.XOPFeature;
 
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPException;
 import java.util.concurrent.TimeUnit;
 
 public class GenAsyncServiceImpl implements GenAsyncService {

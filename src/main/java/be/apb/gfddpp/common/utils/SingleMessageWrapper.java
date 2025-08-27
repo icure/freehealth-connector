@@ -32,7 +32,7 @@ import be.apb.standards.smoa.schema.v1.PharmaceuticalCareEventType;
 import be.apb.standards.smoa.schema.v1.SenderType;
 import be.apb.standards.smoa.schema.v1.SingleMessage;
 import be.apb.standards.smoa.schema.v1.SmoaMessageType;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

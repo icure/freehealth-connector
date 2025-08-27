@@ -1,20 +1,20 @@
 
 package be.fgov.ehealth.mycarenet.commons.core.v4;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
  * Everything that is an entity derives from this type. Enties are object that are distinguishable and have a name. This name isn't nesesary unique.
- * 
+ *
  * <p>Classe Java pour AbstractIdType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractIdType">
  *   &lt;complexContent>
@@ -26,8 +26,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractIdType", namespace = "urn:be:fgov:ehealth:mycarenet:commons:core:v4", propOrder = {
@@ -46,11 +46,11 @@ public abstract class AbstractIdType
 
     /**
      * Obtient la valeur de la propriété name.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ValueRefString }
-     *     
+     *
      */
     public ValueRefString getName() {
         return name;
@@ -58,11 +58,11 @@ public abstract class AbstractIdType
 
     /**
      * Définit la valeur de la propriété name.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ValueRefString }
-     *     
+     *
      */
     public void setName(ValueRefString value) {
         this.name = value;

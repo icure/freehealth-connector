@@ -8,7 +8,7 @@ import org.taktik.connector.technical.ws.domain.GenericRequest;
 import org.taktik.connector.technical.ws.domain.TokenType;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 public final class ServiceFactory {
    private static final String PROP_ENDPOINT_ATTEST_V3 = "endpoint.eattestv3";

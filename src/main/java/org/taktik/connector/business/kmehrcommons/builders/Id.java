@@ -2,7 +2,7 @@ package org.taktik.connector.business.kmehrcommons.builders;
 
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY;
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 public class Id {
    private IDHCPARTY id = new IDHCPARTY();

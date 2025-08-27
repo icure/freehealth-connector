@@ -2,7 +2,7 @@ package org.taktik.connector.business.kmehrcommons.builders.mycarenet;
 
 import be.fgov.ehealth.standards.kmehr.mycarenet.id.v1.IDHCPARTY;
 import be.fgov.ehealth.standards.kmehr.mycarenet.id.v1.IDHCPARTYschemes;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 public class McnId {
    private IDHCPARTY id = new IDHCPARTY();

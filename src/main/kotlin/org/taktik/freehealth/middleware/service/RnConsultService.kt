@@ -12,7 +12,7 @@ import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultSearchPersonByS
 import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultSearchPersonPhoneticallyResponseDto
 import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultPersonMid
 import java.util.*
-import javax.xml.ws.soap.SOAPFaultException
+import jakarta.xml.ws.soap.SOAPFaultException
 
 interface RnConsultService {
     @Throws(TechnicalConnectorException::class, SOAPFaultException::class, SoaErrorException::class, SearchPersonBySsinException::class)

@@ -6,8 +6,8 @@ import be.fgov.ehealth.genericinsurability.core.v1.CommonOutputType;
 import be.fgov.ehealth.genericinsurability.core.v1.RecordCommonOutputType;
 import be.fgov.ehealth.genericinsurability.core.v1.SingleInsurabilityResponseType;
 import java.io.Serializable;
-import javax.xml.bind.annotation.*;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.bind.annotation.*;
+import jakarta.xml.soap.SOAPMessage;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(

@@ -20,11 +20,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Properties;
-import javax.xml.soap.MimeHeader;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.soap.MimeHeader;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ public class HarFileHandler extends AbstractSOAPHandler {
    private static final String TIMINGS = "timings";
    private static final Logger LOG = LoggerFactory.getLogger(HarFileHandler.class);
    private DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-   private static final String MESSAGE_ENDPOINT_ADDRESS = "javax.xml.ws.service.endpoint.address";
+   private static final String MESSAGE_ENDPOINT_ADDRESS = "jakarta.xml.ws.service.endpoint.address";
    private JsonObject harJson;
    private Long start;
    private Long recieved;
@@ -41,7 +41,7 @@ public class HarFileHandler extends AbstractSOAPHandler {
    private static Properties applicationProps = new Properties();
 
    public boolean handleFault(SOAPMessageContext ctx) {
-      Boolean outbound = (Boolean)ctx.get("javax.xml.ws.handler.message.outbound");
+      Boolean outbound = (Boolean)ctx.get("jakarta.xml.ws.handler.message.outbound");
       if (outbound) {
          return false;
       } else {
@@ -97,7 +97,7 @@ public class HarFileHandler extends AbstractSOAPHandler {
       try {
          JsonObject request = new JsonObject();
          request.addProperty("method", "POST");
-         request.addProperty("url", context.get("javax.xml.ws.service.endpoint.address").toString());
+         request.addProperty("url", context.get("jakarta.xml.ws.service.endpoint.address").toString());
          request.addProperty("httpVersion", "HTTP/1.1");
          request.add("headers", this.handleHeaders(msg.getMimeHeaders()));
          request.add("queryString", new JsonArray());

@@ -30,7 +30,7 @@ public class EndpointFeature extends GenericFeature {
 
    public Map<String, Object> requestParamOptions() {
       Map<String, Object> result = new HashMap();
-      result.put("javax.xml.ws.service.endpoint.address", this.url);
+      result.put("jakarta.xml.ws.service.endpoint.address", this.url);
       return result;
    }
 }

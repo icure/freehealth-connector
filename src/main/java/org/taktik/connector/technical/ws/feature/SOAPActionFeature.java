@@ -27,8 +27,8 @@ public class SOAPActionFeature extends GenericFeature {
    public Map<String, Object> requestParamOptions() {
       Map<String, Object> result = new HashMap();
       if (StringUtils.isNotBlank(this.soapAction)) {
-         result.put("javax.xml.ws.soap.http.soapaction.use", Boolean.TRUE);
-         result.put("javax.xml.ws.soap.http.soapaction.uri", this.soapAction);
+         result.put("jakarta.xml.ws.soap.http.soapaction.use", Boolean.TRUE);
+         result.put("jakarta.xml.ws.soap.http.soapaction.uri", this.soapAction);
          result.put("org.taktik.connector.technical.handler.soapactionhandler.wsi.complaint", this.wsiCompliant);
       } else {
          LOG.warn("soapAction is blank.");

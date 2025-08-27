@@ -3,9 +3,9 @@ package be.fgov.ehealth.standards.kmehr.schema.v1;
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDGALENICFORM;
 import be.fgov.ehealth.standards.kmehr.dt.v1.TextType;
 import java.io.Serializable;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(

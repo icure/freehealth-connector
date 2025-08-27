@@ -1,7 +1,7 @@
 package be.fgov.ehealth.etee.commons.core.v1;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(
    name = "ETKUsageType"

@@ -3,7 +3,7 @@ package org.taktik.connector.technical.validator
 import com.gc.iotools.stream.`is`.InputStreamFromOutputStream
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
-import org.apache.commons.lang.ArrayUtils
+import org.apache.commons.lang3.ArrayUtils
 import org.slf4j.LoggerFactory
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
@@ -16,7 +16,7 @@ import org.taktik.connector.technical.validator.impl.handler.XOPValidationHandle
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.concurrent.TimeUnit
-import javax.xml.bind.util.JAXBSource
+import jakarta.xml.bind.util.JAXBSource
 import javax.xml.parsers.SAXParserFactory
 import javax.xml.transform.Source
 import javax.xml.transform.TransformerFactory

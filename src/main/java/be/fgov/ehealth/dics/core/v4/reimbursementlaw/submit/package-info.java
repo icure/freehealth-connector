@@ -4,5 +4,5 @@
 )
 package be.fgov.ehealth.dics.core.v4.reimbursementlaw.submit;
 
-import javax.xml.bind.annotation.XmlNsForm;
-import javax.xml.bind.annotation.XmlSchema;
+import jakarta.xml.bind.annotation.XmlNsForm;
+import jakarta.xml.bind.annotation.XmlSchema;

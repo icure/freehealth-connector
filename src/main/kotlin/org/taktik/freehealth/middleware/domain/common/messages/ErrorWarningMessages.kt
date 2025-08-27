@@ -18,7 +18,6 @@
 
 package org.taktik.freehealth.middleware.domain.common.messages
 
-import org.apache.commons.collections4.Predicate
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -32,6 +31,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.ArrayList
 import java.util.HashMap
+import java.util.function.Predicate
 
 /**
  * Created with IntelliJ IDEA.
@@ -69,7 +69,7 @@ object ErrorWarningMessages {
                     val msg = ErrorMessage()
                     fillMessage(e, ctx, msg)
 
-                    if (p == null || p.evaluate(msg)) {
+                    if (p == null || p.test(msg)) {
                         result.add(msg)
                     }
                 }
@@ -86,7 +86,7 @@ object ErrorWarningMessages {
                     val msg = WarningMessage()
                     fillMessage(e, ctx, msg)
 
-                    if (p == null || p.evaluate(msg)) {
+                    if (p == null || p.test(msg)) {
                         result.add(msg)
                     }
                 }
