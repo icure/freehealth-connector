@@ -1,0 +1,9 @@
+services:
+  freehealth:
+    container_name: freehealth
+    image: docker.taktik.be/icure/freehealth-connector:0.0.0-dev
+    #volumes:
+      #- d:\opt\ehealth:/opt/ehealth
+    ports:
+      - "8080:8080"
+      - "5005:5005"

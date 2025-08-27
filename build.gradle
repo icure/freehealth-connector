@@ -260,3 +260,10 @@ idea {
 		downloadSources = true
 	}
 }
+
+task releaseLocal(type: GradleBuild) {
+    tasks = ['build']
+    startParameter.excludedTaskNames = ['test']
+}
+
+test.onlyIf { project.hasProperty('includeTests') }
