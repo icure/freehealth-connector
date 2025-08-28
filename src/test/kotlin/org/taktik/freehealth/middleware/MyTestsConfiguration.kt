@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.AnnotationAwareOrderComparator
 import org.springframework.util.CollectionUtils
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toJavaDuration
 
 @Configuration
 class MyTestsConfiguration {
@@ -18,7 +20,7 @@ class MyTestsConfiguration {
         builder = restTemplateCustomizers
             .ifAvailable.let {
             if (it.isNullOrEmpty()) builder else builder.customizers(it)
-        }.setConnectTimeout(120000).setReadTimeout(120000)
+        }.connectTimeout(120.seconds.toJavaDuration()).readTimeout(120.seconds.toJavaDuration())
         return builder
     }
 }

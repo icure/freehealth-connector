@@ -1,5 +1,15 @@
 package org.taktik.connector.technical.validator.impl
 
+import org.apache.commons.lang3.Validate
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers
+import org.bouncycastle.cert.X509CertificateHolder
+import org.bouncycastle.cms.DefaultCMSSignatureAlgorithmNameGenerator
+import org.bouncycastle.cms.bc.BcRSASignerInfoVerifierBuilder
+import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder
+import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder
+import org.bouncycastle.operator.bc.BcDigestCalculatorProvider
+import org.bouncycastle.tsp.TimeStampToken
+import org.slf4j.LoggerFactory
 import org.taktik.connector.technical.exception.InvalidTimeStampException
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.utils.ConfigurableImplementation
@@ -9,21 +19,6 @@ import java.security.KeyStore
 import java.security.KeyStoreException
 import java.security.MessageDigest
 import java.security.cert.X509Certificate
-import java.util.ArrayList
-import java.util.Collections
-import org.apache.commons.lang3.Validate
-import org.bouncycastle.asn1.cms.Attribute
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers
-import org.bouncycastle.cert.X509CertificateHolder
-import org.bouncycastle.cms.DefaultCMSSignatureAlgorithmNameGenerator
-import org.bouncycastle.cms.SignerInformationVerifier
-import org.bouncycastle.cms.bc.BcRSASignerInfoVerifierBuilder
-import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder
-import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder
-import org.bouncycastle.operator.bc.BcDigestCalculatorProvider
-import org.bouncycastle.tsp.TimeStampToken
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 class TimeStampValidatorImpl : TimeStampValidator, ConfigurableImplementation {
     private var keyStore: KeyStore? = null

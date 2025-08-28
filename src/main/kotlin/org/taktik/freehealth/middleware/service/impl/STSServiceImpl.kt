@@ -23,8 +23,7 @@ package org.taktik.freehealth.middleware.service.impl
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
-import com.hazelcast.core.IMap
-import com.hazelcast.core.ISet
+import com.hazelcast.map.IMap
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.springframework.stereotype.Service

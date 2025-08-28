@@ -111,6 +111,7 @@ dependencies {
     }
     implementation("org.springframework:spring-orm")
 
+    implementation("org.eclipse.jetty.http2:jetty-http2-server:12.0.25")
     implementation("com.nimbusds:nimbus-jose-jwt:9.7")
     implementation("com.nimbusds:oauth2-oidc-sdk:9.2.1")
 
@@ -140,17 +141,17 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.18.0")
     implementation("org.apache.velocity:velocity:1.7")
     implementation("commons-io:commons-io:2.20.0")
-    implementation("commons-codec:commons-codec:1.10")
+    implementation("commons-codec:commons-codec:1.13")
     implementation("joda-time:joda-time:2.14.0")
     implementation("com.sun.xml.messaging.saaj:saaj-impl:1.3.28")
     implementation("com.sun.xml.wss:xws-security:3.0")
-    implementation("com.hazelcast:hazelcast:3.9.4")
-    implementation("com.google.code.gson:gson:2.7")
+    implementation("com.hazelcast:hazelcast:5.3.5")
+    implementation("com.google.code.gson:gson:2.8.9")
     implementation("net.sf.dozer:dozer:5.5.1")
-    implementation("ma.glasnost.orika:orika-core:1.4.6")
+    implementation("ma.glasnost.orika:orika-core:1.5.4")
     implementation("io.springfox:springfox-swagger2:2.6.1")
     implementation("net.sf.saxon:Saxon-HE:9.9.1-5")
-    implementation("org.bitbucket.b_c:jose4j:0.7.2")
+    implementation("org.bitbucket.b_c:jose4j:0.9.4")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
     implementation("io.jsonwebtoken:jjwt-api:0.13.0")
     implementation("io.jsonwebtoken:jjwt-impl:0.13.0")
@@ -159,10 +160,10 @@ dependencies {
     implementation("org.webjars:webjars-locator-core")
     implementation("org.webjars:sockjs-client:1.0.2")
     implementation("org.webjars:stomp-websocket:2.3.3")
-    implementation("org.webjars:bootstrap:3.3.7")
-    implementation("org.webjars:jquery:3.1.1-1")
+    implementation("org.webjars:bootstrap:5.0.0")
+    implementation("org.webjars:jquery:3.5.0")
 
-    implementation("org.json:json:20211205")
+    implementation("org.json:json:20231013")
 
     implementation("org.apache.lucene:lucene-analyzers-common:4.10.4")
     implementation("org.apache.lucene:lucene-core:4.10.4")
@@ -175,8 +176,9 @@ dependencies {
 
     implementation("org.slf4j:log4j-over-slf4j:1.7.25")
     implementation("org.jdom:jdom-legacy:1.1.3")
-    implementation("com.taktik.boot:spring-boot-starter-gke-logging:2.1.174-0f038f8004")
+    implementation("com.taktik.boot:spring-boot-starter-gke-logging:3.4.34-g3238a3228e")
 
+    testImplementation("junit:junit:4.13.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 

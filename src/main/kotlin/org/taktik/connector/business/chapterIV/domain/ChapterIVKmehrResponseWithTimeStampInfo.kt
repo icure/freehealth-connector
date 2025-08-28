@@ -2,7 +2,6 @@ package org.taktik.connector.business.chapterIV.domain
 
 import be.fgov.ehealth.medicalagreement.core.v1.Kmehrresponse
 import org.apache.commons.lang3.ArrayUtils
-import org.bouncycastle.util.Arrays
 import org.taktik.connector.technical.utils.MarshallerHelper
 import java.io.Serializable
 
@@ -11,11 +10,11 @@ class ChapterIVKmehrResponseWithTimeStampInfo(timeStampBytes: ByteArray, kmehrRe
     private val timeStampBytes: ByteArray = ArrayUtils.clone(timeStampBytes)
 
     fun getKmehrResponseBytes(): ByteArray {
-        return Arrays.clone(this.kmehrResponseBytes)
+        return this.kmehrResponseBytes.clone()
     }
 
     fun getTimeStampBytes(): ByteArray {
-        return Arrays.clone(this.timeStampBytes)
+        return this.timeStampBytes.clone()
     }
 
     val kmehrresponse: Kmehrresponse

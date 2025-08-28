@@ -1,11 +1,12 @@
 [versions]
 springBoot = "3.5.5"
-bouncyCastle = "1.81"
+bouncyCastle = "1.71.1"
 kotlin = "2.2.0"
 
 [libraries]
 bouncyCastleBcmail = { group = "org.bouncycastle", name = "bcmail-jdk18on", version.ref = "bouncyCastle" }
 bouncyCastleBcprov = { group = "org.bouncycastle", name = "bcprov-jdk18on", version.ref = "bouncyCastle" }
+
 kotlinStandardLibrary = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 
 [bundles]

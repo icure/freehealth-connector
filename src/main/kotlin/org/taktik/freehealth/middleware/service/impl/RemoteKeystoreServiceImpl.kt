@@ -1,7 +1,7 @@
 package org.taktik.freehealth.middleware.service.impl
 
 import com.hazelcast.core.HazelcastInstance
-import com.hazelcast.core.ISet
+import com.hazelcast.collection.ISet
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationListener
 import org.springframework.messaging.simp.SimpMessagingTemplate

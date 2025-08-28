@@ -2,7 +2,7 @@ package org.taktik.freehealth.middleware.service.impl
 
 import be.fgov.ehealth.etee.kgss._1_0.protocol.CredentialType
 import be.fgov.ehealth.etee.kgss._1_0.protocol.GetNewKeyRequestContent
-import com.hazelcast.core.IMap
+import com.hazelcast.map.IMap
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.taktik.connector.technical.config.ConfigFactory

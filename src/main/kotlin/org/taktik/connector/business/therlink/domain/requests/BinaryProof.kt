@@ -5,11 +5,10 @@ import org.apache.commons.lang3.ArrayUtils
 import org.apache.commons.lang3.builder.EqualsBuilder
 import org.apache.commons.lang3.builder.HashCodeBuilder
 import org.apache.commons.lang3.builder.ToStringBuilder
-import org.bouncycastle.util.Arrays
 
 class BinaryProof(var method: String?, binary: ByteArray) : Serializable {
     var binary: ByteArray? = null
-        get() = Arrays.clone(field)
+        get() = field?.clone()
         set(value) {
             field = ArrayUtils.clone(value)
         }

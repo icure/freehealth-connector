@@ -59,9 +59,9 @@ import java.security.KeyStore
 import java.util.HashSet
 import jakarta.activation.DataHandler
 import org.bouncycastle.cms.CMSException
-import org.bouncycastle.util.encoders.Base64
 import org.slf4j.LoggerFactory
 import java.util.UUID
+import kotlin.io.encoding.Base64
 
 class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : SendMessageBuilder {
 
@@ -479,7 +479,7 @@ class SendMessageBuilderImpl(private val keydepotManager: KeyDepotManager) : Sen
 
     @Throws(TechnicalConnectorException::class)
     private fun processDigest(data: ByteArray?): String {
-        return String(Base64.encode(ConnectorCryptoUtils.calculateDigest("SHA-256", data)))
+        return Base64.encode(ConnectorCryptoUtils.calculateDigest("SHA-256", data))
     }
 
     @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)

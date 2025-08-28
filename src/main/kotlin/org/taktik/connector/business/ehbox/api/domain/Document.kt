@@ -76,19 +76,12 @@ class Document : Serializable {
 
     @Throws(UnsealConnectorException::class)
     fun getContent(): ByteArray {
-
-        var byteContent = ByteArray(0)
-
-        if(this.content != null){
-            byteContent = Arrays.clone(this.content)
-        }
-
-        return byteContent
+        return this.content?.clone() ?:ByteArray(0)
 
     }
 
     fun setContent(content: ByteArray?) {
-        this.content = content?.let { Arrays.clone(it) }
+        this.content = content?.clone()
     }
 
     @Throws(TechnicalConnectorException::class)

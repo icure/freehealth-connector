@@ -62,7 +62,7 @@ class RelayCardConnection(val uuid: UUID, private val  hazelcastInstance: Hazelc
 class StompCardConnection(val uuid: UUID, val messenger: RemoteKeystoreServiceImpl.Messenger, private val  hazelcastInstance: HazelcastInstance) : CardConnection {
     private val queue = LinkedBlockingQueue<ByteArray>()
     private val markerByteArray = ByteArray(1) { 0 }
-    private var hazelcastRegistrationId: String? = null
+    private var hazelcastRegistrationId: UUID? = null
 
     fun init() {
         hazelcastInstance.getTopic<CardConnectionRelay>("/cc/relay/request/${uuid}").addMessageListener {
@@ -80,7 +80,7 @@ class StompCardConnection(val uuid: UUID, val messenger: RemoteKeystoreServiceIm
     fun pushResponse(byteArray: ByteArray) = queue.put(byteArray)
 
     override fun disconnect() {
-        hazelcastRegistrationId.let { if (hazelcastInstance.getTopic<CardConnectionRelay>("/cc/relay/request/${uuid}").removeMessageListener(it)) { hazelcastRegistrationId = null } }
+        hazelcastRegistrationId?.let { if (hazelcastInstance.getTopic<CardConnectionRelay>("/cc/relay/request/${uuid}").removeMessageListener(it)) { hazelcastRegistrationId = null } }
     }
 
     override fun sign(

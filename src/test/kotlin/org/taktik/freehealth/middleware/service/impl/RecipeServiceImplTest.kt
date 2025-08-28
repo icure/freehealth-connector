@@ -92,6 +92,7 @@ import java.time.LocalDateTime
 import java.util.Properties
 import java.util.UUID
 import jakarta.xml.bind.JAXBContext
+import org.taktik.connector.business.domain.newXMLGregorianCalendar
 import javax.xml.datatype.DatatypeFactory
 import javax.xml.datatype.XMLGregorianCalendar
 

@@ -4,7 +4,7 @@ import be.fgov.ehealth.etkdepot._1_0.protocol.GetEtkRequest;
 import be.fgov.ehealth.etkdepot._1_0.protocol.GetEtkResponse;
 import be.fgov.ehealth.etkdepot._1_0.protocol.MatchingEtk;
 import be.fgov.ehealth.etkdepot._1_0.protocol.SearchCriteriaType;
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
