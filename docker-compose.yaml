@@ -1,9 +1,15 @@
+version: '3.8'
 services:
   freehealth:
+    build: .
+    image: freehealth-connector:dev
     container_name: freehealth
-    image: docker.taktik.be/icure/freehealth-connector:0.0.0-dev
-    #volumes:
-      #- d:\opt\ehealth:/opt/ehealth
     ports:
       - "8080:8080"
       - "5005:5005"
+    volumes:
+      - ./config.json:/opt/freehealth/config.json:ro
+    environment:
+      - JAVA_OPTS=
+    restart: unless-stopped
+ 

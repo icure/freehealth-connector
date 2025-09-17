@@ -10,7 +10,6 @@ import org.taktik.connector.business.agreement.domain.Agreement
 import org.taktik.connector.business.agreement.domain.AgreementMessage
 import org.taktik.connector.business.domain.agreement.AgreementResponse
 import org.taktik.connector.business.domain.agreement.EAgreementResponse
-import org.taktik.freehealth.middleware.dto.eattest.Eattest
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EagreementService
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
@@ -131,6 +130,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             agreement = agreement
         )
     }
+
     @PostMapping("/sendConsult", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendConsult(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -197,7 +197,6 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpQuality: String,
         @RequestParam hcpNihii: String,
-        @RequestParam hcpName: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
@@ -253,7 +252,6 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpQuality: String,
         @RequestParam hcpNihii: String,
-        @RequestParam hcpName: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
@@ -387,7 +385,6 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpQuality: String,
         @RequestParam hcpNihii: String,
-        @RequestParam hcpName: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
@@ -456,7 +453,6 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestParam hcpQuality: String,
         @RequestParam hcpNihii: String,
-        @RequestParam hcpName: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,

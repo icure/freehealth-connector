@@ -9,7 +9,7 @@ import org.taktik.connector.technical.ws.domain.GenericRequest
 import org.taktik.connector.technical.ws.domain.TokenType
 
 object ServiceFactory {
-    private const val PROP_ENDPOINT_AGREEMENT = "endpoint.agreement"
+    private const val PROP_ENDPOINT_AGREEMENT = "endpoint.eagreement"
     private val expectedProps: List<String?> = listOf();
     private var config: Configuration? = null
     @Throws(TechnicalConnectorException::class)

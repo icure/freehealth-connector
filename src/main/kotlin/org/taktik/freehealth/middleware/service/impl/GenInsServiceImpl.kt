@@ -286,9 +286,8 @@ class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : 
                             code = ec,
                             path = url,
                             msgFr = "Erreur générique, xpath invalide",
-                            msgNl = "Onbekend foutmelding, xpath ongeldig"
-                                                                                     )
-                              )
+                            msgNl = "Onbekend foutmelding, xpath ongeldig")
+                    )
                 }
             }
             result
