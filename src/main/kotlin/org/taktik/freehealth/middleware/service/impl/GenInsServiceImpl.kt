@@ -29,7 +29,6 @@ import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityResponse
 import com.google.gson.Gson
 import com.sun.xml.messaging.saaj.soap.impl.ElementImpl
 import com.sun.xml.messaging.saaj.soap.ver1_1.DetailEntry1_1Impl
-import ma.glasnost.orika.MapperFacade
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.slf4j.LoggerFactory
@@ -64,7 +63,7 @@ import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 
 @Service
-class GenInsServiceImpl(val stsService: STSService, val mapper: MapperFacade) : GenInsService {
+class GenInsServiceImpl(val stsService: STSService) : GenInsService {
     @Value("\${mycarenet.timezone}")
     internal val mcnTimezone: String = "Europe/Brussels"
 

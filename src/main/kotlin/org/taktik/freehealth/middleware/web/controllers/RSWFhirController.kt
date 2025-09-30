@@ -12,7 +12,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/rsw/fhir")
-class RSWFhirController(val rswFhirService: RswFhirService, val mapper: MapperFacade) {
+class RSWFhirController(val rswFhirService: RswFhirService) {
     @GetMapping("/{nihii}/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun search(
         @PathVariable nihii: String,

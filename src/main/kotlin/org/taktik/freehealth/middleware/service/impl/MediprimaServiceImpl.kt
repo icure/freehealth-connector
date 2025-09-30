@@ -37,7 +37,6 @@ import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
 import be.fgov.ehealth.standards.kmehr.schema.v1.ItemType
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import ma.glasnost.orika.MapperFacade
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory

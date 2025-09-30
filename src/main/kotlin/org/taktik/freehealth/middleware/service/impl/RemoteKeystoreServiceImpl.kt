@@ -11,7 +11,7 @@ import org.taktik.freehealth.middleware.domain.sts.StompPrincipal
 import org.taktik.freehealth.middleware.pkcs11.beid.RemoteBeIDCard
 import org.taktik.freehealth.middleware.pkcs11.beid.RemoteBeIDKeyStoreSpi
 import org.taktik.freehealth.middleware.pkcs11.beid.RemoteBeIDProvider
-import org.taktik.freehealth.middleware.pkcs11.remote.RelayCardConnection
+import org.taktik.freehealth.middleware.pkcs11.remote.RelayCardConnectionx
 import org.taktik.freehealth.middleware.pkcs11.remote.StompCardConnection
 import org.taktik.freehealth.middleware.service.RemoteKeystoreService
 import java.security.KeyStoreSpi
