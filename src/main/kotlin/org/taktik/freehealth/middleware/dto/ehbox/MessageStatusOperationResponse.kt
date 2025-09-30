@@ -27,7 +27,7 @@ class MessageStatusOperationResponse(
     success: Boolean,
     error: Error? = null,
 val acks: List<Acknowledgement> = emptyList()
-                              ) : MessageOperationResponse(success, error)
+                              ) : MessageOperationResponse(success = success, error = error,)
 
 class Acknowledgement(
     val recipient: EhboxIdentifierType,
