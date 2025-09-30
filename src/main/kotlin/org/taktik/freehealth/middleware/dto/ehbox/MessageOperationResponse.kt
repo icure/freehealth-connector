@@ -26,5 +26,5 @@ open class MessageOperationResponse(
     val success: Boolean,
     val code: String? = null,
     val error: Error? = null,
-    val messageId: String? = null,
+    val messageId: String? = null
 )
