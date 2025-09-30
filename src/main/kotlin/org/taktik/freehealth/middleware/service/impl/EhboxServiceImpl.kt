@@ -169,7 +169,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
                     messageId = sendMessageResponse.id
                 ) else MessageOperationResponse(
                     success = false,
-                    error = Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(",")),
+                    error = Error(sendMessageResponse.status?.code, sendMessageResponse.status?.messages?.joinToString(","))
                 )
             }
         } catch (e: TechnicalConnectorException) {
