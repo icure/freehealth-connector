@@ -36,7 +36,7 @@ class EhboxReplyValidatorImpl : EhboxReplyValidator {
 
     @Throws(ConnectorException::class)
     override fun validateReplyStatus(response: ResponseType): Boolean {
-        if ("100" != response.status.code && "200" != response.status.code) {
+        if ("100" != response.status.code && "101" != response.status.code && "200" != response.status.code) {
             if ("826" == response.status.code) {
                 if (response is SendMessageResponse) {
                     val oooInformation = HashMap<BoxIdType, List<Substitute>>()
