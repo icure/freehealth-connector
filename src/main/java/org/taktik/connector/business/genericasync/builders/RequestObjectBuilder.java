@@ -44,6 +44,8 @@ public interface RequestObjectBuilder extends ConfigurableImplementation {
 
    Confirm buildConfirmRequestWithHashes(OrigineType origin, List<byte[]> msgHashValues, List<byte[]> tackContents);
 
+    Confirm buildConfirmRequestWithReference(OrigineType origin, List<String> msgRefValues, List<String> tackReferences);
+
    Confirm buildConfirmWithReferences(OrigineType origin, GetResponse getResponse);
 
    Post buildPostRequest(String messageName, String projectName, String platformName, Object object, String schemaLocation, KeyStoreCredential credential, KeyDepotManager keyDepotManager, InputReference inputReference, String licenseUsername, String licensePassword, String packageName) throws TechnicalConnectorException, InstantiationException, GenAsyncBusinessConnectorException;

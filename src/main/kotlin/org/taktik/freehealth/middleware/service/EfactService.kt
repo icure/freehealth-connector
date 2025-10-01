@@ -21,6 +21,18 @@ interface EfactService {
                      language: String,
                      limit: Int
         ): List<EfactMessage>
+
+    fun loadMediprimaMessages(keystoreId: UUID,
+                              tokenId: UUID,
+                              passPhrase: String,
+                              hcpNihii: String,
+                              hcpSsin: String,
+                              hcpFirstName: String,
+                              hcpLastName: String,
+                              language: String,
+                              limit: Int
+    ): List<EfactMessage>
+
     fun confirmAcks(
         keystoreId: UUID,
         tokenId: UUID,
@@ -32,7 +44,29 @@ interface EfactService {
         valueHashes: List<String>
     ): Boolean
 
+    fun confirmMediprimaAcks(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        valueHashes: List<String>
+    ): Boolean
+
     fun confirmMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        valueHashes: List<String>
+    ): Boolean
+
+    fun confirmMediprimaMessages(
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,

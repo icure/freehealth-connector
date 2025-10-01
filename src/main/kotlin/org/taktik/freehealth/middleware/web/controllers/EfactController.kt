@@ -106,6 +106,32 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             limit = limit ?: Integer.MAX_VALUE
                                  )
 
+
+    @GetMapping("/mediprima/{nihii}/{language}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun loadMediprimaMessages(
+        @PathVariable nihii: String,
+        @PathVariable language: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam ssin: String,
+        @RequestParam firstName: String,
+        @RequestParam lastName: String,
+        @RequestParam limit: Int?
+    ) =
+        efactService.loadMediprimaMessages(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpSsin = ssin,
+            hcpNihii = nihii,
+            hcpFirstName = firstName,
+            hcpLastName = lastName,
+            language = language,
+            limit = limit ?: Integer.MAX_VALUE
+        )
+
+
     @PutMapping("/confirm/acks/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun confirmAcks(
         @PathVariable nihii: String,
@@ -128,6 +154,28 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             valueHashes = valueHashes
         )
 
+    @PutMapping("/mediprima/confirm/acks/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun confirmMediprimaAcks(
+        @PathVariable nihii: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam ssin: String,
+        @RequestParam firstName: String,
+        @RequestParam lastName: String,
+        @RequestBody valueHashes: List<String>
+    ) =
+        efactService.confirmMediprimaAcks(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpNihii = nihii,
+            hcpSsin = ssin,
+            hcpFirstName = firstName,
+            hcpLastName = lastName,
+            valueHashes = valueHashes
+        )
+
     @PutMapping("/confirm/msgs/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun confirmMessages(
         @PathVariable nihii: String,
@@ -140,6 +188,28 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestBody valueHashes: List<String>
     ) =
         efactService.confirmMessages(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpNihii = nihii,
+            hcpSsin = ssin,
+            hcpFirstName = firstName,
+            hcpLastName = lastName,
+            valueHashes = valueHashes
+        )
+
+    @PutMapping("/mediprima/confirm/msgs/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun confirmMediprimaMessages(
+        @PathVariable nihii: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam ssin: String,
+        @RequestParam firstName: String,
+        @RequestParam lastName: String,
+        @RequestBody valueHashes: List<String>
+    ) =
+        efactService.confirmMediprimaMessages(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
