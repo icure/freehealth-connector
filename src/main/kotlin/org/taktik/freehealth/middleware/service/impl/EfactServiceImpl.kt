@@ -62,6 +62,7 @@ import kotlin.Comparator
 class EfactServiceImpl(private val stsService: STSService, private val mapper: MapperFacade) : EfactService {
     private val config = ConfigFactory.getConfigValidator(listOf())
     private val genAsyncService = GenAsyncServiceImpl("invoicing")
+    private val genAsyncServiceMediprima = GenAsyncServiceImpl("invoicing-mediprima")
 
     override fun makeFlatFile(batch: InvoicesBatch, isTest: Boolean, isMediprima: Boolean): String {
         require(batch.numericalRef?.let { it <= 99999999999999L } ?: false) { batch.numericalRef?.let { "numericalRef is too long (14 positions max)" } ?: "numericalRef is missing" }
@@ -282,7 +283,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             throw IllegalStateException(e)
         }
 
-        val postResponse = genAsyncService.postRequest(samlToken, post, header)
+        val postResponse = if(isMediprima) genAsyncServiceMediprima.postRequest(samlToken, post, header) else genAsyncService.postRequest(samlToken, post, header)
 
         val tack = postResponse.getReturn()
         val success = tack.resultMajor != null && tack.resultMajor == "urn:nip:tack:result:major:success"
@@ -465,7 +466,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             val getResponse: GetResponse
             try {
                 getResponse =
-                    genAsyncService.getRequest(samlToken, requestObjectBuilder.buildGetRequest(ci.origin, msgQuery, query), header)
+                    genAsyncServiceMediprima.getRequest(samlToken, requestObjectBuilder.buildGetRequest(ci.origin, msgQuery, query), header)
             } catch (e: TechnicalConnectorException) {
                 if ((e.message?.contains("SocketTimeout") == true) && batchSize > 1) {
                     batchSize /= 4
@@ -576,7 +577,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                     valueHashes
                 )
 
-        genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
+        genAsyncServiceMediprima.confirmRequest(samlToken, confirm, confirmheader)
 
         return true
     }
@@ -638,7 +639,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                     listOf()
                 )
 
-        genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
+        genAsyncServiceMediprima.confirmRequest(samlToken, confirm, confirmheader)
 
         return true
     }
