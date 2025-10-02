@@ -5,6 +5,7 @@ import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 
 class EfactMessage {
     var detail: String? = null
+    var messageReference: String? = null
     var id: String? = null
     var name: String? = null
 

@@ -12,6 +12,7 @@ import be.cin.mycarenet.esb.common.v2.ValueRefString
 import be.cin.nip.async.generic.GetResponse
 import be.cin.nip.async.generic.Post
 import be.cin.nip.async.generic.PostResponse
+import be.cin.types.v1.Blob
 import ma.glasnost.orika.MapperFacade
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.io.IOUtils
@@ -62,6 +63,7 @@ import kotlin.Comparator
 class EfactServiceImpl(private val stsService: STSService, private val mapper: MapperFacade) : EfactService {
     private val config = ConfigFactory.getConfigValidator(listOf())
     private val genAsyncService = GenAsyncServiceImpl("invoicing")
+    private val genAsyncServiceMediprima = GenAsyncServiceImpl("invoicing-mediprima")
 
     override fun makeFlatFile(batch: InvoicesBatch, isTest: Boolean, isMediprima: Boolean): String {
         require(batch.numericalRef?.let { it <= 99999999999999L } ?: false) { batch.numericalRef?.let { "numericalRef is too long (14 positions max)" } ?: "numericalRef is missing" }
@@ -240,12 +242,12 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         val content = makeFlatFile(sanitizedBatch, isTest, isMediprima)
 
         val requestObjectBuilder = try {
-            BuilderFactory.getRequestObjectBuilder(if(fed === "690") "invoicing-mediprima" else "invoicing")
+            BuilderFactory.getRequestObjectBuilder(if(fed == "690") "invoicing-mediprima" else "invoicing")
         } catch (e: Exception) {
             throw IllegalArgumentException(e)
         }
 
-        val blob = RequestBuilderFactory.getBlobBuilder(if(fed === "690") "invoicing-mediprima" else "invoicing").build(content.toByteArray(Charsets.UTF_8))
+        val blob = RequestBuilderFactory.getBlobBuilder(if(fed == "690") "invoicing-mediprima" else "invoicing").build(content.toByteArray(Charsets.UTF_8))
 
         val messageName = if(fed == "690") "ECM-HCPFAC" else "HCPFAC" // depends on content of message HCPFAC HCPAFD HCPVWR OR ECM-HCPFACT
         blob.messageName = messageName
@@ -268,7 +270,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             this.inputReference = inputReference
         }
 
-        val xades = BlobUtil.generateXades(credential, SendRequestMapper.mapBlobToBlobType(blob), if(fed === "690") "invoicing-mediprima" else "invoicing").value
+        val xades = BlobUtil.generateXades(credential, SendRequestMapper.mapBlobToBlobType(blob), if(fed == "690") "invoicing-mediprima" else "invoicing").value
 
         val post = requestObjectBuilder.buildPostRequest(ci, SendRequestMapper.mapBlobToCinBlob(blob), xades)
         val header: WsAddressingHeader
@@ -282,7 +284,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             throw IllegalStateException(e)
         }
 
-        val postResponse = genAsyncService.postRequest(samlToken, post, header)
+        val postResponse = if(isMediprima) genAsyncServiceMediprima.postRequest(samlToken, post, header) else genAsyncService.postRequest(samlToken, post, header)
 
         val tack = postResponse.getReturn()
         val success = tack.resultMajor != null && tack.resultMajor == "urn:nip:tack:result:major:success"
@@ -383,7 +385,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                     try {
                         detail =
                             String(ConnectorIOUtils.decompress(IOUtils.toByteArray(r.detail.value.inputStream)), Charsets.UTF_8) //This starts with 92...
-
+                        messageReference = r?.detail?.reference
                         message = BelgianInsuranceInvoicingFormatReader(language).parse(StringReader(this.detail!!))?.map {
                             Record(mapper.map(it.description, RecordOrSegmentDescription::class.java), it.zones.map { z -> Zone(mapper.map(z.zoneDescription, ZoneDescription::class.java), z.value)}, mapper.map(it.errorDetail, ErrorDetail::class.java))
                         }
@@ -465,7 +467,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             val getResponse: GetResponse
             try {
                 getResponse =
-                    genAsyncService.getRequest(samlToken, requestObjectBuilder.buildGetRequest(ci.origin, msgQuery, query), header)
+                    genAsyncServiceMediprima.getRequest(samlToken, requestObjectBuilder.buildGetRequest(ci.origin, msgQuery, query), header)
             } catch (e: TechnicalConnectorException) {
                 if ((e.message?.contains("SocketTimeout") == true) && batchSize > 1) {
                     batchSize /= 4
@@ -493,7 +495,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                     try {
                         detail =
                             String(ConnectorIOUtils.decompress(IOUtils.toByteArray(r.detail.value.inputStream)), Charsets.UTF_8) //This starts with 92...
-
+                        messageReference = r?.detail?.reference
                         message = BelgianInsuranceInvoicingFormatReader(language).parse(StringReader(this.detail!!))?.map {
                             Record(mapper.map(it.description, RecordOrSegmentDescription::class.java), it.zones.map { z -> Zone(mapper.map(z.zoneDescription, ZoneDescription::class.java), z.value)}, mapper.map(it.errorDetail, ErrorDetail::class.java))
                         }
@@ -576,7 +578,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                     valueHashes
                 )
 
-        genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
+        genAsyncServiceMediprima.confirmRequest(samlToken, confirm, confirmheader)
 
         return true
     }
@@ -638,7 +640,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                     listOf()
                 )
 
-        genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
+        genAsyncServiceMediprima.confirmRequest(samlToken, confirm, confirmheader)
 
         return true
     }
