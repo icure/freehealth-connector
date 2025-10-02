@@ -119,7 +119,7 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
             val req = RetrieveTransactionRequest().apply {
 
                 this.request = RequestType().apply {
-                    if (isDentist) messageProtocoleSchemaVersion = BigDecimal("1.16")
+                    messageProtocoleSchemaVersion = BigDecimal("1.16")
                     id = IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = reqId }
                     this.author = AuthorType().apply {
                         hcparties.add(HcpartyType().apply {
@@ -162,15 +162,17 @@ class TarificationServiceImpl(private val stsService: STSService) : Tarification
                                     val anatomy = anatomies[index]
                                     if (!anatomy.isNullOrEmpty()) {
                                         contents.add(ContentType().apply {
-                                            cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_ISO_3950; sv = "1.0"; value = anatomy })
+                                            cds.add(CDCONTENT().apply {
+                                                s = CDCONTENTschemes.CD_ISO_3950; sv = "1.0"; value = anatomy
+                                            })
                                         })
                                     }
-                                    val relatedService = relatedServices[index]
-                                    if (!relatedService.isNullOrEmpty()) {
-                                        contents.add(ContentType().apply {
-                                            cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_NIHDI_RELATEDSERVICE; sv = "1.0"; value = relatedService })
-                                        })
-                                    }
+                                }
+                                val relatedService = relatedServices[index]
+                                if (!relatedService.isNullOrEmpty()) {
+                                    contents.add(ContentType().apply {
+                                        cds.add(CDCONTENT().apply { s = CDCONTENTschemes.CD_NIHDI_RELATEDSERVICE; sv = "1.0"; value = relatedService })
+                                    })
                                 }
                             }
                         })
