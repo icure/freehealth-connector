@@ -240,12 +240,12 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         val content = makeFlatFile(sanitizedBatch, isTest, isMediprima)
 
         val requestObjectBuilder = try {
-            BuilderFactory.getRequestObjectBuilder(if(fed === "690") "invoicing-mediprima" else "invoicing")
+            BuilderFactory.getRequestObjectBuilder(if(fed == "690") "invoicing-mediprima" else "invoicing")
         } catch (e: Exception) {
             throw IllegalArgumentException(e)
         }
 
-        val blob = RequestBuilderFactory.getBlobBuilder(if(fed === "690") "invoicing-mediprima" else "invoicing").build(content.toByteArray(Charsets.UTF_8))
+        val blob = RequestBuilderFactory.getBlobBuilder(if(fed == "690") "invoicing-mediprima" else "invoicing").build(content.toByteArray(Charsets.UTF_8))
 
         val messageName = if(fed == "690") "ECM-HCPFAC" else "HCPFAC" // depends on content of message HCPFAC HCPAFD HCPVWR OR ECM-HCPFACT
         blob.messageName = messageName
@@ -268,7 +268,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             this.inputReference = inputReference
         }
 
-        val xades = BlobUtil.generateXades(credential, SendRequestMapper.mapBlobToBlobType(blob), if(fed === "690") "invoicing-mediprima" else "invoicing").value
+        val xades = BlobUtil.generateXades(credential, SendRequestMapper.mapBlobToBlobType(blob), if(fed == "690") "invoicing-mediprima" else "invoicing").value
 
         val post = requestObjectBuilder.buildPostRequest(ci, SendRequestMapper.mapBlobToCinBlob(blob), xades)
         val header: WsAddressingHeader
