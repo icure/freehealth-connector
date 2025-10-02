@@ -1,7 +1,6 @@
 package org.taktik.freehealth.middleware.dto.efact
 
 import be.cin.nip.async.generic.TAck
-import be.cin.types.v1.Blob
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 
 class EfactMessage {
