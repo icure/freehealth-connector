@@ -35,8 +35,12 @@ Most of the endpoints require a valid token to be passed in the headers. You can
 SSIN='78010136212'
 FHC_PASS_PHRASE='********'
 KEYSTORE_PATH='/path/to/your/keystore.p12'
-KEYSTORE_ID="$(curl -s -X POST "https://fhcprd.icure.cloud/sts/keystore" -H "accept: */*" -H "content-type: multipart/form-data" -F "file=@$KEYSTORE_PATH;type=application/x-pkcs12" | jq -r .uuid)"
-TOKEN_ID=curl -X GET "https://fhcprd.icure.cloud/sts/token?ssin=$SSIN" -H "accept: */*" -H "X-FHC-passPhrase: $FHC_PASS_PHRASE" -H "X-FHC-keystoreId: $KEYSTORE_ID"
+KEYSTORE_ID="$(curl -s -X POST "https://fhcprd.icure.cloud/sts/keystore" \
+ -H "accept: */*" -H "content-type: multipart/form-data" \
+ -F "file=@$KEYSTORE_PATH;type=application/x-pkcs12" | jq -r .uuid)"
+TOKEN_ID=curl -X GET "https://fhcprd.icure.cloud/sts/token?ssin=$SSIN" \
+ -H "accept: */*" -H "X-FHC-passPhrase: $FHC_PASS_PHRASE" \
+ -H "X-FHC-keystoreId: $KEYSTORE_ID"
 ```
 
 This call is actually made of two calls:
