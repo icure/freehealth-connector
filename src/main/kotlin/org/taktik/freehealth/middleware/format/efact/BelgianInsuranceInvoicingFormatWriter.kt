@@ -438,7 +438,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("9", if (patient.gender == null || patient.gender == Gender.male) 1 else 2)
         ws.write("12", (icd.timeOfDay?: InvoicingTimeOfDay.Other).code)
         ws.write("13",990)
-        if (sender.isMedicalHouse) ws.write("14", sender.nihii)
+        if (sender.isMedicalHouse) ws.write("14", sender.nihii) else if (icd.options?.get("careLocationNihii")?.isNotEmpty()!!) ws.write("14", icd.options?.get("careLocationNihii")) else null
         if (!sender.isMedicalHouse) ws.write("15", icd.doctorIdentificationNumber)
         if (sender.isMedicalHouse && (icd.codeNomenclature == 109594L || icd.codeNomenclature == 400396L)) ws.write("15", sender.nihii)
         //ws.write("16", if (sender.isMedicalHouse) 0 else if (icd.gnotionNihii == null || icd.gnotionNihii?.let { it.isEmpty() } == true) 1 else 4)
