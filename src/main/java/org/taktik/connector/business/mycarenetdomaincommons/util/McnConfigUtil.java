@@ -31,84 +31,90 @@ public final class McnConfigUtil {
         throw new UnsupportedOperationException();
     }
 
-    private static McnPackageInfo getMyCareNetConfig(String product, String quality) {
-        String userName = "";
-        String password = "";
-        String packageName = "";
+   private static McnPackageInfo getMyCareNetConfig(String product, String quality, String componentName) {
+    String userName = "";
+    String password = "";
+    String packageName = "";
 
-        if(config != null){
-            if (product != null && !product.isEmpty() && quality != null && !quality.isEmpty()) {
-                JsonNode packageNode = config.path("packages").path(product);
-                if (!packageNode.isMissingNode()) {
-                    JsonNode qualityNode = packageNode.path(quality);
-                    if (!qualityNode.isMissingNode()) {
-                        JsonNode usernameNode = qualityNode.path("mcnLicense");
-                        if (!usernameNode.isMissingNode()) {
-                            userName = usernameNode.textValue();
-                        }
-
-                        JsonNode passwordNode = qualityNode.path("mcnPassword");
-                        if (!passwordNode.isMissingNode()) {
-                            password = passwordNode.textValue();
-                        }
-
-                        JsonNode packageNameNode = qualityNode.path("mcnPackage");
-                        if (!packageNameNode.isMissingNode()) {
-                            packageName = packageNameNode.textValue();
-                        }
+    // EFact also uses "eagreement" so only added these 2
+    if(config != null && ("attest".equals(componentName) || "eagreement".equals(componentName))){
+        String actualProduct = (product != null && !product.isEmpty()) ? "CompufitOxygen" : "CompufitOxygen";
+        
+        if (quality != null && !quality.isEmpty()) {
+            JsonNode packageNode = config.path("packages").path(actualProduct);
+            if (!packageNode.isMissingNode()) {
+                JsonNode qualityNode = packageNode.path(quality);
+                if (!qualityNode.isMissingNode()) {
+                    JsonNode usernameNode = qualityNode.path("mcnLicense");
+                    if (!usernameNode.isMissingNode()) {
+                        userName = usernameNode.textValue();
                     }
-                }
-            } else {
-                JsonNode packagesNode = config.path("packages");
-                if (!packagesNode.isMissingNode()) {
-                    final String[] credentials = new String[]{"", "", ""};
 
-                    packagesNode.fields().forEachRemaining(productEntry -> {
-                        if (credentials[0].isEmpty()) {
-                            JsonNode productNode = productEntry.getValue();
-                            productNode.fields().forEachRemaining(qualityEntry -> {
-                                if (credentials[0].isEmpty()) {
-                                    JsonNode qualityNode = qualityEntry.getValue();
+                    JsonNode passwordNode = qualityNode.path("mcnPassword");
+                    if (!passwordNode.isMissingNode()) {
+                        password = passwordNode.textValue();
+                    }
 
-                                    JsonNode usernameNode = qualityNode.path("mcnLicense");
-                                    JsonNode passwordNode = qualityNode.path("mcnPassword");
-                                    JsonNode packageNameNode = qualityNode.path("mcnPackage");
-
-                                    if (!usernameNode.isMissingNode() && !passwordNode.isMissingNode()) {
-                                        credentials[0] = usernameNode.textValue();
-                                        credentials[1] = passwordNode.textValue();
-                                        if (!packageNameNode.isMissingNode()) {
-                                            credentials[2] = packageNameNode.textValue();
-                                        }
-
-                                        System.out.println("Auto-selected config: product=" + productEntry.getKey() +
-                                                ", quality=" + qualityEntry.getKey() +
-                                                ", license=" + credentials[0]);
-                                    }
-                                }
-                            });
-                        }
-                    });
-
-                    userName = credentials[0];
-                    password = credentials[1];
-                    packageName = credentials[2];
+                    JsonNode packageNameNode = qualityNode.path("mcnPackage");
+                    if (!packageNameNode.isMissingNode()) {
+                        packageName = packageNameNode.textValue();
+                    }
+                    
+                    System.out.println("Mapped product '" + product + "' to 'CompufitOxygen' with license: " + userName);
                 }
             }
-        }
+        } else {
+            
+            JsonNode packagesNode = config.path("packages");
+            if (!packagesNode.isMissingNode()) {
+                final String[] credentials = new String[]{"", "", ""};
 
-        return new McnPackageInfo(userName.trim(), password.trim(), packageName);
+                packagesNode.fields().forEachRemaining(productEntry -> {
+                    if (credentials[0].isEmpty()) {
+                        JsonNode productNode = productEntry.getValue();
+                        productNode.fields().forEachRemaining(qualityEntry -> {
+                            if (credentials[0].isEmpty()) {
+                                JsonNode qualityNode = qualityEntry.getValue();
+
+                                JsonNode usernameNode = qualityNode.path("mcnLicense");
+                                JsonNode passwordNode = qualityNode.path("mcnPassword");
+                                JsonNode packageNameNode = qualityNode.path("mcnPackage");
+
+                                if (!usernameNode.isMissingNode() && !passwordNode.isMissingNode()) {
+                                    credentials[0] = usernameNode.textValue();
+                                    credentials[1] = passwordNode.textValue();
+                                    if (!packageNameNode.isMissingNode()) {
+                                        credentials[2] = packageNameNode.textValue();
+                                    }
+
+                                    System.out.println("Auto-selected config: product=" + productEntry.getKey() +
+                                            ", quality=" + qualityEntry.getKey() +
+                                            ", license=" + credentials[0]);
+                                }
+                            }
+                        });
+                    }
+                });
+
+                userName = credentials[0];
+                password = credentials[1];
+                packageName = credentials[2];
+            }
+        }
     }
+
+    return new McnPackageInfo(userName.trim(), password.trim(), packageName);
+}
 
     public static McnPackageInfo retrievePackageInfo(String componentName, String licenseUsername, String licensePassword, String packageName) {
         return retrievePackageInfo(componentName, licenseUsername, licensePassword, packageName, "", "");
     }
 
-    public static McnPackageInfo retrievePackageInfo(String componentName, String licenseUsername, String licensePassword, String packageName, String product, String quality) {
-        McnPackageInfo defaultPackageInfo = getMyCareNetConfig(product, quality);
-        String userName = licenseUsername != null ? licenseUsername : configValidator.getProperty(componentName + "." + PACKAGE_LICENSE_USERNAME, defaultPackageInfo.getUserName() );
-        String password = licensePassword != null ? licensePassword : configValidator.getProperty(componentName + "." + PACKAGE_LICENSE_PASSWORD, defaultPackageInfo.getPassword());
-        String name = packageName != null ? packageName : configValidator.getProperty(componentName + "." + PACKAGE_LICENSE_NAME, defaultPackageInfo.getPackageName());
-        return new McnPackageInfo(userName.trim(), password.trim(), name);
-    }
+   public static McnPackageInfo retrievePackageInfo(String componentName, String licenseUsername, String licensePassword, String packageName, String product, String quality) {
+    McnPackageInfo defaultPackageInfo = getMyCareNetConfig(product, quality, componentName);
+    String userName = licenseUsername != null ? licenseUsername : configValidator.getProperty(componentName + "." + PACKAGE_LICENSE_USERNAME, defaultPackageInfo.getUserName() );
+    String password = licensePassword != null ? licensePassword : configValidator.getProperty(componentName + "." + PACKAGE_LICENSE_PASSWORD, defaultPackageInfo.getPassword());
+    String name = packageName != null ? packageName : configValidator.getProperty(componentName + "." + PACKAGE_LICENSE_NAME, defaultPackageInfo.getPackageName());
+    return new McnPackageInfo(userName.trim(), password.trim(), name);
+}
 }
