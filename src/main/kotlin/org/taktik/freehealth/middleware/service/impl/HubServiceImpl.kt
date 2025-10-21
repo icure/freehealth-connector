@@ -535,7 +535,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                 this.firstName = it.firstnames.firstOrNull()
                 this.lastName = it.familyname
                 this.gender = it.sex?.cd?.value?.value()?.let { Gender.valueOf(it) } ?: Gender.unknown
-                ssin = it.ids.find { it.s == IDPATIENTschemes.ID_PATIENT }?.value
+                ssin = it.ids.find { it.s == IDPATIENTschemes.ID_PATIENT }?.value ?: it.ids.find { it.s == IDPATIENTschemes.INSS }?.value
                 addresses = it.addresses?.map { mapper.map(it, Address::class.java) }?.toMutableSet() ?: HashSet()
             }
         }
@@ -581,7 +581,7 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                 firstName = it.firstnames.firstOrNull()
                 lastName = it.familyname
                 gender = it.sex?.cd?.value?.value()?.let { Gender.valueOf(it) } ?: Gender.unknown
-                ssin = it.ids.find { it.s == IDPATIENTschemes.ID_PATIENT }?.value
+                ssin = it.ids.find { it.s == IDPATIENTschemes.ID_PATIENT }?.value ?: it.ids.find { it.s == IDPATIENTschemes.INSS }?.value
                 addresses = it.addresses?.map { mapper.map(it, Address::class.java) }?.toMutableSet() ?: HashSet()
             }
         }

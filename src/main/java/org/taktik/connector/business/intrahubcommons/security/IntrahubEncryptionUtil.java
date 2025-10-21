@@ -18,7 +18,7 @@ import javax.xml.transform.dom.DOMResult;
 public class IntrahubEncryptionUtil {
    private static final Logger LOG = LoggerFactory.getLogger(IntrahubEncryptionUtil.class);
 
-   public static <T> T encryptFolder(T request, Crypto crypto, Long hubId, String hubApplication, EncryptionToken hubEtk) throws IntraHubBusinessConnectorException, TechnicalConnectorException {
+   public static <T> T encryptFolder(T request, Crypto crypto, EncryptionToken hubEtk) throws IntraHubBusinessConnectorException, TechnicalConnectorException {
       if (LOG.isDebugEnabled()) {
          MarshallerHelper<T, T> helper = new MarshallerHelper(request.getClass(), request.getClass());
          LOG.debug("Pre-encrypted request:\n" + helper.toString(request));
@@ -28,7 +28,7 @@ public class IntrahubEncryptionUtil {
          Marshaller marshaller = JAXBContext.newInstance(request.getClass()).createMarshaller();
          DOMResult res = new DOMResult();
          marshaller.marshal(request, res);
-         Document doc = FolderEncryptor.encryptFolder((Document)res.getNode(), crypto, hubId, hubApplication, hubEtk);
+         Document doc = FolderEncryptor.encryptFolder((Document)res.getNode(), crypto, hubEtk);
          Unmarshaller unmarshaller = JAXBContext.newInstance(request.getClass()).createUnmarshaller();
          return (T) unmarshaller.unmarshal(doc.getFirstChild());
       } catch (JAXBException var7) {
