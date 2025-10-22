@@ -21,31 +21,11 @@
 package org.taktik.connector.business.ehbox.service.impl
 
 import be.fgov.ehealth.commons.protocol.v1.ResponseType
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.DeleteMessageRequest
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.DeleteMessageResponse
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.DeleteOoORequest
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.DeleteOoOResponse
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetAllEhboxesMessagesListRequest
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetAllEhboxesMessagesListResponse
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetBoxInfoRequest
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetBoxInfoResponse
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetFullMessageRequest
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetFullMessageResponse
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetHistoryRequest
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetHistoryResponse
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetMessageAcknowledgmentsStatusRequest
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetMessageAcknowledgmentsStatusResponse
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetMessagesListRequest
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetMessagesListResponse
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetOoOListRequest
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.GetOoOListResponse
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.InsertOoORequest
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.InsertOoOResponse
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.MessageRequestType
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.MoveMessageRequest
-import be.fgov.ehealth.ehbox.consultation.protocol.v3.MoveMessageResponse
+import be.fgov.ehealth.ehbox.consultation.protocol.v3.*
 import be.fgov.ehealth.ehbox.publication.protocol.v3.SendMessageRequest
 import be.fgov.ehealth.ehbox.publication.protocol.v3.SendMessageResponse
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.taktik.connector.business.ehbox.service.EhboxService
 import org.taktik.connector.business.ehbox.service.ServiceFactory
 import org.taktik.connector.business.ehbox.v3.exception.OoOPublicationException
@@ -54,8 +34,14 @@ import org.taktik.connector.technical.exception.ConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
 import org.taktik.connector.technical.service.sts.security.SAMLToken
+import org.taktik.connector.technical.ws.domain.GenericRequest
+import org.taktik.connector.technical.ws.domain.GenericResponse
+import org.taktik.freehealth.utils.LoggingMdcUtil
+import org.taktik.freehealth.utils.SOAPMessageConverter.toXmlString
 
 class EhboxServiceImpl(val replyValidator: EhboxReplyValidator) : EhboxService {
+    val log: Logger = LoggerFactory.getLogger(EhboxServiceImpl::class.java)
+
     @Throws(ConnectorException::class)
     private fun <T : ResponseType> callConsultationService(
         token: SAMLToken,
@@ -68,6 +54,7 @@ class EhboxServiceImpl(val replyValidator: EhboxReplyValidator) : EhboxService {
             service.setPayload(request)
             service.setSoapAction(soapAction)
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            debugLog(soapAction,  service, xmlResponse)
             val response = xmlResponse.asObject(clazz) as T
             this.replyValidator.validateReplyStatus(response)
             return response
@@ -235,11 +222,13 @@ class EhboxServiceImpl(val replyValidator: EhboxReplyValidator) : EhboxService {
     @Throws(ConnectorException::class)
     override fun sendMessage(token: SAMLToken, request: SendMessageRequest): SendMessageResponse {
         try {
+            val soapAction = "urn:be:fgov:ehealth:ehbox:publication:protocol:v3:sendMessage"
             val service = ServiceFactory.getPublicationService(token)
             service.setPayload(request as Any)
-            service.setSoapAction("urn:be:fgov:ehealth:ehbox:publication:protocol:v3:sendMessage")
+            service.setSoapAction(soapAction)
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
             val response = xmlResponse.asObject(SendMessageResponse::class.java) as SendMessageResponse
+            debugLog(soapAction,  service, xmlResponse)
             this.replyValidator.validateReplyStatus(response)
             return response
         } catch (ex: Exception) {
@@ -254,10 +243,12 @@ class EhboxServiceImpl(val replyValidator: EhboxReplyValidator) : EhboxService {
     @Throws(ConnectorException::class)
     override fun sendMessage2Ebox(token: SAMLToken, request: SendMessageRequest): SendMessageResponse {
         try {
+            val soapAction = "urn:be:fgov:ehealth:ehbox:publication:protocol:v3:sendMessage"
             val service = ServiceFactory.getEh2EboxPublicationService(token)
             service.setPayload(request as Any)
-            service.setSoapAction("urn:be:fgov:ehealth:ehbox:publication:protocol:v3:sendMessage")
+            service.setSoapAction(soapAction)
             val xmlResponse = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(service)
+            debugLog(soapAction,  service, xmlResponse)
             val response = xmlResponse.asObject(SendMessageResponse::class.java) as SendMessageResponse
             this.replyValidator.validateReplyStatus(response)
             return response
@@ -266,6 +257,27 @@ class EhboxServiceImpl(val replyValidator: EhboxReplyValidator) : EhboxService {
                 throw TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, ex, ex.message)
             } else {
                 throw ex as ConnectorException
+            }
+        }
+    }
+
+    private fun debugLog(
+        soapAction: String,
+        xmlRequest: GenericRequest?,
+        xmlResponse: GenericResponse?
+    ) {
+        val debug = LoggingMdcUtil.getBooleanMDC("debug")
+        if (debug) {
+            val action = soapAction
+                .replace("urn:be:fgov:ehealth:ehbox:publication:protocol:v3:", "")
+                .replace("urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:", "")
+
+            if(xmlResponse != null &&  xmlRequest != null){
+                log.warn("{} Request: [{}]", action, xmlRequest.payload.toXmlString())
+                log.warn("{} Response: [{}]", action, xmlResponse.soapMessage.toXmlString())
+            }else{
+                log.warn("{} Request: [{}]", action, "No data")
+                log.warn("{} Response: [{}]", action, "No data")
             }
         }
     }

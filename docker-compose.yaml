@@ -9,6 +9,7 @@ services:
       - "5005:5005"
     volumes:
       - ./config.json:/opt/freehealth/config.json:ro
+      - ./logs:/opt/freehealth/logs
     environment:
       - JAVA_OPTS=
     restart: unless-stopped

@@ -32,56 +32,92 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.ehbox.*
 import org.taktik.freehealth.middleware.service.EhboxService
+import org.taktik.freehealth.utils.LoggingMdcUtil
 import java.util.*
 
 @RestController
 @RequestMapping("/ehboxV3")
 class EhboxV3Controller(val ehboxService: EhboxService) {
     @GetMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun getInfos(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String): BoxInfo
-    {
-        MDC.put("keystoreId", keystoreId)
-        MDC.put("company", company)
+    fun getInfos(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean
+    ): BoxInfo {
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val getInfosResult = ehboxService.getInfos(keystoreId, tokenId, passPhrase)
-        MDC.clear()
+        LoggingMdcUtil.clearMDC()
         return getInfosResult
     }
 
     @GetMapping("/{boxId}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun loadMessages(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String, @PathVariable boxId: String, @RequestParam limit: Int?, @RequestParam(defaultValue = "0") skip: Int): MessagesResponse{
-        MDC.put("keystoreId", keystoreId)
-        MDC.put("company", company)
+    fun loadMessages(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
+        @PathVariable boxId: String,
+        @RequestParam limit: Int?,
+        @RequestParam(defaultValue = "0") skip: Int
+    ): MessagesResponse{
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val loadMessagesResult = ehboxService.loadMessages(keystoreId, tokenId, passPhrase, boxId, limit, skip)
-        MDC.clear()
+        LoggingMdcUtil.clearMDC()
         return loadMessagesResult
     }
 
 
     @GetMapping("/{boxId}/{messageId}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun getFullMessage(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String, @PathVariable boxId: String, @PathVariable messageId: String): MessageResponse{
-        MDC.put("keystoreId", keystoreId)
-        MDC.put("company", company)
+    fun getFullMessage(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
+        @PathVariable boxId: String,
+        @PathVariable messageId: String
+    ): MessageResponse{
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val getFullMessageResult = ehboxService.getFullMessage(keystoreId, tokenId, passPhrase, boxId, messageId)
-        MDC.clear()
+        LoggingMdcUtil.clearMDC()
         return getFullMessageResult
     }
 
     @PostMapping("/{boxId}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun loadMessages(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String, @PathVariable boxId: String, @RequestParam limit: Int?, @RequestParam(defaultValue = "0") skip: Int, @RequestBody alternateKeystores: AltKeystoresList): MessagesResponse{
-        MDC.put("keystoreId", keystoreId)
-        MDC.put("company", company)
+    fun loadMessages(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
+        @PathVariable boxId: String,
+        @RequestParam limit: Int?,
+        @RequestParam(defaultValue = "0") skip: Int,
+        @RequestBody alternateKeystores: AltKeystoresList
+    ): MessagesResponse{
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val loadMessagesResult = ehboxService.loadMessages(keystoreId, tokenId, passPhrase, boxId, limit, skip, alternateKeystores.keystores)
-        MDC.clear()
+        LoggingMdcUtil.clearMDC()
         return loadMessagesResult
     }
 
     @PostMapping("/{boxId}/{messageId}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun getFullMessage(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String, @PathVariable boxId: String, @PathVariable messageId: String, @RequestBody alternateKeystores: AltKeystoresList): MessageResponse
-    {
-        MDC.put("keystoreId", keystoreId)
-        MDC.put("company", company)
+    fun getFullMessage(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
+        @PathVariable boxId: String,
+        @PathVariable messageId: String,
+        @RequestBody alternateKeystores: AltKeystoresList
+    ): MessageResponse{
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val getFullMessageResult = ehboxService.getFullMessage(keystoreId, tokenId, passPhrase, boxId, messageId, alternateKeystores.keystores)
-        MDC.clear()
+        LoggingMdcUtil.clearMDC()
         return getFullMessageResult
     }
 
@@ -91,13 +127,13 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestBody message: DocumentMessage,
         @RequestParam publicationReceipt: Boolean?,
         @RequestParam receptionReceipt: Boolean?,
         @RequestParam readReceipt: Boolean?
     ): MessageOperationResponse{
-        MDC.put("keystoreId", keystoreId)
-        MDC.put("company", company)
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val getFullMessageResult =
             ehboxService.sendMessage(
                 keystoreId,
@@ -108,7 +144,7 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
                 receptionReceipt ?: false,
                 readReceipt ?: false
             )
-        MDC.clear()
+        LoggingMdcUtil.clearMDC()
         return getFullMessageResult;
     }
 
@@ -118,12 +154,12 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable messageId: String
-        ): MessageStatusOperationResponse {
-        MDC.put("keystoreId", keystoreId)
-        MDC.put("company", company)
+    ): MessageStatusOperationResponse {
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val getMessageAckStatusResult =  ehboxService.getMessageAckStatus(keystoreId, tokenId, passPhrase, messageId)
-        MDC.clear()
+        LoggingMdcUtil.clearMDC()
         return getMessageAckStatusResult
     }
 
@@ -133,13 +169,13 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestBody message: DocumentMessage,
         @RequestParam publicationReceipt: Boolean?,
         @RequestParam receptionReceipt: Boolean?,
         @RequestParam readReceipt: Boolean?
-                   ): MessageOperationResponse {
-        MDC.put("keystoreId", keystoreId)
-        MDC.put("company", company)
+    ): MessageOperationResponse {
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val sendMessage2EboxResult =  ehboxService.sendMessage2Ebox(
             keystoreId,
             tokenId,
@@ -149,25 +185,40 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
             receptionReceipt ?: false,
             readReceipt ?: false
         )
-        MDC.clear()
+        LoggingMdcUtil.clearMDC()
         return sendMessage2EboxResult
     }
 
     @PostMapping("/move/from/{source}/to/{destination}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun moveMessages(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String, @RequestBody messageIds: List<String>, @PathVariable source: String, @PathVariable destination: String): MessageOperationResponse{
-        MDC.put("keystoreId", keystoreId)
-        MDC.put("company", company)
+    fun moveMessages(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
+        @RequestBody messageIds: List<String>,
+        @PathVariable source: String,
+        @PathVariable destination: String
+    ): MessageOperationResponse{
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val moveMessagesResult = ehboxService.moveMessages(keystoreId, tokenId, passPhrase, messageIds, source, destination)
-        MDC.clear()
+        LoggingMdcUtil.clearMDC()
         return moveMessagesResult
     }
 
     @PostMapping("/move/from/{source}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun deleteMessages(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String, @RequestBody messageIds: List<String>, @PathVariable source: String): MessageOperationResponse{
-        MDC.put("keystoreId", keystoreId)
-        MDC.put("company", company)
+    fun deleteMessages(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
+        @RequestBody messageIds: List<String>,
+        @PathVariable source: String
+    ): MessageOperationResponse{
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val deleteMessagesResult = ehboxService.deleteMessages(keystoreId, tokenId, passPhrase, messageIds, source)
-        MDC.clear()
+        LoggingMdcUtil.clearMDC()
         return deleteMessagesResult
     }
 }

@@ -11,7 +11,6 @@
 		</filter>
 	</appender>
 
-
 	<appender name="FILE-THREAD" class="ch.qos.logback.classic.sift.SiftingAppender">
 		<!-- This is MDC value -->
 		<!-- We will assign a value to 'keystoreId' via Java code -->
@@ -83,6 +82,50 @@
 		</filter>
 	</appender>
 
+    <!-- ADDED: Sifting appender for ERROR logs when debug=true -->
+    <appender name="FILE-DEBUG-WARN" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator>
+            <key>keystoreId</key>
+            <defaultValue>0-debug-noKeyStoreId</defaultValue>
+        </discriminator>
+        <sift>
+            <appender name="FILE-DEBUG-ERROR-${keystoreId}"
+                      class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>/opt/freehealth/logs/keystorelogs/${keystoreId}-debug.log</file>
+                <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                    <Pattern>
+                        %d{yyyy-MM-dd HH:mm:ss} %level %logger{35} [X-Company: %X{company}] [KeystoreId: %X{keystoreId}] - %msg%n
+                    </Pattern>
+                </encoder>
+                <rollingPolicy
+                        class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                    <FileNamePattern>/opt/freehealth/logs/keystorelogs/${keystoreId}-debug.%i.log.zip
+                    </FileNamePattern>
+                    <MinIndex>1</MinIndex>
+                    <MaxIndex>2</MaxIndex>
+                </rollingPolicy>
+                <triggeringPolicy
+                        class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                    <MaxFileSize>1MB</MaxFileSize>
+                </triggeringPolicy>
+                <!-- Only accept ERROR level logs -->
+                <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                    <level>WARN</level>
+                    <onMatch>NEUTRAL</onMatch>
+                    <onMismatch>DENY</onMismatch>
+                </filter>
+                <!-- Only accept logs with debug=true in MDC -->
+                <filter class="ch.qos.logback.classic.filter.EvaluatorFilter">
+                    <evaluator>
+                        <expression>return "true".equals(mdc["debug"]);</expression>
+                    </evaluator>
+                    <OnMismatch>DENY</OnMismatch>
+                    <OnMatch>ACCEPT</OnMatch>
+                </filter>
+            </appender>
+        </sift>
+    </appender>
+
 	<logger name="be.fgov.ehealth.etee.crypto" level="WARN" />
 	<logger name="be.fgov.ehealth.etee.crypto.decrypt" level="ERROR" />
 
@@ -101,6 +144,9 @@
 		<appender-ref ref="CONSOLE" />
 		<appender-ref ref="FILE-THREAD" />
 	</root>
+    <root level="WARN">
+        <appender-ref ref="FILE-DEBUG-WARN" />
+    </root>
 	<root level="ERROR">
 		<appender-ref ref="FILE-GeneralErrors" />
 	</root>

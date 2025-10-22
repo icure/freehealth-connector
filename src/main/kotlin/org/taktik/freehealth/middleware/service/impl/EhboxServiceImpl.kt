@@ -89,7 +89,7 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
                     nbrMessagesInStandBy = response.nbrMessagesInStandBy,
                     currentSize = response.currentSize,
                     maxSize = response.maxSize
-                              )
+                )
             }
 
         } catch (e: TechnicalConnectorException) {
