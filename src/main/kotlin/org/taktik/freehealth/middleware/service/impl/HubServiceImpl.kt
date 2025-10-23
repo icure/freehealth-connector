@@ -448,13 +448,13 @@ class HubServiceImpl(private val stsService: STSService, private val keyDepotSer
                         // enddate = from?.let { DateTime(it) } ?: DateTime.now()
                     }
                 })
-        val errors = therapeuticLinkResponse.acknowledge.errors.map {
+        val errors = therapeuticLinkResponse.acknowledge?.errors?.map {
             Error().apply {
                 this.url = it.url
                 this.descr = it.description.value
             }
-        };
-        val isComplete = therapeuticLinkResponse.acknowledge.isIscomplete();
+        } ?: listOf()
+        val isComplete = therapeuticLinkResponse.acknowledge?.isIscomplete ?: false;
 
         return TherapeuticLinkMessage().apply {
             this.isComplete = isComplete;
