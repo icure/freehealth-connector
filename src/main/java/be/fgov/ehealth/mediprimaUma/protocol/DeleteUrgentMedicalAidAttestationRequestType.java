@@ -2,19 +2,16 @@
 package be.fgov.ehealth.mediprimaUma.protocol;
 
 import javax.annotation.Generated;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 
 
 /**
  * Delete urgent medical aid attestation request
- * 
+ *
  * <p>Classe Java pour DeleteUrgentMedicalAidAttestationRequestType complex type.
- * 
+ *
  * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="DeleteUrgentMedicalAidAttestationRequestType">
  *   &lt;complexContent>
@@ -27,9 +24,12 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
+@XmlRootElement(
+        name = "DeleteUrgentMedicalAidAttestationRequest"
+)
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DeleteUrgentMedicalAidAttestationRequestType", namespace = "urn:be:fgov:ehealth:mediprima:uma:protocol:v1", propOrder = {
     "beneficiarySsin",
@@ -49,11 +49,11 @@ public class DeleteUrgentMedicalAidAttestationRequestType
 
     /**
      * Obtient la valeur de la propriété beneficiarySsin.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2025-10-27T11:37:59+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public String getBeneficiarySsin() {
@@ -62,11 +62,11 @@ public class DeleteUrgentMedicalAidAttestationRequestType
 
     /**
      * Définit la valeur de la propriété beneficiarySsin.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2025-10-27T11:37:59+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public void setBeneficiarySsin(String value) {
@@ -75,11 +75,11 @@ public class DeleteUrgentMedicalAidAttestationRequestType
 
     /**
      * Obtient la valeur de la propriété attestationNumber.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2025-10-27T11:37:59+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public String getAttestationNumber() {
@@ -88,11 +88,11 @@ public class DeleteUrgentMedicalAidAttestationRequestType
 
     /**
      * Définit la valeur de la propriété attestationNumber.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2025-10-27T11:37:59+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public void setAttestationNumber(String value) {

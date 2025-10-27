@@ -77,6 +77,17 @@ class MediprimaUmaServiceImpl(val stsService: STSService, keyDepotService: KeyDe
                 this.startDate = instantToXMLGregorianCalendar(startDate)
                 this.endDate = instantToXMLGregorianCalendar(endDate)
             }
+            this.author = AuthorType().apply {
+                ActorType().apply {
+                    val idType = IdType().apply {
+                        value = hcpNihii
+                        type = "urn:be:fgov:ehealth:1.0:physician:nihii-number"
+                    }
+                    this.name = hcpLastName
+                    this.firstName.add(hcpFirstName)
+                    this.id.add(idType)
+                }
+            }
         }
         this.mediprimaUmaService.sendUrgentMedicalAidAttestation(samlToken, request, soapAction).let { response ->
             val result = SendUrgentMedicalAidAttestationResponseType().apply {

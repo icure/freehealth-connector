@@ -4,10 +4,7 @@ package be.fgov.ehealth.mediprimaUma.protocol;
 import be.fgov.ehealth.mediprimaUma.core.PeriodType;
 
 import javax.annotation.Generated;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 
 
 /**
@@ -33,6 +30,9 @@ import javax.xml.bind.annotation.XmlType;
  *
  *
  */
+@XmlRootElement(
+        name = "SendUrgentMedicalAidAttestationRequest"
+)
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SendUrgentMedicalAidAttestationRequestType", namespace = "urn:be:fgov:ehealth:mediprima:uma:protocol:v1", propOrder = {
     "beneficiarySsin",
