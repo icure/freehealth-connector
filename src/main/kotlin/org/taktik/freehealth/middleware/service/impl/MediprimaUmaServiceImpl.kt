@@ -69,15 +69,15 @@ class MediprimaUmaServiceImpl(val stsService: STSService, keyDepotService: KeyDe
         val issueInstant: Instant = Instant.now()
 
         val request: SendUrgentMedicalAidAttestationRequestType = SendUrgentMedicalAidAttestationRequestType().apply {
-            this.issueInstant = instantToXMLGregorianCalendar(issueInstant)
+            this.issueInstant = instantToXMLGregorianCalendarDateTime(issueInstant, zone)
             this.id = detailId
             this.beneficiarySsin = patientSsin
             this.medicalCover = medicalCover
             this.validityPeriod = PeriodType().apply {
-                this.startDate = instantToXMLGregorianCalendar(startDate)
-                this.endDate = instantToXMLGregorianCalendar(endDate)
+                this.startDate = instantToXMLGregorianCalendarDate(startDate, zone)
+                this.endDate = instantToXMLGregorianCalendarDate(endDate, zone)
             }
-            this.author = AuthorType().apply {
+          this.author = AuthorType().apply {
                 ActorType().apply {
                     val idType = IdType().apply {
                         value = hcpNihii
@@ -138,7 +138,7 @@ class MediprimaUmaServiceImpl(val stsService: STSService, keyDepotService: KeyDe
         val issueInstant: Instant = Instant.now()
 
         val request: SearchUrgentMedicalAidAttestationRequestType = SearchUrgentMedicalAidAttestationRequestType().apply {
-            this.issueInstant = instantToXMLGregorianCalendar(issueInstant)
+            this.issueInstant = instantToXMLGregorianCalendarDateTime(issueInstant, zone)
             this.id = detailId
             this.criteria = CriteriaType().apply {
                 this.beneficiarySsin = patientSsin
@@ -149,8 +149,8 @@ class MediprimaUmaServiceImpl(val stsService: STSService, keyDepotService: KeyDe
                     endDate?.let { e ->
                         medicalCover?.let { m ->
                             this.period = PeriodType().apply {
-                                this.startDate = instantToXMLGregorianCalendar(s)
-                                this.endDate = instantToXMLGregorianCalendar(e)
+                                this.startDate = instantToXMLGregorianCalendarDate(startDate, zone)
+                                this.endDate = instantToXMLGregorianCalendarDate(endDate, zone)
                             }
                             this.medicalCover = m
                         }
@@ -204,7 +204,7 @@ class MediprimaUmaServiceImpl(val stsService: STSService, keyDepotService: KeyDe
         val issueInstant: Instant = Instant.now()
 
         val request: DeleteUrgentMedicalAidAttestationRequestType = DeleteUrgentMedicalAidAttestationRequestType().apply {
-            this.issueInstant = instantToXMLGregorianCalendar(issueInstant)
+            this.issueInstant = instantToXMLGregorianCalendarDateTime(issueInstant, zone)
             this.id = detailId
             this.attestationNumber = attestationNumber
             this.beneficiarySsin = patientSsin
@@ -247,9 +247,26 @@ class MediprimaUmaServiceImpl(val stsService: STSService, keyDepotService: KeyDe
         }
     }
 
-    private fun instantToXMLGregorianCalendar(instant: Instant): XMLGregorianCalendar {
-        val zonedDateTime = instant.atZone(ZoneId.systemDefault())
-        val gregorianCalendar = GregorianCalendar.from(zonedDateTime)
-        return DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar)
+   private fun instantToXMLGregorianCalendarDateTime(
+       instant: Instant,
+       zoneId: ZoneId = ZoneId.systemDefault()
+   ): XMLGregorianCalendar {
+       val zdt = instant.atZone(zoneId)
+       val gregorianCalendar = GregorianCalendar.from(zdt)
+       return DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar)
+   }
+
+    private fun instantToXMLGregorianCalendarDate(
+        instant: Instant,
+        zoneId: ZoneId = ZoneId.systemDefault()
+    ): XMLGregorianCalendar {
+        val zdt = instant.atZone(zoneId)
+        val offsetMinutes = zdt.offset.totalSeconds / 60
+        return DatatypeFactory.newInstance().newXMLGregorianCalendarDate(
+            zdt.year,
+            zdt.monthValue,
+            zdt.dayOfMonth,
+            offsetMinutes
+        )
     }
 }

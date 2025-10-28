@@ -15,6 +15,7 @@ import org.taktik.freehealth.middleware.service.MediprimaUmaService
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @RestController
@@ -38,8 +39,6 @@ class MediprimaUmaController(
         @RequestParam startDate: Long,
         @RequestParam endDate: Long
     ): MediprimaUmaSendUrgentMedicalAidAttestationResponse? {
-        val instantStartDate: Instant = startDate?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
-        val instantEndDate: Instant = endDate?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
 
         return mediprimaUmaService.sendUrgentMedicalAidAttestation(
             keystoreId = keystoreId,
@@ -51,8 +50,8 @@ class MediprimaUmaController(
             hcpLastName = hcpName,
             patientSsin = patientSsin,
             medicalCover = medicalCover,
-            startDate = instantStartDate,
-            endDate = instantEndDate
+            startDate = longDateToInstant(startDate),
+            endDate = longDateToInstant(endDate)
         )
     }
     @PostMapping("/searchUrgentMedicalAidAttestation/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -83,8 +82,8 @@ class MediprimaUmaController(
             hcpLastName = hcpName,
             patientSsin = patientSsin,
             attestationNumber = attestationNumber,
-            startDate = instantStartDate,
-            endDate = instantEndDate,
+            startDate = longDateToInstant(startDate),
+            endDate = longDateToInstant(endDate),
             medicalCover = medicalCover
         )
     }
@@ -112,5 +111,20 @@ class MediprimaUmaController(
             patientSsin = patientSsin,
             attestationNumber = attestationNumber
         )
+    }
+
+    private fun longDateToInstant(dateLong: Long?, timezone: String = "Europe/Brussels"): Instant {
+        if (dateLong == null) {
+            return LocalDate.now().atStartOfDay(ZoneId.of(timezone)).toInstant()
+        }
+
+        return try {
+            val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+            val localDate = LocalDate.parse(dateLong.toString(), formatter)
+            localDate.atStartOfDay(ZoneId.of(timezone)).toInstant()
+        } catch (e: Exception) {
+            // fallback en cas d’erreur de parsing
+            LocalDate.now().atStartOfDay(ZoneId.of(timezone)).toInstant()
+        }
     }
 }
