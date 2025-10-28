@@ -102,8 +102,14 @@ class STSController(private val stsService: STSService, private val ssoService: 
         notes = "Uses a previously obtained SAML token to get a Bearer token. The tokenId is used to identify the SAML token, and the passPhrase is used to decrypt the keystore file. The ssin is the social security number of the user, and the keystoreId is the UUID of the keystore file. This endpoint is useful for obtaining a Bearer token that can be used for API authentication."
     )
     @GetMapping("/token/bearer", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun getBearerToken(@RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID) =
-        ssoService.getBearerToken(tokenId, keystoreId, passPhrase)
+    fun getBearerToken(
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam ssin: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestParam(required = false) destination: String?
+    ) =
+        ssoService.getBearerToken(tokenId, keystoreId, passPhrase, destination)
 
     @ApiOperation(
         value = "Get a OAuth2 token from a SAML token",
