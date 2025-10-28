@@ -108,8 +108,12 @@ class STSController(private val stsService: STSService, private val ssoService: 
         @RequestParam ssin: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestParam(required = false) destination: String?
-    ) =
-        ssoService.getBearerToken(tokenId, keystoreId, passPhrase, destination)
+    ) = ssoService.getBearerToken(tokenId, keystoreId, passPhrase, destination
+        ?.replace("&", "&amp;")
+        ?.replace("<", "&lt;")
+        ?.replace(">", "&gt;")
+        ?.replace("\"", "&quot;")
+        ?.replace("'", "&apos;"))
 
     @ApiOperation(
         value = "Get a OAuth2 token from a SAML token",
