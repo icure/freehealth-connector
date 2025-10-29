@@ -40,7 +40,7 @@ import java.util.UUID
 class SSOServiceImpl(private val stsService: STSService, private val userDetailsService: KeystoreProviderService) : SSOService {
     val ssosi: SingleSignOnService = SingleSignOnServiceImpl()
 
-    override fun getBearerToken(tokenId: UUID, keystoreId: UUID, passPhrase: String, profile: String?): BearerToken? {
+    override fun getBearerToken(tokenId: UUID, keystoreId: UUID, passPhrase: String, destination: String?, profile: String?): BearerToken? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
@@ -49,7 +49,7 @@ class SSOServiceImpl(private val stsService: STSService, private val userDetails
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
 
-        return ssosi.signin(profile?.let { SsoProfile.valueOf(it) } ?: SsoProfile.SAML2_POST, samlToken)?.let { BearerToken(it) }
+        return ssosi.signin(profile?.let { SsoProfile.valueOf(it) } ?: SsoProfile.SAML2_POST, samlToken, destination)?.let { BearerToken(it) }
     }
 
     fun generateClientToken(clientId:String, kid:String, urlOfRealm: String, key: Key): String? {
