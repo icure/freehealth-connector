@@ -1,11 +1,11 @@
 package be.ehealth.businessconnector.mediprimauma.service
 
-import be.fgov.ehealth.mediprimaUma.protocol.DeleteUrgentMedicalAidAttestationRequestType
-import be.fgov.ehealth.mediprimaUma.protocol.DeleteUrgentMedicalAidAttestationResponseType
-import be.fgov.ehealth.mediprimaUma.protocol.SearchUrgentMedicalAidAttestationRequestType
-import be.fgov.ehealth.mediprimaUma.protocol.SearchUrgentMedicalAidAttestationResponseType
-import be.fgov.ehealth.mediprimaUma.protocol.SendUrgentMedicalAidAttestationRequestType
-import be.fgov.ehealth.mediprimaUma.protocol.SendUrgentMedicalAidAttestationResponseType
+import be.fgov.ehealth.mediprimaUma.protocol.v1.DeleteUrgentMedicalAidAttestationRequestType
+import be.fgov.ehealth.mediprimaUma.protocol.v1.DeleteUrgentMedicalAidAttestationResponseType
+import be.fgov.ehealth.mediprimaUma.protocol.v1.SearchUrgentMedicalAidAttestationRequestType
+import be.fgov.ehealth.mediprimaUma.protocol.v1.SearchUrgentMedicalAidAttestationResponseType
+import be.fgov.ehealth.mediprimaUma.protocol.v1.SendUrgentMedicalAidAttestationRequestType
+import be.fgov.ehealth.mediprimaUma.protocol.v1.SendUrgentMedicalAidAttestationResponseType
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 

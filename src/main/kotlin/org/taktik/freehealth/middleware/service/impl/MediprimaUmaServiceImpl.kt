@@ -1,22 +1,18 @@
 package org.taktik.freehealth.middleware.service.impl
 
 import be.ehealth.businessconnector.mediprimauma.service.impl.MediprimaUmaServiceImpl
-import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponseType
-import be.fgov.ehealth.mediprimaUma.core.ActorType
-import be.fgov.ehealth.mediprimaUma.core.AttestationType
-import be.fgov.ehealth.mediprimaUma.core.AuthorType
-import be.fgov.ehealth.mediprimaUma.core.CriteriaType
-import be.fgov.ehealth.mediprimaUma.core.IdType
-import be.fgov.ehealth.mediprimaUma.core.PeriodType
-import be.fgov.ehealth.mediprimaUma.core.StatusCodeType
-import be.fgov.ehealth.mediprimaUma.protocol.DeleteUrgentMedicalAidAttestationRequestType
-import be.fgov.ehealth.mediprimaUma.protocol.DeleteUrgentMedicalAidAttestationResponseType
-import be.fgov.ehealth.mediprimaUma.protocol.SearchUrgentMedicalAidAttestationRequestType
-import be.fgov.ehealth.mediprimaUma.protocol.SearchUrgentMedicalAidAttestationResponseType
-import be.fgov.ehealth.mediprimaUma.protocol.SendUrgentMedicalAidAttestationRequestType
-import be.fgov.ehealth.mediprimaUma.protocol.SendUrgentMedicalAidAttestationResponseType
+import be.fgov.ehealth.mediprimaUma.core.v1.ActorType
+import be.fgov.ehealth.mediprimaUma.core.v1.AuthorType
+import be.fgov.ehealth.mediprimaUma.core.v1.CriteriaType
+import be.fgov.ehealth.mediprimaUma.core.v1.IdType
+import be.fgov.ehealth.mediprimaUma.core.v1.PeriodType
+import be.fgov.ehealth.mediprimaUma.protocol.v1.DeleteUrgentMedicalAidAttestationRequestType
+import be.fgov.ehealth.mediprimaUma.protocol.v1.DeleteUrgentMedicalAidAttestationResponseType
+import be.fgov.ehealth.mediprimaUma.protocol.v1.SearchUrgentMedicalAidAttestationRequestType
+import be.fgov.ehealth.mediprimaUma.protocol.v1.SearchUrgentMedicalAidAttestationResponseType
+import be.fgov.ehealth.mediprimaUma.protocol.v1.SendUrgentMedicalAidAttestationRequestType
+import be.fgov.ehealth.mediprimaUma.protocol.v1.SendUrgentMedicalAidAttestationResponseType
 import ma.glasnost.orika.MapperFacade
-import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.taktik.connector.technical.config.ConfigFactory
@@ -77,16 +73,9 @@ class MediprimaUmaServiceImpl(val stsService: STSService, keyDepotService: KeyDe
                 this.startDate = instantToXMLGregorianCalendarDate(startDate, zone)
                 this.endDate = instantToXMLGregorianCalendarDate(endDate, zone)
             }
-          this.author = AuthorType().apply {
-                ActorType().apply {
-                    val idType = IdType().apply {
-                        value = hcpNihii
-                        type = "urn:be:fgov:ehealth:1.0:physician:nihii-number"
-                    }
-                    this.name = hcpLastName
-                    this.firstName.add(hcpFirstName)
-                    this.id.add(idType)
-                }
+
+            this.author = (this.author ?: AuthorType()).apply {
+                getHcParty().add(getActorType(hcpNihii, hcpLastName, hcpFirstName))
             }
         }
         this.mediprimaUmaService.sendUrgentMedicalAidAttestation(samlToken, request, soapAction).let { response ->
@@ -208,17 +197,6 @@ class MediprimaUmaServiceImpl(val stsService: STSService, keyDepotService: KeyDe
             this.id = detailId
             this.attestationNumber = attestationNumber
             this.beneficiarySsin = patientSsin
-            this.author = AuthorType().apply {
-                ActorType().apply {
-                    val idType = IdType().apply {
-                        value = hcpNihii
-                        type = "urn:be:fgov:ehealth:1.0:physician:nihii-number"
-                    }
-                    this.name = hcpLastName
-                    this.firstName.add(hcpFirstName)
-                    this.id.add(idType)
-                }
-            }
         }
 
         this.mediprimaUmaService.deleteUrgentMedicalAidAttestation(samlToken, request, soapAction).let { response ->
@@ -245,6 +223,20 @@ class MediprimaUmaServiceImpl(val stsService: STSService, keyDepotService: KeyDe
                 }
             }
         }
+    }
+
+    private fun getActorType(hcpNihii: String, hcpLastName: String, hcpFirstName: String): ActorType {
+        val actorType = ActorType().apply {
+            val idType = IdType().apply {
+                value = hcpNihii
+                type = "urn:be:fgov:ehealth:1.0:physician:nihii-number"
+            }
+            name = hcpLastName
+            firstName.add(hcpFirstName)
+            id.add(idType)
+
+        }
+        return actorType
     }
 
    private fun instantToXMLGregorianCalendarDateTime(

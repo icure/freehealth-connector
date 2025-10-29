@@ -1,6 +1,6 @@
 package org.taktik.freehealth.middleware.domain.mediprimaUma
 
-import be.fgov.ehealth.mediprimaUma.protocol.SearchUrgentMedicalAidAttestationResponseType
+import be.fgov.ehealth.mediprimaUma.protocol.v1.SearchUrgentMedicalAidAttestationResponseType
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 
 class MediprimaUmaSearchUrgentMedicalAidAttestationResponse(
