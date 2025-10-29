@@ -544,7 +544,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             val principal = SecurityContextHolder.getContext().authentication?.principal as? User
             val userAgent = UserAgentInterceptorFilter.getUserAgent();
             val productName = userAgent?.split("/")?.get(0) ?: "";
-            val packageInfo = McnConfigUtil.retrievePackageInfo("eagreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName, productName, quality)
+            val packageInfo = McnConfigUtil.retrievePackageInfo("efact", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName, productName, quality)
 
             `package` = PackageType().apply {
                 name = ValueRefString().apply { value = config.getProperty("genericasync.invoicing.package.name") }

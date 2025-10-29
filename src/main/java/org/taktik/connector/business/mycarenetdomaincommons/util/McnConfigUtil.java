@@ -37,8 +37,10 @@ public final class McnConfigUtil {
     String packageName = "";
 
     // EFact also uses "eagreement" so only added these 2
-    if(config != null && ("attest".equals(componentName) || "eagreement".equals(componentName))){
-        String actualProduct = (product != null && !product.isEmpty()) ? "CompufitOxygen" : "CompufitOxygen";
+    if(config != null &&
+            ("efact".equals(componentName) ||"attest".equals(componentName)
+                    || "eagreement".equals(componentName) || "genins".equals(componentName) )){
+        String actualProduct = (product != null && !product.isEmpty()) ? "CompufitOxygen" : product;
         
         if (quality != null && !quality.isEmpty()) {
             JsonNode packageNode = config.path("packages").path(actualProduct);
