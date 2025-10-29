@@ -60,7 +60,7 @@ class MediprimaUmaServiceImpl(val stsService: STSService, keyDepotService: KeyDe
         val soapAction = "urn:be:fgov:ehealth:mediprima:uma:protocol:v1:sendMedicalEmergencyAttestion";
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw MissingTokenException("Cannot obtain token for Mediprima UMA operations")
+                ?: throw MissingTokenException("Cannot obtain token for Mediprima UMA send operations")
         val detailId = "R" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
         val issueInstant: Instant = Instant.now()
 
@@ -122,7 +122,7 @@ class MediprimaUmaServiceImpl(val stsService: STSService, keyDepotService: KeyDe
         val soapAction = "urn:be:fgov:ehealth:mediprima:uma:protocol:v1:searchMedicalEmergencyAttestion"
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw MissingTokenException("Cannot obtain token for Mediprima UMA operations")
+                ?: throw MissingTokenException("Cannot obtain token for Mediprima UMA search operations")
         val detailId = "R" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
         val issueInstant: Instant = Instant.now()
 
@@ -187,7 +187,7 @@ class MediprimaUmaServiceImpl(val stsService: STSService, keyDepotService: KeyDe
         val soapAction = "urn:be:fgov:ehealth:mediprima:uma:protocol:v1:deleteMedicalEmergencyAttestion";
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw MissingTokenException("Cannot obtain token for Mediprima operations")
+                ?: throw MissingTokenException("Cannot obtain token for Mediprima delete operations")
 
         val detailId = "R" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
         val issueInstant: Instant = Instant.now()
