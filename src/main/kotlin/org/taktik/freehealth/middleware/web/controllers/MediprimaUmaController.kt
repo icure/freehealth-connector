@@ -39,7 +39,6 @@ class MediprimaUmaController(
         @RequestParam startDate: Long,
         @RequestParam endDate: Long
     ): MediprimaUmaSendUrgentMedicalAidAttestationResponse? {
-
         return mediprimaUmaService.sendUrgentMedicalAidAttestation(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -69,9 +68,6 @@ class MediprimaUmaController(
         @RequestParam (required = false) endDate: Long?,
         @RequestParam (required = false) attestationNumber: String?
     ): MediprimaUmaSearchUrgentMedicalAidAttestationResponse? {
-        val instantStartDate: Instant = startDate?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
-        val instantEndDate: Instant = endDate?.let { Instant.ofEpochMilli(it) } ?: LocalDate.now().atStartOfDay(ZoneId.of(mcnTimezone)).toInstant()
-
         return mediprimaUmaService.searchUrgentMedicalAidAttestation(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -99,7 +95,6 @@ class MediprimaUmaController(
         @PathVariable patientSsin: String,
         @RequestParam attestationNumber: String
     ): MediprimaUmaDeleteUrgentMedicalAidAttestationResponse? {
-
         return mediprimaUmaService.deleteUrgentMedicalAidAttestation(
             keystoreId = keystoreId,
             tokenId = tokenId,

@@ -8,7 +8,7 @@
 
 package be.fgov.ehealth.mediprimaUma.protocol.v1;
 
-import be.fgov.ehealth.mediprima.core.v1.AuthorRequestType;
+import be.fgov.ehealth.mediprimaUma.core.v1.AuthorRequestType;
 
 import javax.annotation.Generated;
 import javax.xml.bind.annotation.*;

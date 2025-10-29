@@ -197,6 +197,9 @@ class MediprimaUmaServiceImpl(val stsService: STSService, keyDepotService: KeyDe
             this.id = detailId
             this.attestationNumber = attestationNumber
             this.beneficiarySsin = patientSsin
+            this.author = (this.author ?: AuthorType()).apply {
+                getHcParty().add(getActorType(hcpNihii, hcpLastName, hcpFirstName))
+            }
         }
 
         this.mediprimaUmaService.deleteUrgentMedicalAidAttestation(samlToken, request, soapAction).let { response ->
