@@ -105,6 +105,7 @@ class MediprimaUmaServiceImpl(val stsService: STSService, keyDepotService: KeyDe
         }
     }
 
+
     override fun searchUrgentMedicalAidAttestation(
         keystoreId: UUID,
         tokenId: UUID,
