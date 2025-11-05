@@ -2,6 +2,13 @@ package org.taktik.freehealth.middleware.service.impl
 
 import be.cin.encrypted.BusinessContent
 import be.cin.encrypted.EncryptedKnownContent
+import be.cin.mycarenet.esb.common.v2.OrigineType
+import be.cin.nip.async.generic.Get
+import be.cin.nip.async.generic.MsgQuery
+import be.cin.types.v1.DetailType
+import be.cin.types.v1.DetailsType
+import be.cin.types.v1.FaultType
+import be.cin.types.v1.StringLangType
 import be.fgov.ehealth.agreement.protocol.v1.*
 import be.fgov.ehealth.agreement.protocol.v1.ObjectFactory
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
@@ -22,15 +29,18 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.agreement.exception.AgreementBusinessConnectorException
 import org.taktik.connector.business.domain.agreement.EAgreementResponse
+import org.taktik.connector.business.genericasync.service.impl.GenAsyncServiceImpl
 import org.taktik.connector.business.mycarenet.attest.domain.InputReference
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
+import org.taktik.connector.business.mycarenetdomaincommons.mapper.DomainBlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.business.mycarenetdomaincommons.util.PropertyUtil
 import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.connector.technical.exception.SoaErrorException
 import org.taktik.connector.technical.exception.TechnicalConnectorException
 import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValues
+import org.taktik.connector.technical.handler.domain.WsAddressingHeader
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.service.etee.CryptoFactory
@@ -40,22 +50,32 @@ import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.sts.security.Credential
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.CertificateParser
+import org.taktik.connector.technical.utils.ConnectorIOUtils
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
+import org.taktik.freehealth.middleware.domain.eAgreement.EAgreementBatchResponse
+import org.taktik.freehealth.middleware.domain.eAgreement.EAgreementDataList
+import org.taktik.freehealth.middleware.domain.eAgreement.EAgreementDataMessage
+import org.taktik.freehealth.middleware.domain.memberdata.MdaStatus
+import org.taktik.freehealth.middleware.domain.memberdata.MemberDataAck
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
+import org.taktik.freehealth.middleware.exception.UnauthorizedException
 import org.taktik.freehealth.middleware.service.EagreementService
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.middleware.web.controllers.EagreementController
+import org.taktik.icure.cin.saml.extensions.ResponseList
+import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Assertion
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.StringWriter
+import java.net.URI
 import java.util.*
 import java.util.function.Consumer
 import javax.xml.bind.JAXBContext
@@ -65,6 +85,8 @@ import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMResult
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
+import javax.xml.ws.soap.SOAPFaultException
+import kotlin.collections.plus
 
 
 @Service
@@ -73,6 +95,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
 
     private val keyDepotManager = KeyDepotManagerImpl.getInstance(keyDepotService)
     private val config = ConfigFactory.getConfigValidator(emptyList())
+    private val genAsyncService = GenAsyncServiceImpl("mda")
 
     val agreementServiceUtils: EagreementServiceUtilsImpl = EagreementServiceUtilsImpl();
 
@@ -485,6 +508,82 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
 
         }
     }
+
+    override fun getMessageList(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String
+    ): EAgreementDataList? {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+            ?: throw MissingTokenException("Cannot obtain token for eAgreement asyn operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+        val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
+        val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
+
+        val getHeader = WsAddressingHeader(URI("urn:be:cin:nip:async:generic:get:query")).apply {
+            messageID = URI(IdGeneratorFactory.getIdGenerator("uuid").generateId())
+        }
+
+        val get = Get().apply {
+            msgQuery = MsgQuery().apply {
+                isInclude = true
+                max = 100
+                messageNames?.let { this.messageNames.addAll(it) }
+            }
+            origin = buildOriginType(hcpNihii, hcpFirstName, "physiotherapist", hcpSsin)
+        }
+
+        val response = genAsyncService.getRequest(samlToken, get, getHeader)
+        val b64 = java.util.Base64.getEncoder()
+        val listOfEagreementDecryptedResponseContent : ArrayList<String> = arrayListOf()
+
+        return try {
+            EAgreementDataList(
+
+            )
+        }catch (e:SOAPFaultException){
+
+        }
+
+    }
+
+    private fun buildOriginType(hcpNihii: String, hcpName: String, hcpQuality: String?, hcpSsin: String?): OrigineType =
+        OrigineType().apply {
+            val principal = SecurityContextHolder.getContext().authentication?.principal as? User
+            `package` = be.cin.mycarenet.esb.common.v2.PackageType().apply {
+                name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = config.getProperty("genericasync.dmg.package.name") }
+                license = be.cin.mycarenet.esb.common.v2.LicenseType().apply {
+                    username = principal?.mcnLicense ?: throw UnauthorizedException("No MCN license found")
+                    password = principal.mcnPassword ?: throw UnauthorizedException("No MCN license found")
+                }
+            }
+            careProvider = be.cin.mycarenet.esb.common.v2.CareProviderType().apply {
+                this.nihii = be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                    quality = hcpQuality?: "medicalhouse"
+                    value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii }
+                }
+
+                physicalPerson = be.cin.mycarenet.esb.common.v2.IdType().apply {
+                    nihii = be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                        quality = hcpQuality;
+                        value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
+                    }
+
+                    hcpSsin?.let {
+                        ssin = be.cin.mycarenet.esb.common.v2.ValueRefString().apply {
+                            value = hcpSsin;
+                        }
+                    }
+                }
+
+
+            }
+        }
 
     fun transformElement(element: Element, doc: Document) {
         val nodeList = element.childNodes
