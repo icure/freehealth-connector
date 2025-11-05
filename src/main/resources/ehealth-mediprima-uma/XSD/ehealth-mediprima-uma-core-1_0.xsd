@@ -1,20 +1,18 @@
-<!-- Copyright (c) eHealth -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v2" xmlns="urn:be:fgov:ehealth:mediprima:uma:core:v1" xmlns:core="urn:be:fgov:ehealth:commons:core:v2"
-  xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="urn:be:fgov:ehealth:mediprima:uma:core:v1" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
- <xs:annotation xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:be:fgov:ehealth:mediprima:uma:core:v1" xmlns:core="urn:be:fgov:ehealth:commons:core:v2" xmlns:protocol="urn:be:fgov:ehealth:commons:protocol:v2" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="urn:be:fgov:ehealth:mediprima:uma:core:v1" version="1.0">
+ <xs:annotation>
  <xs:appinfo>
  Implementation-Title: xsd-mediprima-uma
  Specification-Version: 1.0
- Implementation-Version: 1.0.0
- Build-Time: 20180214-1348 
+ Implementation-Version: 1.0.6
+ Build-Time: 20201224-0909 
  </xs:appinfo>
  </xs:annotation>
   <!--eHealth core element -->
-  <xs:import namespace="urn:be:fgov:ehealth:commons:core:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-core-2_0.xsd" />
-  <xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-2_0.xsd" />
-  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd" />
+  <xs:import namespace="urn:be:fgov:ehealth:commons:core:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-core-2_0.xsd"/>
+  <xs:import namespace="urn:be:fgov:ehealth:commons:protocol:v2" schemaLocation="../../ehealth-commons/XSD/ehealth-commons-schema-protocol-2_0.xsd"/>
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../external/XSD/xml.xsd"/>
   <!-- MediPrima UMA services types -->
-  <xs:element name="RegistryStatus" type="RegistryStatusType" /> 
+  <xs:element name="RegistryStatus" type="RegistryStatusType"/> 
   <xs:complexType name="AttestationType">
         <xs:annotation>
           <xs:documentation>Attestation information</xs:documentation>
@@ -46,7 +44,7 @@
                 <xs:documentation>Period used to retrieve attestation(s)</xs:documentation>
               </xs:annotation>
             </xs:element>
-          <xs:element name="MedicalCover" type="MedicalCoverType" minOccurs="0"/>
+          <xs:element minOccurs="0" name="MedicalCover" type="MedicalCoverType"/>
         </xs:sequence>        
       </xs:choice>
     </xs:sequence>
@@ -59,7 +57,7 @@
       <xs:element name="Origin" type="xs:string">
       </xs:element>
       <xs:element name="Code" type="xs:string"/>
-    <xs:element name="Message" type="NameType" maxOccurs="unbounded"/>
+    <xs:element maxOccurs="unbounded" name="Message" type="NameType"/>
     </xs:sequence>
   </xs:complexType>
   <xs:simpleType name="MedicalCoverType">
@@ -74,7 +72,7 @@
         </xs:annotation>
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attribute ref="xml:lang" use="required" />
+        <xs:attribute ref="xml:lang" use="required"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -83,8 +81,8 @@
           <xs:documentation>Period with start date and optional end date</xs:documentation>
         </xs:annotation>
     <xs:sequence>
-      <xs:element name="StartDate" type="xs:date" />
-      <xs:element name="EndDate" type="xs:date" minOccurs="0"/>
+      <xs:element name="StartDate" type="xs:date"/>
+      <xs:element minOccurs="0" name="EndDate" type="xs:date"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="RegistryStatusType">
@@ -92,7 +90,7 @@
           <xs:documentation>RegistryStatus will contain extra information about errors or warning</xs:documentation>
         </xs:annotation>
       <xs:sequence>
-      <xs:element name="ErrorDetail" type="ErrorType" maxOccurs="unbounded" />
+      <xs:element maxOccurs="unbounded" name="ErrorDetail" type="ErrorType"/>
     </xs:sequence>
   </xs:complexType>
 </xs:schema>
