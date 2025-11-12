@@ -68,11 +68,7 @@ public enum DocumentType implements Serializable {
    }
 
    static {
-      DocumentType[] var0 = values();
-      int var1 = var0.length;
-
-      for(int var2 = 0; var2 < var1; ++var2) {
-         DocumentType documentType = var0[var2];
+      for(DocumentType documentType : values()) {
          int encodedValue = documentType.key;
          if (documentTypes.containsKey(encodedValue)) {
             throw new IllegalArgumentException("duplicate document type enum: " + encodedValue);

@@ -21,8 +21,8 @@ public class CommonsEidInstantiator$EidMapperImpl implements CommonsEidInstantia
    public CommonsEidInstantiator$EidMapperImpl() {
       try {
          this.datatypeFactory = DatatypeFactory.newInstance();
-      } catch (DatatypeConfigurationException var2) {
-         throw new RuntimeException(var2);
+      } catch (DatatypeConfigurationException ex) {
+         throw new RuntimeException(ex);
       }
    }
 

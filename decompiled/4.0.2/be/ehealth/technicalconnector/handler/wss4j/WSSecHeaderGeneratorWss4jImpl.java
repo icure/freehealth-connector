@@ -55,8 +55,8 @@ public class WSSecHeaderGeneratorWss4jImpl implements AbstractWsSecurityHandler.
          this.sign = new WSSecSignature(this.wsSecHeader);
          this.sign.setAddInclusivePrefixes(false);
          return this;
-      } catch (WSSecurityException var3) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.HANDLER_ERROR, new Object[]{"unable to insert security header.", var3});
+      } catch (WSSecurityException e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.HANDLER_ERROR, new Object[]{"unable to insert security header.", e});
       }
    }
 
@@ -117,8 +117,8 @@ public class WSSecHeaderGeneratorWss4jImpl implements AbstractWsSecurityHandler.
             this.sign.computeSignature(referenceList, false, (Element)null);
          }
 
-      } catch (WSSecurityException var5) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.HANDLER_ERROR, new Object[]{"unable to insert security header.", var5});
+      } catch (WSSecurityException e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.HANDLER_ERROR, new Object[]{"unable to insert security header.", e});
       }
    }
 
@@ -142,11 +142,8 @@ public class WSSecHeaderGeneratorWss4jImpl implements AbstractWsSecurityHandler.
 
    protected List<WSEncryptionPart> generateReferencesToSign(AbstractWsSecurityHandler.SignedParts[] parts) {
       List<WSEncryptionPart> signParts = new ArrayList();
-      AbstractWsSecurityHandler.SignedParts[] var3 = parts;
-      int var4 = parts.length;
 
-      for(int var5 = 0; var5 < var4; ++var5) {
-         AbstractWsSecurityHandler.SignedParts part = var3[var5];
+      for(AbstractWsSecurityHandler.SignedParts part : parts) {
          switch (part) {
             case TIMESTAMP:
                org.apache.commons.lang3.Validate.notNull(this.wsSecTimeStamp);

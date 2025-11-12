@@ -33,7 +33,7 @@ public class GenericResponse {
    public String asString() throws TechnicalConnectorException, SOAPException {
       Node response = this.getFirstChildElement();
       if (response != null) {
-         return ConnectorXmlUtils.toString((Node)response);
+         return ConnectorXmlUtils.toString(response);
       } else {
          LOG.warn("An empty body is recieved, returning empty String");
          return "";
@@ -49,7 +49,7 @@ public class GenericResponse {
          throw new IllegalArgumentException("Class [" + clazz + "] is not annotated with @XMLRootElement");
       } else {
          this.getSOAPException();
-         MarshallerHelper<T, T> helper = new MarshallerHelper(clazz, clazz);
+         MarshallerHelper<T, T> helper = new MarshallerHelper<T, T>(clazz, clazz);
          helper.clearAttachmentPartMap();
          Iterator<AttachmentPart> attachmentPartIterator = this.message.getAttachments();
 
@@ -58,7 +58,7 @@ public class GenericResponse {
             helper.addAttachmentPart(this.getAttachmentPartId(element), element);
          }
 
-         return helper.toObject((Node)this.getFirstChildElement());
+         return (T)helper.toObject((Node)this.getFirstChildElement());
       }
    }
 
@@ -73,16 +73,14 @@ public class GenericResponse {
    public byte[] getAttachment(String cid) throws SOAPException {
       Iterator<AttachmentPart> attachmentPartIterator = this.message.getAttachments();
 
-      AttachmentPart element;
-      do {
-         if (!attachmentPartIterator.hasNext()) {
-            throw new SOAPException("Unable to find attachment with id [" + cid + "]");
+      while(attachmentPartIterator.hasNext()) {
+         AttachmentPart element = (AttachmentPart)attachmentPartIterator.next();
+         if (StringUtils.equals(this.sanitizePartId(cid), this.getAttachmentPartId(element))) {
+            return element.getRawContentBytes();
          }
+      }
 
-         element = (AttachmentPart)attachmentPartIterator.next();
-      } while(!StringUtils.equals(this.sanitizePartId(cid), this.getAttachmentPartId(element)));
-
-      return element.getRawContentBytes();
+      throw new SOAPException("Unable to find attachment with id [" + cid + "]");
    }
 
    public Source asSource() throws SOAPException {
@@ -103,8 +101,8 @@ public class GenericResponse {
                if (LOG.isErrorEnabled()) {
                   LOG.error("SOAPFault: {}", ConnectorXmlUtils.flatten(ConnectorXmlUtils.toString((Node)fault)));
                }
-            } catch (TechnicalConnectorException var3) {
-               LOG.debug("Unable to dump SOAPFault. Reason [{}]", var3.getMessage(), var3);
+            } catch (TechnicalConnectorException e) {
+               LOG.debug("Unable to dump SOAPFault. Reason [{}]", e.getMessage(), e);
             }
 
             throw new SOAPFaultException(fault);

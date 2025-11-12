@@ -33,11 +33,7 @@ public enum CDORTHOTYPEvalues {
    }
 
    public static CDORTHOTYPEvalues fromValue(String v) {
-      CDORTHOTYPEvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDORTHOTYPEvalues c = var1[var3];
+      for(CDORTHOTYPEvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

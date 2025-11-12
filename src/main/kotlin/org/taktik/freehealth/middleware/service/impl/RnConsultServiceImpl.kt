@@ -1,11 +1,21 @@
 package org.taktik.freehealth.middleware.service.impl
 
+import be.cin.types.v1.DetailType
+import be.cin.types.v1.DetailsType
+import be.cin.types.v1.FaultType
+import be.cin.types.v1.StringLangType
 import be.fgov.ehealth.commons.core.v2.Id
+import be.fgov.ehealth.commons.core.v2.Status
+import be.fgov.ehealth.commons.core.v2.StatusCode
+import be.fgov.ehealth.commons.core.v2.StatusDetail
 import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinRequest
 import be.fgov.ehealth.consultrn.ssinhistory.protocol.v1.ConsultCurrentSsinResponse
 import be.fgov.ehealth.idsupport.core.v2.IdentificationData
+import be.fgov.ehealth.idsupport.core.v2.ProviderInfo
 import be.fgov.ehealth.idsupport.protocol.v2.VerifyIdRequest
 import be.fgov.ehealth.idsupport.protocol.v2.VerifyIdResponse
+import be.fgov.ehealth.mediprima.core.v2.CbssStatusType
+import be.fgov.ehealth.mediprima.core.v2.MedicalCardRegistryStatusType
 import be.fgov.ehealth.rn.baselegaldata.v1.AddressBaseType
 import be.fgov.ehealth.rn.baselegaldata.v1.AddressDeclarationType
 import be.fgov.ehealth.rn.baselegaldata.v1.AdministratorBaseType
@@ -58,8 +68,14 @@ import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultPersonMid
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.RnConsultService
 import org.taktik.freehealth.middleware.service.STSService
+import org.w3c.dom.Element
+import org.w3c.dom.NodeList
 import java.util.*
+import javax.xml.bind.JAXBContext
 import javax.xml.ws.soap.SOAPFaultException
+import kotlin.collections.firstOrNull
+import kotlin.jvm.java
+import kotlin.let
 
 @Service
 class RnConsultServiceImpl(private val stsService: STSService) : RnConsultService {
@@ -522,6 +538,40 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
             }
         }
 
-        return verifyIdService.verifyId(verifyIdRequest, samlToken)
+        val verifyIdResponse =  verifyIdService.verifyId(verifyIdRequest, samlToken)
+
+        val response = VerifyIdResponse().apply {
+            id = verifyIdResponse.id
+            inResponseTo = verifyIdResponse.inResponseTo
+            issueInstant = verifyIdResponse.issueInstant
+            validationResult = verifyIdResponse.validationResult
+            status = Status().apply {
+                statusCode = StatusCode().apply {
+                    statusCode = StatusCode().apply {
+                        value = verifyIdResponse.status.statusCode.value
+                        statusCode = verifyIdResponse.status.statusCode.statusCode
+                    }
+                }
+                statusMessage = verifyIdResponse.status.statusMessage
+                statusDetail = StatusDetail().apply {
+                    val providerInfos: List<ProviderInfo> = verifyIdResponse.status?.statusDetail?.anies
+                        ?.filterIsInstance<Element>()
+                        ?.filter { it.localName == "ProviderInfo" }
+                        ?.map { unmarshalElement(it, ProviderInfo::class.java) }
+                        .orEmpty()
+                    anies.addAll(providerInfos)
+                }
+            }
+        }
+
+        return response;
+    }
+
+
+    fun <T> unmarshalElement(element: Element, clazz: Class<T>): T {
+        val context = JAXBContext.newInstance(clazz)
+        val unmarshaller = context.createUnmarshaller()
+        val jaxbElement = unmarshaller.unmarshal(element, clazz)
+        return jaxbElement.value
     }
 }

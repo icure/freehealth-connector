@@ -65,7 +65,7 @@ public class RequestObjectBuilderImpl implements RequestObjectBuilder, Configura
       encryptedKnownContent.setReplyToEtk(KeyDepotManagerFactory.getKeyDepotManager().getETK(KeyDepotManager.EncryptionTokenType.HOLDER_OF_KEY).getEncoded());
       BusinessContent businessContent = new BusinessContent();
       businessContent.setId(detailId);
-      MarshallerHelper<SendTransactionRequest, SendTransactionRequest> kmehrMarshallHelper = new MarshallerHelper(SendTransactionRequest.class, SendTransactionRequest.class);
+      MarshallerHelper<SendTransactionRequest, SendTransactionRequest> kmehrMarshallHelper = new MarshallerHelper<SendTransactionRequest, SendTransactionRequest>(SendTransactionRequest.class, SendTransactionRequest.class);
       businessContent.setValue(kmehrMarshallHelper.toXMLByteArray(request));
       encryptedKnownContent.setBusinessContent(businessContent);
       byte[] xmlByteArray = (new AttestEncryptionUtil()).handleEncryption(encryptedKnownContent, SessionUtil.getHolderOfKeyCrypto(), detailId);

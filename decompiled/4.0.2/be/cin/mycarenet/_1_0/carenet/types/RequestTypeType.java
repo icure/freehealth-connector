@@ -25,11 +25,7 @@ public enum RequestTypeType {
    }
 
    public static RequestTypeType fromValue(String v) {
-      RequestTypeType[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         RequestTypeType c = var1[var3];
+      for(RequestTypeType c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

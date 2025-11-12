@@ -8,7 +8,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -59,21 +58,15 @@ public class SignatureVerificationResult implements Serializable {
    }
 
    public DateTime getVerifiedSigningTime(int amount, TimeUnit unit) {
-      Iterator var3 = this.timestampGenTime.iterator();
-
-      DateTime start;
-      DateTime end;
-      do {
-         if (!var3.hasNext()) {
-            return new DateTime();
+      for(DateTime genTime : this.timestampGenTime) {
+         DateTime start = genTime.minus(unit.toMillis((long)amount));
+         DateTime end = genTime.plus(unit.toMillis((long)amount));
+         if (!this.signingTime.isBefore(start) && !this.signingTime.isAfter(end)) {
+            return this.signingTime;
          }
+      }
 
-         DateTime genTime = (DateTime)var3.next();
-         start = genTime.minus(unit.toMillis((long)amount));
-         end = genTime.plus(unit.toMillis((long)amount));
-      } while(this.signingTime.isBefore(start) || this.signingTime.isAfter(end));
-
-      return this.signingTime;
+      return new DateTime();
    }
 
    public List<TimeStampToken> getTsTokens() {
@@ -86,10 +79,8 @@ public class SignatureVerificationResult implements Serializable {
 
    private void writeObject(ObjectOutputStream out) throws IOException {
       this.serTsTokens = new ArrayList();
-      Iterator var2 = this.tsTokens.iterator();
 
-      while(var2.hasNext()) {
-         TimeStampToken tsToken = (TimeStampToken)var2.next();
+      for(TimeStampToken tsToken : this.tsTokens) {
          this.serTsTokens.add(ArrayUtils.toObject(tsToken.getEncoded()));
       }
 
@@ -101,15 +92,11 @@ public class SignatureVerificationResult implements Serializable {
       in.defaultReadObject();
       this.tsTokens = new ArrayList();
       if (this.serTsTokens != null) {
-         Iterator var2 = this.serTsTokens.iterator();
-
-         while(var2.hasNext()) {
-            Byte[] serToken = (Byte[])var2.next();
-
+         for(Byte[] serToken : this.serTsTokens) {
             try {
                this.tsTokens.add(TimestampUtil.getTimeStampToken(ArrayUtils.toPrimitive(serToken)));
-            } catch (TechnicalConnectorException var5) {
-               throw new IOException(var5);
+            } catch (TechnicalConnectorException e) {
+               throw new IOException(e);
             }
          }
       }

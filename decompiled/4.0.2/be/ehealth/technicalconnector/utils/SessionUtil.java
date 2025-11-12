@@ -13,7 +13,6 @@ import be.ehealth.technicalconnector.session.SessionManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
@@ -191,18 +190,13 @@ public final class SessionUtil {
    }
 
    public static boolean containsCaseInsensitive(String strToCompare, List<String> list) {
-      Iterator var2 = list.iterator();
-
-      String str;
-      do {
-         if (!var2.hasNext()) {
-            return false;
+      for(String str : list) {
+         if (str.equalsIgnoreCase(strToCompare)) {
+            return true;
          }
+      }
 
-         str = (String)var2.next();
-      } while(!str.equalsIgnoreCase(strToCompare));
-
-      return true;
+      return false;
    }
 
    public static Map<String, List<String>> getMatchingAttributes(String attributeNamePattern) throws TechnicalConnectorException {

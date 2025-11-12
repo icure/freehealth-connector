@@ -403,6 +403,6 @@ public class ObjectFactory {
       name = "OriginalDetailFile"
    )
    public JAXBElement<byte[]> createOriginalDetailFile(byte[] value) {
-      return new JAXBElement(_OriginalDetailFile_QNAME, byte[].class, (Class)null, (byte[])value);
+      return new JAXBElement(_OriginalDetailFile_QNAME, byte[].class, (Class)null, value);
    }
 }

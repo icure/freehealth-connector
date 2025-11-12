@@ -336,6 +336,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
+        isPatientRcam: Boolean,
         referenceDate: Long?,
         attemptNbr: Int?,
         decisionReference: String?,
@@ -476,6 +477,9 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                 this.routing = RoutingType().apply {
                     careReceiver = CareReceiverIdType().apply {
                         ssin = patientSsin
+                        if(isPatientRcam){
+                            mutuality = "rcam"
+                        }
                     }
                     this.referenceDate = refDateTime
                 }
@@ -1063,18 +1067,66 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                             familyname = req.hcp!!.lastName ?: ""
                                         }
                                     },
-                                                           ContentType().apply {
-                                                               date = dateTime(req.date)
-                                                                   ?: theDayBeforeRefDate
-                                                           },
-                                                           code.requestorNorm?.let { norm ->
-                                                               ContentType().apply {
-                                                                   this.cds.add(CDCONTENT().apply {
-                                                                       s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
-                                                                       "NIHDI-REQUESTOR-NORM"; value = norm.toString()
-                                                                   })
-                                                               }
-                                                           }).filterNotNull())
+                                       ContentType().apply {
+                                           date = dateTime(req.date)
+                                               ?: theDayBeforeRefDate
+                                       },
+                                       code.requestorNorm?.let { norm ->
+                                           ContentType().apply {
+                                               this.cds.add(CDCONTENT().apply {
+                                                   s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl =
+                                                   "NIHDI-REQUESTOR-NORM"; value = norm.toString()
+                                               })
+                                           }
+                                       }).filterNotNull())
+                                }
+                            }, code.takeIf { it.requestor == null && it.requestorNorm == 3 }?.let {
+                                ItemType().apply {
+                                    ids.add(IDKMEHR().apply {
+                                        s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                        (itemId++).toString()
+                                    })
+                                    cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.11"; value = "requestor" })
+                                    contents.add(
+                                        ContentType().apply {
+                                            cds.add(CDCONTENT().apply {
+                                                s = CDCONTENTschemes.LOCAL
+                                                sv = "1.0"
+                                                sl = "NIHDI-REQUESTOR-NORM"
+                                                value = it.requestorNorm.toString()
+                                            })
+                                        }
+                                    )
+                                }
+                            } ?: run {
+                                code.requestorNorm?.let { norm ->
+                                    ItemType().apply {
+                                        ids.add(IDKMEHR().apply {
+                                            s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                            (itemId++).toString()
+                                        })
+                                        cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.11"; value = "requestor" })
+                                        contents.addAll(listOf(ContentType().apply {
+                                            cds.add(CDCONTENT().apply {
+                                                s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl = "NIHDI-REQUESTOR-NORM"; value = norm.toString()
+                                            })
+                                        }))
+                                    }
+                                }
+                            } ?: run {
+                                code.requestorNorm?.let { norm ->
+                                    ItemType().apply {
+                                        ids.add(IDKMEHR().apply {
+                                            s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                            (itemId++).toString()
+                                        })
+                                        cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.11"; value = "requestor" })
+                                        contents.addAll(listOf(ContentType().apply {
+                                            cds.add(CDCONTENT().apply {
+                                                s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl = "NIHDI-REQUESTOR-NORM"; value = norm.toString()
+                                            })
+                                        }))
+                                    }
                                 }
                             } ?: run {
                                 code.requestorNorm?.let { norm ->

@@ -48,7 +48,7 @@ public class AttributeValue {
    public <T> T asObject(Class<T> clazz) throws TechnicalConnectorException {
       Validate.notNull(clazz);
       if (this.value.getClass().isAssignableFrom(clazz)) {
-         return this.value;
+         return (T)this.value;
       } else {
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, new Object[]{"Unable to cast object to disered type [" + clazz.getName() + "]"});
       }

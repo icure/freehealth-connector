@@ -47,7 +47,6 @@ public class IdSupportServiceImpl implements IdSupportService {
          GenericRequest genericRequest = ServiceFactory.getIdSupportV2Service(samlToken);
          genericRequest.setPayload((Object)verifyIdRequest);
          VerifyIdResponse response = (VerifyIdResponse)org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(genericRequest).asObject(VerifyIdResponse.class);
-         this.validator.validateReplyStatus((StatusResponseType)response);
          return response;
       } catch (SOAPException var4) {
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, new Object[]{var4.getMessage(), var4});

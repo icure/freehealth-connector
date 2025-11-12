@@ -70,11 +70,11 @@ public class CmsSignatureBuilder extends AbstractSignatureBuilder implements Sig
          }
 
          return this.verify(signedData, options);
-      } catch (CMSException var7) {
-         LOG.error("Unable to verify signature", var7);
+      } catch (CMSException e) {
+         LOG.error("Unable to verify signature", e);
          result.getErrors().add(SignatureVerificationError.SIGNATURE_COULD_NOT_BE_VERIFIED);
-      } catch (IOException var8) {
-         LOG.error("Unable to verify signature", var8);
+      } catch (IOException e) {
+         LOG.error("Unable to verify signature", e);
          result.getErrors().add(SignatureVerificationError.SIGNATURE_COULD_NOT_BE_VERIFIED);
       }
 
@@ -92,16 +92,14 @@ public class CmsSignatureBuilder extends AbstractSignatureBuilder implements Sig
          CMSSignedData signedData = new CMSSignedData(signedByteArray);
          this.extractChain(result, signedData);
          this.validateChain(result, options);
-         Iterator<SignerInformation> signerInfos = signedData.getSignerInfos().iterator();
 
-         while(signerInfos.hasNext()) {
-            SignerInformation signer = (SignerInformation)signerInfos.next();
+         for(SignerInformation signer : signedData.getSignerInfos()) {
             if (!signer.verify(verifierBuilder.build(result.getSigningCert().getPublicKey()))) {
                result.getErrors().add(SignatureVerificationError.SIGNATURE_COULD_NOT_BE_VERIFIED);
             }
          }
-      } catch (Exception var7) {
-         LOG.error("Unable to verify signature", var7);
+      } catch (Exception e) {
+         LOG.error("Unable to verify signature", e);
          result.getErrors().add(SignatureVerificationError.SIGNATURE_COULD_NOT_BE_VERIFIED);
       }
 
@@ -137,9 +135,9 @@ public class CmsSignatureBuilder extends AbstractSignatureBuilder implements Sig
 
          boolean encapsulate = (Boolean)SignatureUtils.getOption("encapsulate", optionMap, Boolean.FALSE);
          return generator.generate(content, encapsulate).getEncoded();
-      } catch (Exception var14) {
-         LOG.error(var14.getMessage(), var14);
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_SIGNATURE, var14, new Object[]{var14.getClass().getSimpleName() + " : " + var14.getMessage()});
+      } catch (Exception e) {
+         LOG.error(e.getMessage(), e);
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_SIGNATURE, e, new Object[]{e.getClass().getSimpleName() + " : " + e.getMessage()});
       }
    }
 

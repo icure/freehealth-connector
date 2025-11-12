@@ -86,8 +86,8 @@ public class ProjectMessageValidatorImpl implements ProjectMessageValidator, Con
             }
          }
 
-      } catch (TechnicalConnectorException var9) {
-         throw new IllegalArgumentException("Unable to load schematron directory", var9);
+      } catch (TechnicalConnectorException e) {
+         throw new IllegalArgumentException("Unable to load schematron directory", e);
       }
    }
 

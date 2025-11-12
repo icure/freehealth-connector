@@ -116,7 +116,7 @@ public class ObjectFactory {
       name = "DigestValue"
    )
    public JAXBElement<byte[]> createDigestValue(byte[] value) {
-      return new JAXBElement(_DigestValue_QNAME, byte[].class, (Class)null, (byte[])value);
+      return new JAXBElement(_DigestValue_QNAME, byte[].class, (Class)null, value);
    }
 
    @XmlElementDecl(
@@ -168,7 +168,7 @@ public class ObjectFactory {
       scope = X509Data.class
    )
    public JAXBElement<byte[]> createX509DataX509SKI(byte[] value) {
-      return new JAXBElement(_X509DataX509SKI_QNAME, byte[].class, X509Data.class, (byte[])value);
+      return new JAXBElement(_X509DataX509SKI_QNAME, byte[].class, X509Data.class, value);
    }
 
    @XmlElementDecl(
@@ -186,7 +186,7 @@ public class ObjectFactory {
       scope = X509Data.class
    )
    public JAXBElement<byte[]> createX509DataX509Certificate(byte[] value) {
-      return new JAXBElement(_X509DataX509Certificate_QNAME, byte[].class, X509Data.class, (byte[])value);
+      return new JAXBElement(_X509DataX509Certificate_QNAME, byte[].class, X509Data.class, value);
    }
 
    @XmlElementDecl(
@@ -195,7 +195,7 @@ public class ObjectFactory {
       scope = X509Data.class
    )
    public JAXBElement<byte[]> createX509DataX509CRL(byte[] value) {
-      return new JAXBElement(_X509DataX509CRL_QNAME, byte[].class, X509Data.class, (byte[])value);
+      return new JAXBElement(_X509DataX509CRL_QNAME, byte[].class, X509Data.class, value);
    }
 
    @XmlElementDecl(
@@ -204,6 +204,6 @@ public class ObjectFactory {
       scope = SPKIData.class
    )
    public JAXBElement<byte[]> createSPKIDataSPKISexp(byte[] value) {
-      return new JAXBElement(_SPKIDataSPKISexp_QNAME, byte[].class, SPKIData.class, (byte[])value);
+      return new JAXBElement(_SPKIDataSPKISexp_QNAME, byte[].class, SPKIData.class, value);
    }
 }

@@ -1,8 +1,10 @@
 package org.taktik.freehealth.middleware.service
 
-import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponse
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponseType
+import org.taktik.connector.business.domain.etarif.TarificationMediprimaConsultationResult
+import org.taktik.freehealth.middleware.domain.mediprima.MediprimaMdaResponse
 import java.time.Instant
+import java.time.LocalDateTime
 import java.util.*
 
 interface MediprimaService {
@@ -18,5 +20,21 @@ interface MediprimaService {
         startDate: Instant,
         endDate: Instant,
         referenceDate: Instant
-    ): ConsultCarmedInterventionResponseType?
+    ): MediprimaMdaResponse?
+
+    fun consultTarif(
+        keystoreId: UUID,
+        tokenId: UUID,
+        hcpFirstName: String,
+        hcpLastName: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        passPhrase: String,
+        patientSsin: String?,
+        consultationDate: LocalDateTime,
+        traineeSupervisorSsin: String?,
+        traineeSupervisorNihii: String?,
+        traineeSupervisorFirstName: String?,
+        traineeSupervisorLastName: String?,
+        codes: List<String>): TarificationMediprimaConsultationResult?
 }

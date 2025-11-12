@@ -27,11 +27,7 @@ public enum UsageType {
    }
 
    public static UsageType fromValue(String v) {
-      UsageType[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         UsageType c = var1[var3];
+      for(UsageType c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

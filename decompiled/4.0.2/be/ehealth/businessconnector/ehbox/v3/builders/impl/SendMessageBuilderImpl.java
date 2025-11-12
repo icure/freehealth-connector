@@ -36,7 +36,6 @@ import be.fgov.ehealth.ehbox.publication.protocol.v3.SendMessageRequest;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -114,11 +113,7 @@ public class SendMessageBuilderImpl implements SendMessageBuilder {
 
    private void processCustomMetas(ContentContextType content, Map<String, String> customMetas) {
       if (customMetas.keySet().size() > 0) {
-         Set<String> keySet = customMetas.keySet();
-         Iterator var4 = keySet.iterator();
-
-         while(var4.hasNext()) {
-            String key = (String)var4.next();
+         for(String key : customMetas.keySet()) {
             String value = (String)customMetas.get(key);
             CustomMetaType meta = new CustomMetaType();
             meta.setKey(key);
@@ -199,10 +194,8 @@ public class SendMessageBuilderImpl implements SendMessageBuilder {
    private Table fillEncryptableTable(String tableTitle, Map<String, String> tableRows, boolean isDocumentEncrypted, Set<EncryptionToken> destinationEtkSet) throws IOException, TechnicalConnectorException, EhboxBusinessConnectorException, UnsupportedEncodingException {
       Table table = new Table();
       table.setTitle(tableTitle);
-      Iterator var6 = tableRows.keySet().iterator();
 
-      while(var6.hasNext()) {
-         String rowKey = (String)var6.next();
+      for(String rowKey : tableRows.keySet()) {
          String rowValue = (String)tableRows.get(rowKey);
          Row row = new Row();
          row.setEncryptableLeftCell(this.encode(rowKey, isDocumentEncrypted, destinationEtkSet));
@@ -222,10 +215,7 @@ public class SendMessageBuilderImpl implements SendMessageBuilder {
    }
 
    private void processAnnexes(List<Document> annexList, boolean isDocumentEncrypted, Set<EncryptionToken> destinationEtkSet, PublicationContentType contentType) throws IOException, TechnicalConnectorException, EhboxBusinessConnectorException, UnsealConnectorException, UnsupportedEncodingException {
-      Iterator var5 = annexList.iterator();
-
-      while(var5.hasNext()) {
-         Document annex = (Document)var5.next();
+      for(Document annex : annexList) {
          PublicationAnnexType annexType = new PublicationAnnexType();
          annexType.setDownloadFileName(annex.getFilename());
          byte[] dataToSend = this.encode(annex.getContent(), isDocumentEncrypted, destinationEtkSet);
@@ -251,10 +241,7 @@ public class SendMessageBuilderImpl implements SendMessageBuilder {
    }
 
    private void processDestinations(be.ehealth.businessconnector.ehbox.api.domain.Message<Message> document, SendMessageRequest sendMessageRequest, Set<EncryptionToken> destinationEtkSet) throws TechnicalConnectorException, EhboxBusinessConnectorException {
-      Iterator var4 = document.getDestinations().iterator();
-
-      while(var4.hasNext()) {
-         Addressee addressee = (Addressee)var4.next();
+      for(Addressee addressee : document.getDestinations()) {
          DestinationContextType destination = this.buildDestination(addressee);
          sendMessageRequest.getDestinationContexts().add(destination);
          if (document.isEncrypted()) {
@@ -322,7 +309,6 @@ public class SendMessageBuilderImpl implements SendMessageBuilder {
 
    private byte[] encode(byte[] content, boolean encrypted, Set<EncryptionToken> tokens) throws TechnicalConnectorException, EhboxBusinessConnectorException {
       byte[] byteVal = null;
-      byte[] byteVal;
       if (encrypted && content != null && content.length != 0) {
          byteVal = SessionUtil.getEncryptionCrypto().seal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, tokens, content);
       } else {

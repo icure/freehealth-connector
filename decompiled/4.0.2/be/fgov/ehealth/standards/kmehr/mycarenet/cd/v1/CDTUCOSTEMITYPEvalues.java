@@ -45,11 +45,7 @@ public enum CDTUCOSTEMITYPEvalues {
    }
 
    public static CDTUCOSTEMITYPEvalues fromValue(String v) {
-      CDTUCOSTEMITYPEvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDTUCOSTEMITYPEvalues c = var1[var3];
+      for(CDTUCOSTEMITYPEvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

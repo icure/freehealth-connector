@@ -30,11 +30,7 @@ public enum IDKMEHRschemes {
    }
 
    public static IDKMEHRschemes fromValue(String v) {
-      IDKMEHRschemes[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         IDKMEHRschemes c = var1[var3];
+      for(IDKMEHRschemes c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

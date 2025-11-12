@@ -42,10 +42,10 @@ public class Utils {
          URLConnection conn = url.openConnection();
          conn.connect();
          is = conn.getInputStream();
-         byte[] ba = getBytesToEndOfStream(is, true);
+         ba = getBytesToEndOfStream(is, true);
          return ba;
-      } catch (IOException var4) {
-         LOG.warn(var4.getMessage());
+      } catch (IOException e) {
+         LOG.warn(e.getMessage());
          return null;
       }
    }
@@ -87,8 +87,8 @@ public class Utils {
          if (is != null) {
             is.close();
          }
-      } catch (Exception var2) {
-         LOG.warn(var2.getMessage());
+      } catch (Exception e) {
+         LOG.warn(e.getMessage());
       }
 
    }
@@ -98,8 +98,8 @@ public class Utils {
          if (os != null) {
             os.close();
          }
-      } catch (Exception var2) {
-         LOG.warn(var2.getMessage());
+      } catch (Exception e) {
+         LOG.warn(e.getMessage());
       }
 
    }
@@ -119,8 +119,8 @@ public class Utils {
          }
 
          transferBytesToEndOfStream(is, fos, flags);
-      } catch (FileNotFoundException var7) {
-         throw new RuntimeException("File not found when writing: ", var7);
+      } catch (FileNotFoundException e) {
+         throw new RuntimeException("File not found when writing: ", e);
       }
    }
 
@@ -138,8 +138,8 @@ public class Utils {
          fos = new FileOutputStream(f);
          bis = new ByteArrayInputStream(ba);
          transferBytesToEndOfStream(bis, fos, 17);
-      } catch (FileNotFoundException var7) {
-         throw new RuntimeException("File not found when writing: ", var7);
+      } catch (FileNotFoundException e) {
+         throw new RuntimeException("File not found when writing: ", e);
       }
    }
 

@@ -21,21 +21,15 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import io.swagger.annotations.ApiOperation
+import org.apache.commons.lang.StringEscapeUtils
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import org.taktik.freehealth.middleware.dto.UUIDType
 import org.taktik.freehealth.middleware.service.SSOService
 import org.taktik.freehealth.middleware.service.STSService
-import java.util.UUID
+import java.util.*
 
 @RestController
 @RequestMapping("/sts")
@@ -102,8 +96,13 @@ class STSController(private val stsService: STSService, private val ssoService: 
         notes = "Uses a previously obtained SAML token to get a Bearer token. The tokenId is used to identify the SAML token, and the passPhrase is used to decrypt the keystore file. The ssin is the social security number of the user, and the keystoreId is the UUID of the keystore file. This endpoint is useful for obtaining a Bearer token that can be used for API authentication."
     )
     @GetMapping("/token/bearer", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun getBearerToken(@RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam ssin: String, @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID) =
-        ssoService.getBearerToken(tokenId, keystoreId, passPhrase)
+    fun getBearerToken(
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam ssin: String,
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestParam(required = false) destination: String?
+    ) = ssoService.getBearerToken(tokenId, keystoreId, passPhrase, destination?.let { StringEscapeUtils.escapeXml(it)})
 
     @ApiOperation(
         value = "Get a OAuth2 token from a SAML token",
@@ -117,5 +116,4 @@ class STSController(private val stsService: STSService, private val ssoService: 
         @PathVariable(name = "cbe") cbe: String,
         @PathVariable(name = "kid") kid: String
     ) = ssoService.getOauth2Token(tokenId, keystoreId, passPhrase, cbe, kid)
-
 }

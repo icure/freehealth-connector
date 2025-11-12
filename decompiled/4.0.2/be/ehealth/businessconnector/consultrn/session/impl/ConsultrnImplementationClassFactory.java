@@ -14,7 +14,7 @@ public class ConsultrnImplementationClassFactory extends ImplementationClassFact
 
    public <T> T createImplementationClass(Class<T> clazz, SessionValidator sessionValidator, EhealthReplyValidator replyValidator, String... additionalParameters) throws TechnicalConnectorException {
       if (clazz.equals(ConsultrnSessionServiceImpl.class) && additionalParameters.length == 0) {
-         return new ConsultrnSessionServiceImpl(sessionValidator, ValidatorFactory.getEhealthReplyValidator("be.ehealth.businessconnector.consultrn.v3.validator"));
+         return (T)(new ConsultrnSessionServiceImpl(sessionValidator, ValidatorFactory.getEhealthReplyValidator("be.ehealth.businessconnector.consultrn.v3.validator")));
       } else {
          throw new UnsupportedOperationException("class " + clazz + " not supported");
       }

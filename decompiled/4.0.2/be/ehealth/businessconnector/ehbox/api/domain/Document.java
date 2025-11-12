@@ -42,9 +42,9 @@ public class Document implements Serializable {
          fos = new FileOutputStream(file);
          fos.write(this.content);
          fos.flush();
-      } catch (IOException var8) {
+      } catch (IOException e) {
          LOG.debug("\t## " + MessageFormat.format(EhboxBusinessConnectorExceptionValues.ERROR_EHBOX_DOCUMENT_OUTPUTSTREAM.getMessage(), file.toURI()));
-         throw new EhboxBusinessConnectorException(EhboxBusinessConnectorExceptionValues.ERROR_EHBOX_DOCUMENT_OUTPUTSTREAM, var8, new Object[]{file.toURI()});
+         throw new EhboxBusinessConnectorException(EhboxBusinessConnectorExceptionValues.ERROR_EHBOX_DOCUMENT_OUTPUTSTREAM, e, new Object[]{file.toURI()});
       } finally {
          ConnectorIOUtils.closeQuietly((Object)fos);
       }

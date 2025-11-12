@@ -42,14 +42,14 @@ public final class DistributedKeyStoreRegistry implements Serializable {
 
          this.distributedKeyStores.put(key, store);
          return store;
-      } catch (IOException var5) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var5, new Object[]{var5.getMessage()});
-      } catch (KeyStoreException var6) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var6, new Object[]{var6.getMessage()});
-      } catch (NoSuchAlgorithmException var7) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var7, new Object[]{var7.getMessage()});
-      } catch (CertificateException var8) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var8, new Object[]{var8.getMessage()});
+      } catch (IOException e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{e.getMessage()});
+      } catch (KeyStoreException e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{e.getMessage()});
+      } catch (NoSuchAlgorithmException e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{e.getMessage()});
+      } catch (CertificateException e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{e.getMessage()});
       }
    }
 

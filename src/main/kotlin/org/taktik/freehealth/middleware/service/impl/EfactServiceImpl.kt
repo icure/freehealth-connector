@@ -12,6 +12,7 @@ import be.cin.mycarenet.esb.common.v2.ValueRefString
 import be.cin.nip.async.generic.GetResponse
 import be.cin.nip.async.generic.Post
 import be.cin.nip.async.generic.PostResponse
+import be.cin.types.v1.Blob
 import ma.glasnost.orika.MapperFacade
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.io.IOUtils
@@ -62,8 +63,9 @@ import kotlin.Comparator
 class EfactServiceImpl(private val stsService: STSService, private val mapper: MapperFacade) : EfactService {
     private val config = ConfigFactory.getConfigValidator(listOf())
     private val genAsyncService = GenAsyncServiceImpl("invoicing")
+    private val genAsyncServiceMediprima = GenAsyncServiceImpl("invoicing-mediprima")
 
-    override fun makeFlatFile(batch: InvoicesBatch, isTest: Boolean): String {
+    override fun makeFlatFile(batch: InvoicesBatch, isTest: Boolean, isMediprima: Boolean): String {
         require(batch.numericalRef?.let { it <= 99999999999999L } ?: false) { batch.numericalRef?.let { "numericalRef is too long (14 positions max)" } ?: "numericalRef is missing" }
         requireNotNull(batch.sender) { "Sender cannot be null" }
         requireNotNull(batch.batchRef) { "BatchRef cannot be null" }
@@ -83,7 +85,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         try {
             iv.write200and300(batch.sender!!, batch.numericalRef
                 ?: 0, batch.fileRef!!, if (isTest) 92 else 12, batch.uniqueSendNumber!!, batch.invoicingYear, batch.invoicingMonth, isTest)
-            val metadata = makeFlatFileCore(iv, batch, isTest)
+            val metadata = makeFlatFileCore(iv, batch, isMediprima, isTest)
 
             for (k in metadata.codesPerOAMap.keys) {
                 iv.write400(k, batch.numericalRef, metadata.recordsCountPerOAMap[k]!![0], metadata.codesPerOAMap[k]!!, metadata.amountPerOAMap[k]!![0])
@@ -97,7 +99,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
     }
 
 
-    override fun makeFlatFileCoreWithMetadata(batch: InvoicesBatch, isTest: Boolean): FlatFileWithMetadata {
+    override fun makeFlatFileCoreWithMetadata(batch: InvoicesBatch, isTest: Boolean, isMediprima: Boolean): FlatFileWithMetadata {
         require(batch.numericalRef?.let { it <= 99999999999999L } ?: false) { batch.numericalRef?.let { "numericalRef is too long (14 positions max)" } ?: "numericalRef is missing" }
         requireNotNull(batch.sender) { "Sender cannot be null" }
         requireNotNull(batch.batchRef) { "BatchRef cannot be null" }
@@ -114,7 +116,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         val iv = BelgianInsuranceInvoicingFormatWriter(stringWriter)
 
         val metadata = try {
-            this.makeFlatFileCore(iv, batch, isTest)
+            this.makeFlatFileCore(iv, batch, isMediprima, isTest)
         } catch (e: IOException) {
             throw IllegalArgumentException(e)
         }
@@ -124,6 +126,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
     fun makeFlatFileCore(iv: BelgianInsuranceInvoicingFormatWriter,
         batch: InvoicesBatch,
+        isMediprima: Boolean,
         isTest: Boolean): FlatFileWithMetadata.FlatFileMetadata {
         val metadata = FlatFileWithMetadata.FlatFileMetadata()
 
@@ -151,6 +154,9 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                 rn =
                     iv.writeRecordHeader(rn, batch.sender!!, invoice.invoiceNumber!!, invoice.reason!!, invoice.invoiceRef!!, invoice.patient!!, invoice.ioCode!!, invoice.ignorePrescriptionDate, invoice.hospitalisedPatient, invoice.creditNote, invoice.relatedBatchSendNumber, invoice.relatedBatchYearMonth, invoice.relatedInvoiceIoCode, invoice.relatedInvoiceNumber, batch.magneticInvoice, invoice.startOfCoveragePeriod, invoice.admissionDate, invoice.locationNihii, invoice.locationService)
                 recordsCountPerOA[0]++
+                if(isMediprima){
+                    rn = iv.writeMediprimaRecord(rn, batch.sender!!, invoice)
+                }
                 metadata.recordsCount++
                 for (it in invoice.items) {
                     it.gnotionNihii = it.gnotionNihii ?: invoice.gnotionNihii
@@ -162,7 +168,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
                     if (it.insuranceRef != null) {
                         rn =
-                            iv.writeInvolvementRecordContent(rn, batch.sender!!, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, it)
+                            iv.writeInvolvementRecordContent(rn, batch.sender!!, batch.invoicingYear, batch.invoicingMonth, invoice.patient!!, it, isMediprima)
                         recordCodes.add(it.codeNomenclature)
                         recordsCountPerOA[0]++
                         metadata.recordsCount++
@@ -232,17 +238,18 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
         val fed = sanitizedBatch.ioFederationCode
         val inputReference = "" + DecimalFormat("00000000000000").format(sanitizedBatch.numericalRef ?: 0)
-        val content = makeFlatFile(sanitizedBatch, isTest)
+        val isMediprima = batch.ioFederationCode == "690"
+        val content = makeFlatFile(sanitizedBatch, isTest, isMediprima)
 
         val requestObjectBuilder = try {
-            BuilderFactory.getRequestObjectBuilder("invoicing")
+            BuilderFactory.getRequestObjectBuilder(if(fed == "690") "invoicing-mediprima" else "invoicing")
         } catch (e: Exception) {
             throw IllegalArgumentException(e)
         }
 
-        val blob = RequestBuilderFactory.getBlobBuilder("invoicing").build(content.toByteArray(Charsets.UTF_8))
+        val blob = RequestBuilderFactory.getBlobBuilder(if(fed == "690") "invoicing-mediprima" else "invoicing").build(content.toByteArray(Charsets.UTF_8))
 
-        val messageName = "HCPFAC" // depends on content of message HCPFAC HCPAFD or HCPVWR
+        val messageName = if(fed == "690") "ECM-HCPFAC" else "HCPFAC" // depends on content of message HCPFAC HCPAFD HCPVWR OR ECM-HCPFACT
         blob.messageName = messageName
 
         // Creation of the request
@@ -257,12 +264,13 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                     sanitizedBatch.sender!!.nihii!!.toString().padEnd(11, '0'),
                     sanitizedBatch.sender!!.ssin!!.toString(),
                     sanitizedBatch.sender!!.firstName!!,
-                    sanitizedBatch.sender!!.lastName!!
+                    sanitizedBatch.sender!!.lastName!!,
+                    fed == "690"
                 )
             this.inputReference = inputReference
         }
 
-        val xades = BlobUtil.generateXades(credential, SendRequestMapper.mapBlobToBlobType(blob), "invoicing").value
+        val xades = BlobUtil.generateXades(credential, SendRequestMapper.mapBlobToBlobType(blob), if(fed == "690") "invoicing-mediprima" else "invoicing").value
 
         val post = requestObjectBuilder.buildPostRequest(ci, SendRequestMapper.mapBlobToCinBlob(blob), xades)
         val header: WsAddressingHeader
@@ -276,7 +284,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             throw IllegalStateException(e)
         }
 
-        val postResponse = genAsyncService.postRequest(samlToken, post, header)
+        val postResponse = if(isMediprima) genAsyncServiceMediprima.postRequest(samlToken, post, header) else genAsyncService.postRequest(samlToken, post, header)
 
         val tack = postResponse.getReturn()
         val success = tack.resultMajor != null && tack.resultMajor == "urn:nip:tack:result:major:success"
@@ -323,7 +331,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
             request = be.cin.mycarenet.esb.common.v2.RequestType().apply {
                 isIsTest = isTest
             }
-            origin = buildOriginType(samlToken.quality, hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
+            origin = buildOriginType(samlToken.quality, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, false)
             this.inputReference = inputReference
         }
 
@@ -377,7 +385,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                     try {
                         detail =
                             String(ConnectorIOUtils.decompress(IOUtils.toByteArray(r.detail.value.inputStream)), Charsets.UTF_8) //This starts with 92...
-
+                        messageReference = r?.detail?.reference
                         message = BelgianInsuranceInvoicingFormatReader(language).parse(StringReader(this.detail!!))?.map {
                             Record(mapper.map(it.description, RecordOrSegmentDescription::class.java), it.zones.map { z -> Zone(mapper.map(z.zoneDescription, ZoneDescription::class.java), z.value)}, mapper.map(it.errorDetail, ErrorDetail::class.java))
                         }
@@ -402,6 +410,117 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         return eFactMessages
     }
 
+    override fun loadMediprimaMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        language: String,
+        limit: Int
+    ): List<EfactMessage> {
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for Mediprima Efact operations")
+
+        val isTest = config.getProperty("endpoint.mcn.tarification").contains("-acpt")
+
+        requireNotNull(keystoreId) { "Keystore id cannot be null" }
+        requireNotNull(tokenId) { "Token id cannot be null" }
+
+        val inputReference = "" + System.currentTimeMillis()
+        val requestObjectBuilder = try {
+            BuilderFactory.getRequestObjectBuilder("invoicing-mediprima")
+        } catch (e: Exception) {
+            throw IllegalArgumentException(e)
+        }
+
+        val ci = CommonInput().apply {
+            request = be.cin.mycarenet.esb.common.v2.RequestType().apply {
+                isIsTest = isTest
+            }
+            origin = buildOriginType(samlToken.quality, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, true)
+            this.inputReference = inputReference
+        }
+
+        val header = try {
+            WsAddressingHeader(URI("urn:be:cin:nip:async:generic:get:query")).apply {
+                faultTo = "http://www.w3.org/2005/08/addressing/anonymous"
+                replyTo = "http://www.w3.org/2005/08/addressing/anonymous"
+                messageID = URI("" + UUID.randomUUID())
+            }
+        } catch (e: URISyntaxException) {
+            throw IllegalStateException(e)
+        }
+
+        var batchSize = Math.min(64, limit)
+        var retries = 8
+
+        val eFactMessages = ArrayList<EfactMessage>()
+
+        while (retries-- > 0) {
+            val msgQuery = requestObjectBuilder.createMsgQuery(batchSize, true, "ECM-HCPFAC", "ECM-HCPAFD", "ECM-HCPVWR")
+            val query = requestObjectBuilder.createQuery(batchSize, true)
+
+            val getResponse: GetResponse
+            try {
+                getResponse =
+                    genAsyncServiceMediprima.getRequest(samlToken, requestObjectBuilder.buildGetRequest(ci.origin, msgQuery, query), header)
+            } catch (e: TechnicalConnectorException) {
+                if ((e.message?.contains("SocketTimeout") == true) && batchSize > 1) {
+                    batchSize /= 4
+                    continue
+                }
+                throw IllegalStateException(e)
+            } catch (e: SOAPFaultException) {
+                if (e.message?.contains("Not enough time") == true) {
+                    Thread.sleep(30000)
+                    continue
+                }
+                throw IllegalStateException(e)
+            }
+
+            eFactMessages += getResponse.getReturn().msgResponses.map { r ->
+                EfactMessage().apply {
+                    id = r.detail.id
+                    name = r.detail.messageName
+
+                    commonOutput = CommonOutput().apply {
+                        this.inputReference = r.commonOutput.inputReference
+                        this.nipReference = r.commonOutput.nipReference
+                        this.outputReference = r.commonOutput.outputReference
+                    }
+                    try {
+                        detail =
+                            String(ConnectorIOUtils.decompress(IOUtils.toByteArray(r.detail.value.inputStream)), Charsets.UTF_8) //This starts with 92...
+                        messageReference = r?.detail?.reference
+                        message = BelgianInsuranceInvoicingFormatReader(language).parse(StringReader(this.detail!!))?.map {
+                            Record(mapper.map(it.description, RecordOrSegmentDescription::class.java), it.zones.map { z -> Zone(mapper.map(z.zoneDescription, ZoneDescription::class.java), z.value)}, mapper.map(it.errorDetail, ErrorDetail::class.java))
+                        }
+                        xades = Base64.encodeBase64String(r.xadesT.value)
+                        hashValue = Base64.encodeBase64String(r.detail.hashValue)
+                    } catch (e: IOException) {}
+                }
+            } + getResponse.getReturn().tAckResponses.map { r ->
+                EfactMessage().apply {
+                    id = r.tAck.appliesTo.replace("urn:nip:reference:input:".toRegex(), "")
+                    name = "tAck"
+                    try {
+                        tAck = r.tAck
+                        xades = Base64.encodeBase64String(r.xadesT.value)
+                        hashValue = Base64.encodeBase64String(r.tAck.value)
+                    } catch (e: IOException) {}
+                }
+            }
+
+            break
+        }
+        return eFactMessages
+    }
+
+
     override fun confirmAcks(
         keystoreId: UUID,
         tokenId: UUID,
@@ -423,11 +542,43 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
         val confirm =
             BuilderFactory.getRequestObjectBuilder("invoicing")
-                .buildConfirmRequestWithHashes(buildOriginType(samlToken.quality, hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
+                .buildConfirmRequestWithHashes(buildOriginType(samlToken.quality, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, false),
                                                listOf(),
                                                valueHashes.map { valueHash -> java.util.Base64.getDecoder().decode(valueHash) })
 
         genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
+
+        return true
+    }
+
+    override fun confirmMediprimaAcks(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        valueHashes: List<String>
+    ): Boolean {
+        if (valueHashes.isEmpty()) {
+            return true
+        }
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for Mediprima Efact confirm Acks operations")
+
+        val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
+
+        val confirm =
+            BuilderFactory.getRequestObjectBuilder("invoicing-mediprima")
+                .buildConfirmRequestWithReference(
+                    buildOriginType(samlToken.quality, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, true),
+                    listOf(),
+                    valueHashes
+                )
+
+        genAsyncServiceMediprima.confirmRequest(samlToken, confirm, confirmheader)
 
         return true
     }
@@ -452,7 +603,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
         val confirm =
             BuilderFactory.getRequestObjectBuilder("invoicing")
-                .buildConfirmRequestWithHashes(buildOriginType(samlToken.quality, hcpNihii, hcpSsin, hcpFirstName, hcpLastName),
+                .buildConfirmRequestWithHashes(buildOriginType(samlToken.quality, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, false),
                     valueHashes.map { valueHash -> java.util.Base64.getDecoder().decode(valueHash) },
                     listOf()
                     )
@@ -463,12 +614,44 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
     }
 
 
-    private fun buildOriginType(quality: String, nihii: String, ssin: String, firstName: String, lastName: String): OrigineType =
+    override fun confirmMediprimaMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        valueHashes: List<String>
+    ): Boolean {
+        if (valueHashes.isEmpty()) {
+            return true
+        }
+        val samlToken =
+            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+                ?: throw MissingTokenException("Cannot obtain token for Mediprima Efact confirm message operations")
+
+        val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
+        val confirm =
+            BuilderFactory.getRequestObjectBuilder("invoicing-mediprima")
+                .buildConfirmRequestWithReference(
+                    buildOriginType(samlToken.quality, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, true),
+                    valueHashes,
+                    listOf()
+                )
+
+        genAsyncServiceMediprima.confirmRequest(samlToken, confirm, confirmheader)
+
+        return true
+    }
+
+
+    private fun buildOriginType(quality: String, nihii: String, ssin: String, firstName: String, lastName: String, isMediprima: Boolean): OrigineType =
         OrigineType().apply {
             val principal = SecurityContextHolder.getContext().authentication?.principal as? User
 
             `package` = PackageType().apply {
-                name = ValueRefString().apply { value = config.getProperty("genericasync.invoicing.package.name") }
+                name = ValueRefString().apply { value = config.getProperty(if(isMediprima) "genericasync.invoicing-mediprima.package.name" else "genericasync.invoicing.package.name") }
                 license = LicenseType().apply {
                     this.username = principal?.mcnLicense ?: config.getProperty("mycarenet.license." + quality + ".username")
                     this.password = principal?.mcnPassword ?: config.getProperty("mycarenet.license." + quality + ".password")

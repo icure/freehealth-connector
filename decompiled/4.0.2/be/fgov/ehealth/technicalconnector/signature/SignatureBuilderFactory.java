@@ -9,7 +9,6 @@ import be.fgov.ehealth.technicalconnector.signature.impl.xades.XadesSpecificatio
 import be.fgov.ehealth.technicalconnector.signature.impl.xades.impl.XadesBesSpecification;
 import be.fgov.ehealth.technicalconnector.signature.impl.xades.impl.XadesTSpecification;
 import java.util.EnumMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -43,7 +42,7 @@ public final class SignatureBuilderFactory {
    }
 
    static {
-      ConfigurableFactoryHelper<SignatureBuilder> configHelper = new ConfigurableFactoryHelper("signature.signaturebuilder.class", (String)null);
+      ConfigurableFactoryHelper<SignatureBuilder> configHelper = new ConfigurableFactoryHelper<SignatureBuilder>("signature.signaturebuilder.class", (String)null);
 
       try {
          List<SignatureBuilder> builderList = configHelper.getImplementations();
@@ -55,14 +54,11 @@ public final class SignatureBuilderFactory {
             processBuilder(new CmsSignatureBuilder(AdvancedElectronicSignatureEnumeration.CAdES));
          }
 
-         Iterator var2 = builderList.iterator();
-
-         while(var2.hasNext()) {
-            SignatureBuilder builder = (SignatureBuilder)var2.next();
+         for(SignatureBuilder builder : builderList) {
             processBuilder(builder);
          }
-      } catch (TechnicalConnectorException var4) {
-         LOG.warn("No Signature Builders configured reason:" + var4.getMessage(), var4);
+      } catch (TechnicalConnectorException e) {
+         LOG.warn("No Signature Builders configured reason:" + e.getMessage(), e);
       }
 
    }

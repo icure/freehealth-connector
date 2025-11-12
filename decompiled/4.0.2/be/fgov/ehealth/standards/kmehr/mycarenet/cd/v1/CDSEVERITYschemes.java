@@ -25,11 +25,7 @@ public enum CDSEVERITYschemes {
    }
 
    public static CDSEVERITYschemes fromValue(String v) {
-      CDSEVERITYschemes[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDSEVERITYschemes c = var1[var3];
+      for(CDSEVERITYschemes c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

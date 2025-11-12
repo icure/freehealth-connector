@@ -56,6 +56,12 @@ class Addressee {
             }
         }
 
+    constructor(helperType: IdentifierType, id: String?, applicationId: String?) {
+        this.id = id
+        this.identifier = helperType
+        this.applicationId = applicationId
+    }
+
     constructor(id: String, qualityType: QualityType) {
         this.id = id
         this.quality = qualityType.quality

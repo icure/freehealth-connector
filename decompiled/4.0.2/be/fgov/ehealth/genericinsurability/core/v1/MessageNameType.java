@@ -59,11 +59,7 @@ public enum MessageNameType {
    }
 
    public static MessageNameType fromValue(String v) {
-      MessageNameType[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         MessageNameType c = var1[var3];
+      for(MessageNameType c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

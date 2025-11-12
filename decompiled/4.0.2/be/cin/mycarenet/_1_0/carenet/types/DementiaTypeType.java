@@ -27,11 +27,7 @@ public enum DementiaTypeType {
    }
 
    public static DementiaTypeType fromValue(String v) {
-      DementiaTypeType[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         DementiaTypeType c = var1[var3];
+      for(DementiaTypeType c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

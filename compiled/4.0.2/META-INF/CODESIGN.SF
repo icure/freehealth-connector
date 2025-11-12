@@ -1,57 +1,92 @@
 Signature-Version: 1.0
-SHA-256-Digest-Manifest-Main-Attributes: pVoJtRppQDJJz32eCb+hB0VU51sM+
- yr/kWq6HBFjFzc=
-SHA-256-Digest-Manifest: CzFTUZmDK3iajP1MTl7rYYZ0BJAIbt0difW5fWeU6Fg=
+SHA-256-Digest-Manifest-Main-Attributes: 1BZieeQh4w7wMlk5vgPpKc2puXe4E
+ 0xiB+A0FOtgdx0=
+SHA-256-Digest-Manifest: xbveEeS17PFY70YIxYBRckN/Dn1Yv1BK+GR5Xvyy7hw=
 Created-By: 1.8.0_281 (Oracle Corporation)
 
-Name: be/ehealth/businessconnector/medadmin/domain/RejectXmlProcessedG
- etResponse.class
-SHA-256-Digest: VbI3NnPhXXDW2xOhLgznTz/pNh1jJmvvVazEso3FSoo=
+Name: be/ehealth/businessconnector/mycarenet/attestv3/builders/CancelA
+ ttestationRequestInput$CancelAttestationRequestInputBuilder.class
+SHA-256-Digest: +exC2gj73UMSKWi67mMZDqJhLU1yZFV2EKujRly1uSg=
 
-Name: disclaimer/release.notes.business-mycarenetmedadmin.txt
-SHA-256-Digest: r95zhTCEY3qjOGQxLVnCSaIDnhvqF0kPyNLzbXBIVNM=
+Name: be/ehealth/businessconnector/mycarenet/attestv3/builders/CancelA
+ ttestationRequestInput.class
+SHA-256-Digest: eI4Owb7teff9IKRZ/Q+W1npvSSvqC0+6lViomb21mgw=
 
-Name: be/ehealth/businessconnector/medadmin/session/impl/MedadminServi
- ceImpl.class
-SHA-256-Digest: aQC3Co6/41VEFfdJ6LQnf8mpmrFvx9Qrc71qQDxMnmY=
+Name: be/ehealth/businessconnector/mycarenet/attestv3/builders/impl/Re
+ questObjectBuilderImpl.class
+SHA-256-Digest: n1SfxjENU/PU5b7KKp8R3dT/9E/o0HU7W1Fkk4YmxAI=
 
-Name: META-INF/maven/be.fgov.ehealth.connector/connector-business-myca
- renetmedadmin/pom.properties
-SHA-256-Digest: Ue/ThQXiSpJW2Hv9GZ6vAjzJl4W1bnBIAxcY6SUf3So=
+Name: be/ehealth/businessconnector/mycarenet/attestv3/builders/Respons
+ eObjectBuilderFactory.class
+SHA-256-Digest: PAiqnRimo6/mBydbRjbpA+ctLrIBJo5i3VxhqMfkR5E=
 
-Name: be/ehealth/businessconnector/medadmin/session/MedAdminService.cl
- ass
-SHA-256-Digest: DSSod22BjLhuXHh0PoGgRq6QrqXLge+Yql7K/JdGDMw=
+Name: be/ehealth/businessconnector/mycarenet/attestv3/service/impl/Att
+ estServiceImpl.class
+SHA-256-Digest: CrrjVke0KoiOGOA9mZYYQ8cxBFY1SUD6SB7U1qO3YYE=
 
-Name: be/ehealth/businessconnector/medadmin/domain/M4ACnfXmlProcessedG
- etResponse.class
-SHA-256-Digest: yh3PQIPX6kVznpaPzJ1W8UIZiSbRt+59+b7oTeLBr8A=
-
-Name: be/ehealth/businessconnector/medadmin/domain/M4ACnfXmlProcessedM
- sgResponse.class
-SHA-256-Digest: C71sVOMHtHXxfi8U0yEgtsVcNCDjYI+z+Zo2wM9AdyI=
-
-Name: be/ehealth/businessconnector/medadmin/domain/M4AXmlProcessedGetR
- esponse.class
-SHA-256-Digest: 88/NjsF7FQ0iAFBA203Q9//v/zbmmVilyE9IV84Qb6I=
-
-Name: be/ehealth/businessconnector/medadmin/domain/RejectXmlProcessedM
- sgResponse.class
-SHA-256-Digest: hmt6SiVNOTKBMStNfgyxKjRVwVsM/b10nFIepdROCfA=
+Name: be/ehealth/businessconnector/mycarenet/attestv3/session/AttestSe
+ ssionServiceFactory.class
+SHA-256-Digest: +cu6X48VrV/+SJiaaZ5ag5WoEWJIFyGJesK//5Z/UtM=
 
 Name: META-INF/maven/be.fgov.ehealth.connector/connector-business-myca
- renetmedadmin/pom.xml
-SHA-256-Digest: 3queosE2h1e2PE+tF/PxLMSzY32uheyiKEGMPT/hZbw=
+ renetattestv3/pom.xml
+SHA-256-Digest: x0Ax0TJ8FIegzdH5/lutCzB5Vyuj64yB7tWP8pYDRrA=
 
-Name: be/ehealth/businessconnector/medadmin/domain/M4AXmlProcessedMsgR
- esponse.class
-SHA-256-Digest: C2gXjkkCRGQsNjH7vQaZqzjX0qPEcqObqGU4J9mh+vs=
+Name: be/ehealth/businessconnector/mycarenet/attestv3/service/AttestSe
+ rvice.class
+SHA-256-Digest: 0qPOeTbq6Vg08sp1vKmF1KuhikmyH0sbpWrZwMmLMh4=
 
-Name: be/ehealth/businessconnector/medadmin/session/impl/MedadminServi
- ceImplementationFactory.class
-SHA-256-Digest: t16ipGeoovjf9RLQhYrDMJJDOe/0WN8iWlN3DUF+vYQ=
+Name: be/ehealth/businessconnector/mycarenet/attestv3/builders/SendAtt
+ estationRequestInput.class
+SHA-256-Digest: oAVguxUpZMxhOPTpH16aYtrnwG53tgwGjIKY0es77pQ=
 
-Name: be/ehealth/businessconnector/medadmin/session/MedadminSessionSer
- viceFactory.class
-SHA-256-Digest: DcfEd7QMqri7oiXBcAtpKDPPunxqvOgEUPYqVZKv2xE=
+Name: META-INF/maven/be.fgov.ehealth.connector/connector-business-myca
+ renetattestv3/pom.properties
+SHA-256-Digest: OAdx8l3UVoTebJUcYp4RkMa+98QMIW26ES6drZWdXP8=
+
+Name: be/ehealth/businessconnector/mycarenet/attestv3/builders/impl/Re
+ sponseObjectBuilderImpl.class
+SHA-256-Digest: MZobb8bQv0wVZtIO0XMphGvPaxV48lDk1mXKfEmfC+o=
+
+Name: META-INF/connector.bootstrap
+SHA-256-Digest: odFZx0cXCWwRtNnAc7RW2y0KdFXI7CLXku7TyQGv4vQ=
+
+Name: be/ehealth/businessconnector/mycarenet/attestv3/builders/Respons
+ eObjectBuilder.class
+SHA-256-Digest: haUXgvHR+oJfGSIzj3EbwNccijZ6PHYOZxP7pdkCg1U=
+
+Name: be/ehealth/businessconnector/mycarenet/attestv3/service/ServiceF
+ actory.class
+SHA-256-Digest: SNNU/TDMBUxUzJiPc2HPeuinftHvg108gEMKrGSVWZA=
+
+Name: be/ehealth/businessconnector/mycarenet/attestv3/session/impl/Att
+ estServiceImpl.class
+SHA-256-Digest: xOka4Ao1mMBBJzg/K4ZOqgB1Ofx6iP6GNpN0NiZ69lw=
+
+Name: disclaimer/release.notes.business-mycarenetattestv3.txt
+SHA-256-Digest: ZjXlMPNHpfLZU6Kx/fcbZ1AoCpunR2nIEEQV3uG4LZQ=
+
+Name: be/ehealth/businessconnector/mycarenet/attestv3/session/AttestSe
+ rvice.class
+SHA-256-Digest: 4e4Ykd1ePIML2yksqqwipw0XKCPp+OjgP8cG4gvmVwM=
+
+Name: be/ehealth/businessconnector/mycarenet/attestv3/helper/AttestCon
+ stants.class
+SHA-256-Digest: lYlJntqIXhiBIBJmCKCy86graLFxiXi5xMY3dfO+b+g=
+
+Name: be/ehealth/businessconnector/mycarenet/attestv3/builders/Request
+ ObjectBuilderFactory.class
+SHA-256-Digest: sUqlIOkWAoiX0xol8kUG3uonkiINH1rREekfKkwXwXc=
+
+Name: be/ehealth/businessconnector/mycarenet/attestv3/builders/Request
+ ObjectBuilder.class
+SHA-256-Digest: Np9Mu/EkV/rFGwkaHoWjudogP0JRcfkERzo2+bAFsC0=
+
+Name: be/ehealth/businessconnector/mycarenet/attestv3/session/impl/Att
+ estServiceImplementationFactory.class
+SHA-256-Digest: CQiP70axxLga7jQlcccW5EnHdhaFP8sl+4gXe64fpww=
+
+Name: be/ehealth/businessconnector/mycarenet/attestv3/builders/SendAtt
+ estationRequestInput$SendAttestationRequestInputBuilder.class
+SHA-256-Digest: WOnVfA5PA5fBsq13N62zByV4rInnkvUeti7LjRkWTi4=
 

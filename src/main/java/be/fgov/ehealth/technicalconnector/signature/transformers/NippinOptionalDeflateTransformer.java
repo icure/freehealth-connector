@@ -1,5 +1,6 @@
 package be.fgov.ehealth.technicalconnector.signature.transformers;
 
+import org.apache.xml.security.c14n.InvalidCanonicalizerException;
 import org.taktik.connector.technical.enumeration.Charset;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.utils.ConnectorIOUtils;
@@ -22,11 +23,7 @@ import org.xml.sax.SAXException;
 public class NippinOptionalDeflateTransformer extends TransformSpi {
    public static final String TRANSFORM_URI = "urn:nippin:xml:sig:transform:optional-deflate";
 
-   protected String engineGetURI() {
-      return "urn:nippin:xml:sig:transform:optional-deflate";
-   }
-
-   protected XMLSignatureInput enginePerformTransform(XMLSignatureInput input, OutputStream os, Transform transformObject) throws IOException, CanonicalizationException, TransformationException {
+   protected XMLSignatureInput enginePerformTransform(XMLSignatureInput input, OutputStream os, Element element, String s, boolean b) throws IOException, CanonicalizationException, InvalidCanonicalizerException, TransformationException, ParserConfigurationException, SAXException {
       try {
          if (input.isElement()) {
             return this.processElement(input, os);
@@ -63,6 +60,10 @@ public class NippinOptionalDeflateTransformer extends TransformSpi {
       } catch (TechnicalConnectorException var11) {
          throw new TransformationException("DeflateException", var11);
       }
+   }
+
+   protected String engineGetURI() {
+      return "urn:nippin:xml:sig:transform:optional-deflate";
    }
 
    private XMLSignatureInput processElement(XMLSignatureInput input, OutputStream os) throws TechnicalConnectorException, IOException {

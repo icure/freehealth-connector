@@ -29,11 +29,7 @@ public enum InsurabilityContactTypeType {
    }
 
    public static InsurabilityContactTypeType fromValue(String v) {
-      InsurabilityContactTypeType[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         InsurabilityContactTypeType c = var1[var3];
+      for(InsurabilityContactTypeType c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

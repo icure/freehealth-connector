@@ -82,19 +82,19 @@ public final class SchematronSessionImpl implements SchematronSession {
          LOG.info("Generating validator for schema " + this.config.getSchema() + "... ");
          this.validator = factory.newValidator(new StreamSource(this.config.getSchema()));
          LOG.info("Validator ready to process");
-      } catch (TransformerException var3) {
-         LOG.debug(var3.getMessage());
-         SourceLocator locator = var3.getLocator();
+      } catch (TransformerException ex) {
+         LOG.debug(ex.getMessage());
+         SourceLocator locator = ex.getLocator();
          if (locator != null) {
             LOG.debug("SystemID: " + locator.getSystemId() + "; Line#: " + locator.getLineNumber() + "; Column#: " + locator.getColumnNumber());
          }
 
-         throw new InitialisationException("The validator could not be initialised", var3);
-      } catch (IOException var4) {
-         throw new InitialisationException("Error when outputting preprocessor stylesheet:", var4);
-      } catch (Exception var5) {
-         LOG.error("Error with initializing validator: " + var5.getMessage());
-         throw new InitialisationException("Error with initializing validator: ", var5);
+         throw new InitialisationException("The validator could not be initialised", ex);
+      } catch (IOException io) {
+         throw new InitialisationException("Error when outputting preprocessor stylesheet:", io);
+      } catch (Exception e) {
+         LOG.error("Error with initializing validator: " + e.getMessage());
+         throw new InitialisationException("Error with initializing validator: ", e);
       }
    }
 
@@ -105,12 +105,12 @@ public final class SchematronSessionImpl implements SchematronSession {
          return validate;
       } catch (TransformerConfigurationException var4) {
          throw new Exception("Could not instantiate validator for document ");
-      } catch (TransformerException var5) {
+      } catch (TransformerException ex) {
          if (this.config.isFailOnError()) {
-            throw new Exception("Could not validate document ", var5);
+            throw new Exception("Could not validate document ", ex);
          } else {
-            LOG.error("", var5);
-            SourceLocator locator = var5.getLocator();
+            LOG.error("", ex);
+            SourceLocator locator = ex.getLocator();
             if (locator != null) {
                LOG.info("SystemID: " + locator.getSystemId() + "; Line#: " + locator.getLineNumber() + "; Column#: " + locator.getColumnNumber());
             }

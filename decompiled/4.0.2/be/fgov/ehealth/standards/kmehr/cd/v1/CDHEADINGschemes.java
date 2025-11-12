@@ -30,11 +30,7 @@ public enum CDHEADINGschemes {
    }
 
    public static CDHEADINGschemes fromValue(String v) {
-      CDHEADINGschemes[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDHEADINGschemes c = var1[var3];
+      for(CDHEADINGschemes c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

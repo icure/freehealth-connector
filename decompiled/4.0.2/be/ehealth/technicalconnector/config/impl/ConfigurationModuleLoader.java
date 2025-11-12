@@ -5,7 +5,6 @@ import be.ehealth.technicalconnector.config.ConfigurationModule;
 import be.ehealth.technicalconnector.exception.TechnicalConnectorException;
 import be.ehealth.technicalconnector.utils.ConfigurableFactoryHelper;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
@@ -27,7 +26,7 @@ public class ConfigurationModuleLoader {
    public static void load(Configuration instance) throws TechnicalConnectorException {
       LOG.debug("Loading ConfigurationModule");
       Validate.notNull(instance);
-      ConfigurableFactoryHelper<ConfigurationModule> helper = new ConfigurableFactoryHelper("connector.configmodule", (String)null);
+      ConfigurableFactoryHelper<ConfigurationModule> helper = new ConfigurableFactoryHelper<ConfigurationModule>("connector.configmodule", (String)null);
       List<ConfigurationModule> modulesToLoad = helper.getImplementations(true, true);
       filter(modulesToLoad);
       List<ConfigurationModule> modules = new ArrayList();
@@ -43,10 +42,8 @@ public class ConfigurationModuleLoader {
       modules.add(new ConfigurationModuleOCSP());
       modules.add(new ConfigurationModuleEhealthTime());
       modulesRegistry.clear();
-      Iterator var4 = modules.iterator();
 
-      while(var4.hasNext()) {
-         ConfigurationModule module = (ConfigurationModule)var4.next();
+      for(ConfigurationModule module : modules) {
          if (Boolean.parseBoolean(System.getProperty("be.ehealth.technicalconnector.config.impl.Configuration.use." + module.getClass().getSimpleName(), "true"))) {
             modulesRegistry.add(module);
             module.init(instance);
@@ -60,25 +57,18 @@ public class ConfigurationModuleLoader {
    }
 
    static void unload() {
-      Iterator var0 = modulesRegistry.iterator();
-
-      while(var0.hasNext()) {
-         ConfigurationModule module = (ConfigurationModule)var0.next();
-
+      for(ConfigurationModule module : modulesRegistry) {
          try {
             module.unload();
-         } catch (TechnicalConnectorException var3) {
-            LOG.error(var3.getClass().getSimpleName() + ":" + var3.getMessage(), var3);
+         } catch (TechnicalConnectorException e) {
+            LOG.error(e.getClass().getSimpleName() + ":" + e.getMessage(), e);
          }
       }
 
    }
 
    static void unloadSystemProperties(Map<String, String> oldValues) {
-      Iterator var1 = oldValues.entrySet().iterator();
-
-      while(var1.hasNext()) {
-         Map.Entry<String, String> entry = (Map.Entry)var1.next();
+      for(Map.Entry<String, String> entry : oldValues.entrySet()) {
          LOG.info("Resetting key [{}] for value[{}]", entry.getKey(), entry.getValue());
          String oldValue = (String)oldValues.get(entry.getKey());
          if (oldValue == null) {

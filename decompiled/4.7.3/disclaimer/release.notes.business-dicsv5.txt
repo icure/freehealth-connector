@@ -1,0 +1,15 @@
+**************************************************
+* eHealth Business Dics V5 RELEASE NOTES         *
+**************************************************
+
+4.1.2 release (may 2022)
+  . improvement           Update to latest xsd-dics (5.1.4)
+
+4.1.1 release (may 2022)
+  . internal release
+  
+4.1.0 release (may 2022)
+  . internal release
+
+3.19.0 release (april 2020)
+ . initial release

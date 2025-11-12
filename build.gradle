@@ -178,8 +178,8 @@ dependencies {
 	compile('org.apache.commons:commons-collections4:4.0')
 	compile('org.apache.commons:commons-compress:1.10')
 	compile('org.apache.ws.security:wss4j:1.6.18')
-	compile('org.apache.wss4j:wss4j-ws-security-common:2.0.10')
-	compile('org.apache.wss4j:wss4j-ws-security-dom:2.0.10')
+	compile('org.apache.wss4j:wss4j-ws-security-common:2.3.1')
+	compile('org.apache.wss4j:wss4j-ws-security-dom:2.3.1')
 	compile('net.sf.jsignature.io-tools:easystream:1.2.12')
 	compile('uk.org.lidalia:sysout-over-slf4j:1.0.2') //WTF... This must go away
 	compile('commons-lang:commons-lang:2.6')

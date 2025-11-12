@@ -25,11 +25,7 @@ public enum SexType {
    }
 
    public static SexType fromValue(String v) {
-      SexType[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         SexType c = var1[var3];
+      for(SexType c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

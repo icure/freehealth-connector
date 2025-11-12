@@ -114,7 +114,7 @@ public class HubTokenServiceImpl implements HubTokenService, ConfigurationModule
    public PutTransactionResponse putTransaction(SAMLToken token, PutTransactionRequest request, String breakTheGlass) throws TechnicalConnectorException, IntraHubBusinessConnectorException {
       this.checkSessionCertificateExists();
       request.setRequest(this.buildKmehrRequestWithAuthorEncryptionInfo(breakTheGlass));
-      MarshallerHelper<PutTransactionRequest, PutTransactionRequest> helper = new MarshallerHelper(PutTransactionRequest.class, PutTransactionRequest.class);
+      MarshallerHelper<PutTransactionRequest, PutTransactionRequest> helper = new MarshallerHelper<PutTransactionRequest, PutTransactionRequest>(PutTransactionRequest.class, PutTransactionRequest.class);
       LOG.debug("PutTransactionRequest unsigned request :" + helper.toString(request));
       return (PutTransactionResponse)this.executeOperation(token, IntrahubEncryptionUtil.encryptFolder(request, "hubv3.id", "hubv3.application"), "urn:be:fgov:ehealth:intrahub:protocol:v3:PutTransaction", PutTransactionResponse.class);
    }
@@ -262,11 +262,11 @@ public class HubTokenServiceImpl implements HubTokenService, ConfigurationModule
    private <T> T executeOperation(SAMLToken token, Object request, String operation, Class<T> clazz) throws TechnicalConnectorException {
       try {
          GenericRequest service = ServiceFactory.getIntraHubPort(token, operation).setPayload(request);
-         return be.ehealth.technicalconnector.ws.ServiceFactory.getGenericWsSender().send(service).asObject(clazz);
-      } catch (SOAPException var6) {
-         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var6, new Object[]{var6.getMessage()});
-      } catch (WebServiceException var7) {
-         throw ServiceHelper.handleWebServiceException(var7);
+         return (T)be.ehealth.technicalconnector.ws.ServiceFactory.getGenericWsSender().send(service).asObject(clazz);
+      } catch (SOAPException e) {
+         throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, e, new Object[]{e.getMessage()});
+      } catch (WebServiceException e) {
+         throw ServiceHelper.handleWebServiceException(e);
       }
    }
 

@@ -57,8 +57,8 @@ public final class SchematronResult {
       try {
          this.svrl = inSvrl.getBytes("UTF-8");
          this.parseSVRL(inSvrl);
-      } catch (Exception var3) {
-         throw new IllegalArgumentException(var3);
+      } catch (Exception e) {
+         throw new IllegalArgumentException(e);
       }
    }
 
@@ -87,8 +87,8 @@ public final class SchematronResult {
          transformer.transform(new StreamSource(new ByteArrayInputStream(annotatedSvrl)), new StreamResult(boas));
          String var6 = new String(boas.toByteArray(), "UTF-8");
          return var6;
-      } catch (Exception var10) {
-         LOG.error("", var10);
+      } catch (Exception e) {
+         LOG.error("", e);
       } finally {
          IOUtils.closeQuietly(boas);
       }
@@ -103,8 +103,8 @@ public final class SchematronResult {
    public String getSVRLAsString() {
       try {
          return new String(this.svrl, "UTF-8");
-      } catch (UnsupportedEncodingException var2) {
-         LOG.error("", var2);
+      } catch (UnsupportedEncodingException e) {
+         LOG.error("", e);
          return null;
       }
    }
@@ -140,8 +140,8 @@ public final class SchematronResult {
          filter.setContentHandler(new SVRLXMLWriter(new OutputStreamWriter(baos)));
          filter.parse(new InputSource(new ByteArrayInputStream(svrl)));
          return baos.toByteArray();
-      } catch (Exception var7) {
-         LOG.error("Unable to enrich with locations", var7);
+      } catch (Exception e) {
+         LOG.error("Unable to enrich with locations", e);
          return svrl;
       }
    }
@@ -149,8 +149,8 @@ public final class SchematronResult {
    static {
       try {
          ctx = JAXBContext.newInstance(new Class[]{SchematronOutput.class});
-      } catch (JAXBException var1) {
-         throw new IllegalArgumentException(var1);
+      } catch (JAXBException e) {
+         throw new IllegalArgumentException(e);
       }
    }
 }

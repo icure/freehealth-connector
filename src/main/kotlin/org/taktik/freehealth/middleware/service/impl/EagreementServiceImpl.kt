@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.agreement.exception.AgreementBusinessConnectorException
-import org.taktik.connector.business.domain.agreement.AgreementResponse
+import org.taktik.connector.business.domain.agreement.EAgreementResponse
 import org.taktik.connector.business.mycarenet.attest.domain.InputReference
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
@@ -92,16 +92,16 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
 
     private val log = LoggerFactory.getLogger(this.javaClass)
 
-    private fun generateError(e: AgreementBusinessConnectorException, co: CommonOutput): AgreementResponse {
-        val error = AgreementResponse()
+    private fun generateError(e: AgreementBusinessConnectorException, co: CommonOutput): EAgreementResponse {
+        val error = EAgreementResponse()
         error.isAcknowledged = false
         error.errors = Arrays.asList(MycarenetError(code = e.errorCode, msgFr = e.message, msgNl = e.message))
         error.commonOutput = co
         return error
     }
 
-    private fun generateError(e: SoaErrorException): AgreementResponse {
-        val error = AgreementResponse()
+    private fun generateError(e: SoaErrorException): EAgreementResponse {
+        val error = EAgreementResponse()
         error.isAcknowledged = false
         error.errors = Arrays.asList(MycarenetError(code = e.errorCode, msgFr = e.message, msgNl = e.message))
         return error
@@ -144,7 +144,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         sctCode: String?,
         sctDisplay: String?,
         attachments: List<EagreementController.Attachment>?
-    ): AgreementResponse? {
+    ): EAgreementResponse? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Agreement operations")
@@ -274,7 +274,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                         agreementResponse?.`return`?.commonOutput?.outputReference
                     )
 
-                var res = AgreementResponse()
+                var res = EAgreementResponse()
                 res.isAcknowledged = true
                 res.commonOutput = commonOutput
                 res.mycarenetConversation = MycarenetConversation().apply {
@@ -317,7 +317,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         agreementStartDate: DateTime?,
         agreementEndDate: DateTime?,
         agreementType: String?
-    ): AgreementResponse? {
+    ): EAgreementResponse? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Agreement operations")
@@ -467,7 +467,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                         consultAgreementResponse?.`return`?.commonOutput?.outputReference
                     )
 
-                var res = AgreementResponse()
+                var res = EAgreementResponse()
                 res.isAcknowledged = true
                 res.commonOutput = commonOutput
                 res.mycarenetConversation = MycarenetConversation().apply {

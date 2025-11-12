@@ -25,11 +25,7 @@ public enum TherapeuticLinkOperationType {
    }
 
    public static TherapeuticLinkOperationType fromValue(String v) {
-      TherapeuticLinkOperationType[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         TherapeuticLinkOperationType c = var1[var3];
+      for(TherapeuticLinkOperationType c : values()) {
          if (c.value.equals(v)) {
             return c;
          }

@@ -38,7 +38,6 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
@@ -101,8 +100,8 @@ public final class SessionManagerImpl implements SessionManager {
 
          try {
             etk = KeyDepotManagerFactory.getKeyDepotManager().getETK(type);
-         } catch (Exception var5) {
-            LOG.warn("Unable to prefetch ETK", var5);
+         } catch (Exception e) {
+            LOG.warn("Unable to prefetch ETK", e);
          }
 
          if (etk != null && !privateKeys.containsKey(etk.getCertificate().getSerialNumber().toString(10))) {
@@ -140,7 +139,7 @@ public final class SessionManagerImpl implements SessionManager {
    }
 
    private void bootstrapCache() {
-      this.cache = CacheFactory.newInstance(CacheFactory.CacheType.MEMORY, "sessionmanager-keystore", CacheInformation.ExpiryType.NONE, (Duration)null);
+      this.cache = CacheFactory.<String, KeyStore>newInstance(CacheFactory.CacheType.MEMORY, "sessionmanager-keystore", CacheInformation.ExpiryType.NONE, (Duration)null);
    }
 
    public void loadSession(SAMLToken token, String hokPwd) throws TechnicalConnectorException {
@@ -159,8 +158,8 @@ public final class SessionManagerImpl implements SessionManager {
             Map<String, PrivateKey> tempKeys = KeyManager.getDecryptionKeys(token.getKeyStore(), hokPwd.toCharArray());
             hokPrivateKeys.putAll(tempKeys);
          }
-      } catch (Exception var6) {
-         LOG.warn(var6.getClass().getSimpleName() + ":" + var6.getMessage(), var6);
+      } catch (Exception e) {
+         LOG.warn(e.getClass().getSimpleName() + ":" + e.getMessage(), e);
       }
 
       this.session.setHolderOfKeyPrivateKeys(hokPrivateKeys);
@@ -212,10 +211,8 @@ public final class SessionManagerImpl implements SessionManager {
 
    public void unloadSession() {
       this.session = new SessionItemImpl();
-      Iterator var1 = this.cacheService.iterator();
 
-      while(var1.hasNext()) {
-         SessionServiceWithCache serviceWithCache = (SessionServiceWithCache)var1.next();
+      for(SessionServiceWithCache serviceWithCache : this.cacheService) {
          serviceWithCache.flushCache();
       }
 
@@ -239,7 +236,7 @@ public final class SessionManagerImpl implements SessionManager {
    private void loadIdentificationKeys(String pwd, boolean eidonly) throws TechnicalConnectorException {
       char[] password = pwd == null ? ArrayUtils.EMPTY_CHAR_ARRAY : pwd.toCharArray();
       if (this.cache.containsKey("identification")) {
-         this.session.setHeaderCredential(new KeyStoreCredential((KeyStore)this.cache.get("identification"), this.config.getProperty("sessionmanager.identification.alias", "authentication"), pwd));
+         this.session.setHeaderCredential(new KeyStoreCredential(this.cache.get("identification"), this.config.getProperty("sessionmanager.identification.alias", "authentication"), pwd));
       } else if (pwd == null && eidonly) {
          this.session.setHeaderCredential(BeIDCredential.getInstance("session", "Authentication"));
       } else {
@@ -253,9 +250,9 @@ public final class SessionManagerImpl implements SessionManager {
             KeyStoreInfo ksInfo = new KeyStoreInfo(pathKeystore, password, privateKeyAlias, password);
             Credential headerCred = new KeyStoreCredential(ksInfo);
             this.session.setHeaderCredential(headerCred);
-         } catch (Exception var10) {
-            LOG.error("{} : Could not load HolderOfkey keys. Reason:{}", var10.getClass().getSimpleName(), var10.getMessage());
-            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, var10, new Object[]{"Could not load decryption keys"});
+         } catch (Exception e) {
+            LOG.error("{} : Could not load HolderOfkey keys. Reason:{}", e.getClass().getSimpleName(), e.getMessage());
+            throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_GENERAL, e, new Object[]{"Could not load decryption keys"});
          }
       }
 
@@ -265,7 +262,7 @@ public final class SessionManagerImpl implements SessionManager {
       LOG.debug("Loading HolderOfKeyKeys");
       char[] password = pwd == null ? ArrayUtils.EMPTY_CHAR_ARRAY : pwd.toCharArray();
       if (this.cache.containsKey("holderofkey")) {
-         KeyStore hokstore = (KeyStore)this.cache.get("holderofkey");
+         KeyStore hokstore = this.cache.get("holderofkey");
          this.session.setHolderOfKeyCredential(new KeyStoreCredential(hokstore, this.config.getProperty("sessionmanager.holderofkey.alias", "authentication"), pwd));
          this.session.setHolderOfKeyPrivateKeys(KeyManager.getDecryptionKeys(hokstore, password));
       } else if (pwd == null && eidonly) {
@@ -288,8 +285,8 @@ public final class SessionManagerImpl implements SessionManager {
             this.session.setHolderOfKeyCredential(new KeyStoreCredential(ksInfo));
             this.session.setHolderOfKeyPrivateKeys(hokPrivateKeys);
             fetchEtk(KeyDepotManager.EncryptionTokenType.HOLDER_OF_KEY, hokPrivateKeys, this.config);
-         } catch (Exception var11) {
-            throw translate(var11, "HolderOfKey");
+         } catch (Exception e) {
+            throw translate(e, "HolderOfKey");
          }
       }
 
@@ -303,7 +300,7 @@ public final class SessionManagerImpl implements SessionManager {
       LOG.debug("Loading EncryptionKeys");
       char[] password = pwd == null ? ArrayUtils.EMPTY_CHAR_ARRAY : pwd.toCharArray();
       if (this.cache.containsKey("encryption")) {
-         KeyStore hokstore = (KeyStore)this.cache.get("encryption");
+         KeyStore hokstore = this.cache.get("encryption");
          this.session.setHolderOfKeyCredential(new KeyStoreCredential(hokstore, this.config.getProperty("sessionmanager.encryption.alias", "authentication"), pwd));
          this.session.setHolderOfKeyPrivateKeys(KeyManager.getDecryptionKeys(hokstore, password));
       } else if (pwd == null && eidonly) {
@@ -326,8 +323,8 @@ public final class SessionManagerImpl implements SessionManager {
             this.session.setEncryptionCredential(new KeyStoreCredential(ksInfo));
             this.session.setEncryptionPrivateKeys(encryptionPrivateKeys);
             fetchEtk(KeyDepotManager.EncryptionTokenType.ENCRYPTION, encryptionPrivateKeys, this.config);
-         } catch (Exception var11) {
-            throw translate(var11, "EncrytionKeys");
+         } catch (Exception e) {
+            throw translate(e, "EncrytionKeys");
          }
       }
 

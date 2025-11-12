@@ -53,11 +53,7 @@ public enum CDHEADINGvalues {
    }
 
    public static CDHEADINGvalues fromValue(String v) {
-      CDHEADINGvalues[] var1 = values();
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         CDHEADINGvalues c = var1[var3];
+      for(CDHEADINGvalues c : values()) {
          if (c.value.equals(v)) {
             return c;
          }
