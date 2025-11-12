@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.connector.business.domain.agreement.EAgreementResponse
+import org.taktik.freehealth.middleware.domain.eAgreement.EAgreementList
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EagreementService
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
@@ -444,4 +445,53 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             attachments = attachments?.filter { it.type != "prescription1" && it.type != "prescription2" }
         )
     }
+
+    @PostMapping("async/getMessages", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun getMessageList(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam hcpSpeciality: String
+    ): EAgreementList?{
+        return eagreementService.getMessages(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpFirstName = hcpFirstName,
+            hcpLastName = hcpLastName,
+            hcpQuality = hcpSpeciality
+        )
+    }
+
+    @PostMapping("async/confirmMessage", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun confirmMessage(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam hcpSpeciality: String,
+        @RequestBody eagreementMessagesReference: List<String>) : Boolean?{
+
+        return eagreementService.confirmMessages(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpQuality = hcpSpeciality,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpFirstName = hcpFirstName,
+            hcpLastName = hcpLastName,
+            eagreementMessagesReference = eagreementMessagesReference
+        )
+    }
+
 }

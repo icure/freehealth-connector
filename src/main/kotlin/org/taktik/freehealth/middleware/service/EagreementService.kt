@@ -2,7 +2,7 @@ package org.taktik.freehealth.middleware.service
 
 import org.joda.time.DateTime
 import org.taktik.connector.business.domain.agreement.EAgreementResponse
-import org.taktik.freehealth.middleware.domain.eAgreement.EAgreementDataList
+import org.taktik.freehealth.middleware.domain.eAgreement.EAgreementList
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
 import org.taktik.freehealth.middleware.web.controllers.EagreementController
 import java.util.*
@@ -85,7 +85,7 @@ interface EagreementService {
         agreementType: String?
     ): EAgreementResponse?
 
-    fun getMessageList(
+    fun getMessages(
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
@@ -93,6 +93,19 @@ interface EagreementService {
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-    ): EAgreementDataList?
+        hcpQuality: String
+    ): EAgreementList?
+
+    fun confirmMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpQuality: String?,
+        hcpNihii: String,
+        hcpSsin: String?,
+        hcpFirstName: String,
+        hcpLastName: String,
+        eagreementMessagesReference: List<String>
+    ): Boolean?
 
 }
