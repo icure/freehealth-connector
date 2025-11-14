@@ -274,6 +274,8 @@ class EhboxServiceImpl(private val stsService: STSService, keyDepotService: KeyD
                                 null
                             }
                         } ?: ErrorMessage(title = "Impossible to decrypt message using provided Keystores")
+                    } catch (e: Exception) {
+                        null
                     }
                 })
                 if (response.messages.size < 100 || (limit != null && result.size >= limit)) {
