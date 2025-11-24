@@ -91,6 +91,10 @@ class Document : Serializable {
         this.content = content?.let { Arrays.clone(it) }
     }
 
+    fun setContent(content: String?) {
+        this.content = content?.toByteArray()
+    }
+
     @Throws(TechnicalConnectorException::class)
     fun setContent(inputStream: InputStream) {
         this.content = ConnectorIOUtils.getBytes(inputStream)

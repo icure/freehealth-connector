@@ -46,4 +46,12 @@ class ConsultationMessageBuilderImpl : ConsultationMessageBuilder {
     ): Message<be.fgov.ehealth.ehbox.consultation.protocol.v3.Message> {
         return this.reducedBuilder.buildMessage(credential, msg)
     }
+
+    @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
+    fun buildErrorMessage(
+        credential: KeyStoreCredential,
+        msg: be.fgov.ehealth.ehbox.consultation.protocol.v3.Message
+    ): Message<be.fgov.ehealth.ehbox.consultation.protocol.v3.Message> {
+        return this.reducedBuilder.buildErrorMessage(credential, msg)
+    }
 }

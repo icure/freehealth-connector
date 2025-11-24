@@ -52,6 +52,29 @@ class ConsultationReducedMessageBuilder : AbstractConsultationBuilder<Message>()
         return container.getMessage()
     }
 
+    @Throws(TechnicalConnectorException::class, EhboxBusinessConnectorException::class)
+    fun buildErrorMessage(
+        credential: KeyStoreCredential,
+        response: Message
+    ): org.taktik.connector.business.ehbox.api.domain.Message<Message> {
+        val message = this.createMessage(response.contentSpecification, response, response.messageId, null)
+        val container = AbstractConsultationBuilder.ExceptionContainer(message)
+        this.processMessageInfo(response.messageInfo, message)
+        this.processContentSpecification(response.contentSpecification, message)
+        if (message is DocumentMessage<*>) {
+            val documentMessage = message as DocumentMessage<*>
+            val document = Document()
+            document.title = response.contentInfo.title
+            document.setContent("Impossible to decrypt message.")
+            documentMessage.document = document
+        }
+        this.processContentInfo(response.contentInfo, message)
+        this.processCustomMetas(response.customMetas, message)
+        this.processDestination(response, message)
+        this.processSender(response.sender, response.contentSpecification, message)
+        return container.getMessage()
+    }
+
     private fun processDestination(
         response: Message,
         message: org.taktik.connector.business.ehbox.api.domain.Message<Message>
