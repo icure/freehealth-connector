@@ -756,22 +756,28 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 "patientpaid"
                             })
                             cost = CostType().apply {
-                                decimal =
-                                    BigDecimal.valueOf(attest.codes.sumBy {
-                                        Math.round(
-                                            ((it.reimbursement ?: 0.0) + (it.reglementarySupplement ?: 0.0)) * 100
-                                        ).toInt()
-                                    }.toLong()).divide(BigDecimal(100L)).setScale(2, RoundingMode.CEILING)
+                                val totalPatientPaid = attest.patientPaid
+
+                                decimal = if (totalPatientPaid != null && totalPatientPaid > 0.0) {
+                                   BigDecimal.valueOf(totalPatientPaid).setScale(2, RoundingMode.CEILING)
+                                } else {
+                                    val total = attest.codes.sumByDouble { code ->
+                                        val codePatientPaid = code.patientPaid
+                                        val codeValue = (codePatientPaid?.takeIf { it > 0.0 }) 
+                                            ?: ((code.reimbursement ?: 0.0) + (code.reglementarySupplement ?: 0.0))
+                                       codeValue
+                                    }
+                                   BigDecimal.valueOf(total).setScale(2, RoundingMode.CEILING)
+                                }
+                                
+
                                 unit = UnitType().apply {
-                                    cd =
-                                        CDUNIT().apply {
-                                            s = CDUNITschemes.CD_CURRENCY; sv = "1.0"; value =
-                                            "EUR"
-                                        }
+                                    cd = CDUNIT().apply {
+                                        s = CDUNITschemes.CD_CURRENCY; sv = "1.0"; value = "EUR"
+                                    }
                                 }
                             }
-                        },
-                            attest.codes.sumBy {
+                        },attest.codes.sumBy {
                                 Math.round((it.doctorSupplement ?: 0.0) * 100)
                                     .toInt()
                             }.let {
@@ -947,7 +953,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                 System.out.println(code.reglementarySupplement)
                                 BigDecimal.valueOf((code.reimbursement ?: 0.0) + (code.reglementarySupplement ?: 0.0))
                                 BigDecimal.valueOf((code.reimbursement ?: 0.0) + (code.reglementarySupplement ?: 0.0)).setScale(2, RoundingMode.CEILING)
-                            }, ItemType().apply {
+                                }, ItemType().apply {
                                 ids.add(IDKMEHR().apply {
                                     s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
                                     (itemId++).toString()
@@ -957,17 +963,19 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                     "patientpaid"
                                 })
                                 cost = CostType().apply {
-                                    decimal =
-                                        BigDecimal.valueOf(
-                                            Math.round(
-                                                ((code.reimbursement ?: 0.0) + (code.reglementarySupplement ?: 0.0)) * 100)
-                                                .toLong()).divide(BigDecimal(100L)).setScale(2, RoundingMode.CEILING)
+                                    val codePatientPaid = code.patientPaid
+
+                                    decimal = if (codePatientPaid != null && codePatientPaid > 0.0) {
+                                       BigDecimal.valueOf(codePatientPaid).setScale(2, RoundingMode.CEILING)
+                                    } else {
+                                        val calculatedValue = (code.reimbursement ?: 0.0) + (code.reglementarySupplement ?: 0.0)
+                                      BigDecimal.valueOf(calculatedValue).setScale(2, RoundingMode.CEILING)
+                                    }
+
                                     unit = UnitType().apply {
-                                        cd =
-                                            CDUNIT().apply {
-                                                s = CDUNITschemes.CD_CURRENCY; sv = "1.0"; value =
-                                                "EUR"
-                                            }
+                                        cd = CDUNIT().apply {
+                                            s = CDUNITschemes.CD_CURRENCY; sv = "1.0"; value = "EUR"
+                                        }
                                     }
                                 }
                             }, ItemType().apply {
@@ -989,24 +997,29 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                                 "EUR"
                                             }
                                     }
-                                }
-                            },decisionReference?.let {
-                                ItemType().apply {
-                                    ids.add(IDKMEHR().apply {
-                                        s = IDKMEHRschemes.ID_KMEHR; sv = "1.0";
-                                        value = (itemId++).toString()
-                                    })
-                                    cds.add(CDITEM().apply { s = CD_ITEM_MYCARENET; sv = "1.6"; value = "decisionreference" })
-                                    contents.addAll(listOf(ContentType().apply {
-                                        cds.add(CDCONTENT().apply {
-                                            s = CDCONTENTschemes.LOCAL;
-                                            sv = "1.0";
-                                            sl = "OAreferencesystemname";
-                                            value = decisionReference.toString();
-                                        })
-                                    }))
-                                }
-                            }, code.location?.let { loc ->
+                                } },decisionReference?.let {
+                    ItemType().apply {
+                        ids.add(IDKMEHR().apply {
+                            s = IDKMEHRschemes.ID_KMEHR
+                            sv = "1.0"
+                            value = (itemId++).toString()
+                        })
+                        cds.add(CDITEM().apply {
+                            s = CD_ITEM_MYCARENET
+                            sv = "1.6"
+                            value = "decisionreference"
+                        })
+                        contents.add(ContentType().apply {
+                            // Use IDKMEHR for the decision reference ID
+                            ids.add(IDKMEHR().apply {
+                                s = IDKMEHRschemes.LOCAL
+                                sv = "1.0"
+                                sl = "OAreferencesystemname"
+                                value = decisionReference.toString()
+                            })
+                        })
+                    }
+                }, code.location?.let { loc ->
                                 ItemType().apply {
                                     ids.add(IDKMEHR().apply {
                                         s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
