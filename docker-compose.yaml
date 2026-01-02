@@ -10,9 +10,6 @@ services:
     volumes:
       - ./config.json:/opt/freehealth/config.json:ro
       - ./logs:/opt/freehealth/logs
-    environment:
-      JAVA_OPTIONS: >
-          #-Dorg.taktik.connector.technical.config.location=/prod/org.taktik.connector.technical.properties
 
     restart: unless-stopped
  
