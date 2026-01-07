@@ -6,6 +6,7 @@ import be.cin.mycarenet.esb.common.v2.OrigineType
 import be.cin.nip.async.generic.Confirm
 import be.cin.nip.async.generic.Get
 import be.cin.nip.async.generic.MsgQuery
+import be.cin.nip.async.generic.Query
 import be.cin.types.v1.DetailType
 import be.cin.types.v1.DetailsType
 import be.cin.types.v1.FaultType
@@ -521,6 +522,10 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 isInclude = true
                 max = 100
                 messageNames?.let { this.messageNames.addAll(it) }
+            }
+            tAckQuery = Query().apply {
+                isInclude = true
+                max = 100
             }
             origin = buildOriginType(hcpNihii, hcpFirstName, "physiotherapist", hcpSsin)
         }
