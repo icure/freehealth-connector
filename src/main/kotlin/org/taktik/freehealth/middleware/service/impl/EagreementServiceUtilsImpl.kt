@@ -279,7 +279,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         )
     }
 
-    override fun getServiceRequest(serviceRequestId: String, prescriptionId: String, data: String, annexId: String, quantity: Float, patientFirstName: String, patientLastName: String, gender: String, patientSsin: String?, io: String?, ioMembership: String?, sctCode: String?, sctDisplay: String?): ServiceRequest {
+    override fun getServiceRequest(serviceRequestId: String, prescriptionId: String, data: String, annexId: String, quantity: Float, patientFirstName: String, patientLastName: String, gender: String, prescriptionDate: DateTime, patientSsin: String?, io: String?, ioMembership: String?, sctCode: String?, sctDisplay: String?): ServiceRequest {
         val patient = getPatient(patientFirstName!!, patientLastName!!, gender!!, patientSsin, io, ioMembership)
         val formatter = DateTimeFormat.forPattern("yyyy-MM-dd")
         return ServiceRequest(subject = Reference().apply { patient }).apply {
@@ -318,7 +318,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             subject = Reference().apply {
                 reference = "Patient/Patient1"
             }
-            authoredOn = formatter.print(DateTime())
+            authoredOn = formatter.print(prescriptionDate)
             requester = Reference().apply {
                 reference = "PractitionerRole/PractitionerRole2"
             }
@@ -548,6 +548,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
+        prescriptionDate: DateTime,
         patientSsin: String?,
         patientIo: String?,
         patientIoMembership: String?,
@@ -737,7 +738,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.COMPLETE_AGREEMENT || requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) {
             val serviceRequest1 = JsonObject()
             serviceRequest1.addProperty("fullUrl" , "urn:uuid:" + uuidGenerator.generateId())
-            serviceRequest1.add("resource", JsonParser().parse(mapper.writeValueAsString(getServiceRequest("1", "", prescription1!!, "1", numberOfSessionForPrescription1!!, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, sctCode, sctDisplay))).asJsonObject)
+            serviceRequest1.add("resource", JsonParser().parse(mapper.writeValueAsString(getServiceRequest("1", "", prescription1!!, "1", numberOfSessionForPrescription1!!, patientFirstName, patientLastName, patientGender, prescriptionDate, patientSsin, patientIo, patientIoMembership, sctCode, sctDisplay))).asJsonObject)
             serviceRequest1.getAsJsonObject("resource").getAsJsonObject("ServiceRequest").add("contained", JsonParser().parse(mapper.writeValueAsString( Binary(
                 contentType = "application/pdf",
                 data = prescription1,

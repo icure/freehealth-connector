@@ -43,7 +43,7 @@ interface EagreementServiceUtils {
 
     fun getPatient(patientFirstName: String, patientLastName: String, gender: String, patientSsin: String?, io: String ?, ioMembership: String?): Patient?
 
-    fun getServiceRequest(serviceRequestId: String, prescriptionId: String, data: String, annexId: String, quantity: Float, patientFirstName: String, patientLastName: String, gender: String, patientSsin: String?, io: String?, ioMembership: String?, sctCode: String?, sctDisplay: String?): ServiceRequest?
+    fun getServiceRequest(serviceRequestId: String, prescriptionId: String, data: String, annexId: String, quantity: Float, patientFirstName: String, patientLastName: String, gender: String, prescriptionDate: DateTime, patientSsin: String?, io: String?, ioMembership: String?, sctCode: String?, sctDisplay: String?): ServiceRequest?
 
     fun getContained(data: String, containedId: String): List<Binary>?
 
@@ -94,6 +94,7 @@ interface EagreementServiceUtils {
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
+        prescriptionDate: DateTime,
         patientSsin: String?,
         patientIo: String?,
         patientIoMembership: String?,
