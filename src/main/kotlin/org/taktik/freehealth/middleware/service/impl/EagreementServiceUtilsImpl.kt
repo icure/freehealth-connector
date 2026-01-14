@@ -548,7 +548,6 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
-        prescriptionDate: DateTime,
         patientSsin: String?,
         patientIo: String?,
         patientIoMembership: String?,
@@ -573,7 +572,8 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         sctCode: String?,
         sctDisplay: String?,
         subTypeCode: String?,
-        attachments: List<EagreementController.Attachment>?
+        attachments: List<EagreementController.Attachment>?,
+        prescriptionDate: DateTime?
     ): JsonObject? {
         val uuidGenerator = IdGeneratorFactory.getIdGenerator("uuid")
         val practitionerRole1UUID = uuidGenerator.generateId()
@@ -738,7 +738,8 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.COMPLETE_AGREEMENT || requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) {
             val serviceRequest1 = JsonObject()
             serviceRequest1.addProperty("fullUrl" , "urn:uuid:" + uuidGenerator.generateId())
-            serviceRequest1.add("resource", JsonParser().parse(mapper.writeValueAsString(getServiceRequest("1", "", prescription1!!, "1", numberOfSessionForPrescription1!!, patientFirstName, patientLastName, patientGender, prescriptionDate, patientSsin, patientIo, patientIoMembership, sctCode, sctDisplay))).asJsonObject)
+            val prescriptionDateNonNull = prescriptionDate ?: DateTime.now()
+            serviceRequest1.add("resource", JsonParser().parse(mapper.writeValueAsString(getServiceRequest("1", "", prescription1!!, "1", numberOfSessionForPrescription1!!, patientFirstName, patientLastName, patientGender, prescriptionDateNonNull, patientSsin, patientIo, patientIoMembership, sctCode, sctDisplay))).asJsonObject)
             serviceRequest1.getAsJsonObject("resource").getAsJsonObject("ServiceRequest").add("contained", JsonParser().parse(mapper.writeValueAsString( Binary(
                 contentType = "application/pdf",
                 data = prescription1,

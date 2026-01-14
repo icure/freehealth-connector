@@ -94,7 +94,6 @@ interface EagreementServiceUtils {
         patientFirstName: String,
         patientLastName: String,
         patientGender: String,
-        prescriptionDate: DateTime,
         patientSsin: String?,
         patientIo: String?,
         patientIoMembership: String?,
@@ -119,7 +118,8 @@ interface EagreementServiceUtils {
         sctCode: String?,
         sctDisplay: String?,
         subTypeCode: String?,
-        attachments: List<EagreementController.Attachment>?
+        attachments: List<EagreementController.Attachment>?,
+        prescriptionDate: DateTime?
     ): JsonObject?
 
 }
