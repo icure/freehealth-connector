@@ -755,7 +755,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 requestType,
                 claimId = "1",
                 subTypeCode = agreementType!!,
-                agreementStartDate = DateTime(),
+                agreementStartDate = agreementStartDate!!,
                 insuranceRef = insuranceRef,
                 pathologyCode = pathologyCode,
                 pathologyStartDate = pathologyStartDate,
