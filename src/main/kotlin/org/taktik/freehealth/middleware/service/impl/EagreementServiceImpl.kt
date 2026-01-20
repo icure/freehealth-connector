@@ -6,6 +6,7 @@ import be.cin.mycarenet.esb.common.v2.OrigineType
 import be.cin.nip.async.generic.Confirm
 import be.cin.nip.async.generic.Get
 import be.cin.nip.async.generic.MsgQuery
+import be.cin.nip.async.generic.Query
 import be.cin.types.v1.DetailType
 import be.cin.types.v1.DetailsType
 import be.cin.types.v1.FaultType
@@ -165,6 +166,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         numberOfSessionForPrescription1: Float?,
         numberOfSessionForPrescription2: Float?,
         sctCode: String?,
+        prescriptionDate: DateTime,
         sctDisplay: String?,
         attachments: List<EagreementController.Attachment>?
     ): EAgreementResponse? {
@@ -178,7 +180,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
 
         return extractEtk(credential)?.let {
-            val requestBundleJSON = this.agreementServiceUtils.getBundleJSON(requestType, "Claim/Claim1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, prescriberNihii, prescriberFirstName, prescriberLastName, orgNihii, organizationType, prescription1, prescription2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForPrescription1, numberOfSessionForPrescription2, insuranceRef, pathologyCode, pathologyStartDate, sctCode, sctDisplay, null, attachments) ?: throw IllegalArgumentException("Cannot load fhir")
+            val requestBundleJSON = this.agreementServiceUtils.getBundleJSON(requestType, "Claim/Claim1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, prescriberNihii, prescriberFirstName, prescriberLastName, orgNihii, organizationType, prescription1, prescription2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForPrescription1, numberOfSessionForPrescription2, insuranceRef, pathologyCode, pathologyStartDate, sctCode, sctDisplay, null, attachments, prescriptionDate) ?: throw IllegalArgumentException("Cannot load fhir")
 
             var askAgreementRequest = AskAgreementRequest();
             askAgreementRequest.apply {
@@ -522,6 +524,10 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 max = 100
                 messageNames?.let { this.messageNames.addAll(it) }
             }
+            tAckQuery = Query().apply {
+                isInclude = true
+                max = 100
+            }
             origin = buildOriginType(hcpNihii, hcpFirstName, "physiotherapist", hcpSsin)
         }
 
@@ -796,7 +802,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         agreementEndDate: DateTime?,
         agreementType: String?
     ): JsonObject?{
-        return this.agreementServiceUtils.getBundleJSON(requestType, "Parameters/Parameters1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, null, null, null, orgNihii, organizationType, null, null, agreementStartDate, agreementEndDate, agreementType, null, null, insuranceRef, null, null, null, null, subTypeCode, attachments = null) ?: throw IllegalArgumentException("Cannot load fhir")
+        return this.agreementServiceUtils.getBundleJSON(requestType, "Parameters/Parameters1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, null, null, null, orgNihii, organizationType, null, null, agreementStartDate, agreementEndDate, agreementType, null, null, insuranceRef, null, null, null, null, subTypeCode, attachments = null, prescriptionDate = null) ?: throw IllegalArgumentException("Cannot load fhir")
     }
 
     private fun extractEtk(cred: KeyStoreCredential): EncryptionToken? {

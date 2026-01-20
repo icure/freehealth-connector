@@ -50,6 +50,7 @@ interface EagreementService {
         numberOfSessionForPrescription1: Float?,
         numberOfSessionForPrescription2: Float?,
         sctCode: String?,
+        prescriptionDate: DateTime,
         sctDisplay: String?,
         attachments: List<EagreementController.Attachment>?
     ): EAgreementResponse?

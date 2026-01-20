@@ -67,6 +67,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam pathologyStartDate: Int,
         @RequestParam pathologyCode: String,
         @RequestParam sctCode: String,
+        @RequestParam prescriptionDate: Int,
         @RequestParam(required = false) sctDisplay: String?,
         @RequestParam(required = false) patientSsin: String?,
         @RequestParam(required = false) patientIo: String?,
@@ -115,6 +116,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             numberOfSessionForPrescription1 = numberOfSessionForPrescription1,
             numberOfSessionForPrescription2 = numberOfSessionForPrescription2,
             sctCode = sctCode,
+            prescriptionDate = formatter.parseDateTime(prescriptionDate.toString()),
             sctDisplay = sctDisplay,
             attachments = attachments?.filter { it.type != "prescription1" && it.type != "prescription2" }
         )
@@ -189,6 +191,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
         @RequestParam insuranceRef: String,
+        @RequestParam prescriptionDate: Int,
         @RequestParam(required = false) patientSsin: String?,
         @RequestParam(required = false) patientIo: String?,
         @RequestParam(required = false) patientIoMembership: String?,
@@ -196,6 +199,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) organizationType: String?,
         @RequestParam(required = false) agreementType: String?
     ): EAgreementResponse? {
+        val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -230,6 +234,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             numberOfSessionForPrescription1 = null,
             numberOfSessionForPrescription2 = null,
             sctCode = null,
+            prescriptionDate = formatter.parseDateTime(prescriptionDate.toString()),
             sctDisplay = null,
             attachments = null
         )
@@ -254,6 +259,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam pathologyStartDate: Int,
         @RequestParam pathologyCode: String,
         @RequestParam insuranceRef: String,
+        @RequestParam prescriptionDate: Int,
         @RequestParam(required = false) sctCode: String?,
         @RequestParam(required = false) sctDisplay: String?,
         @RequestParam(required = false) patientSsin: String?,
@@ -303,6 +309,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             numberOfSessionForPrescription1 = numberOfSessionForPrescription1,
             numberOfSessionForPrescription2 = numberOfSessionForPrescription2,
             sctCode = sctCode,
+            prescriptionDate = formatter.parseDateTime(prescriptionDate.toString()),
             sctDisplay = sctDisplay,
             attachments = attachments?.filter { it.type != "prescription1" && it.type != "prescription2" }
         )
@@ -326,6 +333,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
         @RequestParam insuranceRef: String,
+        @RequestParam prescriptionDate: Int,
         @RequestParam(required = false) sctCode: String?,
         @RequestParam(required = false) sctDisplay: String?,
         @RequestParam(required = false) patientSsin: String?,
@@ -338,6 +346,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) numberOfSessionForPrescription2: Float?,
         @RequestBody(required = false) attachments: List<Attachment>?
     ): EAgreementResponse? {
+        val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -372,6 +381,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             numberOfSessionForPrescription1 = numberOfSessionForPrescription1,
             numberOfSessionForPrescription2 = numberOfSessionForPrescription2,
             sctCode = sctCode,
+            prescriptionDate = formatter.parseDateTime(prescriptionDate.toString()),
             sctDisplay = sctDisplay,
             attachments = attachments?.filter { it.type != "prescription1" && it.type != "prescription2" }
         )
@@ -395,6 +405,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
         @RequestParam insuranceRef: String,
+        @RequestParam prescriptionDate: Int,
         @RequestParam(required = false) sctCode: String?,
         @RequestParam(required = false) sctDisplay: String?,
         @RequestParam(required = false) patientSsin: String?,
@@ -407,6 +418,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) numberOfSessionForPrescription2: Float?,
         @RequestBody(required = false) attachments: List<Attachment>?
     ): EAgreementResponse? {
+        val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -441,6 +453,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             numberOfSessionForPrescription1 = numberOfSessionForPrescription1,
             numberOfSessionForPrescription2 = numberOfSessionForPrescription2,
             sctCode = sctCode,
+            prescriptionDate = formatter.parseDateTime(prescriptionDate.toString()),
             sctDisplay = sctDisplay,
             attachments = attachments?.filter { it.type != "prescription1" && it.type != "prescription2" }
         )
