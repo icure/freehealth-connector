@@ -110,7 +110,7 @@
                 </triggeringPolicy>
                 <!-- Only accept ERROR level logs -->
                 <filter class="ch.qos.logback.classic.filter.LevelFilter">
-                    <level>WARN</level>
+                    <level>DEBUG</level>
                     <onMatch>NEUTRAL</onMatch>
                     <onMismatch>DENY</onMismatch>
                 </filter>
@@ -144,7 +144,7 @@
 		<appender-ref ref="CONSOLE" />
 		<appender-ref ref="FILE-THREAD" />
 	</root>
-    <root level="WARN">
+    <root level="DEBUG">
         <appender-ref ref="FILE-DEBUG-WARN" />
     </root>
 	<root level="ERROR">
