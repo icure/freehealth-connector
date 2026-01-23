@@ -1,0 +1,11 @@
+{
+  "packages": {
+    "CompufitOxygen": {
+      "physiotherapist": {
+        "mcnLicense": "<see keepass>",
+        "mcnPassword": "<see keepass>",
+        "mcnPackage": "<see keepass>"
+      }
+    }
+  }
+}
