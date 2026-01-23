@@ -5,13 +5,13 @@ REM .\gradlew build
 
 set "IMAGE_NAME=freehealth-connector"
 set "TAG=develop"
-set "JFROG_URL="
+set "JFROG_URL=cgm-be-compufit-docker.oci.jfrog.cgm.ag"
 
 if "%JFROG_URL%"=="" (
   echo ERROR: JFROG_URL is required.
   echo.
   echo Set it by passing it as the 3rd argument, e.g.:
-  echo   %~nx0 %IMAGE_NAME% %TAG% dockerrepo.domain.com
+  echo   %~nx0 %IMAGE_NAME% %TAG% cgm-be-compufit-docker.oci.jfrog.cgm.ag
   pause
   exit /b 1
 )
