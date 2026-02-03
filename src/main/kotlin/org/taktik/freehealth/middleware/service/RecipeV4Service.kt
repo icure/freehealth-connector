@@ -200,4 +200,30 @@ interface RecipeV4Service {
         vendorName: String?,
         packageVersion: String?
     ): ListStructuredPrescriptionsResult
+
+    fun createPrescriptions(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpQuality: String,
+        hcpNihii: String,
+        patient: Patient,
+        hcp: HealthcareParty,
+        feedback: Boolean,
+        medications: List<List<Medication>>,
+        prescriptionType: String?,
+        notification: String?,
+        executorId: String?,
+        samVersion: String?,
+        deliveryDate: LocalDateTime?,
+        vendorName: String?,
+        packageName: String?,
+        packageVersion: String?,
+        vendorEmail: String?,
+        vendorPhone: String?,
+        vision: String?,
+        visionOthers: VisionOtherPrescribers?,
+        expirationDate: LocalDateTime?,
+        lang: String?
+    ): List<Prescription>
 }
