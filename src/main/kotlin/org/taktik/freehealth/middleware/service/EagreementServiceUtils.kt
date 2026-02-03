@@ -30,7 +30,7 @@ interface EagreementServiceUtils {
         requestType: EagreementServiceImpl.RequestTypeEnum,
         claimId: String,
         subTypeCode: String,
-        agreementStartDate: DateTime,
+        agreementStartDate: DateTime?,
         insuranceRef: String?,
         pathologyCode: String?,
         pathologyStartDate: DateTime?,
