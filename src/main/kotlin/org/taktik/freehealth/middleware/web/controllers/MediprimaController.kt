@@ -86,6 +86,8 @@ class MediprimaController(
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
         @RequestParam(required = false) traineeSupervisorLastName: String?,
+        @RequestParam(required = false) guardPostNihii: String?,
+        @RequestParam(required = false) guardPostSsin: String?,
         @RequestBody codes: List<String>
     ): TarificationMediprimaConsultationResult? {
         return mediprimaService.consultTarif(
@@ -102,6 +104,8 @@ class MediprimaController(
             traineeSupervisorNihii = traineeSupervisorNihii,
             traineeSupervisorFirstName = traineeSupervisorFirstName,
             traineeSupervisorLastName = traineeSupervisorLastName,
+            guardPostNihii = guardPostNihii,
+            guardPostSsin = guardPostSsin,
             codes = codes
         )
     }
