@@ -35,8 +35,8 @@ public class KeyDepotServiceImpl implements KeyDepotService, ConfigurationModule
    private static final long serialVersionUID = 1L;
    private static final Logger LOG = LoggerFactory.getLogger(KeyDepotServiceImpl.class);
 
-   private IMap<Triple<IdentifierType,String,String>, Set<EncryptionToken>> etksMap;
-   private IMap<Pair<UUID, Triple<IdentifierType, String, String>>, Set<EncryptionToken>> longLivedEtksMap;
+   private final IMap<Triple<IdentifierType,String,String>, Set<EncryptionToken>> etksMap;
+   private final IMap<Pair<UUID, Triple<IdentifierType, String, String>>, Set<EncryptionToken>> longLivedEtksMap;
 
    public KeyDepotServiceImpl(IMap<Triple<IdentifierType,String,String>, Set<EncryptionToken>> etksMap, IMap<Pair<UUID, Triple<IdentifierType, String, String>>, Set<EncryptionToken>> longLivedEtksMap) {
       this.etksMap = etksMap;

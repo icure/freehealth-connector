@@ -19,5 +19,5 @@ public interface KeyDepotService extends Serializable {
     * @return
     * @throws TechnicalConnectorException
     */
-   Set<EncryptionToken> getETKSet(org.taktik.connector.technical.utils.IdentifierType identifierType, String identifierValue, String applicationId, @Nullable UUID keystoreId, boolean isOwnEtk) throws TechnicalConnectorException;
+   Set<EncryptionToken> getETKSet(org.taktik.connector.technical.utils.IdentifierType identifierType, String identifierValue, String applicationId, @Nullable UUID longLivedCacheKey, boolean isOwnEtk) throws TechnicalConnectorException;
 }

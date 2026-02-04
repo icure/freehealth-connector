@@ -208,10 +208,6 @@ dependencies {
 	//JSONtoXML
 	implementation 'org.json:json:20211205'
 
-  	//Hibernate
-	compile group:'org.hibernate', name: 'hibernate-core', version: '4.3.10.Final'
-	compile group:'com.h2database', name: 'h2', version: '1.4.187'
-
 	//Lucene
 	compile('org.apache.lucene:lucene-analyzers-common:4.10.4')
 	compile('org.apache.lucene:lucene-core:4.10.4')

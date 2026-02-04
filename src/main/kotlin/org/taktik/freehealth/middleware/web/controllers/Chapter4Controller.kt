@@ -32,10 +32,6 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.connector.business.domain.chapter4.Appendix
 import org.taktik.connector.business.domain.chapter4.RequestType
-import org.taktik.freehealth.middleware.drugs.civics.AddedDocumentPreview
-import org.taktik.freehealth.middleware.drugs.civics.ParagraphInfos
-import org.taktik.freehealth.middleware.drugs.civics.ParagraphPreview
-import org.taktik.freehealth.middleware.drugs.dto.MppPreview
 import org.taktik.freehealth.middleware.service.Chapter4Service
 import java.time.LocalDate
 import java.time.ZoneId
@@ -50,61 +46,6 @@ import java.net.URL
 @RequestMapping("/chap4")
 class Chapter4Controller(private val chapter4Service: Chapter4Service) {
     val log = LoggerFactory.getLogger(this .javaClass)
-
-    @GetMapping("/sam/docpreviews/{chapterName}/{paragraphName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun getAddedDocuments(
-        @PathVariable chapterName: String,
-        @PathVariable paragraphName: String): List<AddedDocumentPreview> =
-        chapter4Service.getAddedDocuments(chapterName, paragraphName)
-
-    @GetMapping("/sam/docpreview/{chapterName}/{paragraphName}/{verseSeq}/{docSeq}/{language}", produces = ["application/octet-stream"])
-    @ResponseBody
-    fun getAddedDocument(
-        @PathVariable chapterName: String,
-        @PathVariable paragraphName: String,
-        @PathVariable verseSeq: Long,
-        @PathVariable docSeq: Long,
-        @PathVariable language: String,
-        response : HttpServletResponse) {
-        val url = chapter4Service.getAddedDocuments(chapterName, paragraphName).find {d -> d.documentSeq == docSeq && d.verseSeq == verseSeq}?.addressUrl
-        url?.let { response.contentType = MediaType.APPLICATION_PDF_VALUE
-            val url = URL(it.replace("@lng@",language))
-            val inputStream = url.openStream()
-            IOUtils.copy(inputStream, response.outputStream)
-            inputStream.close()
-        }
-    }
-
-    @GetMapping("/sam/search/{searchString}/{language}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun findParagraphs(
-        @PathVariable searchString: String,
-        @PathVariable language: String): List<ParagraphPreview> =
-        chapter4Service.findParagraphs(searchString, language)
-
-    @GetMapping("/sam/bycnk/{cnk}/{language}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun findParagraphsWithCnk(
-        @PathVariable cnk: Long,
-        @PathVariable language: String): List<ParagraphPreview> =
-        chapter4Service.findParagraphsWithCnk(cnk, language)
-
-    @GetMapping("/sam/mpps/{chapterName}/{paragraphName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun getMppsForParagraph(
-        @PathVariable chapterName: String,
-        @PathVariable paragraphName: String) : List<MppPreview> =
-        chapter4Service.getMppsForParagraph(chapterName, paragraphName)
-
-    @GetMapping("/sam/vtms/{chapterName}/{paragraphName}/{language}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun getVtmNamesForParagraph(
-        @PathVariable chapterName: String,
-        @PathVariable paragraphName: String,
-        @PathVariable language: String) : List<String> =
-        chapter4Service.getVtmNamesForParagraph(chapterName, paragraphName, language)
-
-    @GetMapping("/sam/info/{chapterName}/{paragraphName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun getParagraphInfos(
-        @PathVariable chapterName: String,
-        @PathVariable paragraphName: String) : ParagraphInfos? =
-        chapter4Service.getParagraphInfos(chapterName, paragraphName)
 
     @GetMapping("/consult/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun agreementRequestsConsultation(
