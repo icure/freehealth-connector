@@ -20,8 +20,6 @@ public class ETKHelper {
     private static final String RECIPE_ID = "0206653946"; // Previously "0823257311";
     private static final String KGSS_ID = "0809394427";
 
-    private Map<String, EncryptionToken> etkCache = new HashMap<String, EncryptionToken>();
-    private Map<String, List<EncryptionToken>> etksCache = new HashMap<String, List<EncryptionToken>>();
     private KeyDepotService keyDepotService;
 
     public ETKHelper(KeyDepotService keyDepotService) {
