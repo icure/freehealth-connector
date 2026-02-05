@@ -147,7 +147,7 @@ dependencies {
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
     ktlint "com.github.shyiko:ktlint:0.22.0"
 
-    implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.0.6'
+    implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '2.9.3'
 
 	implementation("com.taktik.boot:spring-boot-starter-micrometer:2.1-90-gcc5c980239")
 	implementation('org.springframework.boot:spring-boot-starter-jetty')
