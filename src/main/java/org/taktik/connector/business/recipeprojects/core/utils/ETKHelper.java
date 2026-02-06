@@ -32,17 +32,7 @@ public class ETKHelper {
     }
 
     public List<EncryptionToken> getRecipe_ETK() throws IntegrationModuleException {
-        try {
-            return getEtks(KgssIdentifierType.CBE, RECIPE_ID, "");
-        } catch (IntegrationModuleException e) {
-            LOG.error("Unable to retrieve ETK for Recipe ID {}, trying without application parameter", RECIPE_ID, e);
-            try {
-                return getEtks(KgssIdentifierType.CBE, RECIPE_ID);
-            } catch (IntegrationModuleException ee) {
-                LOG.error("Unable to retrieve ETK for Recipe ID {}, trying without alternate ID", ALT_RECIPE_ID, e);
-                return getEtks(KgssIdentifierType.CBE, ALT_RECIPE_ID, "");
-            }
-        }
+        return getEtks(KgssIdentifierType.CBE, ALT_RECIPE_ID, "");
     }
 
     public List<EncryptionToken> getEtks(KgssIdentifierType identifierType, String identifierValue) throws IntegrationModuleException {
