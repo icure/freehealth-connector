@@ -191,7 +191,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
             patientFirstName,
             patientLastName,
             patientGender,
-            null,
+            date,
             eAttestRef,
             reason,
             attemptNbr
@@ -237,7 +237,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
             patientFirstName,
             patientLastName,
             patientGender,
-            null,
+            date,
             eAttestRef,
             reason,
             attemptNbr

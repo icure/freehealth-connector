@@ -1,6 +1,9 @@
 # Freehealth Connector
 A streamlined mmu (Massively Multi User) version of the eHealth connector
 
+Scalability: only vertically, NOT horizontally
+
+
 ## Run via gradlew
 ```
 ./gradlew bootRun
