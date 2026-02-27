@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.service
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import org.taktik.connector.business.domain.dmg.DmgAcknowledge
 import org.taktik.freehealth.middleware.dto.efact.EfactMessage
 import org.taktik.freehealth.middleware.dto.efact.EfactSendResponse
@@ -20,7 +21,30 @@ interface EfactService {
                      language: String,
                      limit: Int
         ): List<EfactMessage>
+
+    fun loadMediprimaMessages(keystoreId: UUID,
+                              tokenId: UUID,
+                              passPhrase: String,
+                              hcpNihii: String,
+                              hcpSsin: String,
+                              hcpFirstName: String,
+                              hcpLastName: String,
+                              language: String,
+                              limit: Int
+    ): List<EfactMessage>
+
     fun confirmAcks(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        valueHashes: List<String>
+    ): Boolean
+
+    fun confirmMediprimaAcks(
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
@@ -42,6 +66,17 @@ interface EfactService {
         valueHashes: List<String>
     ): Boolean
 
-    fun makeFlatFile(batch: InvoicesBatch, isTest: Boolean): String
-    fun makeFlatFileCoreWithMetadata(batch: InvoicesBatch, isTest: Boolean): FlatFileWithMetadata
+    fun confirmMediprimaMessages(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpNihii: String,
+        hcpSsin: String,
+        hcpFirstName: String,
+        hcpLastName: String,
+        valueHashes: List<String>
+    ): Boolean
+
+    fun makeFlatFile(batch: InvoicesBatch, isTest: Boolean, isMediprima: Boolean): String
+    fun makeFlatFileCoreWithMetadata(batch: InvoicesBatch, isTest: Boolean, isMediprima: Boolean): FlatFileWithMetadata
 }

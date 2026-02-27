@@ -106,7 +106,7 @@ public class BlobBuilderImpl implements BlobBuilder {
             newBlob.setContent(buff);
             newBlob.setContentType(blobAttributes.getContentType());
             newBlob.setId(blobAttributes.getId());
-            newBlob.setMessageName(this.messageName);
+            newBlob.setMessageName(blobAttributes.getMessageName());
             newBlob.setHashValue((byte[])null);
             newBlob.setContentEncryption(blobAttributes.getContentEncryption());
             newBlob.setMessageVersion(blobAttributes.getMessageVersion());

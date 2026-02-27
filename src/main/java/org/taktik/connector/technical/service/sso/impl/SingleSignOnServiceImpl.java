@@ -55,11 +55,15 @@ public class SingleSignOnServiceImpl implements SingleSignOnService {
    }
 
    public String signin(SsoProfile profile, SAMLToken samlToken) throws TechnicalConnectorException {
+       return this.signin(profile, samlToken, null);
+   }
+
+   public String signin(SsoProfile profile, SAMLToken samlToken, String destination) throws TechnicalConnectorException {
       switch(profile) {
       case SAML2_ARTIFACT:
          return this.signinWithSAML2Artifact(samlToken);
       case SAML2_POST:
-         return this.signinWithSAML2POST(samlToken);
+         return this.signinWithSAML2POST(samlToken, destination);
       default:
          throw new IllegalArgumentException("Unsupported SSO profile [" + profile + "]");
       }
@@ -114,6 +118,10 @@ public class SingleSignOnServiceImpl implements SingleSignOnService {
    }
 
    private String signinWithSAML2POST(SAMLToken samlToken) throws TechnicalConnectorException {
+      return this.signinWithSAML2POST(samlToken, null);
+   }
+
+   private String signinWithSAML2POST(SAMLToken samlToken, String destination) throws TechnicalConnectorException {
       FileWriter fw = null;
 
       try {
@@ -123,8 +131,22 @@ public class SingleSignOnServiceImpl implements SingleSignOnService {
          Validate.notNull(assertions);
          Validate.isTrue(assertions.getLength() == 1);
          Element assertion = (Element)assertions.item(0);
-         String samlResponse = ConnectorIOUtils.getResourceAsString("/sso/bindingTemplate-SAMLResponse.xml");
-         samlResponse = StringUtils.replaceEachRepeatedly(samlResponse, new String[]{"${SAMLResponseID}", "${SAMLResponseIssueInstant}", "${SAMLAssertion}"}, new String[]{IdGeneratorFactory.getIdGenerator("xsid").generateId(), (new DateTime()).toString(), this.toXMLString(assertion)});
+
+         String samlResponse;
+         if (destination != null && !destination.isEmpty()) {
+            // Use template with Destination attribute for specific case
+            samlResponse = ConnectorIOUtils.getResourceAsString("/sso/bindingTemplate-SAMLResponse-WithDestination.xml");
+            samlResponse = StringUtils.replaceEachRepeatedly(samlResponse,
+               new String[]{"${SAMLResponseID}", "${SAMLResponseIssueInstant}", "${SAMLDestination}", "${SAMLAssertion}"},
+               new String[]{IdGeneratorFactory.getIdGenerator("xsid").generateId(), (new DateTime()).toString(), destination, this.toXMLString(assertion)});
+         } else {
+            // Use standard template without Destination attribute
+            samlResponse = ConnectorIOUtils.getResourceAsString("/sso/bindingTemplate-SAMLResponse.xml");
+            samlResponse = StringUtils.replaceEachRepeatedly(samlResponse,
+               new String[]{"${SAMLResponseID}", "${SAMLResponseIssueInstant}", "${SAMLAssertion}"},
+               new String[]{IdGeneratorFactory.getIdGenerator("xsid").generateId(), (new DateTime()).toString(), this.toXMLString(assertion)});
+         }
+
          return new String(Base64.encode(ConnectorIOUtils.toBytes(ConnectorXmlUtils.flatten(samlResponse), Charset.UTF_8)));
       } finally {
          ConnectorIOUtils.closeQuietly(fw);

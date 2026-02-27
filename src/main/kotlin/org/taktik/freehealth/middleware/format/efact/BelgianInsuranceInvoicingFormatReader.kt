@@ -24,6 +24,7 @@ import org.taktik.freehealth.middleware.domain.EfactError
 import org.taktik.freehealth.middleware.format.ReaderSession
 import org.taktik.freehealth.middleware.format.efact.segments.Record10Description
 import org.taktik.freehealth.middleware.format.efact.segments.Record20Description
+import org.taktik.freehealth.middleware.format.efact.segments.Record25Description
 import org.taktik.freehealth.middleware.format.efact.segments.Record30Description
 import org.taktik.freehealth.middleware.format.efact.segments.Record50Description
 import org.taktik.freehealth.middleware.format.efact.segments.Record51Description
@@ -82,6 +83,7 @@ class BelgianInsuranceInvoicingFormatReader(private val language: String) {
                         }
                         "10" -> this.add(Record(Record10Description, Record10Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (doParseErrors) this.errorDetail = readErrorDetails(session, this) })
                         "20" -> this.add(Record(Record20Description, Record20Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (doParseErrors) this.errorDetail = readErrorDetails(session, this) })
+                        "25" -> this.add(Record(Record25Description, Record25Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (doParseErrors) this.errorDetail = readErrorDetails(session, this) })
                         "30" -> this.add(Record(Record30Description, Record30Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (doParseErrors) this.errorDetail = readErrorDetails(session, this) })
                         "50" -> this.add(Record(Record50Description, Record50Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (doParseErrors) this.errorDetail = readErrorDetails(session, this) })
                         "51" -> this.add(Record(Record51Description, Record51Description.zoneDescriptions.map { zd -> Zone(zd, session.read(zd.label, zd.length)) }).apply { if (doParseErrors) this.errorDetail = readErrorDetails(session, this) })

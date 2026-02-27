@@ -26,6 +26,7 @@ import org.taktik.freehealth.middleware.format.StringUtils
 import org.taktik.freehealth.middleware.format.WriterSession
 import org.taktik.freehealth.middleware.format.efact.segments.Record10Description
 import org.taktik.freehealth.middleware.format.efact.segments.Record20Description
+import org.taktik.freehealth.middleware.format.efact.segments.Record25Description
 import org.taktik.freehealth.middleware.format.efact.segments.Record50Description
 import org.taktik.freehealth.middleware.format.efact.segments.Record51Description
 import org.taktik.freehealth.middleware.format.efact.segments.Record52Description
@@ -350,11 +351,51 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
     }
 
     @Throws(IOException::class)
+    fun writeMediprimaRecord(
+        recordNumber: Int,
+        sender: InvoiceSender,
+        invoice: Invoice
+    ): Int{
+        val ws = WriterSession(writer, Record25Description)
+        var patient = invoice.patient!!
+        var invoiceNumber = invoice.invoiceNumber!!
+        var invoiceRef = invoice.invoiceRef!!
+        var urgencyMedicalAssistance = invoice.options?.get("urgencyMedicalAssistance") == "true"
+        var codeCover = invoice.options?.get("codeCover") ?: "0000000000"
+        var cbePcsa = invoice.options?.get("cbePcsa") ?: ""
+        var cardNumber = invoice.options?.get("cardNumber") ?: "000000000000"
+        var cardVersion = invoice.options?.get("cardVersion") ?: "000000"
+        var establishmentStayNumber = invoice.options?.get("establishmentStayNumber") ?: ""
+        var refElectronicAMU = invoice.options?.get("refElectronicAMU") ?: ""
+
+        ws.write("2", recordNumber)
+        ws.write("7", "690")
+        ws.write("8", if (patient.ssin != null) patient.ssin!!.replace("[^0-9]".toRegex(), "") else "")
+        ws.write("9", if (patient.gender == null || patient.gender == Gender.male) 1 else 2)
+        ws.write("12", if (urgencyMedicalAssistance) 1 else 0)
+        ws.write("14", sender.nihii.toString().padEnd(11, '0'))
+        ws.write("15", establishmentStayNumber)
+        ws.write("18", "690")
+        ws.write("24,25", invoiceNumber)
+        ws.write("27", codeCover)
+        ws.write("28", invoiceRef)
+        ws.write("32", 1)
+        ws.write("38", cbePcsa)
+        ws.write("47,48,49", refElectronicAMU)
+        ws.write("56,57,58", cardNumber)
+        ws.write("59", cardVersion)
+
+        ws.writeFieldsWithCheckSum()
+        return recordNumber+1
+    }
+
+    @Throws(IOException::class)
     fun writeRecordContent(recordNumber: Int,
                            sender: InvoiceSender,
                            invoicingYear: Int?,
                            invoicingMonth: Int?,
                            patient: Patient,
+                           creditNote: Boolean,
                            insuranceCode: String,
                            icd: InvoiceItem,
                            magneticInvoice: Boolean? = false): Int {
@@ -398,7 +439,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("9", if (patient.gender == null || patient.gender == Gender.male) 1 else 2)
         ws.write("12", (icd.timeOfDay?: InvoicingTimeOfDay.Other).code)
         ws.write("13",990)
-        if (sender.isMedicalHouse) ws.write("14", sender.nihii)
+        if (sender.isMedicalHouse) ws.write("14", sender.nihii) else if (icd.options?.get("careLocationNihii")?.isNotEmpty() == true) ws.write("14", icd.options?.get("careLocationNihii")) else null
         if (!sender.isMedicalHouse) ws.write("15", icd.doctorIdentificationNumber)
         if (sender.isMedicalHouse && (icd.codeNomenclature == 109594L || icd.codeNomenclature == 400396L)) ws.write("15", sender.nihii)
         //ws.write("16", if (sender.isMedicalHouse) 0 else if (icd.gnotionNihii == null || icd.gnotionNihii?.let { it.isEmpty() } == true) 1 else 4)
@@ -411,13 +452,25 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                 else -> 1
             })
         ws.write("17", icd.relatedCode)
-        ws.write("19",(if (icd.reimbursedAmount >= 0) "+" else "-") + nf11.format(Math.abs(icd.reimbursedAmount)))
+        ws.write("19",( if (icd.reimbursedAmount > 0) "+"
+            else if (icd.reimbursedAmount < 0) "-"
+            else if (creditNote) "-"   // zero case when credit note applies
+            else "+"                   // zero case otherwise
+            ) + nf11.format(Math.abs(icd.reimbursedAmount)))
         if(icd.prescriberNorm?.code != 0 && icd.prescriberNorm?.code !=3 && icd.prescriberNorm?.code !=4) ws.write("20", icd.prescriptionDate)// todo enlever le code 4 quand on fera infi cfr bible factu pg 473
-        ws.write("22",(if (icd.units >= 0) "+" else "-") + nf4.format(Math.abs(icd.units)))
+        ws.write("22",( if (icd.units > 0) "+"
+            else if (icd.units < 0) "-"
+            else if (creditNote) "-"   // zero case when credit note applies
+            else "+"                   // zero case otherwise
+            ) + nf4.format(Math.abs(icd.units)))
         ws.write("23", (icd.derogationMaxNumber ?: InvoicingDerogationMaxNumberCode.Other).code)
         ws.write("24", icd.prescriberNihii)
         ws.write("26", (icd.prescriberNorm ?: InvoicingPrescriberCode.None).code)
-        ws.write("27",(if (icd.patientFee >= 0) "+" else "-") + nf9.format(Math.abs(icd.patientFee)))
+        ws.write("27",(if (icd.patientFee > 0) "+"
+            else if (icd.patientFee < 0) "-"
+            else if (creditNote) "-"   // zero case when credit note applies
+            else "+"                   // zero case otherwise
+            ) + nf9.format(Math.abs(icd.patientFee)))
         ws.write("28", icd.invoiceRef)
         ws.write("29", icd.anatomy ?: "00")
         ws.write("30",(if (icd.doctorSupplement >= 0) "+" else "-") + nf9.format(Math.abs(icd.doctorSupplement)))
@@ -450,7 +503,9 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
                                       invoicingYear: Int?,
                                       invoicingMonth: Int?,
                                       patient: Patient,
-                                      icd: InvoiceItem): Int {
+                                      creditNote: Boolean,
+                                      icd: InvoiceItem,
+                                      isMediprima: Boolean? = false): Int {
         val ws = WriterSession(writer, Record51Description)
 
         val creationDate = LocalDateTime.now()
@@ -492,8 +547,13 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         else {
             ws.write("17", 0)
         }
-        ws.write("19", (if (icd.reimbursedAmount >= 0) "+" else "-") + nf11.format(Math.abs(icd.reimbursedAmount)))
-        ws.write("27", "0000" + nf3.format(ct1) + nf3.format(ct2))
+        ws.write("19", (
+            if (icd.reimbursedAmount > 0) "+"
+            else if (icd.reimbursedAmount < 0) "-"
+            else if (creditNote) "-"   // zero case when credit note applies
+            else "+"                   // zero case otherwise
+            ) + nf11.format(Math.abs(icd.reimbursedAmount)))
+        ws.write("27", (if (isMediprima!!) icd.options?.get("coveringCode") else "0000" + nf3.format(ct1) + nf3.format(ct2)))
         ws.write("42", icd.insuranceRef)
         ws.write("55", FuzzyValues.getLocalDateTime(icd.insuranceRefDate!!)!!.format(dtf))
 

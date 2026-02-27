@@ -147,8 +147,6 @@ class HubTokenServiceImpl(keyDepotService: KeyDepotService) : HubTokenService, C
             IntrahubEncryptionUtil.encryptFolder(
                 request,
                 getCrypto(keystoreId, keystore, samlToken.quality, passPhrase),
-                hubId,
-                hubApplication,
                 keyDepotManager.getEtk(IdentifierType.EHP, hubId, hubApplication , keystoreId, false)
             ),
             PutTransactionResponse::class.java
@@ -618,8 +616,6 @@ class HubTokenServiceImpl(keyDepotService: KeyDepotService) : HubTokenService, C
             IntrahubEncryptionUtil.encryptFolder(
                 request,
                 getCrypto(keystoreId, keystore, samlToken.quality, passPhrase),
-                hubId,
-                hubApplication,
                 keyDepotManager.getEtk(IdentifierType.EHP, hubId, hubApplication, keystoreId, false)
             ),
             PutTransactionSetResponse::class.java

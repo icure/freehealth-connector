@@ -91,13 +91,13 @@ import org.taktik.connector.business.recipe.utils.KmehrPrescriptionHelperV4.toDu
 import org.taktik.connector.business.recipe.utils.KmehrValidator
 import org.taktik.connector.technical.exception.ConnectorException
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
+import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.CodeDao
 import org.taktik.freehealth.middleware.domain.common.Patient
 import org.taktik.freehealth.middleware.domain.recipe.*
-import org.taktik.freehealth.middleware.drugs.dto.MppId
 import org.taktik.freehealth.middleware.dto.Address
 import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.HealthcareParty
@@ -118,6 +118,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.Callable
+import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.zip.DataFormatException
@@ -544,6 +545,158 @@ class RecipeV4ServiceImpl(
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
 
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+        val (m, prescriptionId) = doCreatePrescription(
+            medications,
+            prescriptionType,
+            patient,
+            hcp,
+            samVersion,
+            deliveryDate,
+            hcpQuality,
+            vendorName,
+            packageName,
+            packageVersion,
+            vendorEmail,
+            vendorPhone,
+            expirationDate,
+            lang,
+            samlToken,
+            credential,
+            hcpNihii,
+            feedback,
+            vision,
+            visionOthers
+        )
+
+        val result = Prescription(Date(), "", prescriptionId, false, null, false, ConnectorXmlUtils.toString(m))
+
+        return result
+    }
+
+    override fun createPrescriptions(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        hcpQuality: String,
+        hcpNihii: String,
+        patient: Patient,
+        hcp: HealthcareParty,
+        feedback: Boolean,
+        medications: List<List<Medication>>,
+        prescriptionType: String?,
+        notification: String?,
+        executorId: String?,
+        samVersion: String?,
+        deliveryDate: LocalDateTime?,
+        vendorName: String?,
+        packageName: String?,
+        packageVersion: String?,
+        vendorEmail: String?,
+        vendorPhone: String?,
+        vision: String?,
+        visionOthers: VisionOtherPrescribers?,
+        expirationDate: LocalDateTime?,
+        lang: String?
+    ): List<Prescription> {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+            ?: throw IllegalArgumentException("Cannot obtain token for Recipe operations")
+        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
+
+        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
+
+        val results = ConcurrentLinkedQueue<Pair<Kmehrmessage, String>>()
+
+        require(medications.isNotEmpty()) { "At least one prescription must be provided" }
+
+        //Create first prescription
+        results.add(doCreatePrescription(
+            medications[0],
+            prescriptionType,
+            patient,
+            hcp,
+            samVersion,
+            deliveryDate,
+            hcpQuality,
+            vendorName,
+            packageName,
+            packageVersion,
+            vendorEmail,
+            vendorPhone,
+            expirationDate,
+            lang,
+            samlToken,
+            credential,
+            hcpNihii,
+            feedback,
+            vision,
+            visionOthers
+        ))
+
+        //Launch a max of 9 threads to create the other prescriptions in parallel
+        val es = Executors.newFixedThreadPool(9)
+        try {
+            val futures = es.invokeAll<Pair<Kmehrmessage, String>>(medications.drop(1).map { meds ->
+                Callable<Pair<Kmehrmessage, String>> {
+                    doCreatePrescription(
+                        meds,
+                        prescriptionType,
+                        patient,
+                        hcp,
+                        samVersion,
+                        deliveryDate,
+                        hcpQuality,
+                        vendorName,
+                        packageName,
+                        packageVersion,
+                        vendorEmail,
+                        vendorPhone,
+                        expirationDate,
+                        lang,
+                        samlToken,
+                        credential,
+                        hcpNihii,
+                        feedback,
+                        vision,
+                        visionOthers
+                    )
+                }
+            })
+            for (f in futures) {
+                results.add(f.get())
+            }
+        } catch (e: InterruptedException) {
+            log.error("Unexpected error", e)
+        } finally {
+            es.shutdown()
+        }
+
+        return results.toList().map { (m, prescriptionId) ->
+            Prescription(Date(), "", prescriptionId, false, null, false, ConnectorXmlUtils.toString(m))
+        }
+    }
+
+    private fun doCreatePrescription(
+        medications: List<Medication>,
+        prescriptionType: String?,
+        patient: Patient,
+        hcp: HealthcareParty,
+        samVersion: String?,
+        deliveryDate: LocalDateTime?,
+        hcpQuality: String,
+        vendorName: String?,
+        packageName: String?,
+        packageVersion: String?,
+        vendorEmail: String?,
+        vendorPhone: String?,
+        expirationDate: LocalDateTime?,
+        lang: String?,
+        samlToken: SAMLToken,
+        credential: KeyStoreCredential,
+        hcpNihii: String,
+        feedback: Boolean,
+        vision: String?,
+        visionOthers: VisionOtherPrescribers?
+    ): Pair<Kmehrmessage, String> {
         val selectedType: String = inferPrescriptionType(medications, prescriptionType)
 
         val m = getKmehrPrescription(
@@ -592,10 +745,7 @@ class RecipeV4ServiceImpl(
             vendorName = vendorName ?: "phyMedispringTopaz",
             packageVersion = packageVersion ?: "1.0-freehealth-connector"
         )
-
-        val result = Prescription(Date(), "", prescriptionId, false, null, false, ConnectorXmlUtils.toString(m))
-
-        return result
+        return Pair(m, prescriptionId)
     }
 
     fun getKmehrPrescription(

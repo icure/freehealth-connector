@@ -36,5 +36,7 @@ interface MediprimaService {
         traineeSupervisorNihii: String?,
         traineeSupervisorFirstName: String?,
         traineeSupervisorLastName: String?,
+        guardPostNihii: String?,
+        guardPostSsin: String?,
         codes: List<String>): TarificationMediprimaConsultationResult?
 }

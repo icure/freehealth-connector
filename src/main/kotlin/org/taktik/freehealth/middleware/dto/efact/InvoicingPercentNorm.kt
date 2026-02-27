@@ -34,6 +34,7 @@ enum class InvoicingPercentNorm private constructor(val code: Int) {
     HalfPriceSecondAct(5),
     InvoiceException(6),
     ForInformation(7),
+    SurgicalSameField(8),
     PseudoCodeProthesis(9);
 
 

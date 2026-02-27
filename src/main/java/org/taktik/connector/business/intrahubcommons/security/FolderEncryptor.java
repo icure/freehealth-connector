@@ -27,14 +27,14 @@ public final class FolderEncryptor {
    private static final Logger LOG = LoggerFactory.getLogger(FolderEncryptor.class.getName());
 
 
-   public static Document encryptFolder(Document doc, Crypto crypto, Long hubId, String hubApplication, EncryptionToken hubEtk) throws TechnicalConnectorException {
+   public static Document encryptFolder(Document doc, Crypto crypto, EncryptionToken hubEtk) throws TechnicalConnectorException {
       NodeList folderNodes = doc.getElementsByTagNameNS("http://www.ehealth.fgov.be/standards/kmehr/schema/v1", "folder");
       if (folderNodes.getLength() > 0) {
          Node kmerhmessage = folderNodes.item(0).getParentNode();
 
          try {
             String folders = serializeFolders(folderNodes);
-            String encryptedMessageString = sealFolders(crypto, folders, hubId, hubApplication, hubEtk);
+            String encryptedMessageString = sealFolders(crypto, folders, hubEtk);
             removeNodes(kmerhmessage, folderNodes);
             kmerhmessage.appendChild(createBase64EncryptedData(doc, encryptedMessageString));
          } catch (UnsupportedEncodingException var8) {
@@ -86,7 +86,7 @@ public final class FolderEncryptor {
 
    }
 
-   private static String sealFolders(Crypto crypto, String folders, Long hubId, String hubApplication, EncryptionToken hubEtk) throws TechnicalConnectorException, UnsupportedEncodingException {
+   private static String sealFolders(Crypto crypto, String folders, EncryptionToken hubEtk) throws TechnicalConnectorException, UnsupportedEncodingException {
       byte[] encryptedMessage = crypto.seal(Crypto.SigningPolicySelector.WITH_NON_REPUDIATION, hubEtk, folders.getBytes(Charset.UTF_8.getName()));
       encryptedMessage = Base64.encode(encryptedMessage);
       return new String(encryptedMessage);

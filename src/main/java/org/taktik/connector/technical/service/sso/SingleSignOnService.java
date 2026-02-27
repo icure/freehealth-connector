@@ -6,4 +6,5 @@ import org.taktik.connector.technical.service.sts.security.SAMLToken;
 
 public interface SingleSignOnService {
    String signin(SsoProfile profile, SAMLToken samlToken) throws TechnicalConnectorException;
+   String signin(SsoProfile profile, SAMLToken samlToken, String destination) throws TechnicalConnectorException;
 }

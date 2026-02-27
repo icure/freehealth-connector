@@ -208,6 +208,8 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
         traineeSupervisorNihii: String?,
         traineeSupervisorFirstName: String?,
         traineeSupervisorLastName: String?,
+        guardPostNihii: String?,
+        guardPostSsin: String?,
         codes: List<String>
     ): TarificationMediprimaConsultationResult? {
         val samlToken =
@@ -218,20 +220,25 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
             val isTest = config.getProperty("endpoint.mcn.tarification.mediprima").contains("-acpt")
             val now = DateTime().withMillisOfSecond(0).withZone(null)
             val kmehrUUID = now.toString("YYYYddhhmmssSS")
-            val requestAuthorNihii = (hcpNihii).padEnd(11, '0')
-            val requestAuthorSsin = hcpSsin
-            val reqId = "${(hcpNihii).padEnd(11, '0')}.$kmehrUUID"
+            val requestAuthorNihii = (guardPostNihii ?: hcpNihii).padEnd(11, '0')
+            val requestAuthorSsin = guardPostSsin ?: hcpSsin
+            val reqId = "${(guardPostNihii ?: hcpNihii).padEnd(11, '0')}.$kmehrUUID"
             val quality = "doctor"
-            val hcParty = "persphysician"
+            val hcParty = if (guardPostNihii?.isEmpty() != false) "persphysician" else "guardpost"
 
             //  The author is always the caller
             val author = AuthorType().apply {
                 hcparties.add(HcpartyType().apply {
-                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
-                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
-                    cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = hcParty })
-                    firstname = hcpFirstName
-                    familyname = hcpLastName
+                    if(guardPostNihii != null) {
+                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = guardPostNihii.padEnd(11, '0') })
+                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = hcParty })
+                    }else{
+                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
+                        ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
+                        cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = hcParty })
+                        firstname = hcpFirstName
+                        familyname = hcpLastName
+                    }
                 })
             }
 
@@ -252,15 +259,7 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
                 this.request = RequestType().apply {
                     messageProtocoleSchemaVersion = BigDecimal("1.18")
                     id = IDKMEHR().apply { s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value = reqId }
-                    this.author = AuthorType().apply {
-                        hcparties.add(HcpartyType().apply {
-                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = requestAuthorNihii })
-                            ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = requestAuthorSsin })
-                            cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = hcParty })
-                            firstname = hcpFirstName
-                            familyname = hcpLastName
-                        })
-                    }
+                    this.author = author
                     date = now; time = now
                 }
                 this.select = SelectRetrieveTransactionType().apply {
@@ -273,7 +272,15 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
                         traineeSupervisorNihii?.let {
                             this.author = supervisor
                         } ?: run {
-                            this.author = author
+                            this.author = AuthorType().apply {
+                                hcparties.add(HcpartyType().apply {
+                                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.ID_HCPARTY; sv = "1.0"; value = hcpNihii })
+                                    ids.add(IDHCPARTY().apply { s = IDHCPARTYschemes.INSS; sv = "1.0"; value = hcpSsin })
+                                    cds.add(CDHCPARTY().apply { s = CDHCPARTYschemes.CD_HCPARTY; sv = "1.3"; value = hcParty })
+                                    firstname = hcpFirstName
+                                    familyname = hcpLastName
+                                })
+                            }
                         }
 
                         cds.add(CDTRANSACTION().apply { s = CDTRANSACTIONschemes.CD_TRANSACTION_MYCARENET; sv = "1.2"; value = "tariffmediprima" })
@@ -332,10 +339,17 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
 
                         this.careProvider = be.fgov.ehealth.mycarenet.commons.core.v2.CareProviderType().apply {
                             this.nihii = be.fgov.ehealth.mycarenet.commons.core.v2.NihiiType().apply {
-                                this.quality = quality
+                                this.quality = if (guardPostNihii?.isEmpty() != false) quality else "guardpost"
                                 this.value =
                                     be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
                                         .apply { this.value = requestAuthorNihii }
+                            }
+                            if (guardPostNihii?.isEmpty() != false) {
+                                this.physicalPerson = be.fgov.ehealth.mycarenet.commons.core.v2.IdType().apply {
+                                    this.ssin =
+                                        be.fgov.ehealth.mycarenet.commons.core.v2.ValueRefString()
+                                            .apply { this.value = hcpSsin }
+                                }
                             }
                         }
                     }
