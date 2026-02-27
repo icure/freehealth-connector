@@ -12,7 +12,7 @@ import be.fgov.ehealth.mediprimaUma.protocol.v1.SearchUrgentMedicalAidAttestatio
 import be.fgov.ehealth.mediprimaUma.protocol.v1.SearchUrgentMedicalAidAttestationResponseType
 import be.fgov.ehealth.mediprimaUma.protocol.v1.SendUrgentMedicalAidAttestationRequestType
 import be.fgov.ehealth.mediprimaUma.protocol.v1.SendUrgentMedicalAidAttestationResponseType
-import ma.glasnost.orika.MapperFacade
+import org.taktik.freehealth.middleware.mapper.MapperFacade
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.taktik.connector.technical.config.ConfigFactory

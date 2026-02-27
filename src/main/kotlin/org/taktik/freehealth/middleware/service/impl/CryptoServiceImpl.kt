@@ -11,14 +11,12 @@ import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.freehealth.middleware.service.CryptoService
 import org.taktik.freehealth.middleware.service.STSService
-import springfox.documentation.swagger.readers.operation.OperationHiddenReader
 import java.util.UUID
 
 @Service
 class CryptoServiceImpl(
     val stsService: STSService,
-    keyDepotService: KeyDepotService,
-    private val operationHiddenReader: OperationHiddenReader
+    keyDepotService: KeyDepotService
 ) : CryptoService {
     val keyDepotManager: KeyDepotManager = KeyDepotManagerImpl.getInstance(keyDepotService)
 

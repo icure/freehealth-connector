@@ -580,7 +580,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         var entries = mutableListOf<BundleEntry>()
 
         val mapper = ObjectMapper()
-        mapper.registerModule(KotlinModule())
+        mapper.registerModule(KotlinModule.Builder().build())
         mapper.enable(SerializationFeature.WRAP_ROOT_VALUE)
 
         val requestBundle = Bundle().apply {

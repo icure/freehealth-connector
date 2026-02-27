@@ -53,7 +53,7 @@ class RswFhirServiceImpl(val stsService: STSService) : RswFhirService {
     private val certFactory: CertificateFactory = CertificateFactory.getInstance("X.509")
     private val issuer = "idp.rsw.vault"
     private val audience = "api.rsw.clientid.fhir.careset"
-    private val objectMapper: ObjectMapper = ObjectMapper().registerModule(KotlinModule())
+    private val objectMapper: ObjectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
     private var rswPublicKey: PublicKey? = null
     private val fhirSearchEndpoint = "https://www.ehealth.fgov.be/standards/fhir/NamingSystem/ssin|"
 

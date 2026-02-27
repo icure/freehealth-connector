@@ -1,7 +1,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
-import io.swagger.annotations.ApiOperation
-import ma.glasnost.orika.MapperFacade
+import io.swagger.v3.oas.annotations.Operation
+import org.taktik.freehealth.middleware.mapper.MapperFacade
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -23,7 +23,7 @@ class DmgController(val dmgService: DmgService, val mapper: MapperFacade) {
     fun registerDoctor(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestParam hcpNihii: String, @RequestParam hcpSsin: String, @RequestParam hcpFirstName: String, @RequestParam hcpLastName: String, @PathVariable oa: String, @RequestParam bic: String, @RequestParam iban: String) =
         dmgService.registerDoctor(keystoreId = keystoreId, tokenId = tokenId, passPhrase = passPhrase, hcpNihii = hcpNihii, hcpSsin = hcpSsin, hcpFirstName = hcpFirstName, hcpLastName = hcpLastName, oa = oa, bic = bic, iban = iban)
 
-    @ApiOperation(value = "Consult dmg status", httpMethod = "GET")
+    @Operation(summary = "Consult dmg status")
     @GetMapping(produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun consultDmg(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: String,

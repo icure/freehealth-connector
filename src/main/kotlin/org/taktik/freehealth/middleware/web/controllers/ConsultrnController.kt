@@ -22,7 +22,7 @@ package org.taktik.freehealth.middleware.web.controllers
 
 import be.fgov.ehealth.consultrn.commons.core.v3.BusinessAnomalyType
 import be.fgov.ehealth.consultrn.protocol.v2.RegisterPersonResponse
-import ma.glasnost.orika.MapperFacade
+import org.taktik.freehealth.middleware.mapper.MapperFacade
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

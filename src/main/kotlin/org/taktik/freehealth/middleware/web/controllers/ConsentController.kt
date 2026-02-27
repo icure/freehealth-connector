@@ -21,7 +21,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import be.fgov.ehealth.hubservices.core.v2.ConsentType
-import ma.glasnost.orika.MapperFacade
+import org.taktik.freehealth.middleware.mapper.MapperFacade
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

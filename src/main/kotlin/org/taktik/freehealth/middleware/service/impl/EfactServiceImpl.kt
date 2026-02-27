@@ -13,7 +13,7 @@ import be.cin.nip.async.generic.GetResponse
 import be.cin.nip.async.generic.Post
 import be.cin.nip.async.generic.PostResponse
 import be.cin.types.v1.Blob
-import ma.glasnost.orika.MapperFacade
+import org.taktik.freehealth.middleware.mapper.MapperFacade
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.io.IOUtils
 import org.springframework.security.core.context.SecurityContextHolder
@@ -387,7 +387,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                             String(ConnectorIOUtils.decompress(IOUtils.toByteArray(r.detail.value.inputStream)), Charsets.UTF_8) //This starts with 92...
                         messageReference = r?.detail?.reference
                         message = BelgianInsuranceInvoicingFormatReader(language).parse(StringReader(this.detail!!))?.map {
-                            Record(mapper.map(it.description, RecordOrSegmentDescription::class.java), it.zones.map { z -> Zone(mapper.map(z.zoneDescription, ZoneDescription::class.java), z.value)}, mapper.map(it.errorDetail, ErrorDetail::class.java))
+                            Record(mapper.mapOrNull(it.description, RecordOrSegmentDescription::class.java), it.zones.map { z -> Zone(mapper.map(z.zoneDescription, ZoneDescription::class.java), z.value)}, mapper.mapOrNull(it.errorDetail, ErrorDetail::class.java))
                         }
                         xades = Base64.encodeBase64String(r.xadesT.value)
                         hashValue = Base64.encodeBase64String(r.detail.hashValue)
@@ -497,7 +497,7 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                             String(ConnectorIOUtils.decompress(IOUtils.toByteArray(r.detail.value.inputStream)), Charsets.UTF_8) //This starts with 92...
                         messageReference = r?.detail?.reference
                         message = BelgianInsuranceInvoicingFormatReader(language).parse(StringReader(this.detail!!))?.map {
-                            Record(mapper.map(it.description, RecordOrSegmentDescription::class.java), it.zones.map { z -> Zone(mapper.map(z.zoneDescription, ZoneDescription::class.java), z.value)}, mapper.map(it.errorDetail, ErrorDetail::class.java))
+                            Record(mapper.mapOrNull(it.description, RecordOrSegmentDescription::class.java), it.zones.map { z -> Zone(mapper.map(z.zoneDescription, ZoneDescription::class.java), z.value)}, mapper.mapOrNull(it.errorDetail, ErrorDetail::class.java))
                         }
                         xades = Base64.encodeBase64String(r.xadesT.value)
                         hashValue = Base64.encodeBase64String(r.detail.hashValue)

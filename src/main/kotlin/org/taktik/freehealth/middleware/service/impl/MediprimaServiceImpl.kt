@@ -88,6 +88,7 @@ import javax.xml.namespace.QName
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
+import org.taktik.freehealth.middleware.mapper.MapperFacade
 
 @Service
 class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepotService, val mapper: MapperFacade) : MediprimaService {

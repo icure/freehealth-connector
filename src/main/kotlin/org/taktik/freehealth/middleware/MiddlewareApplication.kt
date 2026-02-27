@@ -26,7 +26,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 import org.taktik.freehealth.application.utils.JarUtils
 import java.io.File
 
-@SpringBootApplication
+@SpringBootApplication(excludeName = ["com.taktik.boot.autoconfigure.micrometer.MicrometerAutoConfiguration"])
 @EnableScheduling
 class MiddlewareApplication
 

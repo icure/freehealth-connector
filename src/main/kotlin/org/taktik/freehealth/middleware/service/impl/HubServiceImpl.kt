@@ -36,7 +36,7 @@ import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import be.fgov.ehealth.standards.kmehr.schema.v1.PersonType
 import be.fgov.ehealth.standards.kmehr.schema.v1.SexType
 import com.google.gson.Gson
-import ma.glasnost.orika.MapperFacade
+import org.taktik.freehealth.middleware.mapper.MapperFacade
 import org.apache.commons.lang3.StringUtils
 import org.joda.time.DateTime
 import org.springframework.stereotype.Service

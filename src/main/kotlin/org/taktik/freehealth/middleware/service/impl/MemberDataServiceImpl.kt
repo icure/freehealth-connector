@@ -54,7 +54,7 @@ import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
 import com.google.gson.Gson
 import com.sun.xml.messaging.saaj.soap.impl.ElementImpl
 import com.sun.xml.messaging.saaj.soap.ver1_1.DetailEntry1_1Impl
-import ma.glasnost.orika.MapperFacade
+import org.taktik.freehealth.middleware.mapper.MapperFacade
 import net.sf.saxon.xpath.XPathFactoryImpl
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone

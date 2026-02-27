@@ -21,7 +21,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import jakarta.servlet.http.HttpServletRequest
-import ma.glasnost.orika.MapperFacade
+import org.taktik.freehealth.middleware.mapper.MapperFacade
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.ExceptionHandler

@@ -20,7 +20,7 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
-import ma.glasnost.orika.MapperFacade
+import org.taktik.freehealth.middleware.mapper.MapperFacade
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -215,7 +215,7 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
         comment = comment,
         sign = sign,
         proofType = proofType?.let { ProofTypeValues.valueOf(it)}
-    ).let { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
+    )?.let { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
 
     @PostMapping("/revoke", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun revokeLink(

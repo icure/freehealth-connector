@@ -28,11 +28,6 @@ import be.fgov.ehealth.standards.kmehr.schema.v1.CountryType
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
-import ma.glasnost.orika.CustomConverter
-import ma.glasnost.orika.MapperFacade
-import ma.glasnost.orika.MappingContext
-import ma.glasnost.orika.impl.DefaultMapperFactory
-import ma.glasnost.orika.metadata.Type
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
 import org.joda.time.LocalDateTime
@@ -42,6 +37,7 @@ import org.springframework.context.annotation.Configuration
 import org.taktik.freehealth.middleware.dto.Address
 import org.taktik.freehealth.middleware.dto.common.KmehrCd
 import org.taktik.freehealth.middleware.dto.common.KmehrId
+import org.taktik.freehealth.middleware.mapper.MapperFacade
 import org.w3._2005._05.xmlmime.Base64Binary
 import java.time.Instant
 import java.util.*
@@ -86,183 +82,67 @@ class MapperConfiguration {
     }
 
     @Bean
-    fun mapper(): MapperFacade? {
-        val factory = DefaultMapperFactory.Builder().build()
+    fun mapper(): MapperFacade {
+        val facade = MapperFacade()
 
-        val converterFactory = factory.getConverterFactory()
-        converterFactory.registerConverter(object : CustomConverter<LocalDate, Long>() {
-            override fun convert(
-                source: LocalDate,
-                destinationType: Type<out Long>,
-                mappingContext: MappingContext
-            ): Long? {
-                return source.yearOfEra * 10000L + source.monthOfYear * 100L + source.dayOfMonth
+        facade.registerConverter(IDHCPARTY::class.java, KmehrId::class.java) { source ->
+            KmehrId().apply {
+                s = source.s.value()
+                sl = source.sl
+                sv = source.sv
+                value = source.value
             }
-        })
+        }
 
-        converterFactory.registerConverter(object : CustomConverter<Long, LocalDate>() {
-            override fun convert(
-                source: Long,
-                destinationType: Type<out LocalDate>,
-                mappingContext: MappingContext
-            ): LocalDate? {
-                return LocalDate((source / 10000).toInt(), ((source / 100) % 100).toInt(), (source % 100).toInt())
+        facade.registerConverter(KmehrId::class.java, IDHCPARTY::class.java) { source ->
+            IDHCPARTY().apply {
+                s = IDHCPARTYschemes.fromValue(source.s)
+                sl = source.sl
+                sv = source.sv
+                value = source.value
             }
-        })
+        }
 
-        converterFactory.registerConverter(object : CustomConverter<Instant, Long>() {
-            override fun convert(
-                source: Instant,
-                destinationType: Type<out Long>,
-                mappingContext: MappingContext
-            ): Long? {
-                return source.toEpochMilli()
+        facade.registerConverter(be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY::class.java, KmehrCd::class.java) { source ->
+            KmehrCd().apply {
+                s = source.s.value()
+                sl = source.sl
+                sv = source.sv
+                value = source.value
             }
-        })
+        }
 
-        converterFactory.registerConverter(object : CustomConverter<Long, Instant>() {
-            override fun convert(
-                source: Long?,
-                destinationType: Type<out Instant>,
-                mappingContext: MappingContext
-            ): Instant {
-                return Instant.ofEpochMilli(source!!)
+        facade.registerConverter(KmehrCd::class.java, be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY::class.java) { source ->
+            be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY().apply {
+                s = CDHCPARTYschemes.fromValue(source.s)
+                sl = source.sl
+                sv = source.sv
+                value = source.value
             }
-        })
+        }
 
-        converterFactory.registerConverter(object :
-            CustomConverter<be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY, KmehrId>() {
-            override fun convert(
-                source: be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY,
-                destinationType: Type<out KmehrId>,
-                mappingContext: MappingContext
-            ): KmehrId {
-                return KmehrId().apply {
-                    s = source.s.value()
-                    sl = source.sl
-                    sv = source.sv
-                    value = source.value
-                }
-            }
-        })
-
-        converterFactory.registerConverter(object :
-            CustomConverter<KmehrId, IDHCPARTY>() {
-            override fun convert(
-                source: KmehrId,
-                destinationType: Type<out IDHCPARTY>,
-                mappingContext: MappingContext
-            ) = source.let {
-                IDHCPARTY().apply {
-                    s = IDHCPARTYschemes.fromValue(source.s)
-                    sl = source.sl
-                    sv = source.sv
-                    value = source.value
-                }
-            }
-        })
-
-        converterFactory.registerConverter(object :
-            CustomConverter<be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY, KmehrCd>() {
-            override fun convert(
-                source: be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY,
-                destinationType: Type<out KmehrCd>,
-                mappingContext: MappingContext
-            ): KmehrCd {
-                return KmehrCd().apply {
-                    s = source.s.value()
-                    sl = source.sl
-                    sv = source.sv
-                    value = source.value
-                }
-            }
-        })
-
-        converterFactory.registerConverter(object :
-            CustomConverter<KmehrCd, be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY>() {
-            override fun convert(
-                source: KmehrCd,
-                destinationType: Type<out be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY>,
-                mappingContext: MappingContext
-            ): be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY {
-                return be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY().apply {
-                    s = CDHCPARTYschemes.fromValue(source.s)
-                    sl = source.sl
-                    sv = source.sv
-                    value = source.value
-                }
-            }
-        })
-
-        converterFactory.registerConverter(object : CustomConverter<AddressType, Address>() {
-            override fun convert(
-                source: AddressType,
-                destinationType: Type<out Address>,
-                mappingContext: MappingContext
-            ): Address {
-                return Address(addressType = source.cds.firstOrNull()?.value?.let {
-                    org.taktik.freehealth.middleware.dto.AddressType.valueOf(
-                        it.lowercase()
-                    )
+        facade.registerConverter(AddressType::class.java, Address::class.java) { source ->
+            Address(
+                addressType = source.cds.firstOrNull()?.value?.let {
+                    org.taktik.freehealth.middleware.dto.AddressType.valueOf(it.lowercase())
                 } ?: org.taktik.freehealth.middleware.dto.AddressType.home,
-                    street = source.street,
-                    houseNumber = source.housenumber,
-                    postboxNumber = source.postboxnumber,
-                    postalCode = source.zip,
-                    city = source.city,
-                    country = source.country?.cd?.value)
-            }
-        })
+                street = source.street,
+                houseNumber = source.housenumber,
+                postboxNumber = source.postboxnumber,
+                postalCode = source.zip,
+                city = source.city,
+                country = source.country?.cd?.value
+            )
+        }
 
-        converterFactory.registerConverter(object : CustomConverter<CountryType, String>() {
-            override fun convert(
-                source: CountryType,
-                destinationType: Type<out String>,
-                mappingContext: MappingContext
-            ): String {
-                return source.cd.value
-            }
-        })
+        facade.registerConverter(CountryType::class.java, String::class.java) { source ->
+            source.cd.value
+        }
 
-        converterFactory.registerConverter(object : CustomConverter<Instant, Instant>() {
-            override fun convert(
-                source: Instant,
-                destinationType: Type<out Instant>,
-                mappingContext: MappingContext
-            ): Instant {
-                return Instant.ofEpochSecond(source.epochSecond, source.nano.toLong())
-            }
-        })
-        converterFactory.registerConverter(object : CustomConverter<org.w3._2005._05.xmlmime.Base64Binary, String>() {
-            override fun convert(
-                base64Binary: Base64Binary,
-                type: Type<out String>,
-                mappingContext: MappingContext
-            ): String {
-                return Base64.getEncoder().encodeToString(base64Binary.value)
-            }
-        })
+        facade.registerConverter(Base64Binary::class.java, String::class.java) { source ->
+            Base64.getEncoder().encodeToString(source.value)
+        }
 
-        converterFactory.registerConverter(object : CustomConverter<DateTime, Instant>() {
-            override fun convert(
-                source: DateTime,
-                destinationType: Type<out Instant>,
-                mappingContext: MappingContext
-            ): Instant {
-                return Instant.ofEpochMilli(source.millis)
-            }
-        })
-
-        converterFactory.registerConverter(object : CustomConverter<DateTime, Long>() {
-            override fun convert(
-                source: DateTime,
-                destinationType: Type<out Long>,
-                mappingContext: MappingContext
-            ): Long? {
-                return source.millis
-            }
-        })
-
-        return factory.mapperFacade
+        return facade
     }
 }
