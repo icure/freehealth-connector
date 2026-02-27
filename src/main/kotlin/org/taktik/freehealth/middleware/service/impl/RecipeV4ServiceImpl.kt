@@ -158,7 +158,7 @@ class RecipeV4ServiceImpl(
 
         val ridList = service.listOpenRids(samlToken, credential, patientId, vendorName, packageVersion)
 
-        val es = Executors.newFixedThreadPool(5)
+        val es = Executors.newVirtualThreadPerTaskExecutor()
         try {
             val getFeedback = es.submit<List<Feedback>> {
                 listFeedbacks(
@@ -632,8 +632,8 @@ class RecipeV4ServiceImpl(
             visionOthers
         ))
 
-        //Launch a max of 9 threads to create the other prescriptions in parallel
-        val es = Executors.newFixedThreadPool(9)
+        //Launch virtual threads to create the other prescriptions in parallel
+        val es = Executors.newVirtualThreadPerTaskExecutor()
         try {
             val futures = es.invokeAll<Pair<Kmehrmessage, String>>(medications.drop(1).map { meds ->
                 Callable<Pair<Kmehrmessage, String>> {

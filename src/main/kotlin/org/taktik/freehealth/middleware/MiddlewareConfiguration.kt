@@ -5,14 +5,14 @@ import be.fgov.ehealth.technicalconnector.bootstrap.bcp.EndpointUpdater
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.Scheduled
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
+import org.springframework.scheduling.concurrent.SimpleAsyncTaskScheduler
 
 
 @Configuration
 class MiddlewareConfiguration {
     @Bean
-    fun threadPoolTaskScheduler() = ThreadPoolTaskScheduler().apply {
-        poolSize = 5
-        threadNamePrefix = "ThreadPoolTaskScheduler"
+    fun taskScheduler() = SimpleAsyncTaskScheduler().apply {
+        setVirtualThreads(true)
+        setThreadNamePrefix("VirtualTaskScheduler-")
     }
 }
