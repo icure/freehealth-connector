@@ -110,7 +110,7 @@ dependencies {
         exclude(group = "org.bouncycastle")
     }
     implementation("org.springframework:spring-orm")
-
+    implementation("com.github.ben-manes.caffeine:caffeine:2.9.3")
     implementation("org.eclipse.jetty.http2:jetty-http2-server:12.0.25")
     implementation("com.nimbusds:nimbus-jose-jwt:9.7")
     implementation("com.nimbusds:oauth2-oidc-sdk:9.2.1")
