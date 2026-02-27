@@ -43,10 +43,31 @@ import org.taktik.freehealth.middleware.dto.consultrn.SearchPhoneticReplyDto
 import org.taktik.freehealth.middleware.service.ConsultRnService
 import java.util.UUID
 
+/**
+ * REST controller for consulting the Belgian National Registry (Registre National / Rijksregister).
+ *
+ * Provides endpoints to identify persons by SSIN, perform phonetic searches by name and date of birth,
+ * retrieve SSIN history, and register new persons in the National Registry. This is the v1 API;
+ * see [RnConsultController] for the v2 API.
+ *
+ * All endpoints require a valid keystore and SAML token, supplied via HTTP headers.
+ */
 @RestController
 @RequestMapping("/consultrn")
 @Tag(name = "ConsultRn", description = "Consult the Belgian National Registry to look up patient identity information using SSIN or phonetic search.")
 class ConsultrnController(val consultRnService: ConsultRnService, val mapper: MapperFacade) {
+    /**
+     * Identifies a person in the Belgian National Registry by their SSIN.
+     *
+     * Looks up full identity information (name, address, nationality, etc.) for the person
+     * associated with the given SSIN and returns the result mapped to a [SearchBySSINReplyDto].
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore
+     * @param tokenId UUID of the SAML authentication token
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param ssin social security identification number (NISS/INSZ) of the person to identify
+     * @return a [SearchBySSINReplyDto] containing the person's identity information
+     */
     @Operation(
         summary = "Identify a person by SSIN",
         description = "Looks up a person's identity information in the Belgian National Registry using their SSIN (social security identification number)."

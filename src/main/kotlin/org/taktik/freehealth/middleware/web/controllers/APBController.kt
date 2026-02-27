@@ -29,12 +29,26 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.service.APBService
 
+/**
+ * REST controller for the Association Pharmaceutique Belge (APB - Belgian Pharmaceutical Association).
+ * Provides endpoints for obtaining authentication bearer tokens needed to access APB and FTM
+ * (Formulaire Therapeutique Magistral) pharmaceutical services and product information APIs.
+ *
+ * @property apbService the service handling APB and FTM token retrieval
+ */
 @RestController
 @RequestMapping("/apb")
 @Tag(name = "APB", description = "Association Pharmaceutique Belge (Belgian Pharmaceutical Association). Provides pharmaceutical product information.")
 class APBController(private val apbService: APBService) {
     val log = LoggerFactory.getLogger(this.javaClass)
 
+    /**
+     * Retrieves an authentication bearer token for the APB (Association Pharmaceutique Belge) API.
+     * This token is required to authenticate subsequent calls to APB pharmaceutical product
+     * information services.
+     *
+     * @return the APB bearer token as a string
+     */
     @Operation(
         summary = "Get APB bearer token",
         description = "Retrieves an authentication bearer token for the APB (Belgian Pharmaceutical Association) API."
@@ -42,6 +56,13 @@ class APBController(private val apbService: APBService) {
     @GetMapping("/token/bearer", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getAPBBearerToken() = apbService.getAPBBearerToken()
 
+    /**
+     * Retrieves an authentication bearer token for the FTM (Formulaire Therapeutique Magistral) API.
+     * The FTM provides information about magistral (compounded) pharmaceutical preparations.
+     * This token is required to authenticate subsequent calls to FTM services.
+     *
+     * @return the FTM bearer token as a string
+     */
     @Operation(
         summary = "Get FTM bearer token",
         description = "Retrieves an authentication bearer token for the FTM (Formulaire Thérapeutique Magistral) API."

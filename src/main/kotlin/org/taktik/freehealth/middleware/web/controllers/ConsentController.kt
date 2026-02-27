@@ -38,10 +38,42 @@ import org.taktik.freehealth.middleware.dto.consent.ConsentTypeDto
 import org.taktik.freehealth.middleware.service.ConsentService
 import java.util.*
 
+/**
+ * REST controller for managing patient consent on the Belgian eHealth platform.
+ *
+ * This controller provides endpoints to register, retrieve, and revoke a patient's consent for sharing
+ * their health data through the eHealth platform. Patient consent is a prerequisite for accessing
+ * shared health data (e.g., SumEHR, medication schemes) stored in health vaults and hubs.
+ *
+ * Patient identification can optionally be strengthened using the Belgian electronic identity card (eID)
+ * or the ISI+ social insurance card.
+ *
+ * All endpoints require authentication via keystore, token, and passphrase headers.
+ */
 @RestController
 @RequestMapping("/consent")
 @Tag(name = "Consent", description = "Patient consent management: register, retrieve, and revoke patient consent for sharing health data through the Belgian eHealth platform.")
 class ConsentController(val consentService: ConsentService, val mapper: MapperFacade) {
+    /**
+     * Registers a patient's consent for sharing their health data through the Belgian eHealth platform.
+     * Once registered, health data such as SumEHR documents and medication schemes can be shared
+     * between healthcare providers via the eHealth hubs. Patient identification can optionally be
+     * strengthened by providing the eID or ISI+ card number.
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore
+     * @param tokenId UUID of the SAML authentication token
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpNihii NIHII number (unique Belgian healthcare provider identifier)
+     * @param hcpSsin healthcare provider's SSIN (social security number)
+     * @param hcpFirstName healthcare provider's first name
+     * @param hcpLastName healthcare provider's last name
+     * @param patientSsin patient's SSIN (social security number)
+     * @param patientFirstName patient's first name
+     * @param patientLastName patient's last name
+     * @param eidCardNumber Belgian electronic identity card number, optional (strengthens patient identification)
+     * @param isiCardNumber ISI+ social insurance card number, optional (strengthens patient identification)
+     * @return a [ConsentMessageDto] containing the result of the consent registration, including any error or acknowledgement details
+     */
     @Operation(
         summary = "Register patient consent",
         description = "Registers a patient's consent for sharing their health data through the Belgian eHealth platform, optionally using eID or ISI+ card identification."
@@ -75,6 +107,23 @@ class ConsentController(val consentService: ConsentService, val mapper: MapperFa
         isiCardNumber = isiCardNumber
                                                   ).let { mapper.map(it, ConsentMessageDto::class.java) }
 
+    /**
+     * Retrieves the current consent status for a patient, indicating whether they have given consent
+     * for sharing their health data through the Belgian eHealth platform. This can be used to verify
+     * consent before attempting to access shared health data in hubs.
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore
+     * @param tokenId UUID of the SAML authentication token
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpNihii NIHII number (unique Belgian healthcare provider identifier)
+     * @param hcpSsin healthcare provider's SSIN (social security number)
+     * @param hcpFirstName healthcare provider's first name
+     * @param hcpLastName healthcare provider's last name
+     * @param patientSsin patient's SSIN (social security number)
+     * @param patientFirstName patient's first name
+     * @param patientLastName patient's last name
+     * @return a [ConsentMessageDto] containing the consent status and details, or an indication that no consent exists
+     */
     @Operation(
         summary = "Get patient consent",
         description = "Retrieves the current consent status for a patient, indicating whether they have given consent for sharing their health data."

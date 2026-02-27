@@ -49,6 +49,37 @@ import jakarta.servlet.http.HttpServletRequest
 @RequestMapping("/eattestv2")
 @Tag(name = "eattestv2", description = "Electronic attestation of care V2 operations for submitting and cancelling healthcare attestations via the Belgian eHealth platform.")
 class EattestV2Controller(val eattestService: EattestV2Service) {
+    /**
+     * Sends an electronic attestation of care (V2) to the Belgian mutuality/insurance organization
+     * and returns the full verbose response including acknowledgement details, invoicing number, and raw attestation data.
+     *
+     * The V2 protocol adds support for treatment reason and trainee supervisor information
+     * compared to the base eattest protocol.
+     *
+     * @param patientSsin the patient's SSIN (Social Security Identification Number)
+     * @param keystoreId UUID of the uploaded PKCS12 keystore (obtained via STS uploadKeystore endpoint)
+     * @param tokenId UUID of the SAML authentication token (obtained via STS requestToken endpoint)
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpNihii NIHII number (unique Belgian healthcare provider identifier)
+     * @param hcpSsin healthcare provider's SSIN (Social Security Identification Number)
+     * @param hcpFirstName healthcare provider's first name
+     * @param hcpLastName healthcare provider's last name
+     * @param hcpCbe healthcare provider's CBE (Crossroads Bank for Enterprises) number
+     * @param patientFirstName the patient's first name
+     * @param patientLastName the patient's last name
+     * @param patientGender the patient's gender
+     * @param treatmentReason optional reason for the treatment
+     * @param date optional epoch timestamp for the attestation date; defaults to the current date if null
+     * @param traineeSupervisorSsin optional SSIN of the trainee's supervisor
+     * @param traineeSupervisorNihii optional NIHII of the trainee's supervisor
+     * @param traineeSupervisorFirstName optional first name of the trainee's supervisor
+     * @param traineeSupervisorLastName optional last name of the trainee's supervisor
+     * @param guardPostNihii optional NIHII of the guard post (poste de garde)
+     * @param guardPostSsin optional SSIN of the guard post
+     * @param guardPostName optional name of the guard post
+     * @param attest the attestation payload containing the medical acts to attest
+     * @return the full attestation response including acknowledgement, invoicing number, and raw attestation data
+     */
     @Operation(
         summary = "Send an electronic attestation V2 with verbose response",
         description = "Submits an electronic attestation of care (V2) for a patient identified by SSIN to the Belgian eHealth platform and returns the full response including acknowledgement details, invoicing number, and raw attestation data."
@@ -102,6 +133,36 @@ class EattestV2Controller(val eattestService: EattestV2Service) {
         attest
     )
 
+    /**
+     * Sends an electronic attestation of care (V2) to the Belgian mutuality/insurance organization
+     * and returns a simplified result containing only the acknowledgement, invoicing number, and attestation data.
+     *
+     * Unlike the verbose variant, this method extracts and returns only the essential fields from the response.
+     *
+     * @param patientSsin the patient's SSIN (Social Security Identification Number)
+     * @param keystoreId UUID of the uploaded PKCS12 keystore (obtained via STS uploadKeystore endpoint)
+     * @param tokenId UUID of the SAML authentication token (obtained via STS requestToken endpoint)
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpNihii NIHII number (unique Belgian healthcare provider identifier)
+     * @param hcpSsin healthcare provider's SSIN (Social Security Identification Number)
+     * @param hcpFirstName healthcare provider's first name
+     * @param hcpLastName healthcare provider's last name
+     * @param hcpCbe healthcare provider's CBE (Crossroads Bank for Enterprises) number
+     * @param patientFirstName the patient's first name
+     * @param patientLastName the patient's last name
+     * @param patientGender the patient's gender
+     * @param treatmentReason optional reason for the treatment
+     * @param date optional epoch timestamp for the attestation date; defaults to the current date if null
+     * @param traineeSupervisorSsin optional SSIN of the trainee's supervisor
+     * @param traineeSupervisorNihii optional NIHII of the trainee's supervisor
+     * @param traineeSupervisorFirstName optional first name of the trainee's supervisor
+     * @param traineeSupervisorLastName optional last name of the trainee's supervisor
+     * @param guardPostNihii optional NIHII of the guard post (poste de garde)
+     * @param guardPostSsin optional SSIN of the guard post
+     * @param guardPostName optional name of the guard post
+     * @param attest the attestation payload containing the medical acts to attest
+     * @return a simplified [SendAttestResult] with acknowledgement, invoicing number, and attestation data, or null if the service returns no result
+     */
     @Operation(
         summary = "Send an electronic attestation V2",
         description = "Submits an electronic attestation of care (V2) for a patient identified by SSIN to the Belgian eHealth platform. Returns a simplified result containing the acknowledgement, invoicing number, and attestation data."
@@ -155,6 +216,33 @@ class EattestV2Controller(val eattestService: EattestV2Service) {
         attest
     )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
 
+    /**
+     * Cancels a previously submitted electronic attestation of care (V2) for a given patient.
+     *
+     * The cancellation requires the original attestation reference and a reason for cancellation.
+     * Returns a simplified result containing only the acknowledgement, invoicing number, and attestation data.
+     *
+     * @param patientSsin the patient's SSIN (Social Security Identification Number)
+     * @param keystoreId UUID of the uploaded PKCS12 keystore (obtained via STS uploadKeystore endpoint)
+     * @param tokenId UUID of the SAML authentication token (obtained via STS requestToken endpoint)
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpNihii NIHII number (unique Belgian healthcare provider identifier)
+     * @param hcpSsin healthcare provider's SSIN (Social Security Identification Number)
+     * @param hcpFirstName healthcare provider's first name
+     * @param hcpLastName healthcare provider's last name
+     * @param hcpCbe healthcare provider's CBE (Crossroads Bank for Enterprises) number
+     * @param patientFirstName the patient's first name
+     * @param patientLastName the patient's last name
+     * @param patientGender the patient's gender
+     * @param eAttestRef the reference identifier of the attestation to cancel
+     * @param reason the reason for cancelling the attestation
+     * @param date optional epoch timestamp for the cancellation date; defaults to the current date if null
+     * @param traineeSupervisorSsin optional SSIN of the trainee's supervisor
+     * @param traineeSupervisorNihii optional NIHII of the trainee's supervisor
+     * @param traineeSupervisorFirstName optional first name of the trainee's supervisor
+     * @param traineeSupervisorLastName optional last name of the trainee's supervisor
+     * @return a simplified [SendAttestResult] with acknowledgement, invoicing number, and attestation data, or null if the service returns no result
+     */
     @Operation(
         summary = "Cancel an electronic attestation V2",
         description = "Cancels a previously submitted electronic attestation of care (V2) for a patient identified by SSIN. Requires the attestation reference and a cancellation reason. Returns a simplified result containing the acknowledgement, invoicing number, and attestation data."
@@ -203,6 +291,33 @@ class EattestV2Controller(val eattestService: EattestV2Service) {
             reason
        )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
 
+    /**
+     * Cancels a previously submitted electronic attestation of care (V2) for a given patient
+     * and returns the full verbose response including all acknowledgement details and raw attestation data.
+     *
+     * The cancellation requires the original attestation reference and a reason for cancellation.
+     *
+     * @param patientSsin the patient's SSIN (Social Security Identification Number)
+     * @param keystoreId UUID of the uploaded PKCS12 keystore (obtained via STS uploadKeystore endpoint)
+     * @param tokenId UUID of the SAML authentication token (obtained via STS requestToken endpoint)
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpNihii NIHII number (unique Belgian healthcare provider identifier)
+     * @param hcpSsin healthcare provider's SSIN (Social Security Identification Number)
+     * @param hcpFirstName healthcare provider's first name
+     * @param hcpLastName healthcare provider's last name
+     * @param hcpCbe healthcare provider's CBE (Crossroads Bank for Enterprises) number
+     * @param patientFirstName the patient's first name
+     * @param patientLastName the patient's last name
+     * @param patientGender the patient's gender
+     * @param eAttestRef the reference identifier of the attestation to cancel
+     * @param reason the reason for cancelling the attestation
+     * @param date optional epoch timestamp for the cancellation date; defaults to the current date if null
+     * @param traineeSupervisorSsin optional SSIN of the trainee's supervisor
+     * @param traineeSupervisorNihii optional NIHII of the trainee's supervisor
+     * @param traineeSupervisorFirstName optional first name of the trainee's supervisor
+     * @param traineeSupervisorLastName optional last name of the trainee's supervisor
+     * @return the full cancellation response including acknowledgement, invoicing number, and raw attestation data
+     */
     @Operation(
         summary = "Cancel an electronic attestation V2 with verbose response",
         description = "Cancels a previously submitted electronic attestation of care (V2) for a patient identified by SSIN and returns the full response. Requires the attestation reference and a cancellation reason."

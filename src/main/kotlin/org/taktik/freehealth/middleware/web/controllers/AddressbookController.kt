@@ -33,10 +33,30 @@ import org.taktik.freehealth.middleware.dto.HealthcareParty
 import org.taktik.freehealth.middleware.service.AddressbookService
 import java.util.*
 
+/**
+ * REST controller for querying the Belgian eHealth Addressbook.
+ *
+ * Provides endpoints to search for and retrieve details of healthcare professionals (HCPs)
+ * and organizations registered in the Belgian eHealth platform addressbook. Lookups can be
+ * performed by name (phonetic search), NIHII number, SSIN, CBE number, or EHP identifier.
+ *
+ * All endpoints require a valid keystore and SAML token, supplied via HTTP headers.
+ */
 @RestController
 @RequestMapping("/ab")
 @Tag(name = "Addressbook", description = "Search for healthcare professionals and organizations in the Belgian eHealth addressbook.")
 class AddressbookController(val addressbookService: AddressbookService) {
+    /**
+     * Searches the Belgian eHealth addressbook for healthcare professionals matching a last name.
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore
+     * @param tokenId UUID of the SAML authentication token
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param lastName last name to search for in the addressbook
+     * @param firstName optional first name to narrow the search results
+     * @param type optional HCP type filter (e.g. "PHYSICIAN", "DENTIST"); defaults to "PHYSICIAN" if not specified
+     * @return a list of [HealthcareParty] entries matching the search criteria
+     */
     @Operation(
         summary = "Search healthcare professionals by last name",
         description = "Searches the Belgian eHealth addressbook for healthcare professionals matching the given last name, with optional first name and type filters."
@@ -53,6 +73,16 @@ class AddressbookController(val addressbookService: AddressbookService) {
         keystoreId, tokenId, passPhrase, lastName, firstName, type ?: "PHYSICIAN"
     )
 
+    /**
+     * Searches the Belgian eHealth addressbook for organizations matching a name.
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore
+     * @param tokenId UUID of the SAML authentication token
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param name organization name to search for in the addressbook
+     * @param type optional organization type filter (e.g. "HOSPITAL", "PHARMACY"); defaults to "HOSPITAL" if not specified
+     * @return a list of [HealthcareParty] entries representing matching organizations
+     */
     @Operation(
         summary = "Search organizations by name",
         description = "Searches the Belgian eHealth addressbook for organizations matching the given name, with an optional type filter (defaults to HOSPITAL)."
@@ -68,6 +98,16 @@ class AddressbookController(val addressbookService: AddressbookService) {
         keystoreId, tokenId, passPhrase, name, type ?: "HOSPITAL"
     )
 
+    /**
+     * Retrieves a healthcare professional from the addressbook by their NIHII number.
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore
+     * @param tokenId UUID of the SAML authentication token
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param nihii NIHII number (unique Belgian healthcare provider identification number)
+     * @param language optional language code for the response (e.g. "fr", "nl", "de"); defaults to "fr"
+     * @return the matching [HealthcareParty], or null if no match is found
+     */
     @Operation(
         summary = "Get a healthcare professional by NIHII number",
         description = "Retrieves a healthcare professional's details from the Belgian eHealth addressbook using their NIHII identification number."
@@ -83,6 +123,17 @@ class AddressbookController(val addressbookService: AddressbookService) {
         keystoreId, tokenId, passPhrase, nihii, null, null, language ?: "fr"
     )
 
+    /**
+     * Retrieves a healthcare professional from the addressbook by their SSIN.
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore
+     * @param tokenId UUID of the SAML authentication token
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param ssin social security identification number (NISS) of the healthcare professional
+     * @param quality optional healthcare provider quality for authorization purposes
+     * @param language optional language code for the response (e.g. "fr", "nl", "de"); defaults to "fr"
+     * @return the matching [HealthcareParty], or null if no match is found
+     */
     @Operation(
         summary = "Get a healthcare professional by SSIN",
         description = "Retrieves a healthcare professional's details from the Belgian eHealth addressbook using their SSIN (social security identification number)."
@@ -99,6 +150,16 @@ class AddressbookController(val addressbookService: AddressbookService) {
         keystoreId, tokenId, passPhrase, null, ssin, quality, language ?: "fr"
     )
 
+    /**
+     * Retrieves an organization from the addressbook by its NIHII number.
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore
+     * @param tokenId UUID of the SAML authentication token
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param nihii NIHII number (unique Belgian healthcare provider identification number) of the organization
+     * @param language optional language code for the response (e.g. "fr", "nl", "de"); defaults to "fr"
+     * @return the matching [HealthcareParty], or null if no match is found
+     */
     @Operation(
         summary = "Get an organization by NIHII number",
         description = "Retrieves an organization's details from the Belgian eHealth addressbook using its NIHII identification number."
@@ -114,6 +175,16 @@ class AddressbookController(val addressbookService: AddressbookService) {
         keystoreId, tokenId, passPhrase, null, null, nihii, language ?: "fr"
     )
 
+    /**
+     * Retrieves an organization from the addressbook by its CBE number.
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore
+     * @param tokenId UUID of the SAML authentication token
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param cbe Belgian company registration number (Crossroads Bank for Enterprises / Banque-Carrefour des Entreprises)
+     * @param language optional language code for the response (e.g. "fr", "nl", "de"); defaults to "fr"
+     * @return the matching [HealthcareParty], or null if no match is found
+     */
     @Operation(
         summary = "Get an organization by CBE number",
         description = "Retrieves an organization's details from the Belgian eHealth addressbook using its CBE (Crossroads Bank for Enterprises) number."
@@ -129,6 +200,16 @@ class AddressbookController(val addressbookService: AddressbookService) {
         keystoreId, tokenId, passPhrase, null, cbe, null, language ?: "fr"
     )
 
+    /**
+     * Retrieves an organization from the addressbook by its EHP identifier.
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore
+     * @param tokenId UUID of the SAML authentication token
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param ehp eHealth Platform (EHP) identifier of the organization
+     * @param language optional language code for the response (e.g. "fr", "nl", "de"); defaults to "fr"
+     * @return the matching [HealthcareParty], or null if no match is found
+     */
     @Operation(
         summary = "Get an organization by EHP number",
         description = "Retrieves an organization's details from the Belgian eHealth addressbook using its EHP (eHealth Platform) identifier."

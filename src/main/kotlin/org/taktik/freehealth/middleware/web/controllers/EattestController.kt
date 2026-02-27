@@ -48,6 +48,36 @@ import jakarta.servlet.http.HttpServletRequest
 @RequestMapping("/eattest")
 @Tag(name = "eattest", description = "Electronic attestation of care (eattest) operations for submitting healthcare attestations to Belgian mutuality/insurance organizations.")
 class EattestController(val eattestService: EattestV2Service) {
+    /**
+     * Sends an electronic attestation of care to the Belgian mutuality/insurance organization
+     * and returns the full verbose response including acknowledgement details and raw attestation data.
+     *
+     * This endpoint delegates to the V2 eattest service implementation. The verbose variant returns
+     * the complete [SendAttestResult] with all response fields, as opposed to the simplified version.
+     *
+     * @param patientSsin the patient's SSIN (Social Security Identification Number)
+     * @param keystoreId UUID of the uploaded PKCS12 keystore (obtained via STS uploadKeystore endpoint)
+     * @param tokenId UUID of the SAML authentication token (obtained via STS requestToken endpoint)
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpNihii NIHII number (unique Belgian healthcare provider identifier)
+     * @param hcpSsin healthcare provider's SSIN (Social Security Identification Number)
+     * @param hcpFirstName healthcare provider's first name
+     * @param hcpLastName healthcare provider's last name
+     * @param hcpCbe healthcare provider's CBE (Crossroads Bank for Enterprises) number
+     * @param patientFirstName the patient's first name
+     * @param patientLastName the patient's last name
+     * @param patientGender the patient's gender
+     * @param date optional epoch timestamp for the attestation date; defaults to the current date if null
+     * @param traineeSupervisorSsin optional SSIN of the trainee's supervisor
+     * @param traineeSupervisorNihii optional NIHII of the trainee's supervisor
+     * @param traineeSupervisorFirstName optional first name of the trainee's supervisor
+     * @param traineeSupervisorLastName optional last name of the trainee's supervisor
+     * @param guardPostNihii optional NIHII of the guard post (poste de garde)
+     * @param guardPostSsin optional SSIN of the guard post
+     * @param guardPostName optional name of the guard post
+     * @param attest the attestation payload containing the medical acts to attest
+     * @return the full attestation response including acknowledgement, invoicing number, and raw attestation data
+     */
     @Operation(
         summary = "Send an electronic attestation with verbose response",
         description = "Submits an electronic attestation of care for a patient identified by SSIN to the Belgian eHealth platform and returns the full response including acknowledgement details and raw attestation data."
@@ -100,6 +130,36 @@ class EattestController(val eattestService: EattestV2Service) {
         attest
     )
 
+    /**
+     * Sends an electronic attestation of care to the Belgian mutuality/insurance organization
+     * and returns a simplified result containing only the acknowledgement, invoicing number, and attestation data.
+     *
+     * This endpoint delegates to the V2 eattest service implementation. Unlike the verbose variant,
+     * this method extracts and returns only the essential fields from the response.
+     *
+     * @param patientSsin the patient's SSIN (Social Security Identification Number)
+     * @param keystoreId UUID of the uploaded PKCS12 keystore (obtained via STS uploadKeystore endpoint)
+     * @param tokenId UUID of the SAML authentication token (obtained via STS requestToken endpoint)
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpNihii NIHII number (unique Belgian healthcare provider identifier)
+     * @param hcpSsin healthcare provider's SSIN (Social Security Identification Number)
+     * @param hcpFirstName healthcare provider's first name
+     * @param hcpLastName healthcare provider's last name
+     * @param hcpCbe healthcare provider's CBE (Crossroads Bank for Enterprises) number
+     * @param patientFirstName the patient's first name
+     * @param patientLastName the patient's last name
+     * @param patientGender the patient's gender
+     * @param date optional epoch timestamp for the attestation date; defaults to the current date if null
+     * @param traineeSupervisorSsin optional SSIN of the trainee's supervisor
+     * @param traineeSupervisorNihii optional NIHII of the trainee's supervisor
+     * @param traineeSupervisorFirstName optional first name of the trainee's supervisor
+     * @param traineeSupervisorLastName optional last name of the trainee's supervisor
+     * @param guardPostNihii optional NIHII of the guard post (poste de garde)
+     * @param guardPostSsin optional SSIN of the guard post
+     * @param guardPostName optional name of the guard post
+     * @param attest the attestation payload containing the medical acts to attest
+     * @return a simplified [SendAttestResult] with acknowledgement, invoicing number, and attestation data, or null if the service returns no result
+     */
     @Operation(
         summary = "Send an electronic attestation",
         description = "Submits an electronic attestation of care for a patient identified by SSIN to the Belgian eHealth platform. Returns a simplified result containing the acknowledgement, invoicing number, and attestation data."

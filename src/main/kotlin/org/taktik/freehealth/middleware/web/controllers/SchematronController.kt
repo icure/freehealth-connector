@@ -34,6 +34,14 @@ import org.taktik.freehealth.middleware.service.SchematronService
 import java.io.InputStream
 import java.util.*
 
+/**
+ * REST controller for validating XML documents against Schematron schemas. Schematron is a
+ * rule-based validation language for making assertions about the presence or absence of patterns
+ * in XML documents. This is used to validate eHealth XML messages against their corresponding
+ * Schematron rule sets before submission.
+ *
+ * @property schematronService the service that performs Schematron validation
+ */
 @RestController
 @RequestMapping("/schematron")
 @Tag(name = "Schematron", description = "XML validation service using Schematron rules.")

@@ -42,10 +42,44 @@ import org.taktik.freehealth.middleware.service.HubService
 import org.taktik.freehealth.utils.FuzzyValues
 import java.util.*
 
+/**
+ * REST controller for interacting with Belgian regional health data hubs (RSW, Vitalink, Abrumet, Cozo).
+ *
+ * These hubs are regional platforms that centralize patient health data, enabling healthcare providers
+ * to share and access medical information such as medication schemes, sumehr documents, and other
+ * KMEHR-formatted clinical data. This controller provides endpoints for managing patients, consent,
+ * therapeutic links, transactions (documents, scans, medication schemes), access rights, and audit trails.
+ *
+ * All operations require authentication via a PKCS12 keystore and SAML token, passed as HTTP headers.
+ * Most operations also require specifying the hub endpoint URL, as each regional hub has its own service address.
+ */
 @RestController
 @RequestMapping("/hub")
 @Tag(name = "Hub", description = "Operations for interacting with Belgian regional health data hubs (RSW, Vitalink, Abrumet, Cozo). Includes managing patients, consent, therapeutic links, transactions, access rights, and audit trails.")
 class HubController(val hubService: HubService, val mapper: MapperFacade) {
+    /**
+     * Creates or updates a patient record in the regional health hub.
+     *
+     * Registers a patient in the hub system, which is a prerequisite for managing patient data,
+     * consent, and therapeutic links. The patient is identified by their SSIN and personal details.
+     *
+     * @param endpoint the endpoint URL of the target health hub (e.g., RSW, Vitalink, Abrumet, Cozo)
+     * @param keystoreId UUID of the uploaded PKCS12 keystore
+     * @param tokenId UUID of the SAML authentication token
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpLastName healthcare provider's last name
+     * @param hcpFirstName healthcare provider's first name
+     * @param hcpNihii NIHII number (unique Belgian healthcare provider identifier)
+     * @param hcpSsin healthcare provider's SSIN
+     * @param hcpZip healthcare provider's ZIP code
+     * @param patientSsin patient's social security identification number
+     * @param firstName patient's first name
+     * @param lastName patient's last name
+     * @param gender patient's gender
+     * @param dateOfBirth patient's date of birth in YYYYMMDD format
+     * @param hubPackageId software package identifier provided by the hub, usually different for acceptance and production environments
+     * @return the result of the patient registration in the hub
+     */
     @Operation(
         summary = "Create or update a patient in the hubs",
         description = "This endpoint allows to create or update a patient in the hubs. " +
@@ -103,6 +137,24 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         dateOfBirth = FuzzyValues.getLocalDateTime(dateOfBirth)!!
     )
 
+    /**
+     * Retrieves a patient's information from the regional health hub.
+     *
+     * Fetches the patient record registered in the hub, identified by their SSIN.
+     *
+     * @param endpoint the endpoint URL of the target health hub (e.g., RSW, Vitalink, Abrumet, Cozo)
+     * @param keystoreId UUID of the uploaded PKCS12 keystore
+     * @param tokenId UUID of the SAML authentication token
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpLastName healthcare provider's last name
+     * @param hcpFirstName healthcare provider's first name
+     * @param hcpNihii NIHII number (unique Belgian healthcare provider identifier)
+     * @param hcpSsin healthcare provider's SSIN
+     * @param hcpZip healthcare provider's ZIP code
+     * @param patientSsin patient's social security identification number
+     * @param hubPackageId software package identifier provided by the hub, usually different for acceptance and production environments
+     * @return the patient's information as stored in the hub
+     */
     @Operation(
         summary = "Get a patient from the hubs",
         description = "This endpoint allows to retrieve a patient's information from the hubs. " +
@@ -146,6 +198,24 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         patientSsin = patientSsin
     )
 
+    /**
+     * Retrieves the consent status of a healthcare provider for accessing the hub.
+     *
+     * Checks whether a healthcare provider has been granted the right to access the hub system.
+     * This is a prerequisite for performing most hub operations.
+     *
+     * @param endpoint the endpoint URL of the target health hub (e.g., RSW, Vitalink, Abrumet, Cozo)
+     * @param keystoreId UUID of the uploaded PKCS12 keystore
+     * @param tokenId UUID of the SAML authentication token
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpNihii NIHII number (unique Belgian healthcare provider identifier)
+     * @param hcpLastName healthcare provider's last name
+     * @param hcpFirstName healthcare provider's first name
+     * @param hcpSsin healthcare provider's SSIN
+     * @param hcpZip healthcare provider's ZIP code
+     * @param hubPackageId software package identifier provided by the hub, usually different for acceptance and production environments
+     * @return the healthcare provider's consent status for the hub
+     */
     @Operation(
         summary = "Get the consent status of a healthcare provider",
         description = "This endpoint allows to retrieve the consent status of a healthcare provider that determines if an hcp has the right to access the hub. " +
@@ -186,6 +256,27 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         hcpZip = hcpZip
     )
 
+    /**
+     * Registers a patient's consent in the hub system.
+     *
+     * Records the patient's agreement to have their health data stored and shared through the hub.
+     * Proof of the patient's presence is required, typically via an eID card number or ISI+ card number (for children).
+     *
+     * @param endpoint the endpoint URL of the target health hub (e.g., RSW, Vitalink, Abrumet, Cozo)
+     * @param keystoreId UUID of the uploaded PKCS12 keystore
+     * @param tokenId UUID of the SAML authentication token
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpLastName healthcare provider's last name
+     * @param hcpFirstName healthcare provider's first name
+     * @param hcpNihii NIHII number (unique Belgian healthcare provider identifier)
+     * @param hcpSsin healthcare provider's SSIN
+     * @param hcpZip healthcare provider's ZIP code
+     * @param patientSsin patient's social security identification number
+     * @param hubPackageId software package identifier provided by the hub, usually different for acceptance and production environments
+     * @param patientEidCardNumber the patient's eID card number, used as proof of presence
+     * @param patientIsiCardNumber the patient's ISI+ card number, used as proof of presence (typically for children)
+     * @return the result of the consent registration
+     */
     @Operation(
         summary = "Register a patient consent",
         description = "This endpoint allows a healthcare provider to register a patient's consent in the hub system. " +
@@ -236,6 +327,27 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         patientIsiCardNumber = patientIsiCardNumber
 
                                                                    )
+    /**
+     * Revokes a patient's consent in the hub system.
+     *
+     * Removes the patient's agreement to have their health data stored and shared through the hub.
+     * Proof of the patient's presence is required, typically via an eID card number or ISI+ card number (for children).
+     *
+     * @param endpoint the endpoint URL of the target health hub (e.g., RSW, Vitalink, Abrumet, Cozo)
+     * @param keystoreId UUID of the uploaded PKCS12 keystore
+     * @param tokenId UUID of the SAML authentication token
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpLastName healthcare provider's last name
+     * @param hcpFirstName healthcare provider's first name
+     * @param hcpNihii NIHII number (unique Belgian healthcare provider identifier)
+     * @param hcpSsin healthcare provider's SSIN
+     * @param hcpZip healthcare provider's ZIP code
+     * @param patientSsin patient's social security identification number
+     * @param hubPackageId software package identifier provided by the hub, usually different for acceptance and production environments
+     * @param patientEidCardNumber the patient's eID card number, used as proof of presence
+     * @param patientIsiCardNumber the patient's ISI+ card number, used as proof of presence (typically for children)
+     * @return the result of the consent revocation
+     */
     @Operation(
         summary = "Revoke a patient's consent",
         description = "This endpoint allows a healthcare provider to revoke a patient's consent in the hub system. " +
@@ -286,6 +398,25 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         patientIsiCardNumber = patientIsiCardNumber
                                                                    )
 
+    /**
+     * Retrieves a patient's consent status from the hub.
+     *
+     * Checks whether the patient has consented to having their health data stored and shared
+     * through the hub by institutions and healthcare providers.
+     *
+     * @param endpoint the endpoint URL of the target health hub (e.g., RSW, Vitalink, Abrumet, Cozo)
+     * @param keystoreId UUID of the uploaded PKCS12 keystore
+     * @param tokenId UUID of the SAML authentication token
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpLastName healthcare provider's last name
+     * @param hcpFirstName healthcare provider's first name
+     * @param hcpNihii NIHII number (unique Belgian healthcare provider identifier)
+     * @param hcpSsin healthcare provider's SSIN
+     * @param hcpZip healthcare provider's ZIP code
+     * @param patientSsin patient's social security identification number
+     * @param hubPackageId software package identifier provided by the hub, usually different for acceptance and production environments
+     * @return the patient's [Consent] object, or null if no consent is registered
+     */
     @Operation(
         summary = "Get a patient's consent",
         description = "This endpoint allows to retrieve a patient's consent from the hubs, in other words, the patient's consent of having institutions and healthcare providers put some information on the hubs. " +

@@ -49,10 +49,39 @@ import org.taktik.freehealth.middleware.service.RecipeV4Service
 import org.taktik.freehealth.utils.FuzzyValues
 import java.util.*
 
+/**
+ * REST controller for the Belgian electronic prescription (Recipe) system.
+ *
+ * Provides endpoints for creating, retrieving, revoking, and managing electronic prescriptions
+ * via the Recipe v4 API. Prescriptions are identified by a unique Recipe ID (RID) and contain
+ * KMEHR-structured clinical content including medications, dosage instructions, and patient information.
+ *
+ * All endpoints (except [getGalToAdministrationUnit] and [getPrescription]) require authentication
+ * via uploaded PKCS12 keystore and SAML token, passed as HTTP headers.
+ */
 @RestController
 @RequestMapping("/recipe")
 @Tag(name = "Recipe", description = "Belgian electronic prescription (Recipe) services for creating, retrieving, revoking, and managing e-prescriptions via the Recipe v4 API.")
 class RecipeController(val recipeV4Service: RecipeV4Service) {
+    /**
+     * Creates a new electronic prescription in the Belgian Recipe system.
+     *
+     * The prescription content (patient details, medications, healthcare provider info) is provided
+     * in the request body as a [PrescriptionRequest]. Returns the created prescription with its
+     * unique Recipe ID (RID) that can be used for subsequent operations.
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore (obtained via [STSController.uploadKeystore])
+     * @param tokenId UUID of the SAML authentication token (obtained via [STSController.requestToken])
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpQuality provider quality/role (e.g. "doctor", "dentist", "nurse", "physiotherapist")
+     * @param hcpNihii NIHII number of the prescribing healthcare provider (unique Belgian identifier, 8 or 11 digits)
+     * @param hcpSsin healthcare provider's social security number (SSIN/NISS), optional
+     * @param hcpName healthcare provider's name, optional
+     * @param prescription the prescription request body containing patient, HCP, medications, and prescription metadata
+     * @param vendorName name of the software vendor integrating with the API, optional header override
+     * @param packageVersion version of the integrating software package, optional header override
+     * @return [Prescription] containing the created prescription details including the assigned Recipe ID (RID)
+     */
     @Operation(
         summary = "Create an electronic prescription",
         description = "Creates a new electronic prescription in the Belgian Recipe system. The prescription content (patient, medications, HCP info) is provided in the request body. Returns the created prescription with its Recipe ID (RID)."
@@ -97,6 +126,24 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             lang = prescription.lang
         )
 
+    /**
+     * Creates a new electronic prescription using the Recipe v4 API explicitly.
+     *
+     * Functionally identical to [createPrescription] but uses the `/v4` path for clarity.
+     * Returns the created prescription with its unique Recipe ID (RID).
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore (obtained via [STSController.uploadKeystore])
+     * @param tokenId UUID of the SAML authentication token (obtained via [STSController.requestToken])
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpQuality provider quality/role (e.g. "doctor", "dentist", "nurse", "physiotherapist")
+     * @param hcpNihii NIHII number of the prescribing healthcare provider (unique Belgian identifier, 8 or 11 digits)
+     * @param hcpSsin healthcare provider's social security number (SSIN/NISS), optional
+     * @param hcpName healthcare provider's name, optional
+     * @param prescription the prescription request body containing patient, HCP, medications, and prescription metadata
+     * @param vendorName name of the software vendor integrating with the API, optional header override
+     * @param packageVersion version of the integrating software package, optional header override
+     * @return [Prescription] containing the created prescription details including the assigned Recipe ID (RID)
+     */
     @Operation(
         summary = "Create an electronic prescription (v4 explicit)",
         description = "Creates a new electronic prescription using the Recipe v4 API explicitly. Functionally identical to the root POST endpoint but uses the /v4 path for clarity. Returns the created prescription with its Recipe ID (RID)."
@@ -141,6 +188,25 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             lang = prescription.lang
         )
 
+    /**
+     * Creates multiple electronic prescriptions in a single batch request.
+     *
+     * Each medication batch in the [PrescriptionsRequest] results in a separate prescription
+     * in the Belgian Recipe system. Returns a list of all created prescriptions with their
+     * Recipe IDs (RIDs).
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore (obtained via [STSController.uploadKeystore])
+     * @param tokenId UUID of the SAML authentication token (obtained via [STSController.requestToken])
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpQuality provider quality/role (e.g. "doctor", "dentist", "nurse", "physiotherapist")
+     * @param hcpNihii NIHII number of the prescribing healthcare provider (unique Belgian identifier, 8 or 11 digits)
+     * @param hcpSsin healthcare provider's social security number (SSIN/NISS), optional
+     * @param hcpName healthcare provider's name, optional
+     * @param prescription the batch prescription request body containing patient, HCP, medication batches, and prescription metadata
+     * @param vendorName name of the software vendor integrating with the API, optional header override
+     * @param packageVersion version of the integrating software package, optional header override
+     * @return list of [Prescription] objects, one per medication batch, each with its assigned Recipe ID (RID)
+     */
     @Operation(
         summary = "Create multiple electronic prescriptions in batch",
         description = "Creates multiple electronic prescriptions in a single batch request via the Belgian Recipe system. Each medication batch results in a separate prescription. Returns a list of created prescriptions with their Recipe IDs (RIDs)."
@@ -185,6 +251,24 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         )
 
 
+    /**
+     * Retrieves all open (non-expired, non-revoked) electronic prescriptions for a given patient.
+     *
+     * The patient is identified by their SSIN. Only prescriptions that are still active and
+     * available for dispensing are returned.
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore (obtained via [STSController.uploadKeystore])
+     * @param tokenId UUID of the SAML authentication token (obtained via [STSController.requestToken])
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpNihii NIHII number of the healthcare provider (unique Belgian identifier, 8 or 11 digits)
+     * @param patientId patient's social security number (SSIN/NISS)
+     * @param hcpQuality provider quality/role (e.g. "doctor", "dentist"), optional
+     * @param hcpSsin healthcare provider's social security number (SSIN/NISS), optional
+     * @param hcpName healthcare provider's name, optional
+     * @param vendorName name of the software vendor integrating with the API, optional
+     * @param packageVersion version of the integrating software package, optional
+     * @return list of [Prescription] objects representing all open prescriptions for the patient
+     */
     @Operation(
         summary = "List open prescriptions for a patient",
         description = "Retrieves all open (non-expired, non-revoked) electronic prescriptions for a given patient from the Belgian Recipe system. The patient is identified by their SSIN."
@@ -212,6 +296,33 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             packageVersion = packageVersion
         )
 
+    /**
+     * Retrieves all electronic prescriptions for a given patient with optional filters and pagination.
+     *
+     * Supports filtering by prescriber, creation date range, prescription statuses, expiration date range,
+     * and pagination parameters. Returns a structured result including pagination metadata.
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore (obtained via [STSController.uploadKeystore])
+     * @param tokenId UUID of the SAML authentication token (obtained via [STSController.requestToken])
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpNihii NIHII number of the healthcare provider (unique Belgian identifier, 8 or 11 digits)
+     * @param patientId patient's social security number (SSIN/NISS)
+     * @param prescriberId NIHII number of the prescriber to filter by, optional
+     * @param from start of creation date range filter (epoch millis), optional
+     * @param toInclusive end of creation date range filter inclusive (epoch millis), optional
+     * @param statuses comma-separated list of prescription statuses to filter by (e.g. "open,dispensed"), optional
+     * @param expiringFrom start of expiration date range filter (epoch millis), optional
+     * @param expiringToInclusive end of expiration date range filter inclusive (epoch millis), optional
+     * @param pageYear year component of the pagination cursor, optional
+     * @param pageMonth month component of the pagination cursor, optional
+     * @param pageNumber page number for pagination, optional
+     * @param hcpQuality provider quality/role (e.g. "doctor", "dentist"), optional
+     * @param hcpSsin healthcare provider's social security number (SSIN/NISS), optional
+     * @param hcpName healthcare provider's name, optional
+     * @param vendorName name of the software vendor integrating with the API, optional
+     * @param packageVersion version of the integrating software package, optional
+     * @return [ListStructuredPrescriptionsResult] containing the matching prescriptions and pagination metadata
+     */
     @Operation(
         summary = "List all prescriptions for a patient with filters",
         description = "Retrieves all electronic prescriptions for a given patient from the Belgian Recipe system, with optional filters for prescriber, date range, statuses, expiration range, and pagination. Returns a structured result with pagination metadata."
@@ -257,6 +368,27 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             packageVersion = packageVersion
         )
 
+    /**
+     * Sends a notification message related to an electronic prescription.
+     *
+     * The notification is sent to the specified executor (e.g., a pharmacist) to inform them
+     * about the prescription identified by its Recipe ID (RID). The notification text can contain
+     * free-form instructions or information for the executor.
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore (obtained via [STSController.uploadKeystore])
+     * @param tokenId UUID of the SAML authentication token (obtained via [STSController.requestToken])
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpQuality provider quality/role (e.g. "doctor", "dentist", "nurse", "physiotherapist")
+     * @param hcpNihii NIHII number of the prescribing healthcare provider (unique Belgian identifier, 8 or 11 digits)
+     * @param hcpSsin healthcare provider's social security number (SSIN/NISS)
+     * @param hcpName healthcare provider's name
+     * @param patientId patient's social security number (SSIN/NISS)
+     * @param executorId identifier of the executor (e.g., pharmacist NIHII) to receive the notification
+     * @param rid Recipe ID - unique prescription identifier in the Recipe system
+     * @param text notification message text to send to the executor
+     * @param vendorName name of the software vendor integrating with the API, optional
+     * @param packageVersion version of the integrating software package, optional
+     */
     @Operation(
         summary = "Send a notification for a prescription",
         description = "Sends a notification message related to an electronic prescription identified by its Recipe ID (RID). The notification is sent to the specified executor (e.g., pharmacist) to inform them about the prescription."
@@ -289,6 +421,24 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         packageVersion = packageVersion
     )
 
+    /**
+     * Revokes an existing electronic prescription in the Belgian Recipe system.
+     *
+     * Once revoked, the prescription identified by its Recipe ID (RID) can no longer be dispensed.
+     * A reason for the revocation must be provided for audit purposes.
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore (obtained via [STSController.uploadKeystore])
+     * @param tokenId UUID of the SAML authentication token (obtained via [STSController.requestToken])
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpNihii NIHII number of the prescribing healthcare provider (unique Belgian identifier, 8 or 11 digits)
+     * @param rid Recipe ID - unique prescription identifier to revoke
+     * @param reason reason for revoking the prescription (required for audit trail)
+     * @param hcpQuality provider quality/role (e.g. "doctor", "dentist"), optional
+     * @param hcpSsin healthcare provider's social security number (SSIN/NISS), optional
+     * @param hcpName healthcare provider's name, optional
+     * @param vendorName name of the software vendor integrating with the API, optional
+     * @param packageVersion version of the integrating software package, optional
+     */
     @Operation(
         summary = "Revoke an electronic prescription",
         description = "Revokes an existing electronic prescription identified by its Recipe ID (RID) in the Belgian Recipe system. A reason for the revocation must be provided. Once revoked, the prescription can no longer be dispensed."
@@ -318,6 +468,21 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             packageVersion = packageVersion
         )
 
+    /**
+     * Retrieves the current status of an electronic prescription.
+     *
+     * The status indicates whether the prescription is open, dispensed, revoked, or expired
+     * in the Belgian Recipe system.
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore (obtained via [STSController.uploadKeystore])
+     * @param tokenId UUID of the SAML authentication token (obtained via [STSController.requestToken])
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpNihii NIHII number of the healthcare provider (unique Belgian identifier, 8 or 11 digits)
+     * @param rid Recipe ID - unique prescription identifier to query
+     * @param vendorName name of the software vendor integrating with the API, optional
+     * @param packageVersion version of the integrating software package, optional
+     * @return the current prescription status (e.g. open, dispensed, revoked, expired)
+     */
     @Operation(
         summary = "Get the status of a prescription",
         description = "Retrieves the current status of an electronic prescription identified by its Recipe ID (RID) from the Belgian Recipe system. The status indicates whether the prescription is open, dispensed, revoked, or expired."
@@ -342,6 +507,24 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             packageVersion = packageVersion
         )
 
+    /**
+     * Updates the feedback flag on an electronic prescription.
+     *
+     * When feedback is allowed, the dispensing pharmacist can send feedback messages to the
+     * prescriber about the prescription (e.g., substitutions, dispensing notes).
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore (obtained via [STSController.uploadKeystore])
+     * @param tokenId UUID of the SAML authentication token (obtained via [STSController.requestToken])
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param rid Recipe ID - unique prescription identifier to update
+     * @param feedbackFlag true to allow feedback from the dispensing pharmacist, false to disallow
+     * @param hcpNihii NIHII number of the prescribing healthcare provider (unique Belgian identifier, 8 or 11 digits)
+     * @param hcpQuality provider quality/role (e.g. "doctor", "dentist"), optional
+     * @param hcpSsin healthcare provider's social security number (SSIN/NISS), optional
+     * @param hcpName healthcare provider's name, optional
+     * @param vendorName name of the software vendor integrating with the API, optional
+     * @param packageVersion version of the integrating software package, optional
+     */
     @Operation(
         summary = "Update the feedback flag on a prescription",
         description = "Updates the feedback flag on an electronic prescription identified by its Recipe ID (RID). When feedback is allowed, the dispensing pharmacist can send feedback messages to the prescriber about the prescription."
@@ -371,6 +554,22 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             packageVersion = packageVersion
         )
 
+    /**
+     * Sets the vision (visibility) policy on an electronic prescription.
+     *
+     * The vision controls which healthcare providers can view the prescription. Possible
+     * values include open (visible to all), locked, or restricted to GMD prescriber.
+     *
+     * @param keystoreId UUID of the uploaded PKCS12 keystore (obtained via [STSController.uploadKeystore])
+     * @param tokenId UUID of the SAML authentication token (obtained via [STSController.requestToken])
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param rid Recipe ID - unique prescription identifier to update
+     * @param vision vision policy for the prescription controlling who can see it
+     * @param visionOthers additional vision settings for other prescribers (e.g. "open", "locked", "gmd_prescriber"), optional
+     * @param vendorName name of the software vendor integrating with the API, optional
+     * @param packageVersion version of the integrating software package, optional
+     * @return [PutVisionResult] containing the result of the vision policy update
+     */
     @Operation(
         summary = "Set the vision policy on a prescription",
         description = "Sets the vision (visibility) policy on an electronic prescription identified by its Recipe ID (RID). The vision controls which healthcare providers can view the prescription (e.g., open, locked, or restricted to GMD prescriber)."

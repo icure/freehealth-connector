@@ -40,6 +40,14 @@ import org.taktik.freehealth.middleware.service.TarificationService
 import java.time.LocalDateTime
 import java.util.*
 
+/**
+ * REST controller for consulting official Belgian healthcare tariffs and fees.
+ *
+ * Provides an endpoint to look up INAMI/RIZIV nomenclature codes and their associated tariffs
+ * for a given patient. The tarification consultation takes into account factors such as
+ * the patient's insurance status, GMD (Global Medical Dossier) holder, trainee supervision,
+ * guard post context, anatomy, and related services.
+ */
 @RestController
 @RequestMapping("/tarif")
 @Tag(name = "Tarification", description = "Tarification and fee consultation service. Allows looking up official Belgian healthcare tariffs and fees (INAMI/RIZIV nomenclature codes) for a given patient.")
@@ -50,6 +58,42 @@ class TarificationController(val tarificationService: TarificationService, val m
             arrayOf<MycarenetError>().javaClass
         ).associateBy({ it.uid }, { it })
 
+    /**
+     * Consults official Belgian healthcare tariffs (INAMI/RIZIV nomenclature) for a given patient.
+     *
+     * Accepts a list of nomenclature codes and returns the applicable tariffs for the patient
+     * identified by their SSIN. The consultation takes into account the healthcare provider's
+     * identity, optional GMD holder, justification codes, trainee supervisor details, guard post
+     * context, anatomy specifications, and related services.
+     *
+     * The [date] parameter is encoded as a long in YYYYMMDD format (e.g., 20260115 for January 15, 2026).
+     * If not provided, the current date is used.
+     *
+     * The [anatomy] and [relatedService] parameters can be comma-separated lists that must match
+     * the length of [codes], or a single value applied to all codes.
+     *
+     * @param ssin the patient's social security identification number (SSIN/NISS)
+     * @param tokenId UUID of the SAML authentication token
+     * @param keystoreId UUID of the uploaded PKCS12 keystore
+     * @param passPhrase passphrase to decrypt the keystore's private key
+     * @param hcpFirstName first name of the healthcare provider
+     * @param hcpLastName last name of the healthcare provider
+     * @param hcpNihii NIHII number of the healthcare provider
+     * @param hcpSsin social security number of the healthcare provider
+     * @param date optional consultation date in YYYYMMDD format; defaults to today if not provided
+     * @param gmdNihii optional NIHII number of the GMD (Global Medical Dossier) holder
+     * @param justification optional justification code for the consultation
+     * @param traineeSupervisorSsin optional SSIN of the trainee's supervisor
+     * @param traineeSupervisorNihii optional NIHII number of the trainee's supervisor
+     * @param traineeSupervisorFirstName optional first name of the trainee's supervisor
+     * @param traineeSupervisorLastName optional last name of the trainee's supervisor
+     * @param guardPostNihii optional NIHII number of the guard post
+     * @param guardPostSsin optional SSIN associated with the guard post
+     * @param anatomy optional anatomy code(s), comma-separated if multiple (must match codes length)
+     * @param relatedService optional related service code(s), comma-separated if multiple (must match codes length)
+     * @param codes list of INAMI/RIZIV nomenclature codes to look up tariffs for
+     * @return a [TarificationConsultationResult] containing the applicable tariffs or errors if the consultation fails
+     */
     @Operation(
         summary = "Consult tarification for a patient",
         description = "Looks up official Belgian healthcare tariffs and fees (INAMI/RIZIV nomenclature codes) for a given patient identified by SSIN. Accepts a list of nomenclature codes in the request body and returns the applicable tariffs, taking into account optional parameters such as GMD holder, justification, trainee supervisor, guard post, anatomy, and related services."
