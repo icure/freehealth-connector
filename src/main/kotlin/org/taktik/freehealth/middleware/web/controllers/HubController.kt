@@ -28,6 +28,7 @@ import be.fgov.ehealth.hubservices.core.v3.RevokeAccessRightResponse
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.mapper.MapperFacade
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
@@ -43,6 +44,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/hub")
+@Tag(name = "Hub", description = "Operations for interacting with Belgian regional health data hubs (RSW, Vitalink, Abrumet, Cozo). Includes managing patients, consent, therapeutic links, transactions, access rights, and audit trails.")
 class HubController(val hubService: HubService, val mapper: MapperFacade) {
     @Operation(
         summary = "Create or update a patient in the hubs",

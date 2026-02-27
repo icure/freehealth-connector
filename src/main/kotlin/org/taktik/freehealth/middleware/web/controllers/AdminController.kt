@@ -36,14 +36,21 @@ import org.springframework.http.MediaType
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
 import org.taktik.freehealth.middleware.dao.User
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.dto.EndpointDistributorStatusDto
 
 
 @RestController
 @RequestMapping("/admin")
+@Tag(name = "Admin", description = "Administrative endpoints for system management.")
 class AdminController(val addressbookService: AddressbookService) {
     private val log = LogFactory.getLog(this.javaClass)
 
+    @Operation(
+        summary = "Set log level",
+        description = "Changes the log level for a specified package. Requires ROLE_ADMIN authority."
+    )
     @PostMapping("/loglevel/{loglevel}", produces = [MediaType.TEXT_PLAIN_VALUE])
     @Throws(Exception::class)
     fun loglevel(@PathVariable("loglevel") logLevel: String, @RequestParam(value = "package") packageName: String): String {
@@ -58,6 +65,10 @@ class AdminController(val addressbookService: AddressbookService) {
         return setLogLevel(logLevel, packageName)
     }
 
+    @Operation(
+        summary = "Get BCP status",
+        description = "Returns the current Business Continuity Plan (BCP) endpoint distributor status. Requires ROLE_ADMIN authority."
+    )
     @GetMapping("/bcp", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun bcpStatus(): EndpointDistributorStatusDto {
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User
@@ -69,6 +80,10 @@ class AdminController(val addressbookService: AddressbookService) {
         return EndpointDistributorStatusDto(mustPoll = distributor.mustPoll(), isBcpMode = distributor.isBCPMode, active = distributor.service2ActiveEndpoint, default = distributor.service2DefaultEndpoint)
     }
 
+    @Operation(
+        summary = "Force BCP update",
+        description = "Forces an update of the Business Continuity Plan (BCP) endpoint status. Requires ROLE_ADMIN authority."
+    )
     @PostMapping("/bcp", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun updateBcpStatus() {
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User

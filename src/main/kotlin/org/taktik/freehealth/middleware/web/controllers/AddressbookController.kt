@@ -27,13 +27,20 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.dto.HealthcareParty
 import org.taktik.freehealth.middleware.service.AddressbookService
 import java.util.*
 
 @RestController
 @RequestMapping("/ab")
+@Tag(name = "Addressbook", description = "Search for healthcare professionals and organizations in the Belgian eHealth addressbook.")
 class AddressbookController(val addressbookService: AddressbookService) {
+    @Operation(
+        summary = "Search healthcare professionals by last name",
+        description = "Searches the Belgian eHealth addressbook for healthcare professionals matching the given last name, with optional first name and type filters."
+    )
     @GetMapping("/search/hcp/{lastName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun searchHcp(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -46,6 +53,10 @@ class AddressbookController(val addressbookService: AddressbookService) {
         keystoreId, tokenId, passPhrase, lastName, firstName, type ?: "PHYSICIAN"
     )
 
+    @Operation(
+        summary = "Search organizations by name",
+        description = "Searches the Belgian eHealth addressbook for organizations matching the given name, with an optional type filter (defaults to HOSPITAL)."
+    )
     @GetMapping("/search/org/{name}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun searchOrg(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -57,6 +68,10 @@ class AddressbookController(val addressbookService: AddressbookService) {
         keystoreId, tokenId, passPhrase, name, type ?: "HOSPITAL"
     )
 
+    @Operation(
+        summary = "Get a healthcare professional by NIHII number",
+        description = "Retrieves a healthcare professional's details from the Belgian eHealth addressbook using their NIHII identification number."
+    )
     @GetMapping("/hcp/nihii/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getHcpByNihii(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -68,6 +83,10 @@ class AddressbookController(val addressbookService: AddressbookService) {
         keystoreId, tokenId, passPhrase, nihii, null, null, language ?: "fr"
     )
 
+    @Operation(
+        summary = "Get a healthcare professional by SSIN",
+        description = "Retrieves a healthcare professional's details from the Belgian eHealth addressbook using their SSIN (social security identification number)."
+    )
     @GetMapping("/hcp/ssin/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getHcpBySsin(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -80,6 +99,10 @@ class AddressbookController(val addressbookService: AddressbookService) {
         keystoreId, tokenId, passPhrase, null, ssin, quality, language ?: "fr"
     )
 
+    @Operation(
+        summary = "Get an organization by NIHII number",
+        description = "Retrieves an organization's details from the Belgian eHealth addressbook using its NIHII identification number."
+    )
     @GetMapping("/org/nihii/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getOrgByNihii(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -91,6 +114,10 @@ class AddressbookController(val addressbookService: AddressbookService) {
         keystoreId, tokenId, passPhrase, null, null, nihii, language ?: "fr"
     )
 
+    @Operation(
+        summary = "Get an organization by CBE number",
+        description = "Retrieves an organization's details from the Belgian eHealth addressbook using its CBE (Crossroads Bank for Enterprises) number."
+    )
     @GetMapping("/org/cbe/{cbe}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getOrgByCbe(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -102,6 +129,10 @@ class AddressbookController(val addressbookService: AddressbookService) {
         keystoreId, tokenId, passPhrase, null, cbe, null, language ?: "fr"
     )
 
+    @Operation(
+        summary = "Get an organization by EHP number",
+        description = "Retrieves an organization's details from the Belgian eHealth addressbook using its EHP (eHealth Platform) identifier."
+    )
     @GetMapping("/org/ehp/{ehp}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getOrgByEhp(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,

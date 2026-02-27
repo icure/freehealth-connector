@@ -20,6 +20,8 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.mapper.MapperFacade
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
@@ -38,7 +40,12 @@ import java.util.*
 
 @RestController
 @RequestMapping("/therlink")
+@Tag(name = "TherLink", description = "Therapeutic link management: register, query, check, and revoke therapeutic links between healthcare providers and patients.")
 class TherLinkController(val therLinkService: TherLinkService, val mapper: MapperFacade) {
+    @Operation(
+        summary = "Check therapeutic link existence",
+        description = "Checks whether a therapeutic link exists between a healthcare provider (identified by NIHII) and a patient (identified by SSIN), with optional date range and type filtering."
+    )
     @GetMapping("/check/{patientSsin}/{hcpNihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun hasTherapeuticLink(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -74,6 +81,10 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
     therLinkType = type
     )
 
+    @Operation(
+        summary = "Get all therapeutic links",
+        description = "Retrieves all therapeutic links between a healthcare provider and a patient, with optional filtering by date range, link type, and signature requirement."
+    )
     @GetMapping("/{patientSsin}/{hcpNihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getAllTherapeuticLinks(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -111,6 +122,10 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
         sign = sign
     )?.let { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
 
+    @Operation(
+        summary = "Query therapeutic links",
+        description = "Queries therapeutic links using a therapeutic link object as search criteria, allowing flexible searches based on any combination of link attributes."
+    )
     @PostMapping("/query", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getAllTherapeuticLinksWithQueryLink(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -126,6 +141,10 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
         sign = sign
     )?.let { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
 
+    @Operation(
+        summary = "Verify therapeutic link",
+        description = "Verifies whether a specific therapeutic link exists by submitting the full link details in the request body. Returns the matching link if found."
+    )
     @PostMapping("/check", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun doesLinkExist(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID, @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID, @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String, @RequestBody therLink: TherapeuticLinkDto) =
         therLinkService.doesLinkExist(
@@ -135,6 +154,10 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
             therLink = mapper.map(therLink, org.taktik.connector.business.therlink.domain.TherapeuticLink::class.java)
         )?.let { mapper.map(it, TherapeuticLinkDto::class.java) }
 
+    @Operation(
+        summary = "Register therapeutic link",
+        description = "Registers a new therapeutic link between a healthcare provider and a patient, with optional date range, link type, comment, signature, and proof type."
+    )
     @PostMapping("/register", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun registerTherapeuticLink(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -176,6 +199,10 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
         proofType = proofType?.let { ProofTypeValues.valueOf(it)}
     ).let { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
 
+    @Operation(
+        summary = "Revoke therapeutic link by path parameters",
+        description = "Revokes an existing therapeutic link between a healthcare provider and a patient identified by their NIHII and SSIN in the URL path."
+    )
     @PostMapping("/revoke/{patientSsin}/{hcpNihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun revokeLink(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -217,6 +244,10 @@ class TherLinkController(val therLinkService: TherLinkService, val mapper: Mappe
         proofType = proofType?.let { ProofTypeValues.valueOf(it)}
     )?.let { mapper.map(it, TherapeuticLinkMessageDto::class.java) }
 
+    @Operation(
+        summary = "Revoke therapeutic link by request body",
+        description = "Revokes an existing therapeutic link by submitting the full link details in the request body, with optional signature and proof type."
+    )
     @PostMapping("/revoke", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun revokeLink(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,

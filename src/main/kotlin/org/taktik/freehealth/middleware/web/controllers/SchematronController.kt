@@ -28,13 +28,20 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.service.SchematronService
 import java.io.InputStream
 import java.util.*
 
 @RestController
 @RequestMapping("/schematron")
+@Tag(name = "Schematron", description = "XML validation service using Schematron rules.")
 class SchematronController(val schematronService: SchematronService) {
+    @Operation(
+        summary = "Validate a document",
+        description = "Validates an XML document against a schematron schema."
+    )
     @PostMapping("/validate/{schema}", consumes = [MediaType.APPLICATION_XML_VALUE], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun validateUsingShematron(
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,

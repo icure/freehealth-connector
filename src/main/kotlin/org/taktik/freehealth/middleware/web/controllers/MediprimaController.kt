@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController
 import org.taktik.connector.business.domain.etarif.TarificationMediprimaConsultationResult
 import org.taktik.freehealth.middleware.domain.mediprima.MediprimaMdaResponse
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.service.MediprimaService
 import java.time.Instant
 import java.time.LocalDate
@@ -26,6 +28,7 @@ internal val timezone: String = "Europe/Brussels"
 
 @RestController
 @RequestMapping("/mediprima")
+@Tag(name = "Mediprima", description = "Belgian social welfare healthcare system (CPAS/OCMW). Handles healthcare coverage for people on social welfare.")
 class MediprimaController(
     val mediprimaService: MediprimaService,
     val mapper: MapperFacade
@@ -37,6 +40,10 @@ class MediprimaController(
             arrayOf<MycarenetError>().javaClass
         ).associateBy({ it.uid }, { it })
 
+    @Operation(
+        summary = "Consult Mediprima care data",
+        description = "Consults the Mediprima (CPAS/OCMW) system for a patient's healthcare coverage data using their SSIN."
+    )
     @PostMapping("/consultMediprima/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun consultMediprima(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -71,6 +78,10 @@ class MediprimaController(
     }
 
 
+    @Operation(
+        summary = "Consult Mediprima tarification",
+        description = "Consults the Mediprima tarification system to check coverage for specific medical procedure codes for a patient."
+    )
     @PostMapping("/consultTarificationMediprima/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun consultMediprimaTarification(
         @PathVariable patientSsin: String,

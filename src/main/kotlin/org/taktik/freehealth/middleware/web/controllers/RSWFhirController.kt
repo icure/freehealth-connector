@@ -7,12 +7,19 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.service.RswFhirService
 import java.util.UUID
 
 @RestController
 @RequestMapping("/rsw/fhir")
+@Tag(name = "RSWFhir", description = "Réseau Santé Wallon FHIR interface for accessing the Walloon health network using the FHIR standard.")
 class RSWFhirController(val rswFhirService: RswFhirService) {
+    @Operation(
+        summary = "Search patient data on RSW",
+        description = "Searches for patient health data on the Réseau Santé Wallon (Walloon Health Network) using the FHIR standard, identified by NIHII and patient SSIN."
+    )
     @GetMapping("/{nihii}/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun search(
         @PathVariable nihii: String,

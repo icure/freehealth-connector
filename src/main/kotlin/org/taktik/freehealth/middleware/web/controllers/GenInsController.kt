@@ -20,6 +20,8 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -34,7 +36,12 @@ import java.util.*
 
 @RestController
 @RequestMapping("/genins")
+@Tag(name = "GenIns", description = "General Insurability service for checking patient insurance status and coverage details with Belgian mutuality organizations.")
 class GenInsController(val genInsService: GenInsService) {
+    @Operation(
+        summary = "Get insurability by SSIN",
+        description = "Checks a patient's general insurability status and coverage details using their social security identification number (SSIN)."
+    )
     @GetMapping("/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getGeneralInsurability(
         @PathVariable ssin: String,
@@ -65,6 +72,10 @@ class GenInsController(val genInsService: GenInsService) {
                                                   hospitalized = hospitalized ?: false)
     }
 
+    @Operation(
+        summary = "Get insurability by membership",
+        description = "Checks a patient's general insurability status and coverage details using their insurance organization (IO) code and membership number."
+    )
     @GetMapping("/{io}/{ioMembership}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getGeneralInsurabilityByMembership(
         @PathVariable io: String,

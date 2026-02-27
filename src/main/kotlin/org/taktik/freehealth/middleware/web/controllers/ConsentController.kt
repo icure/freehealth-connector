@@ -21,6 +21,8 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import be.fgov.ehealth.hubservices.core.v2.ConsentType
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.mapper.MapperFacade
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
@@ -38,7 +40,12 @@ import java.util.*
 
 @RestController
 @RequestMapping("/consent")
+@Tag(name = "Consent", description = "Patient consent management: register, retrieve, and revoke patient consent for sharing health data through the Belgian eHealth platform.")
 class ConsentController(val consentService: ConsentService, val mapper: MapperFacade) {
+    @Operation(
+        summary = "Register patient consent",
+        description = "Registers a patient's consent for sharing their health data through the Belgian eHealth platform, optionally using eID or ISI+ card identification."
+    )
     @PostMapping("/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun registerPatientConsent(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -68,6 +75,10 @@ class ConsentController(val consentService: ConsentService, val mapper: MapperFa
         isiCardNumber = isiCardNumber
                                                   ).let { mapper.map(it, ConsentMessageDto::class.java) }
 
+    @Operation(
+        summary = "Get patient consent",
+        description = "Retrieves the current consent status for a patient, indicating whether they have given consent for sharing their health data."
+    )
     @GetMapping("/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getPatientConsent(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -93,6 +104,10 @@ class ConsentController(val consentService: ConsentService, val mapper: MapperFa
         patientLastName = patientLastName
                                              ).let { mapper.map(it, ConsentMessageDto::class.java) }
 
+    @Operation(
+        summary = "Revoke patient consent",
+        description = "Revokes an existing patient consent for sharing health data through the Belgian eHealth platform, using the existing consent details provided in the request body."
+    )
     @PostMapping("/revoke", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun revokePatientConsent(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,

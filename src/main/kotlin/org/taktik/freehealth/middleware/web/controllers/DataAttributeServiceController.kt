@@ -27,12 +27,19 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.service.DataAttributeService
 import java.util.*
 
 @RestController
 @RequestMapping("/daas")
+@Tag(name = "DataAttributeService", description = "Retrieves eHealth data attributes and metadata, including DIN routing information.")
 class DataAttributeServiceController(val dataAttributeService: DataAttributeService) {
+    @Operation(
+        summary = "Get DIN routing info",
+        description = "Retrieves DIN (Disability Insurance Number) routing information for a healthcare provider identified by NIHII and patient identified by SSIN."
+    )
     @GetMapping("/din/{nihii}/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getDinRoutingInfo(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,

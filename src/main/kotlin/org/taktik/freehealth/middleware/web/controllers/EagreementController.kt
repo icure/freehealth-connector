@@ -1,5 +1,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.mapper.MapperFacade
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -23,6 +25,7 @@ import jakarta.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/eagreement")
+@Tag(name = "Eagreement", description = "Electronic agreement requests for prior authorization from insurance organizations for specific treatments.")
 class EagreementController(val eagreementService: EagreementService, val mapper: MapperFacade) {
     @Value("\${mycarenet.timezone}")
     internal val mcnTimezone: String = "Europe/Brussels"
@@ -48,6 +51,10 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         val data: String
     )
 
+    @Operation(
+        summary = "Ask for an agreement",
+        description = "Submits a new electronic agreement request to the insurance organization for prior authorization of a specific treatment."
+    )
     @PostMapping("/askAgreement", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun askAgreement(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -122,6 +129,10 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         )
     }
 
+    @Operation(
+        summary = "Consult agreement list",
+        description = "Retrieves a list of existing electronic agreements for a patient, optionally filtered by date range, agreement type, and insurance reference."
+    )
     @PostMapping("/consultList", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun consultList(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -176,6 +187,10 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         )
     }
 
+    @Operation(
+        summary = "Cancel an agreement",
+        description = "Cancels a previously submitted electronic agreement request using its insurance reference."
+    )
     @PostMapping("/cancelAgreement", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun cancelAgreement(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -240,6 +255,10 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         )
     }
 
+    @Operation(
+        summary = "Extend an agreement",
+        description = "Requests an extension of an existing electronic agreement, providing updated prescriptions and session details."
+    )
     @PostMapping("/extendAgreement", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun extendAgreement(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -315,6 +334,10 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         )
     }
 
+    @Operation(
+        summary = "Complete an agreement",
+        description = "Completes a pending electronic agreement by providing additional required information such as prescriptions and attachments."
+    )
     @PostMapping("/completeAgreement", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun completeAgreement(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -387,6 +410,10 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         )
     }
 
+    @Operation(
+        summary = "Argue an agreement",
+        description = "Submits additional arguments or justifications for a previously refused or pending electronic agreement request."
+    )
     @PostMapping("/argueAgreement", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun argueAgreement(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -459,6 +486,10 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         )
     }
 
+    @Operation(
+        summary = "Get agreement messages",
+        description = "Retrieves pending asynchronous electronic agreement messages (responses, notifications) for the healthcare provider."
+    )
     @PostMapping("async/getMessages", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getMessageList(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -482,6 +513,10 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         )
     }
 
+    @Operation(
+        summary = "Confirm agreement messages",
+        description = "Confirms receipt of asynchronous electronic agreement messages, marking them as processed."
+    )
     @PostMapping("async/confirmMessage", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun confirmMessage(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,

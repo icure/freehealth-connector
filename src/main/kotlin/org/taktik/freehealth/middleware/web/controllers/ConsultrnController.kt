@@ -37,13 +37,20 @@ import org.taktik.connector.business.consultrn.exception.manageperson.ConsultrnR
 import org.taktik.freehealth.middleware.dto.consultrn.PersonMid
 import org.taktik.freehealth.middleware.dto.consultrn.RegisterPersonResponseDto
 import org.taktik.freehealth.middleware.dto.consultrn.SearchBySSINReplyDto
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.dto.consultrn.SearchPhoneticReplyDto
 import org.taktik.freehealth.middleware.service.ConsultRnService
 import java.util.UUID
 
 @RestController
 @RequestMapping("/consultrn")
+@Tag(name = "ConsultRn", description = "Consult the Belgian National Registry to look up patient identity information using SSIN or phonetic search.")
 class ConsultrnController(val consultRnService: ConsultRnService, val mapper: MapperFacade) {
+    @Operation(
+        summary = "Identify a person by SSIN",
+        description = "Looks up a person's identity information in the Belgian National Registry using their SSIN (social security identification number)."
+    )
     @GetMapping("/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun identify(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -52,6 +59,10 @@ class ConsultrnController(val consultRnService: ConsultRnService, val mapper: Ma
         @PathVariable(value = "ssin") ssin: String
                  ) = consultRnService.identify(keystoreId, tokenId, passPhrase, ssin).let { mapper.map(it, SearchBySSINReplyDto::class.java) }
 
+    @Operation(
+        summary = "Get SSIN history for a person",
+        description = "Retrieves the history of SSIN changes for a person from the Belgian National Registry."
+    )
     @GetMapping("/history/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun history(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -60,6 +71,10 @@ class ConsultrnController(val consultRnService: ConsultRnService, val mapper: Ma
         @PathVariable(value = "ssin") ssin: String
                 ) = consultRnService.history(keystoreId, tokenId, passPhrase, ssin)
 
+    @Operation(
+        summary = "Search persons phonetically",
+        description = "Performs a phonetic search in the Belgian National Registry using date of birth and last name, with optional filters for first name, gender, and tolerance."
+    )
     @GetMapping("/{dateOfBirth}/{lastName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun search(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -77,6 +92,10 @@ class ConsultrnController(val consultRnService: ConsultRnService, val mapper: Ma
     }
 
 
+    @Operation(
+        summary = "Register a person in the National Registry",
+        description = "Registers a new person in the Belgian National Registry. Returns the registration result, including any business anomalies if the person already exists."
+    )
     @PostMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun registerPerson(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,

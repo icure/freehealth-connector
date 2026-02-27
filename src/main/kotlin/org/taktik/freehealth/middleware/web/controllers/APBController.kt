@@ -25,16 +25,27 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.service.APBService
 
 @RestController
 @RequestMapping("/apb")
+@Tag(name = "APB", description = "Association Pharmaceutique Belge (Belgian Pharmaceutical Association). Provides pharmaceutical product information.")
 class APBController(private val apbService: APBService) {
     val log = LoggerFactory.getLogger(this.javaClass)
 
+    @Operation(
+        summary = "Get APB bearer token",
+        description = "Retrieves an authentication bearer token for the APB (Belgian Pharmaceutical Association) API."
+    )
     @GetMapping("/token/bearer", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getAPBBearerToken() = apbService.getAPBBearerToken()
 
+    @Operation(
+        summary = "Get FTM bearer token",
+        description = "Retrieves an authentication bearer token for the FTM (Formulaire Thérapeutique Magistral) API."
+    )
     @GetMapping("/token/bearer/ftm", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getFTMBearerToken() = apbService.getFTMBearerToken()
 }

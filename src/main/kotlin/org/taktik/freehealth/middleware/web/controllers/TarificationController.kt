@@ -20,6 +20,8 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import com.google.gson.Gson
 import com.sun.xml.messaging.saaj.soap.impl.ElementImpl
 import com.sun.xml.messaging.saaj.soap.ver1_1.DetailEntry1_1Impl
@@ -40,6 +42,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/tarif")
+@Tag(name = "Tarification", description = "Tarification and fee consultation service. Allows looking up official Belgian healthcare tariffs and fees (INAMI/RIZIV nomenclature codes) for a given patient.")
 class TarificationController(val tarificationService: TarificationService, val mapper: MapperFacade) {
     private val ConsultTarifErrors =
         Gson().fromJson(
@@ -47,6 +50,10 @@ class TarificationController(val tarificationService: TarificationService, val m
             arrayOf<MycarenetError>().javaClass
         ).associateBy({ it.uid }, { it })
 
+    @Operation(
+        summary = "Consult tarification for a patient",
+        description = "Looks up official Belgian healthcare tariffs and fees (INAMI/RIZIV nomenclature codes) for a given patient identified by SSIN. Accepts a list of nomenclature codes in the request body and returns the applicable tariffs, taking into account optional parameters such as GMD holder, justification, trainee supervisor, guard post, anatomy, and related services."
+    )
     @PostMapping("/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun consultTarification(
         @PathVariable ssin: String,

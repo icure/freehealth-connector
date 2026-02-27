@@ -20,6 +20,8 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.mapper.MapperFacade
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
@@ -37,7 +39,12 @@ import java.util.*
 
 @RestController
 @RequestMapping("/efact")
+@Tag(name = "Efact", description = "Electronic invoicing (tiers payant) operations. Allows healthcare providers to send electronic invoices directly to insurance organizations via the MyCareNet platform.")
 class EfactController(val efactService: EfactService, val mapper: MapperFacade) {
+    @Operation(
+        summary = "Send an invoice batch",
+        description = "Sends a batch of electronic invoices to the MyCareNet platform for processing by the insurance organizations."
+    )
     @PostMapping("/batch", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendBatch(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -52,6 +59,10 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             batch = batch
         )
 
+    @Operation(
+        summary = "Generate a flat file from an invoice batch",
+        description = "Converts an invoice batch into the flat file format required by the MyCareNet platform, without sending it. Useful for previewing or archiving the generated content."
+    )
     @PostMapping("/flat", produces = [MediaType.TEXT_PLAIN_VALUE])
     fun makeFlatFile(
         @RequestBody batch: InvoicesBatch
@@ -62,6 +73,10 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             isMediprima = false
                                  )
 
+    @Operation(
+        summary = "Generate a flat file core with metadata",
+        description = "Converts an invoice batch into the flat file core format with additional metadata, returned as JSON. Useful for integration with systems that need both the flat file content and associated metadata."
+    )
     @PostMapping("/flatcore", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun makeFlatFileCore(
         @RequestBody batch: InvoicesBatch
@@ -72,6 +87,10 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             isMediprima = false
                                  )
 
+    @Operation(
+        summary = "Generate a test flat file from an invoice batch",
+        description = "Converts an invoice batch into the flat file format in test mode, without sending it. The test flag is set so the generated file can be used for validation purposes."
+    )
     @PostMapping("/flat/test", produces = [MediaType.TEXT_PLAIN_VALUE])
     fun makeFlatFileTest(
         @RequestBody batch: InvoicesBatch
@@ -82,6 +101,10 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             isMediprima = false
                                  )
 
+    @Operation(
+        summary = "Load eFact messages",
+        description = "Retrieves pending electronic invoicing messages (responses, acknowledgements, errors) from the MyCareNet platform for the specified healthcare provider."
+    )
     @GetMapping("/{nihii}/{language}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun loadMessages(
         @PathVariable nihii: String,
@@ -107,6 +130,10 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
                                  )
 
 
+    @Operation(
+        summary = "Load Mediprima eFact messages",
+        description = "Retrieves pending Mediprima electronic invoicing messages from the MyCareNet platform. Mediprima is the system used for invoicing healthcare provided to people without insurance coverage."
+    )
     @GetMapping("/mediprima/{nihii}/{language}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun loadMediprimaMessages(
         @PathVariable nihii: String,
@@ -132,6 +159,10 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         )
 
 
+    @Operation(
+        summary = "Confirm eFact acknowledgements",
+        description = "Confirms the receipt of acknowledgement messages from the MyCareNet platform, identified by their value hashes. This prevents the same acknowledgements from being returned in subsequent load calls."
+    )
     @PutMapping("/confirm/acks/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun confirmAcks(
         @PathVariable nihii: String,
@@ -154,6 +185,10 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             valueHashes = valueHashes
         )
 
+    @Operation(
+        summary = "Confirm Mediprima eFact acknowledgements",
+        description = "Confirms the receipt of Mediprima acknowledgement messages from the MyCareNet platform, identified by their value hashes. This prevents the same acknowledgements from being returned in subsequent load calls."
+    )
     @PutMapping("/mediprima/confirm/acks/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun confirmMediprimaAcks(
         @PathVariable nihii: String,
@@ -176,6 +211,10 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             valueHashes = valueHashes
         )
 
+    @Operation(
+        summary = "Confirm eFact messages",
+        description = "Confirms the receipt of invoicing response messages from the MyCareNet platform, identified by their value hashes. This prevents the same messages from being returned in subsequent load calls."
+    )
     @PutMapping("/confirm/msgs/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun confirmMessages(
         @PathVariable nihii: String,
@@ -198,6 +237,10 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
             valueHashes = valueHashes
         )
 
+    @Operation(
+        summary = "Confirm Mediprima eFact messages",
+        description = "Confirms the receipt of Mediprima invoicing response messages from the MyCareNet platform, identified by their value hashes. This prevents the same messages from being returned in subsequent load calls."
+    )
     @PutMapping("/mediprima/confirm/msgs/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun confirmMediprimaMessages(
         @PathVariable nihii: String,

@@ -20,6 +20,8 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -48,9 +50,14 @@ import java.net.URL
 
 @RestController
 @RequestMapping("/chap4")
+@Tag(name = "Chapter4", description = "Belgian Chapter IV prior authorization for special medications requiring approval from insurance organizations.")
 class Chapter4Controller(private val chapter4Service: Chapter4Service) {
     val log = LoggerFactory.getLogger(this .javaClass)
 
+    @Operation(
+        summary = "Consult agreement requests",
+        description = "Retrieves existing Chapter IV agreement requests for a given patient, optionally filtered by paragraph, date range, and reference."
+    )
     @GetMapping("/consult/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun agreementRequestsConsultation(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -88,6 +95,10 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
         end = end,
         reference = reference)
 
+    @Operation(
+        summary = "Request a new agreement",
+        description = "Sends a new Chapter IV prior authorization request to the insurance organization for a specific paragraph and medication."
+    )
     @PostMapping("/new/{patientSsin}/{civicsVersion}/{requestType}/{paragraph}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun requestAgreement(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
                          @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -137,6 +148,10 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
             ioRequestReference = ioRequestReference,
             appendices = appendices)
 
+    @Operation(
+        summary = "Cancel an agreement",
+        description = "Cancels an existing Chapter IV agreement request identified by decision reference or IO request reference."
+    )
     @DeleteMapping("/cancel/{patientSsin}")
     fun cancelAgreement(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
                         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
@@ -169,6 +184,10 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
             iorequestReference = iorequestReference
                                        )
 
+    @Operation(
+        summary = "Close an agreement",
+        description = "Closes an approved Chapter IV agreement using its decision reference, ending the authorization period."
+    )
     @DeleteMapping("/close/{patientSsin}")
     fun closeAgreement(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
                        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,

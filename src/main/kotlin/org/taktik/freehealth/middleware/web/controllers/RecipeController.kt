@@ -43,13 +43,20 @@ import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.recipe.ListStructuredPrescriptionsResult
 import org.taktik.freehealth.middleware.dto.recipe.PrescriptionRequest
 import org.taktik.freehealth.middleware.dto.recipe.PrescriptionsRequest
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.service.RecipeV4Service
 import org.taktik.freehealth.utils.FuzzyValues
 import java.util.*
 
 @RestController
 @RequestMapping("/recipe")
+@Tag(name = "Recipe", description = "Belgian electronic prescription (Recipe) services for creating, retrieving, revoking, and managing e-prescriptions via the Recipe v4 API.")
 class RecipeController(val recipeV4Service: RecipeV4Service) {
+    @Operation(
+        summary = "Create an electronic prescription",
+        description = "Creates a new electronic prescription in the Belgian Recipe system. The prescription content (patient, medications, HCP info) is provided in the request body. Returns the created prescription with its Recipe ID (RID)."
+    )
     @Suppress("DuplicatedCode")
     @PostMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun createPrescription(
@@ -90,6 +97,10 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             lang = prescription.lang
         )
 
+    @Operation(
+        summary = "Create an electronic prescription (v4 explicit)",
+        description = "Creates a new electronic prescription using the Recipe v4 API explicitly. Functionally identical to the root POST endpoint but uses the /v4 path for clarity. Returns the created prescription with its Recipe ID (RID)."
+    )
     @Suppress("DuplicatedCode")
     @PostMapping("/v4", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun createPrescriptionV4(
@@ -130,6 +141,10 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             lang = prescription.lang
         )
 
+    @Operation(
+        summary = "Create multiple electronic prescriptions in batch",
+        description = "Creates multiple electronic prescriptions in a single batch request via the Belgian Recipe system. Each medication batch results in a separate prescription. Returns a list of created prescriptions with their Recipe IDs (RIDs)."
+    )
     @PostMapping("/batch", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun createPrescriptions(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -170,6 +185,10 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         )
 
 
+    @Operation(
+        summary = "List open prescriptions for a patient",
+        description = "Retrieves all open (non-expired, non-revoked) electronic prescriptions for a given patient from the Belgian Recipe system. The patient is identified by their SSIN."
+    )
     @GetMapping("/patient", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun listOpenPrescriptionsByPatient(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -193,6 +212,10 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             packageVersion = packageVersion
         )
 
+    @Operation(
+        summary = "List all prescriptions for a patient with filters",
+        description = "Retrieves all electronic prescriptions for a given patient from the Belgian Recipe system, with optional filters for prescriber, date range, statuses, expiration range, and pagination. Returns a structured result with pagination metadata."
+    )
     @GetMapping("/patient/all", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun listPrescriptionsByPatient(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -234,6 +257,10 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             packageVersion = packageVersion
         )
 
+    @Operation(
+        summary = "Send a notification for a prescription",
+        description = "Sends a notification message related to an electronic prescription identified by its Recipe ID (RID). The notification is sent to the specified executor (e.g., pharmacist) to inform them about the prescription."
+    )
     @PostMapping("/notify/{rid}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendNotification(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -262,6 +289,10 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         packageVersion = packageVersion
     )
 
+    @Operation(
+        summary = "Revoke an electronic prescription",
+        description = "Revokes an existing electronic prescription identified by its Recipe ID (RID) in the Belgian Recipe system. A reason for the revocation must be provided. Once revoked, the prescription can no longer be dispensed."
+    )
     @DeleteMapping("/{rid}")
     fun revokePrescription(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -287,6 +318,10 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             packageVersion = packageVersion
         )
 
+    @Operation(
+        summary = "Get the status of a prescription",
+        description = "Retrieves the current status of an electronic prescription identified by its Recipe ID (RID) from the Belgian Recipe system. The status indicates whether the prescription is open, dispensed, revoked, or expired."
+    )
     @GetMapping("/{rid}/status", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getPrescriptionStatus(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -307,6 +342,10 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             packageVersion = packageVersion
         )
 
+    @Operation(
+        summary = "Update the feedback flag on a prescription",
+        description = "Updates the feedback flag on an electronic prescription identified by its Recipe ID (RID). When feedback is allowed, the dispensing pharmacist can send feedback messages to the prescriber about the prescription."
+    )
     @PutMapping("/{rid}/feedback/{feedbackFlag}")
     fun updateFeedbackFlag(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -332,6 +371,10 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             packageVersion = packageVersion
         )
 
+    @Operation(
+        summary = "Set the vision policy on a prescription",
+        description = "Sets the vision (visibility) policy on an electronic prescription identified by its Recipe ID (RID). The vision controls which healthcare providers can view the prescription (e.g., open, locked, or restricted to GMD prescriber)."
+    )
     @PutMapping("/{rid}/vision")
     fun setVision(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -353,6 +396,10 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
         packageVersion = packageVersion
     )
 
+    @Operation(
+        summary = "Get the KMEHR prescription message",
+        description = "Retrieves the full KMEHR XML message content of an electronic prescription identified by its Recipe ID (RID). The KMEHR message contains the structured clinical content of the prescription including medications, dosage, and patient information."
+    )
     @GetMapping("/prescription/{rid}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getPrescriptionMessage(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -376,6 +423,10 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             packageVersion = packageVersion
         )
 
+    @Operation(
+        summary = "List all prescription feedbacks",
+        description = "Retrieves all feedback messages sent by dispensing pharmacists for the authenticated prescriber's prescriptions. Feedbacks provide information about dispensing events, substitutions, or other notes from the pharmacist."
+    )
     @GetMapping("/all/feedbacks", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun listFeedbacks(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -396,9 +447,17 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             packageVersion = packageVersion
         )
 
+    @Operation(
+        summary = "Get administration unit for a GAL code",
+        description = "Maps a GAL (galenic form) identifier to its corresponding administration unit code. This is used to determine the correct administration unit for a medication based on its galenic form in the Belgian SAM (authentic source of medicines) database."
+    )
     @GetMapping("/gal/{galId}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getGalToAdministrationUnit(@PathVariable galId: String): Code? = recipeV4Service.getGalToAdministrationUnit(galId)
 
+    @Operation(
+        summary = "Get a prescription with feedback",
+        description = "Retrieves a full electronic prescription along with its associated feedback messages, identified by its Recipe ID (RID). Returns the complete prescription details including medications, patient info, and any pharmacist feedback."
+    )
     @GetMapping("/{rid}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getPrescription(@PathVariable rid: String): PrescriptionFullWithFeedback? = recipeV4Service.getPrescription(rid)
 }

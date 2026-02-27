@@ -20,6 +20,8 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -36,9 +38,21 @@ import org.taktik.freehealth.middleware.service.EattestV2Service
 import java.util.UUID
 import jakarta.servlet.http.HttpServletRequest
 
+/**
+ * Controller for the Belgian eHealth electronic attestation V2 (eattestv2) service.
+ *
+ * Provides endpoints for healthcare providers to submit and cancel electronic
+ * attestations of care using the V2 protocol. Supports treatment reason and
+ * trainee supervisor information.
+ */
 @RestController
 @RequestMapping("/eattestv2")
+@Tag(name = "eattestv2", description = "Electronic attestation of care V2 operations for submitting and cancelling healthcare attestations via the Belgian eHealth platform.")
 class EattestV2Controller(val eattestService: EattestV2Service) {
+    @Operation(
+        summary = "Send an electronic attestation V2 with verbose response",
+        description = "Submits an electronic attestation of care (V2) for a patient identified by SSIN to the Belgian eHealth platform and returns the full response including acknowledgement details, invoicing number, and raw attestation data."
+    )
     @PostMapping("/send/{patientSsin}/verbose", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendAttestWithResponse(
         @PathVariable patientSsin: String,
@@ -88,6 +102,10 @@ class EattestV2Controller(val eattestService: EattestV2Service) {
         attest
     )
 
+    @Operation(
+        summary = "Send an electronic attestation V2",
+        description = "Submits an electronic attestation of care (V2) for a patient identified by SSIN to the Belgian eHealth platform. Returns a simplified result containing the acknowledgement, invoicing number, and attestation data."
+    )
     @PostMapping("/send/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendAttest(
         @PathVariable patientSsin: String,
@@ -137,6 +155,10 @@ class EattestV2Controller(val eattestService: EattestV2Service) {
         attest
     )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
 
+    @Operation(
+        summary = "Cancel an electronic attestation V2",
+        description = "Cancels a previously submitted electronic attestation of care (V2) for a patient identified by SSIN. Requires the attestation reference and a cancellation reason. Returns a simplified result containing the acknowledgement, invoicing number, and attestation data."
+    )
     @DeleteMapping("/send/{patientSsin}")
     fun cancelAttest(
         @PathVariable patientSsin: String,
@@ -181,6 +203,10 @@ class EattestV2Controller(val eattestService: EattestV2Service) {
             reason
        )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
 
+    @Operation(
+        summary = "Cancel an electronic attestation V2 with verbose response",
+        description = "Cancels a previously submitted electronic attestation of care (V2) for a patient identified by SSIN and returns the full response. Requires the attestation reference and a cancellation reason."
+    )
     @DeleteMapping("/send/{patientSsin}/verbose")
     fun cancelAttestWithResponse(
         @PathVariable patientSsin: String,

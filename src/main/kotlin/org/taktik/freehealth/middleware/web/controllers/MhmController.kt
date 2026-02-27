@@ -20,6 +20,8 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import be.fgov.ehealth.mycarenet.mhm.protocol.v1.SendSubscriptionResponse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -51,6 +53,7 @@ import jakarta.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/mhm")
+@Tag(name = "MHM", description = "Medical House Management. Manages registration and administration for medical houses (maisons medicales), including subscription start, cancellation, and closure notifications.")
 class MhmController(val mhmService: MhmService) {
     @Value("\${mycarenet.timezone}")
     internal val mcnTimezone: String = "Europe/Brussels"
@@ -71,6 +74,10 @@ class MhmController(val mhmService: MhmService) {
     fun handleBadRequest(req: HttpServletRequest, ex: jakarta.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
 
 
+    @Operation(
+        summary = "Send a medical house subscription",
+        description = "Registers a new patient subscription to a medical house (maison medicale). Sends the subscription request to the MyCarenet platform with patient details, start date, and signature type. Supports trial subscriptions and recovery mode."
+    )
     @PostMapping("/sendSubscription", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendSubscription(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -109,6 +116,10 @@ class MhmController(val mhmService: MhmService) {
             isTestForNotify = isTestForNotify ?: false)
     }
 
+    @Operation(
+        summary = "Cancel a medical house subscription",
+        description = "Cancels an existing patient subscription to a medical house. The subscription is identified by its reference number. Patient identification can be done via SSIN or via insurance organization (IO) and membership number."
+    )
     @PostMapping("/cancelSubscription", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun cancelSubscription(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -140,6 +151,10 @@ class MhmController(val mhmService: MhmService) {
       )
     }
 
+    @Operation(
+        summary = "Notify closure of a medical house subscription",
+        description = "Sends a notification about the closure of an existing patient subscription to a medical house. Requires the subscription reference, end date, reason for closure, and the decision type. Used to formally end a patient's registration with a medical house."
+    )
     @PostMapping("/notifySubscriptionClosure", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun notifySubscriptionClosure(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,

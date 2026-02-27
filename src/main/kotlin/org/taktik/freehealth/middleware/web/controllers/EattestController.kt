@@ -20,6 +20,8 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -35,9 +37,21 @@ import org.taktik.freehealth.middleware.service.EattestV2Service
 import java.util.UUID
 import jakarta.servlet.http.HttpServletRequest
 
+/**
+ * Controller for the Belgian eHealth electronic attestation (eattest) service.
+ *
+ * Provides endpoints for healthcare providers to submit electronic attestations
+ * of care to mutuality/insurance organizations via the eHealth platform.
+ * This controller delegates to the V2 implementation of the eattest service.
+ */
 @RestController
 @RequestMapping("/eattest")
+@Tag(name = "eattest", description = "Electronic attestation of care (eattest) operations for submitting healthcare attestations to Belgian mutuality/insurance organizations.")
 class EattestController(val eattestService: EattestV2Service) {
+    @Operation(
+        summary = "Send an electronic attestation with verbose response",
+        description = "Submits an electronic attestation of care for a patient identified by SSIN to the Belgian eHealth platform and returns the full response including acknowledgement details and raw attestation data."
+    )
     @PostMapping("/send/{patientSsin}/verbose", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendAttestWithResponse(
         @PathVariable patientSsin: String,
@@ -86,6 +100,10 @@ class EattestController(val eattestService: EattestV2Service) {
         attest
     )
 
+    @Operation(
+        summary = "Send an electronic attestation",
+        description = "Submits an electronic attestation of care for a patient identified by SSIN to the Belgian eHealth platform. Returns a simplified result containing the acknowledgement, invoicing number, and attestation data."
+    )
     @PostMapping("/send/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendAttest(
         @PathVariable patientSsin: String,

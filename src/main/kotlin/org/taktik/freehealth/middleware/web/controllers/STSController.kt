@@ -21,6 +21,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.apache.commons.lang.StringEscapeUtils
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
@@ -33,6 +34,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/sts")
+@Tag(name = "STS", description = "Security Token Service. Manages keystore uploads and SAML/Bearer/OAuth2 token generation for authenticating with Belgian eHealth platform services.")
 class STSController(private val stsService: STSService, private val ssoService: SSOService) {
     val log = LoggerFactory.getLogger(this.javaClass)
 

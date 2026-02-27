@@ -31,12 +31,19 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.connector.business.domain.vaccinnet.VaccineInjection
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.service.VaccinnetService
 import java.util.*
 
 @RestController
 @RequestMapping("/vaccinnet")
+@Tag(name = "Vaccinnet", description = "Belgian vaccination registry integration for managing patient vaccinations.")
 class VaccinnetController(val vaccinnetService: VaccinnetService) {
+    @Operation(
+        summary = "Get vaccinations",
+        description = "Retrieves vaccination records for a patient from the Vaccinnet registry."
+    )
     @GetMapping("/{patientId}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getVaccinations(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -48,6 +55,10 @@ class VaccinnetController(val vaccinnetService: VaccinnetService) {
         @RequestParam since: Long
     ) = vaccinnetService.getVaccinations(keystoreId, tokenId, passPhrase, patientId, softwareId, vaccinnetId, since)
 
+    @Operation(
+        summary = "Remove a vaccination",
+        description = "Removes a specific vaccination record for a patient from the Vaccinnet registry."
+    )
     @DeleteMapping("/{patientId}/{vaccinationId}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun removeVaccination(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -59,6 +70,10 @@ class VaccinnetController(val vaccinnetService: VaccinnetService) {
         @RequestParam vaccinnetId: String
     ) = vaccinnetService.removeVaccination(keystoreId, tokenId, passPhrase, patientId, softwareId, vaccinnetId, vaccinationId)
 
+    @Operation(
+        summary = "Add vaccinations",
+        description = "Registers new vaccination records for a patient in the Vaccinnet registry."
+    )
     @PostMapping("/{patientId}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun addVaccinations(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,

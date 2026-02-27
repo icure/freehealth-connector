@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.domain.mediprimaUma.MediprimaUmaDeleteUrgentMedicalAidAttestationResponse
 import org.taktik.freehealth.middleware.domain.mediprimaUma.MediprimaUmaSearchUrgentMedicalAidAttestationResponse
 import org.taktik.freehealth.middleware.domain.mediprimaUma.MediprimaUmaSendUrgentMedicalAidAttestationResponse
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.service.MediprimaUmaService
 import java.time.Instant
 import java.time.LocalDate
@@ -20,11 +22,16 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/mediprimaUma")
+@Tag(name = "MediprimaUma", description = "Mediprima UMA (User-Managed Access) endpoints for urgent medical aid attestations.")
 class MediprimaUmaController(
     val mediprimaUmaService: MediprimaUmaService,
     val mapper: MapperFacade
 ){
     internal val mcnTimezone: String = "Europe/Brussels"
+    @Operation(
+        summary = "Send urgent medical aid attestation",
+        description = "Sends an urgent medical aid (UMA) attestation for a patient identified by their SSIN."
+    )
     @PostMapping("/sendUrgentMedicalAidAttestation/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun sendUrgentMedicalAidAttestation(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -53,6 +60,10 @@ class MediprimaUmaController(
             endDate = longDateToInstant(endDate)
         )
     }
+    @Operation(
+        summary = "Search urgent medical aid attestations",
+        description = "Searches for existing urgent medical aid (UMA) attestations for a patient, with optional filters for date range, medical cover, and attestation number."
+    )
     @PostMapping("/searchUrgentMedicalAidAttestation/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun searchUrgentMedicalAidAttestation(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -83,6 +94,10 @@ class MediprimaUmaController(
             medicalCover = medicalCover
         )
     }
+    @Operation(
+        summary = "Delete urgent medical aid attestation",
+        description = "Deletes an existing urgent medical aid (UMA) attestation identified by its attestation number for a given patient."
+    )
     @PostMapping("/deleteUrgentMedicalAidAttestation/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun deleteUrgentMedicalAidAttestation(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
