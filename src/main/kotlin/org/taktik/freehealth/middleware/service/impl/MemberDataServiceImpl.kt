@@ -51,7 +51,8 @@ import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
 import be.fgov.ehealth.standards.kmehr.schema.v1.AuthorType
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.sun.xml.messaging.saaj.soap.impl.ElementImpl
 import com.sun.xml.messaging.saaj.soap.ver1_1.DetailEntry1_1Impl
 import org.taktik.freehealth.middleware.mapper.MapperFacade
@@ -135,9 +136,8 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
 
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val MemberDataErrors =
-        Gson().fromJson(
-            this.javaClass.getResourceAsStream("/be/errors/MemberDataErrors.json").reader(Charsets.UTF_8),
-            arrayOf<MycarenetError>().javaClass
+        ObjectMapper().readValue<Array<MycarenetError>>(
+            this.javaClass.getResourceAsStream("/be/errors/MemberDataErrors.json")!!
         ).associateBy({ it.uid }, { it })
     private val xPathfactory = XPathFactoryImpl()
     private val config = ConfigFactory.getConfigValidator(listOf())

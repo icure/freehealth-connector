@@ -1,0 +1,17 @@
+*
+!deployment
+!src
+!libs
+!gradle
+!build.gradle.kts
+!gradle.properties
+!gradlew
+!settings.gradle.kts
+!git.version
+!.editorconfig
+!buildSrc/src
+!buildSrc/build.gradle.kts
+!kraken-common
+!libs.versions.toml
+*/build
+*/out

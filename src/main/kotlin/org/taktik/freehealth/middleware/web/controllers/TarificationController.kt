@@ -22,7 +22,8 @@ package org.taktik.freehealth.middleware.web.controllers
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.sun.xml.messaging.saaj.soap.impl.ElementImpl
 import com.sun.xml.messaging.saaj.soap.ver1_1.DetailEntry1_1Impl
 import org.taktik.freehealth.middleware.mapper.MapperFacade
@@ -52,10 +53,9 @@ import java.util.*
 @RequestMapping("/tarif")
 @Tag(name = "Tarification", description = "Tarification and fee consultation service. Allows looking up official Belgian healthcare tariffs and fees (INAMI/RIZIV nomenclature codes) for a given patient.")
 class TarificationController(val tarificationService: TarificationService, val mapper: MapperFacade) {
-    private val ConsultTarifErrors =
-        Gson().fromJson(
-            this.javaClass.getResourceAsStream("/be/errors/ConsultTarifErrors.json").reader(Charsets.UTF_8),
-            arrayOf<MycarenetError>().javaClass
+    private val consultTarifErrors =
+        ObjectMapper().readValue<Array<MycarenetError>>(
+            this.javaClass.getResourceAsStream("/be/errors/consultTarifErrors.json")!!
         ).associateBy({ it.uid }, { it })
 
     /**
@@ -156,25 +156,25 @@ class TarificationController(val tarificationService: TarificationService, val m
             code = "999999",
             msgFr = e.message,
             msgNl = e.message,
-            locFr = e.stackTrace?.toList()?.map { it.toString() }?.joinToString(";"),
-            locNl = e.stackTrace?.toList()?.map { it.toString() }?.joinToString(";")))
+            locFr = e.stackTrace?.toList()?.joinToString(";") { it.toString() },
+            locNl = e.stackTrace?.toList()?.joinToString(";") { it.toString() }))
         }
     }
 
     private fun extractError(e: jakarta.xml.ws.soap.SOAPFaultException): Set<MycarenetError> {
         val result = mutableSetOf<MycarenetError>()
 
-        e.fault.detail.detailEntries.forEach { it ->
-            if(it != null) {
-                val detailEntry = it as DetailEntry1_1Impl
+        e.fault.detail.detailEntries.forEach { entry ->
+            if(entry != null) {
+                val detailEntry = entry as DetailEntry1_1Impl
                 val codeElements = detailEntry.getElementsByTagName("Code")
-                for (i in 0..(codeElements.length - 1)){
-                    val codeElement = codeElements?.item(i) as ElementImpl
-                    val currentConsultTarifErrors = ConsultTarifErrors.values.filter { it.code == codeElement.value }
-                    if (currentConsultTarifErrors.count() > 0) result.addAll(currentConsultTarifErrors)
+                for (i in 0..<codeElements.length){
+                    val codeElement = codeElements.item(i) as ElementImpl
+                    val currentConsultTarifErrors = consultTarifErrors.values.filter { it.code == codeElement.value }
+                    if (currentConsultTarifErrors.isNotEmpty()) result.addAll(currentConsultTarifErrors)
                     else {
                         val msgElements = detailEntry.getElementsByTagName("Message")
-                        val msgElement = msgElements?.item(0) as ElementImpl
+                        val msgElement = msgElements.item(0) as ElementImpl
                         result.add(MycarenetError(
                             code = codeElement.value,
                             msgFr = msgElement.value,

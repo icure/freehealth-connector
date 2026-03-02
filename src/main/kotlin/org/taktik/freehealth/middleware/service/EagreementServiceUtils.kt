@@ -1,6 +1,6 @@
 package org.taktik.freehealth.middleware.service
 
-import com.google.gson.JsonObject
+import com.fasterxml.jackson.databind.node.ObjectNode
 import org.joda.time.DateTime
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
 import org.taktik.freehealth.middleware.web.controllers.EagreementController
@@ -120,6 +120,6 @@ interface EagreementServiceUtils {
         subTypeCode: String?,
         attachments: List<EagreementController.Attachment>?,
         prescriptionDate: DateTime?
-    ): JsonObject?
+    ): ObjectNode?
 
 }

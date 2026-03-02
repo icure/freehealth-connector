@@ -98,7 +98,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jetty")
     implementation("com.taktik.boot:spring-boot-starter-micrometer:3.4.34-g3238a3228e")
     implementation("io.micrometer:micrometer-core")
-    implementation("org.springframework.boot:spring-boot-starter-jetty")
     implementation("org.springframework.boot:spring-boot-starter-web") {
         exclude(module = "spring-boot-starter-tomcat")
     }
@@ -110,7 +109,6 @@ dependencies {
     implementation("org.springframework.ws:spring-ws-security") {
         exclude(group = "org.bouncycastle")
     }
-    implementation("org.springframework:spring-orm")
     implementation("com.github.ben-manes.caffeine:caffeine:2.9.3")
     implementation("org.eclipse.jetty.http2:jetty-http2-server:12.0.25")
     implementation("com.nimbusds:nimbus-jose-jwt:9.7")
@@ -134,7 +132,6 @@ dependencies {
     }
     //runtimeOnly("com.sun.xml.bind:jaxb-impl:4.0.3")
     implementation("org.apache.commons:commons-compress:1.26.0")
-    implementation("org.apache.ws.security:wss4j:1.6.18")
     implementation("org.apache.wss4j:wss4j-ws-security-common:2.3.1")
     implementation("org.apache.wss4j:wss4j-ws-security-dom:2.3.1")
     implementation("net.sf.jsignature.io-tools:easystream:1.2.12")
@@ -147,7 +144,6 @@ dependencies {
     implementation("com.sun.xml.messaging.saaj:saaj-impl:3.0.4")
     implementation("com.sun.xml.wss:xws-security:3.0")
     implementation("com.hazelcast:hazelcast:5.3.5")
-    implementation("com.google.code.gson:gson:2.8.9")
     implementation("net.sf.dozer:dozer:5.5.1")
     //implementation("ma.glasnost.orika:orika-core:1.5.4") // Removed: incompatible with Java 21
     //implementation("io.springfox:springfox-swagger2:2.6.1") // Removed: incompatible with Spring Boot 3 (javax.servlet)
@@ -159,25 +155,9 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-impl:0.13.0")
     implementation("io.jsonwebtoken:jjwt-jackson:0.13.0")
 
-    implementation("org.webjars:webjars-locator-core")
-    implementation("org.webjars:sockjs-client:1.0.2")
-    implementation("org.webjars:stomp-websocket:2.3.3")
-    implementation("org.webjars:bootstrap:5.0.0")
-    implementation("org.webjars:jquery:3.5.0")
-
     implementation("org.json:json:20231013")
 
-    implementation("org.apache.lucene:lucene-analyzers-common:4.10.4")
-    implementation("org.apache.lucene:lucene-core:4.10.4")
-    implementation("org.apache.lucene:lucene-highlighter:4.10.4")
-    implementation("org.apache.lucene:lucene-memory:4.10.4")
-    implementation("org.apache.lucene:lucene-queries:4.10.4")
-    implementation("org.apache.lucene:lucene-queryparser:4.10.4")
-    implementation("org.apache.lucene:lucene-sandbox:4.10.4")
-    implementation("org.apache.lucene:lucene-suggest:4.10.4")
-
     implementation("org.slf4j:log4j-over-slf4j:1.7.25")
-    implementation("org.jdom:jdom-legacy:1.1.3")
     implementation("com.taktik.boot:spring-boot-starter-gke-logging:3.4.34-g3238a3228e")
 
     testImplementation("junit:junit:4.13.2")

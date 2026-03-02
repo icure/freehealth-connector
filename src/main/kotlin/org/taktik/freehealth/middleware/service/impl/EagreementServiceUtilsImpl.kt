@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.freehealth.middleware.service.EagreementServiceUtils
 import org.taktik.freehealth.middleware.web.controllers.EagreementController
@@ -574,7 +574,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         subTypeCode: String?,
         attachments: List<EagreementController.Attachment>?,
         prescriptionDate: DateTime?
-    ): JsonObject? {
+    ): ObjectNode? {
         val uuidGenerator = IdGeneratorFactory.getIdGenerator("uuid")
         val practitionerRole1UUID = uuidGenerator.generateId()
         var entries = mutableListOf<BundleEntry>()
@@ -596,157 +596,63 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             entry = entries
         }
 
-        val requestJson = mapper.writeValueAsString(requestBundle)
-        val gson = JsonParser().parse(requestJson).asJsonObject;
+        val rootNode = mapper.readTree(mapper.writeValueAsString(requestBundle)) as ObjectNode
+        val entriesArray = (rootNode.get("Bundle") as ObjectNode).putArray("entry")
 
-        val messageHeader = JsonObject()
-        messageHeader.addProperty("fullUrl", "urn:uuid:" + uuidGenerator.generateId())
-        messageHeader.add(
-            "resource",
-            JsonParser().parse(
-                mapper.writeValueAsString(
-                    getMessageHeader(
-                        messageFocusReference,
-                        messageEventSystem.eventSystem,
-                        messageEventCode,
-                        practitionerRole1UUID
-                    )
-                )
-            ).asJsonObject
-        )
-        gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(messageHeader)
+        fun addEntry(fullUrl: String, resource: Any) {
+            val entry = mapper.createObjectNode()
+            entry.put("fullUrl", fullUrl)
+            entry.set<JsonNode>("resource", mapper.readTree(mapper.writeValueAsString(resource)))
+            entriesArray.add(entry)
+        }
+
+        addEntry("urn:uuid:" + uuidGenerator.generateId(),
+            getMessageHeader(messageFocusReference, messageEventSystem.eventSystem, messageEventCode, practitionerRole1UUID))
 
         if (hcpNihii != null && hcpFirstName != null && hcpLastName != null) {
-            val practitioner1 = JsonObject()
-            practitioner1.addProperty("fullUrl", "urn:uuid:" + uuidGenerator.generateId())
-            practitioner1.add(
-                "resource",
-                JsonParser().parse(
-                    mapper.writeValueAsString(
-                        getPractitioner(
-                            "1",
-                            hcpNihii,
-                            hcpFirstName,
-                            hcpLastName
-                        )
-                    )
-                ).asJsonObject
-            )
-            gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(practitioner1)
+            addEntry("urn:uuid:" + uuidGenerator.generateId(), getPractitioner("1", hcpNihii, hcpFirstName, hcpLastName))
         }
 
         if (prescriberNihii != null && prescriberFirstName != null && prescriberLastName != null) {
-            val practitioner2 = JsonObject()
-            practitioner2.addProperty("fullUrl", "urn:uuid:" + uuidGenerator.generateId())
-            practitioner2.add(
-                "resource",
-                JsonParser().parse(
-                    mapper.writeValueAsString(
-                        getPractitioner(
-                            "2",
-                            prescriberNihii,
-                            prescriberFirstName,
-                            prescriberLastName
-                        )
-                    )
-                ).asJsonObject
-            )
-            gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(practitioner2)
+            addEntry("urn:uuid:" + uuidGenerator.generateId(), getPractitioner("2", prescriberNihii, prescriberFirstName, prescriberLastName))
         }
 
         if (patientFirstName != null && patientLastName != null && patientGender != null && (patientSsin != null || patientIo != null || patientIoMembership != null)) {
-            val patient = JsonObject()
-            patient.addProperty("fullUrl", "urn:uuid:" + uuidGenerator.generateId())
-            patient.add(
-                "resource",
-                JsonParser().parse(
-                    mapper.writeValueAsString(
-                        getPatient(
-                            patientFirstName,
-                            patientLastName,
-                            patientGender,
-                            patientSsin,
-                            patientIo,
-                            patientIoMembership
-                        )
-                    )
-                ).asJsonObject
-            )
-            gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(patient)
+            addEntry("urn:uuid:" + uuidGenerator.generateId(), getPatient(patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership))
         }
 
         if (hcpNihii != null) {
-            val practitionerRole1 = JsonObject()
-            practitionerRole1.addProperty("fullUrl", "urn:uuid:$practitionerRole1UUID")
-            practitionerRole1.add(
-                "resource",
-                JsonParser().parse(
-                    mapper.writeValueAsString(
-                        getPractitionerRole(
-                            "1",
-                            "persphysiotherapist"
-                        )
-                    )
-                ).asJsonObject
-            )
-            gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(practitionerRole1)
+            addEntry("urn:uuid:$practitionerRole1UUID", getPractitionerRole("1", "persphysiotherapist"))
         }
 
         if (prescriberNihii != null) {
-            val practitionerRole2 = JsonObject()
-            practitionerRole2.addProperty("fullUrl", "urn:uuid:" + uuidGenerator.generateId())
-            practitionerRole2.add(
-                "resource",
-                JsonParser().parse(mapper.writeValueAsString(getPractitionerRole("2", "persphysician"))).asJsonObject
-            )
-            gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(practitionerRole2)
+            addEntry("urn:uuid:" + uuidGenerator.generateId(), getPractitionerRole("2", "persphysician"))
         }
 
         if (orgNihii != null && organizationType != null) {
-            val organization = JsonObject()
-            organization.addProperty("fullUrl" , "urn:uuid:"+uuidGenerator.generateId())
-            organization.add("resource", JsonParser().parse(mapper.writeValueAsString(getOrganization("1", orgNihii, organizationType))).asJsonObject)
-            gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(organization)
+            addEntry("urn:uuid:" + uuidGenerator.generateId(), getOrganization("1", orgNihii, organizationType))
         }
 
         //Parameters 1
         if (requestType == EagreementServiceImpl.RequestTypeEnum.CONSULT_LIST) {
-            val parameter1 = JsonObject()
-            parameter1.addProperty("fullUrl", "urn:uuid:" + uuidGenerator.generateId())
-            parameter1.add(
-                "resource",
-                JsonParser().parse(
-                    mapper.writeValueAsString(
-                        getParameters(
-                            "1",
-                            agreementStartDate,
-                            agreementEndDate,
-                            hcpNihii,
-                            hcpFirstName,
-                            hcpLastName,
-                            patientSsin,
-                            patientIo,
-                            patientIoMembership,
-                            subTypeCode
-                        )
-                    )
-                ).asJsonObject
-            )
-            gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(parameter1)
+            addEntry("urn:uuid:" + uuidGenerator.generateId(),
+                getParameters("1", agreementStartDate, agreementEndDate, hcpNihii, hcpFirstName, hcpLastName, patientSsin, patientIo, patientIoMembership, subTypeCode))
         }
         //Service Request 1
         if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.COMPLETE_AGREEMENT || requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) {
-            val serviceRequest1 = JsonObject()
-            serviceRequest1.addProperty("fullUrl" , "urn:uuid:" + uuidGenerator.generateId())
+            val serviceRequest1 = mapper.createObjectNode()
+            serviceRequest1.put("fullUrl", "urn:uuid:" + uuidGenerator.generateId())
             val prescriptionDateNonNull = prescriptionDate ?: DateTime.now()
-            serviceRequest1.add("resource", JsonParser().parse(mapper.writeValueAsString(getServiceRequest("1", "", prescription1!!, "1", numberOfSessionForPrescription1!!, patientFirstName, patientLastName, patientGender, prescriptionDateNonNull, patientSsin, patientIo, patientIoMembership, sctCode, sctDisplay))).asJsonObject)
-            serviceRequest1.getAsJsonObject("resource").getAsJsonObject("ServiceRequest").add("contained", JsonParser().parse(mapper.writeValueAsString( Binary(
+            val resourceNode = mapper.readTree(mapper.writeValueAsString(getServiceRequest("1", "", prescription1!!, "1", numberOfSessionForPrescription1!!, patientFirstName, patientLastName, patientGender, prescriptionDateNonNull, patientSsin, patientIo, patientIoMembership, sctCode, sctDisplay))) as ObjectNode
+            serviceRequest1.set<JsonNode>("resource", resourceNode)
+            val serviceRequestObj = (resourceNode.get("ServiceRequest") as ObjectNode)
+            serviceRequestObj.set<JsonNode>("contained", mapper.readTree(mapper.writeValueAsString(Binary(
                 contentType = "application/pdf",
                 data = prescription1,
                 id = "annexSR1"
-            ))).asJsonObject)
-            serviceRequest1.getAsJsonObject("resource").getAsJsonObject("ServiceRequest").getAsJsonObject("quantityQuantity").addProperty("value", numberOfSessionForPrescription1.toInt())
-            gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(serviceRequest1)
+            ))))
+            (serviceRequestObj.get("quantityQuantity") as ObjectNode).put("value", numberOfSessionForPrescription1.toInt())
+            entriesArray.add(serviceRequest1)
         }
 
         //Claim 1
@@ -762,12 +668,9 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 provider = "PractitionerRole/PractitionerRole1",
                 attachments = attachments
             )
-            val parameter = JsonObject()
-            parameter.addProperty("fullUrl" , "urn:uuid:"+uuidGenerator.generateId())
-            parameter.add("resource", JsonParser().parse(mapper.writeValueAsString(claim)).asJsonObject)
-            gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(parameter)
+            addEntry("urn:uuid:" + uuidGenerator.generateId(), claim)
         }
 
-        return gson
+        return rootNode
     }
 }

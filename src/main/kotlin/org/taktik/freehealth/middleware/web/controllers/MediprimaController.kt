@@ -1,7 +1,8 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponseType
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.taktik.freehealth.middleware.mapper.MapperFacade
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PathVariable
@@ -35,9 +36,8 @@ class MediprimaController(
 ) {
     internal val mcnTimezone: String = "Europe/Brussels"
     private val ConsultTarifErrors =
-        Gson().fromJson(
-            this.javaClass.getResourceAsStream("/be/errors/ConsultTarifErrors.json").reader(Charsets.UTF_8),
-            arrayOf<MycarenetError>().javaClass
+        ObjectMapper().readValue<Array<MycarenetError>>(
+            this.javaClass.getResourceAsStream("/be/errors/ConsultTarifErrors.json")!!
         ).associateBy({ it.uid }, { it })
 
     @Operation(

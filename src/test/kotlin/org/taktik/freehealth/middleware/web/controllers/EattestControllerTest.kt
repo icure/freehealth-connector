@@ -1,6 +1,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.Test
@@ -46,7 +47,7 @@ class EattestControllerTest : EhealthTest() {
 
         results.forEachIndexed { index, it ->
             Assertions.assertThat(it?.length ?: 0 > 2 && it!!.startsWith("{"))
-            val res = Gson().fromJson(it, SendAttestResult::class.java)
+            val res = ObjectMapper().registerModule(KotlinModule.Builder().build()).readValue(it, SendAttestResult::class.java)
             println("${oas[index]}: ${res.invoicingNumber ?: "-"}")
             res.acknowledge?.errors?.forEach {
                 println(it.locFr + " : " + it.msgFr)

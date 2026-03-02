@@ -12,7 +12,8 @@ import be.fgov.ehealth.medicalagreement.core.v1.Kmehrrequest
 import be.fgov.ehealth.medicalagreement.core.v1.Kmehrresponse
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDERRORschemes
 import be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.springframework.security.core.context.SecurityContextHolder
@@ -163,15 +164,15 @@ class Chapter4ServiceImpl(private val stsService: STSService, private val kgssSe
         "chapterIV.keydepot.identifiervalue"))
 
     val chapter4ConsultationWarnings =
-        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/Chapter4ConsultationWarnings.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
+        ObjectMapper().readValue<Array<MycarenetError>>(this.javaClass.getResourceAsStream("/be/errors/Chapter4ConsultationWarnings.json")!!).associateBy({ it.uid!! }, { it })
     val chapter4ConsultationErrors =
-        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/Chapter4ConsultationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
+        ObjectMapper().readValue<Array<MycarenetError>>(this.javaClass.getResourceAsStream("/be/errors/Chapter4ConsultationErrors.json")!!).associateBy({ it.uid!! }, { it })
     val chapter4AgreementWarnings =
-        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/Chapter4AgreementWarnings.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
+        ObjectMapper().readValue<Array<MycarenetError>>(this.javaClass.getResourceAsStream("/be/errors/Chapter4AgreementWarnings.json")!!).associateBy({ it.uid!! }, { it })
     val chapter4AgreementErrors =
-        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/Chapter4AgreementErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
+        ObjectMapper().readValue<Array<MycarenetError>>(this.javaClass.getResourceAsStream("/be/errors/Chapter4AgreementErrors.json")!!).associateBy({ it.uid!! }, { it })
     val chapter4AgreementRefusalJustifications =
-        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/Chapter4AgreementRefusalJustifications.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
+        ObjectMapper().readValue<Array<MycarenetError>>(this.javaClass.getResourceAsStream("/be/errors/Chapter4AgreementRefusalJustifications.json")!!).associateBy({ it.uid!! }, { it })
     val xPathfactory = XPathFactory.newInstance()
 
 

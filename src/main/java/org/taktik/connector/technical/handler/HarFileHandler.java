@@ -5,14 +5,11 @@ import org.taktik.connector.technical.enumeration.Charset;
 import org.taktik.connector.technical.exception.TechnicalConnectorException;
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory;
 import org.taktik.connector.technical.utils.ConnectorIOUtils;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonWriter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -33,7 +30,8 @@ public class HarFileHandler extends AbstractSOAPHandler {
    private static final Logger LOG = LoggerFactory.getLogger(HarFileHandler.class);
    private DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
    private static final String MESSAGE_ENDPOINT_ADDRESS = "jakarta.xml.ws.service.endpoint.address";
-   private JsonObject harJson;
+   private static final ObjectMapper objectMapper = new ObjectMapper();
+   private ObjectNode harJson;
    private Long start;
    private Long recieved;
    private Long split;
@@ -56,32 +54,32 @@ public class HarFileHandler extends AbstractSOAPHandler {
 
       try {
          String soapenv = this.getEnvelope(msg);
-         JsonObject response = new JsonObject();
-         response.addProperty("status", 200);
-         response.addProperty("statusText", "OK");
-         response.addProperty("httpVersion", "HTTP/1.1");
-         response.add("headers", this.handleHeaders(msg.getMimeHeaders()));
-         response.add("cookies", new JsonArray());
-         JsonObject content = new JsonObject();
-         content.addProperty("size", soapenv.getBytes().length);
-         response.addProperty("headersSize", -1);
-         response.addProperty("bodySize", -1);
-         response.addProperty("redirectURL", "");
-         content.addProperty("mimeType", "text/xml; charset=utf-8");
+         ObjectNode response = objectMapper.createObjectNode();
+         response.put("status", 200);
+         response.put("statusText", "OK");
+         response.put("httpVersion", "HTTP/1.1");
+         response.set("headers", this.handleHeaders(msg.getMimeHeaders()));
+         response.set("cookies", objectMapper.createArrayNode());
+         ObjectNode content = objectMapper.createObjectNode();
+         content.put("size", soapenv.getBytes().length);
+         response.put("headersSize", -1);
+         response.put("bodySize", -1);
+         response.put("redirectURL", "");
+         content.put("mimeType", "text/xml; charset=utf-8");
          if (msg.getMimeHeaders() != null) {
             String[] header = msg.getMimeHeaders().getHeader("Content-Type");
             if (header != null && header.length > 0) {
-               content.addProperty("mimeType", header[0]);
+               content.put("mimeType", header[0]);
             }
          }
 
-         content.addProperty("text", soapenv);
-         response.add("content", content);
-         this.getEntry().add("response", response);
-         this.getEntry().get("timings").getAsJsonObject().addProperty("wait", this.recieved - this.split);
+         content.put("text", soapenv);
+         response.set("content", content);
+         this.getEntry().set("response", response);
+         ((ObjectNode)this.getEntry().get("timings")).put("wait", this.recieved - this.split);
          long end = System.currentTimeMillis();
-         this.getEntry().get("timings").getAsJsonObject().addProperty("receive", end - this.recieved);
-         this.getEntry().addProperty("time", end - this.start);
+         ((ObjectNode)this.getEntry().get("timings")).put("receive", end - this.recieved);
+         this.getEntry().put("time", end - this.start);
          this.saveHar();
       } catch (Exception var8) {
          LOG.error(var8.getMessage(), var8);
@@ -95,20 +93,20 @@ public class HarFileHandler extends AbstractSOAPHandler {
       SOAPMessage msg = context.getMessage();
 
       try {
-         JsonObject request = new JsonObject();
-         request.addProperty("method", "POST");
-         request.addProperty("url", context.get("jakarta.xml.ws.service.endpoint.address").toString());
-         request.addProperty("httpVersion", "HTTP/1.1");
-         request.add("headers", this.handleHeaders(msg.getMimeHeaders()));
-         request.add("queryString", new JsonArray());
-         request.add("cookies", new JsonArray());
-         request.addProperty("headersSize", -1);
-         request.add("postData", this.getPostData(msg));
-         request.addProperty("time", "1");
-         request.addProperty("bodySize", -1);
+         ObjectNode request = objectMapper.createObjectNode();
+         request.put("method", "POST");
+         request.put("url", context.get("jakarta.xml.ws.service.endpoint.address").toString());
+         request.put("httpVersion", "HTTP/1.1");
+         request.set("headers", this.handleHeaders(msg.getMimeHeaders()));
+         request.set("queryString", objectMapper.createArrayNode());
+         request.set("cookies", objectMapper.createArrayNode());
+         request.put("headersSize", -1);
+         request.set("postData", this.getPostData(msg));
+         request.put("time", "1");
+         request.put("bodySize", -1);
          this.split = System.currentTimeMillis();
-         this.getEntry().get("timings").getAsJsonObject().addProperty("send", this.split - this.start);
-         this.getEntry().add("request", request);
+         ((ObjectNode)this.getEntry().get("timings")).put("send", this.split - this.start);
+         this.getEntry().set("request", request);
       } catch (Exception var4) {
          LOG.error(var4.getMessage(), var4);
       }
@@ -120,15 +118,14 @@ public class HarFileHandler extends AbstractSOAPHandler {
       String fileName = IdGeneratorFactory.getIdGenerator("uuid").generateId() + ".har";
       File file = new File(this.outputdir, fileName);
       LOG.info("Writing har file on location: {}", file.getPath());
-      Gson gson = (new GsonBuilder()).setPrettyPrinting().create();
-      gson.toJson(this.harJson, new JsonWriter(new FileWriter(file)));
+      objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, this.harJson);
    }
 
-   private JsonObject getPostData(SOAPMessage msg) throws SOAPException, IOException {
-      JsonObject postData = new JsonObject();
-      postData.addProperty("mimeType", "multipart/form-data");
-      postData.add("params", new JsonArray());
-      postData.addProperty("text", this.getEnvelope(msg));
+   private ObjectNode getPostData(SOAPMessage msg) throws SOAPException, IOException {
+      ObjectNode postData = objectMapper.createObjectNode();
+      postData.put("mimeType", "multipart/form-data");
+      postData.set("params", objectMapper.createArrayNode());
+      postData.put("text", this.getEnvelope(msg));
       return postData;
    }
 
@@ -151,16 +148,16 @@ public class HarFileHandler extends AbstractSOAPHandler {
       return var3;
    }
 
-   private JsonArray handleHeaders(MimeHeaders headers) throws IOException {
-      JsonArray response = new JsonArray();
+   private ArrayNode handleHeaders(MimeHeaders headers) throws IOException {
+      ArrayNode response = objectMapper.createArrayNode();
       if (headers != null) {
          Iterator headersIterator = headers.getAllHeaders();
 
          while(headersIterator.hasNext()) {
             MimeHeader mimheader = (MimeHeader)headersIterator.next();
-            JsonObject header = new JsonObject();
-            header.addProperty("name", mimheader.getName());
-            header.addProperty("value", mimheader.getValue());
+            ObjectNode header = objectMapper.createObjectNode();
+            header.put("name", mimheader.getName());
+            header.put("value", mimheader.getValue());
             response.add(header);
          }
       }
@@ -170,27 +167,27 @@ public class HarFileHandler extends AbstractSOAPHandler {
 
    private void prepareHarFile() {
       LOG.info("Start creating har file");
-      JsonObject creator = new JsonObject();
-      creator.addProperty("name", applicationProps.getProperty("application.name", "UNKOWN"));
-      creator.addProperty("version", applicationProps.getProperty("application.version", "UNKOWN"));
-      JsonArray entries = new JsonArray();
-      JsonObject entry = new JsonObject();
-      entry.addProperty("startedDateTime", this.dateFormatter.format(new Date()));
-      entry.add("cache", new JsonArray());
-      entry.add("timings", new JsonObject());
+      ObjectNode creator = objectMapper.createObjectNode();
+      creator.put("name", applicationProps.getProperty("application.name", "UNKOWN"));
+      creator.put("version", applicationProps.getProperty("application.version", "UNKOWN"));
+      ArrayNode entries = objectMapper.createArrayNode();
+      ObjectNode entry = objectMapper.createObjectNode();
+      entry.put("startedDateTime", this.dateFormatter.format(new Date()));
+      entry.set("cache", objectMapper.createArrayNode());
+      entry.set("timings", objectMapper.createObjectNode());
       entries.add(entry);
-      JsonObject log = new JsonObject();
-      log.addProperty("version", "1.2");
-      log.add("creator", creator);
-      log.add("entries", entries);
-      this.harJson = new JsonObject();
-      this.harJson.add("log", log);
+      ObjectNode log = objectMapper.createObjectNode();
+      log.put("version", "1.2");
+      log.set("creator", creator);
+      log.set("entries", entries);
+      this.harJson = objectMapper.createObjectNode();
+      this.harJson.set("log", log);
    }
 
-   private JsonObject getEntry() {
-      JsonObject log = (JsonObject)this.harJson.get("log");
-      JsonArray entries = (JsonArray)log.get("entries");
-      return (JsonObject)entries.get(0);
+   private ObjectNode getEntry() {
+      ObjectNode log = (ObjectNode)this.harJson.get("log");
+      ArrayNode entries = (ArrayNode)log.get("entries");
+      return (ObjectNode)entries.get(0);
    }
 
    private void setHandler() {

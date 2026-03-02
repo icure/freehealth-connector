@@ -20,13 +20,11 @@
 
 package org.taktik.freehealth.middleware.dao
 
-import com.google.gson.Gson
 import org.springframework.stereotype.Repository
 import org.taktik.freehealth.middleware.dto.Code
-import org.w3._2000._09.xmldsig.RetrievalMethod
 
 @Repository
-class CodeDao(gson: Gson) {
+class CodeDao {
     class CodesMap {
         val version: String? = null
         val date: String? = null

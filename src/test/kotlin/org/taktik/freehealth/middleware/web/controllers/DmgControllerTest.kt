@@ -1,6 +1,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -29,7 +30,7 @@ import java.time.ZoneOffset
 class DmgControllerTest : EhealthTest() {
     @LocalServerPort
     private val port: Int = 0
-    private val gson = Gson()
+    private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
 
     private val nisses = mapOf(
             100 to listOf("80010505329", "57072844360", "89031129009", "68021229115", "85120710797", "98051722943"),
@@ -73,7 +74,7 @@ class DmgControllerTest : EhealthTest() {
                 "&patientSsin=$it" +
                 "&requestDate=${now.minusMonths(25).toInstant(ZoneOffset.UTC).toEpochMilli()}",
                                                  HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
-            val dmgc = gson.fromJson(res.body, DmgConsultation::class.java)
+            val dmgc = objectMapper.readValue(res.body, DmgConsultation::class.java)
 
             dmgc
         }
@@ -97,7 +98,7 @@ class DmgControllerTest : EhealthTest() {
                 "&patientSsin=$it" +
                 "&requestDate=${now.minusMonths(12).toInstant(ZoneOffset.UTC).toEpochMilli()}",
                 HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
-            val dmgc = gson.fromJson(res.body, DmgConsultation::class.java)
+            val dmgc = objectMapper.readValue(res.body, DmgConsultation::class.java)
 
             dmgc
         }
@@ -120,7 +121,7 @@ class DmgControllerTest : EhealthTest() {
                 "&hcpLastName=$lastName1" +
                 "&patientSsin=$it",
                                                  HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
-            val dmgc = gson.fromJson(res.body, DmgConsultation::class.java)
+            val dmgc = objectMapper.readValue(res.body, DmgConsultation::class.java)
 
             dmgc
         }
@@ -144,7 +145,7 @@ class DmgControllerTest : EhealthTest() {
                 "&patientFirstName=XXX&patientLastName=XXX" +
                 "&patientGender=female",
                 HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
-            val dmgc = gson.fromJson(res.body, DmgNotification::class.java)
+            val dmgc = objectMapper.readValue(res.body, DmgNotification::class.java)
 
             dmgc
         }
@@ -170,7 +171,7 @@ class DmgControllerTest : EhealthTest() {
                 "&patientGender=female" +
                 "&requestDate=${now.minusDays(2).toInstant(ZoneOffset.UTC).toEpochMilli()}",
                 HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
-            val dmgc = gson.fromJson(res.body, DmgNotification::class.java)
+            val dmgc = objectMapper.readValue(res.body, DmgNotification::class.java)
 
             dmgc
         }
@@ -192,7 +193,7 @@ class DmgControllerTest : EhealthTest() {
                 "&hcpLastName=$lastName1" +
                 "&patientSsin=$it",
                 HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
-            val dmgc = gson.fromJson(res.body, DmgConsultation::class.java)
+            val dmgc = objectMapper.readValue(res.body, DmgConsultation::class.java)
 
             dmgc
         }
@@ -214,7 +215,7 @@ class DmgControllerTest : EhealthTest() {
                 "&hcpLastName={lastName1}" +
                 "&bic=$BIC1&iban=$IBAN1",
                 HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
-            val dmgr = gson.fromJson(str.body, DmgRegistration::class.java)
+            val dmgr = objectMapper.readValue(str.body, DmgRegistration::class.java)
 
             dmgr
         }
@@ -233,7 +234,7 @@ class DmgControllerTest : EhealthTest() {
                                                  "&hcpFirstName={firstName1}" +
                                                  "&hcpLastName={lastName1}",
                                              HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
-        val ok = gson.fromJson(str.body, Boolean::class.java)
+        val ok = objectMapper.readValue(str.body, Boolean::class.java)
 
         assertThat(ok).isTrue()
     }

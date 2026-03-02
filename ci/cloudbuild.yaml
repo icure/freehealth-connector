@@ -1,16 +1,39 @@
 steps:
-    -   name: 'gcr.io/cloud-builders/git'
-        entrypoint: 'bash'
-        args: [ '-c', 'git fetch --unshallow --tags && git checkout ${BRANCH_NAME}' ]
+  -   name: 'gcr.io/cloud-builders/git'
+      entrypoint: 'bash'
+      args: [ '-c', 'git fetch --unshallow --tags && git checkout ${BRANCH_NAME}' ]
 
-    -   name: 'gcr.io/cloud-builders/docker'
-        args: ['login', 'docker.taktik.be', '--username', '${_REPO_USERNAME}', '--password', '${_REPO_PASSWORD}']
+  -   name: 'taktik/git-version:2.0.21-g2f3751c36c'
+      args: [ '-f', 'git.version' ]
 
-    -   name: 'gcr.io/cloud-builders/javac' # java + docker
-        entrypoint: 'bash'
-        args: [ '-c', './gradlew :dockerize -x test -PdockerPush' ]
+  -   name: 'docker:24-git'
+      entrypoint: 'sh'
+      args: [ '-c', 'echo $$REPO_PASSWORD | docker login docker.taktik.be --username=$$REPO_USERNAME --password-stdin' ]
+      secretEnv: [ 'REPO_USERNAME', 'REPO_PASSWORD' ]
 
-options:
-    pool:
-        name: "projects/taktik-dev/locations/europe-west1/workerPools/taktik-gcb-large-pool"
+  -   name: 'docker:24-git'
+      entrypoint: 'sh'
+      args: ['-c', 'docker buildx create --name multiarch --driver docker-container --use']
+
+  -   name: 'docker:24-git'
+      entrypoint: 'sh'
+      args: [ '-c', 'docker build --progress=plain -f build.Dockerfile --push -t "docker.taktik.be/icure/freehealth-connector:$(cat git.version)" --build-arg "repoUsername=$$REPO_USERNAME" --build-arg "repoPassword=$$REPO_PASSWORD" .' ]
+      secretEnv: [ 'REPO_USERNAME', 'REPO_PASSWORD' ]
+
+  -   name: 'docker:24-git'
+      entrypoint: 'sh'
+      args: [ '-c', 'docker build --builder multiarch --progress=plain -f package.Dockerfile --push --platform linux/amd64,linux/arm64 -t docker.taktik.be/icure/freehealth-connector:latest -t docker.taktik.be/icure/freehealth-connector:$(cat ./git.version) --build-arg "version=$(cat ./git.version)" .' ]
+
+  -   name: 'alpine/helm'
+      entrypoint: 'sh'
+      args: [ '-c', 'v=$(cat git.version) && helm package ./deployment/helm/freehealth-connector --version $v --app-version $v -d . && apk --no-cache add curl && curl -F file=@./freehealth-connector-${v}.tgz -u $$REPO_USERNAME:$$REPO_PASSWORD "https://helm.taktik.be/service/rest/v1/components?repository=helm"' ]
+      secretEnv: [ 'REPO_USERNAME', 'REPO_PASSWORD' ]
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/taktik-dev/secrets/ci-repo-username/versions/1
+      env: 'REPO_USERNAME'
+    - versionName: projects/taktik-dev/secrets/ci-repo-password/versions/1
+      env: 'REPO_PASSWORD'
+
 timeout: 2700s

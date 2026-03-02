@@ -83,7 +83,8 @@ import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationError
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationResult
 import be.fgov.ehealth.technicalconnector.signature.transformers.EncapsulationTransformer
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang3.StringUtils
 import org.joda.time.DateTime
@@ -150,10 +151,9 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
     private val config = ConfigFactory.getConfigValidator(listOf())
     private val freehealthEattestService: org.taktik.connector.business.eattest.EattestService = org.taktik.connector.business.eattest.impl.EattestServiceImpl()
     private val eAttestErrors =
-        Gson().fromJson(
-            this.javaClass.getResourceAsStream("/be/errors/eAttestErrors.json").reader(Charsets.UTF_8),
-            arrayOf<MycarenetError>().javaClass
-                       ).associateBy({ it.uid }, { it })
+        ObjectMapper().readValue<Array<MycarenetError>>(
+            this.javaClass.getResourceAsStream("/be/errors/eAttestErrors.json")!!
+        ).associateBy({ it.uid }, { it })
     private val xPathFactory = XPathFactory.newInstance()
 
     fun NodeList.forEach(action: (Node) -> Unit) {

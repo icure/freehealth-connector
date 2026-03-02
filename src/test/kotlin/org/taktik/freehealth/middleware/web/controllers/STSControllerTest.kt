@@ -1,6 +1,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,7 +25,7 @@ class STSControllerTest : EhealthTest() {
 
     @Autowired
     private val restTemplate: TestRestTemplate? = null
-    private val gson: Gson = Gson()
+    private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
 
     @Test
     fun uploadKeystore() {
@@ -39,7 +40,7 @@ class STSControllerTest : EhealthTest() {
         val passPhrase = password1
         val res = this.restTemplate.exchange("http://localhost:$port/sts/token?ssin=$ssin", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, null, passPhrase)), String::class.java).body
         assertThat(res != null)
-        val saml = gson.fromJson(res, SamlTokenResult::class.java)
+        val saml = objectMapper.readValue(res, SamlTokenResult::class.java)
         assertThat(saml.tokenId).isNotNull()
         assertThat(saml.token).startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Assertion")
         assertThat(saml.token).containsIgnoringCase("OU=${firstName1} ${lastName1}")

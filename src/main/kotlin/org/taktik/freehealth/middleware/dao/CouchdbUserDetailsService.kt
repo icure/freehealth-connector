@@ -1,6 +1,7 @@
 package org.taktik.freehealth.middleware.dao
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.eclipse.jetty.client.HttpClient
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -18,7 +19,7 @@ class CouchdbUserDetailsService(val httpClient: HttpClient,
     val couchDbProperties: CouchDbProperties,
     val authenticationProperties: AuthenticationProperties,
     val passwordEncoder: PasswordEncoder,
-    val gson: Gson = Gson()
+    val objectMapper: ObjectMapper = ObjectMapper()
     ) : UserDetailsService, KeystoreProviderService {
     private val TTL = couchDbProperties.cachettl.toLong()
     private val hashedPassword = authenticationProperties.password?.let {passwordEncoder.encode(it)}
@@ -61,7 +62,7 @@ class CouchdbUserDetailsService(val httpClient: HttpClient,
                     }"
                 )
             }.inputStream.bufferedReader().readText()
-            gson.fromJson(content, User::class.java)?.apply {
+            objectMapper.readValue<User>(content)?.apply {
                 authorities.add(GrantedAuthority("ROLE_USER"))
             }
         } ?: throw IllegalStateException("Cannot load User from database")

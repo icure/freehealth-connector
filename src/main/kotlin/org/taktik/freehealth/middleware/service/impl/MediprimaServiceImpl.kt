@@ -35,8 +35,8 @@ import be.fgov.ehealth.standards.kmehr.schema.v1.AuthorType
 import be.fgov.ehealth.standards.kmehr.schema.v1.ContentType
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
 import be.fgov.ehealth.standards.kmehr.schema.v1.ItemType
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
@@ -99,9 +99,8 @@ class MediprimaServiceImpl(val stsService: STSService, keyDepotService: KeyDepot
     private val config = ConfigFactory.getConfigValidator(listOf())
     private val freehealthTarificationService = org.taktik.connector.business.tarification.impl.TarificationServiceImpl()
     private val ConsultTarifErrors =
-        Gson().fromJson(
-            this.javaClass.getResourceAsStream("/be/errors/ConsultTarificationMediprimaErrors.json").reader(Charsets.UTF_8),
-            arrayOf<MycarenetError>().javaClass
+        ObjectMapper().readValue<Array<MycarenetError>>(
+            this.javaClass.getResourceAsStream("/be/errors/ConsultTarificationMediprimaErrors.json")!!
         ).associateBy({ it.uid }, { it })
     private val xPathfactory = XPathFactory.newInstance()
 

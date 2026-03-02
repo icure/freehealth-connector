@@ -1,6 +1,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.assertj.core.api.Assertions
 import org.junit.Assert
 import org.junit.Before
@@ -46,7 +47,7 @@ class EattestV3ControllerTest : EhealthTest() {
 
         results.forEachIndexed { index, it ->
             Assertions.assertThat(it?.length ?: 0 > 2 && it!!.startsWith("{"))
-            val res = Gson().fromJson(it, SendAttestResult::class.java)
+            val res = ObjectMapper().registerModule(KotlinModule.Builder().build()).readValue(it, SendAttestResult::class.java)
             Assert.assertEquals(((res.attest!=null && res.acknowledge?.errors?.isEmpty()!!) || res.acknowledge?.errors?.any { err -> err.code.equals("190") }!!),false)
             println("${oas[index]}: ${res.invoicingNumber ?: "errors or empty ${res.acknowledge?.errors?.map { err -> err.code }.toString()}"}")
         }
@@ -57,7 +58,7 @@ class EattestV3ControllerTest : EhealthTest() {
 
         results.forEachIndexed { index, it ->
             Assertions.assertThat(it?.length ?: 0 > 2 && it!!.startsWith("{"))
-            val res = Gson().fromJson(it, SendAttestResult::class.java)
+            val res = ObjectMapper().registerModule(KotlinModule.Builder().build()).readValue(it, SendAttestResult::class.java)
             if(res?.acknowledge?.errors?.isNotEmpty()!!){
                 Assert.assertNotNull(res.acknowledge?.errors?.find { error -> error.code.equals(errorCode) })
                 println("${oas[index]}: wanted error($errorCode) - got error (${res.acknowledge?.errors?.map { err -> err.code }.toString()})")
@@ -564,7 +565,7 @@ class EattestV3ControllerTest : EhealthTest() {
         val results = getNissesv3(0).map {
             val invoice = this.restTemplate.exchange("http://localhost:$port/eattestv3/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&treatmentReason=0070&patientFirstName={patientFirstName}&patientLastName={patientLastName}&patientGender={patientGender}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", HttpMethod.POST,HttpEntity(eattest, createHeaders(null, null, keystoreId, tokenId, passPhrase)),
                 String::class.java, firstName1, lastName1, "John", "Doe", "male", passPhrase).body
-            val res = Gson().fromJson(invoice, SendAttestResult::class.java)
+            val res = ObjectMapper().registerModule(KotlinModule.Builder().build()).readValue(invoice, SendAttestResult::class.java)
             if(res.attest!=null){
                 this.restTemplate.exchange("http://localhost:$port/eattestv3/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&patientFirstName={patientFirstName}&patientLastName={patientLastName}&patientGender={patientGender}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}&eAttestRef={attestRef}&reason={reason}", HttpMethod.DELETE,HttpEntity(null, createHeaders(null, null, keystoreId, tokenId, passPhrase)),
                         String::class.java, firstName1, lastName1, "John", "Doe", "male", passPhrase,res.invoicingNumber,"X").body
@@ -589,7 +590,7 @@ class EattestV3ControllerTest : EhealthTest() {
         val results = getNissesv3(0).map {
             val invoice = this.restTemplate.exchange("http://localhost:$port/eattestv3/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&treatmentReason=0070&patientFirstName={patientFirstName}&patientLastName={patientLastName}&patientGender={patientGender}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}", HttpMethod.POST,HttpEntity(eattest, createHeaders(null, null, keystoreId, tokenId, passPhrase)),
                 String::class.java, firstName1, lastName1, "John", "Doe", "male", passPhrase).body
-            val res = Gson().fromJson(invoice, SendAttestResult::class.java)
+            val res = ObjectMapper().registerModule(KotlinModule.Builder().build()).readValue(invoice, SendAttestResult::class.java)
             if(res.attest!=null){
                 tabAttesSv3C3.add(res)
                 this.restTemplate.exchange("http://localhost:$port/eattestv3/send/$it?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&hcpCbe=$cbe1&patientFirstName={patientFirstName}&patientLastName={patientLastName}&patientGender={patientGender}&keystoreId=$keystoreId&tokenId=$tokenId&passPhrase={passPhrase}&eAttestRef={attestRef}&reason={reason}", HttpMethod.DELETE,HttpEntity(null, createHeaders(null, null, keystoreId, tokenId, passPhrase)),

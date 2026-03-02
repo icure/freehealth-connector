@@ -1,6 +1,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -32,7 +33,7 @@ import java.util.Calendar
 class Chapter4ControllerTest : EhealthTest() {
     @LocalServerPort
     private val port: Int = 0
-    private val gson = Gson()
+    private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
     //100 to listOf("60060414864", "60091251857", "89031129009", "60060414864","60060414864","60091251857","60060414864","60060414864"),
     //300 to listOf("29041126344", "61030223636", "71052406859", "04051321132","93070556427","93070556427","59010619595","59010619595"),
     //500 to listOf("82091938752", "61011059307", "53091222311", "84062204633","82091938752","82091938752","65082928176","85070555661"),
@@ -105,7 +106,7 @@ class Chapter4ControllerTest : EhealthTest() {
                 HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)),
                 String::class.java)
 
-            val agrp = gson.fromJson(res.body, AgreementResponse::class.java)
+            val agrp = objectMapper.readValue(res.body, AgreementResponse::class.java)
 
             agrp
         }

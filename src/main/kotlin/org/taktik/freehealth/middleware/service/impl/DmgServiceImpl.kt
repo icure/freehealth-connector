@@ -29,7 +29,8 @@ import be.fgov.ehealth.standards.kmehr.id.v1.*
 import be.fgov.ehealth.standards.kmehr.schema.v1.*
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.apache.commons.lang3.ArrayUtils
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
@@ -90,18 +91,17 @@ import javax.xml.xpath.XPathFactory
 @org.springframework.stereotype.Service
 class DmgServiceImpl(private val stsService: STSService) : DmgService {
     private val log = LogFactory.getLog(this.javaClass)
-    private val gson = Gson()
     private val genAsyncService = GenAsyncServiceImpl("dmg")
     private val config = ConfigFactory.getConfigValidator(listOf())
 
     val dmgRegistrationErrors =
-        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/DmgRegistrationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
+        ObjectMapper().readValue<Array<MycarenetError>>(this.javaClass.getResourceAsStream("/be/errors/DmgRegistrationErrors.json")!!).associateBy({ it.uid!! }, { it })
     val dmgConsultationErrors =
-        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/DmgConsultationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
+        ObjectMapper().readValue<Array<MycarenetError>>(this.javaClass.getResourceAsStream("/be/errors/DmgConsultationErrors.json")!!).associateBy({ it.uid!! }, { it })
     val dmgNotificationErrors =
-        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/DmgNotificationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
+        ObjectMapper().readValue<Array<MycarenetError>>(this.javaClass.getResourceAsStream("/be/errors/DmgNotificationErrors.json")!!).associateBy({ it.uid!! }, { it })
     val dmgListsConsultationErrors =
-        Gson().fromJson(this.javaClass.getResourceAsStream("/be/errors/DmgListsConsultationErrors.json").reader(Charsets.UTF_8), arrayOf<MycarenetError>().javaClass).associateBy({ it.uid!! }, { it })
+        ObjectMapper().readValue<Array<MycarenetError>>(this.javaClass.getResourceAsStream("/be/errors/DmgListsConsultationErrors.json")!!).associateBy({ it.uid!! }, { it })
     val xPathfactory = XPathFactory.newInstance()
 
 

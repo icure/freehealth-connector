@@ -26,7 +26,8 @@ import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityContactTypeType.H
 import be.fgov.ehealth.genericinsurability.core.v1.InsurabilityRequestTypeType.INFORMATION
 import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityAsXmlOrFlatRequestType
 import be.fgov.ehealth.genericinsurability.protocol.v1.GetInsurabilityResponse
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.sun.xml.messaging.saaj.soap.impl.ElementImpl
 import com.sun.xml.messaging.saaj.soap.ver1_1.DetailEntry1_1Impl
 import org.joda.time.DateTime
@@ -71,9 +72,8 @@ class GenInsServiceImpl(val stsService: STSService) : GenInsService {
     private val freehealthGenInsService: org.taktik.connector.business.genins.service.GenInsService =
         org.taktik.connector.business.genins.service.impl.GenInsServiceImpl()
     private val GenInsErrors =
-        Gson().fromJson(
-            this.javaClass.getResourceAsStream("/be/errors/GenInsErrors.json").reader(Charsets.UTF_8),
-            arrayOf<MycarenetError>().javaClass
+        ObjectMapper().readValue<Array<MycarenetError>>(
+            this.javaClass.getResourceAsStream("/be/errors/GenInsErrors.json")!!
         ).associateBy({ it.uid }, { it })
     private val xPathfactory = XPathFactory.newInstance()
     private val config = ConfigFactory.getConfigValidator(listOf())

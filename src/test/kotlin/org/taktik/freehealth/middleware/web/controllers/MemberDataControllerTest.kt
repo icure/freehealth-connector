@@ -1,6 +1,7 @@
 package org.taktik.freehealth.middleware.web.controllers
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.Test
@@ -29,7 +30,7 @@ import java.time.Instant
 class MemberDataControllerTest : EhealthTest() {
     @LocalServerPort
     private val port: Int = 0
-    private val gson = Gson()
+    private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
 
     @Autowired
     private val restTemplate: TestRestTemplate? = null

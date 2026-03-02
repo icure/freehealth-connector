@@ -20,8 +20,8 @@ import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationError
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationResult
 import be.fgov.ehealth.technicalconnector.signature.transformers.EncapsulationTransformer
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang3.StringUtils
 import org.joda.time.DateTime
@@ -79,7 +79,6 @@ import org.w3c.dom.NodeList
 import java.io.StringWriter
 import java.net.URI
 import java.util.*
-import java.util.function.Consumer
 import jakarta.xml.bind.JAXBContext
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.TransformerException
@@ -744,40 +743,31 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         return writer.toString()
     }
 
-    fun convertJsonObjectToXml(jsonObject: JsonObject): String {
+    fun convertJsonObjectToXml(jsonObject: ObjectNode): String {
         val xmlBuilder = java.lang.StringBuilder()
-        // Ajout de l'en-tête XML (optionnel)
         xmlBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
-        // Convertir le JsonObject en XML
-        xmlBuilder.append(convertElement(jsonObject.get("Bundle").asJsonObject, "Bundle"))
+        xmlBuilder.append(convertElement(jsonObject.get("Bundle"), "Bundle"))
         return xmlBuilder.toString()
     }
 
-    private fun convertElement(jsonElement: JsonElement, elementName: String): String? {
-        // Cas de base : si l'élément est une primitive ou null, retourner sa représentation en chaîne
-        if (jsonElement.isJsonPrimitive || jsonElement.isJsonNull) {
-            return String.format("<%s>%s</%s>", elementName, jsonElement.asString, elementName)
-        } else if (jsonElement.isJsonObject) {
+    private fun convertElement(jsonNode: JsonNode, elementName: String): String? {
+        if (jsonNode.isValueNode || jsonNode.isNull) {
+            return String.format("<%s>%s</%s>", elementName, jsonNode.asText(), elementName)
+        } else if (jsonNode.isObject) {
             val elementBuilder = java.lang.StringBuilder()
             elementBuilder.append(String.format("<%s>", elementName))
-            val jsonObject = jsonElement.asJsonObject
-            jsonObject.entrySet().forEach(Consumer { (key, value): Map.Entry<String, JsonElement> ->
-                // Récursion pour chaque élément du JsonObject
+            jsonNode.fields().forEach { (key, value) ->
                 elementBuilder.append(convertElement(value, key))
-            })
+            }
             elementBuilder.append(String.format("</%s>", elementName))
             return elementBuilder.toString()
-        } else if (jsonElement.isJsonArray) {
-            // Gérer les tableaux JSON. Notez que cela ne définit pas de balises spécifiques pour les éléments de tableau
+        } else if (jsonNode.isArray) {
             val arrayBuilder = java.lang.StringBuilder()
-            jsonElement.asJsonArray.forEach(Consumer { item: JsonElement ->
-                arrayBuilder.append(
-                    convertElement(item, elementName)
-                )
-            })
+            jsonNode.forEach { item ->
+                arrayBuilder.append(convertElement(item, elementName))
+            }
             return arrayBuilder.toString()
         }
-        // Retourner une chaîne vide pour tout autre cas (ce qui ne devrait normalement pas arriver)
         return ""
     }
 
@@ -801,7 +791,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         agreementStartDate: DateTime?,
         agreementEndDate: DateTime?,
         agreementType: String?
-    ): JsonObject?{
+    ): ObjectNode?{
         return this.agreementServiceUtils.getBundleJSON(requestType, "Parameters/Parameters1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, null, null, null, orgNihii, organizationType, null, null, agreementStartDate, agreementEndDate, agreementType, null, null, insuranceRef, null, null, null, null, subTypeCode, attachments = null, prescriptionDate = null) ?: throw IllegalArgumentException("Cannot load fhir")
     }
 

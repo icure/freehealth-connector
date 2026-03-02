@@ -20,8 +20,8 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -48,13 +48,13 @@ class TherLinkControllerTest : EhealthTest() {
     @Autowired
     private val restTemplate: TestRestTemplate? = null
 
-    private val gson: Gson = Gson()
+    private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
 
     private fun getTherapeuticLink(): TherapeuticLinkDto {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val therLink = this.restTemplate.exchange("http://localhost:$port/therlink/${"74010414733"}/$nihii1?hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&patientSsin=${"74010414733"}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
         assertThat(therLink != null)
-        val tlmsg: TherapeuticLinkMessageDto = gson.fromJson(therLink.body, object : TypeToken<TherapeuticLinkMessageDto>() {}.getType())
+        val tlmsg: TherapeuticLinkMessageDto = objectMapper.readValue(therLink.body, TherapeuticLinkMessageDto::class.java)
         assertThat(tlmsg.therapeuticLinks.size).isGreaterThan(0)
         return tlmsg.therapeuticLinks.first()
     }
@@ -73,7 +73,7 @@ class TherLinkControllerTest : EhealthTest() {
         val therapeuticLink = this.getTherapeuticLink();
 
         val exists = this.restTemplate.exchange("http://localhost:$port/therlink/check",HttpMethod.POST, HttpEntity(therapeuticLink!!, createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
-        val existingLink = gson.fromJson(exists.body, TherapeuticLinkDto::class.java)
+        val existingLink = objectMapper.readValue(exists.body, TherapeuticLinkDto::class.java)
         assertThat(existingLink?.patient?.inss).isEqualToIgnoringCase("74010414733")
         assertThat(existingLink?.type).isEqualToIgnoringCase("gpconsultation")
         assertThat((existingLink?.endDate ?: 0) - (existingLink?.startDate ?: 0)).isGreaterThan(10000L)
@@ -84,9 +84,9 @@ class TherLinkControllerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val therLink = this.restTemplate.exchange("http://localhost:$port/therlink/${"74010414733"}/$nihii1?hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
         assertThat(therLink != null)
-        val tlmsg: TherapeuticLinkMessageDto = gson.fromJson(therLink.body, object : TypeToken<TherapeuticLinkMessageDto>() {}.getType())
+        val tlmsg: TherapeuticLinkMessageDto = objectMapper.readValue(therLink.body, TherapeuticLinkMessageDto::class.java)
         val therapeuticLink = if(tlmsg.therapeuticLinks.isEmpty()) {
-            this.restTemplate.exchange("http://localhost:$port/therlink/register?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&patientSsin=${"74010414733"}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&eidCardNumber=${"592363302467"}&proofType=EIDENCODING_HOUSECALL", HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1).body?.let {gson.fromJson(it, TherapeuticLinkMessageDto::class.java)}?.let {it.therapeuticLinks.firstOrNull()}
+            this.restTemplate.exchange("http://localhost:$port/therlink/register?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&patientSsin=${"74010414733"}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&eidCardNumber=${"592363302467"}&proofType=EIDENCODING_HOUSECALL", HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1).body?.let {objectMapper.readValue(it, TherapeuticLinkMessageDto::class.java)}?.let {it.therapeuticLinks.firstOrNull()}
         } else tlmsg.therapeuticLinks.first()
         assertThat(therapeuticLink?.patient?.inss).isEqualToIgnoringCase("74010414733")
         val revoke= this.restTemplate.exchange("http://localhost:$port/therlink/revoke?proofType=EIDENCODING_HOUSECALL", HttpMethod.POST, HttpEntity(therapeuticLink!!, createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
@@ -100,7 +100,7 @@ class TherLinkControllerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val therLink = this.restTemplate.exchange("http://localhost:$port/therlink/register?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&patientSsin=${"74010414733"}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}&eidCardNumber=${"592363302467"}&proofType=EIDENCODING_HOUSECALL", HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, firstName1, lastName1)
         assertThat(therLink != null)
-        val tlmsg = gson.fromJson(therLink.body, TherapeuticLinkMessageDto::class.java)
+        val tlmsg = objectMapper.readValue(therLink.body, TherapeuticLinkMessageDto::class.java)
         val therapeuticLink = tlmsg.therapeuticLinks.first();
         assertThat(therapeuticLink?.patient?.inss).isEqualToIgnoringCase("74010414733")
     }

@@ -20,7 +20,8 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -45,7 +46,7 @@ class ConsentControllerTest : EhealthTest() {
 
     @Autowired
     private val restTemplate: TestRestTemplate? = null
-    private val gson: Gson = Gson()
+    private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
 
     @Test
     fun getConsent() {
@@ -58,7 +59,7 @@ class ConsentControllerTest : EhealthTest() {
                 lastName1
             ).body
         assertThat(consent != null)
-        val msg = gson.fromJson(consent, ConsentMessageDto::class.java)
+        val msg = objectMapper.readValue(consent, ConsentMessageDto::class.java)
         assertThat(msg.complete).isTrue()
     }
 
@@ -66,7 +67,7 @@ class ConsentControllerTest : EhealthTest() {
     fun revokeConsent() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val consent =
-            gson.fromJson(
+            objectMapper.readValue(
                 this.restTemplate.exchange(
                     "http://localhost:$port/consent/${"74010414733"}?hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}",
                     HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java,
@@ -83,7 +84,7 @@ class ConsentControllerTest : EhealthTest() {
                 lastName1
             ).body
         assertThat(revoke != null)
-        val msg = gson.fromJson(revoke, ConsentMessageDto::class.java)
+        val msg = objectMapper.readValue(revoke, ConsentMessageDto::class.java)
         assertThat(msg.complete).isTrue()
         //Reestablish
         this.restTemplate.exchange(
@@ -100,7 +101,7 @@ class ConsentControllerTest : EhealthTest() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         //First revoke
         val consent =
-            gson.fromJson(
+            objectMapper.readValue(
                 this.restTemplate.exchange(
                     "http://localhost:$port/consent/${"74010414733"}?keystoreId=$keystoreId&tokenId=$tokenId&hcpNihii=$nihii1&hcpSsin=$ssin1&hcpFirstName={firstName}&hcpLastName={lastName}&patientFirstName=${"Antoine"}&patientLastName=${"Duchâteau"}",
                     HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java,
@@ -126,7 +127,7 @@ class ConsentControllerTest : EhealthTest() {
                 lastName1
             ).body
         assertThat(newConsent != null)
-        val msg = gson.fromJson(newConsent, ConsentMessageDto::class.java)
+        val msg = objectMapper.readValue(newConsent, ConsentMessageDto::class.java)
         assertThat(msg.complete).isTrue()
     }
 }

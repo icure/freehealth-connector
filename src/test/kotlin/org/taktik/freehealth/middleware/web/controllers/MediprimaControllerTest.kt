@@ -3,7 +3,7 @@ package org.taktik.freehealth.middleware.web.controllers
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponse
 import be.fgov.ehealth.mediprima.protocol.v2.ConsultCarmedInterventionResponseType
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -44,7 +44,7 @@ class MediprimaControllerTest: EhealthTest()  {
         val response = this.restTemplate.exchange("http://localhost:$port/mediprima/consultMediprima/${"85000132773"}?hcpQuality=${"doctor"}&hcpNihii=$nihii6&hcpSsin=$ssin6&hcpName=$name6" +
                 "&passPhrase=$passPhrase&startDate=20250409&endDate=20250409&referenceDate=$todayDate",
             HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
-        println("Result: "+ ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: "+ ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -53,7 +53,7 @@ class MediprimaControllerTest: EhealthTest()  {
         val response = this.restTemplate.exchange("http://localhost:$port/mediprima/consultMediprima/${"66092552676"}?hcpQuality=${"doctor"}&hcpNihii=$nihii6&hcpSsin=$ssin6&hcpName=$name6" +
             "&passPhrase=$passPhrase&startDate=20250409&endDate=20250409&referenceDate=$todayDate",
             HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
-        println("Result: "+ ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: "+ ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -62,7 +62,7 @@ class MediprimaControllerTest: EhealthTest()  {
         val response = this.restTemplate.exchange("http://localhost:$port/mediprima/consultMediprima/${"66092552676"}?hcpQuality=${"doctor"}&hcpNihii=$nihii6&hcpSsin=$ssin6&hcpName=$name6" +
             "&passPhrase=$passPhrase&startDate=20250409&endDate=20250409&referenceDate=$todayDate",
             HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
-        println("Result: "+ ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: "+ ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -71,7 +71,7 @@ class MediprimaControllerTest: EhealthTest()  {
         val response = this.restTemplate.exchange("http://localhost:$port/mediprima/consultMediprima/${"66092552676"}?hcpQuality=${"doctor"}&hcpNihii=$nihii6&hcpSsin=$ssin6&hcpName=$name6" +
             "&passPhrase=$passPhrase&startDate=20250409&endDate=20250409&referenceDate=$todayDate",
             HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
-        println("Result: "+ ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: "+ ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -80,7 +80,7 @@ class MediprimaControllerTest: EhealthTest()  {
         val response = this.restTemplate.exchange("http://localhost:$port/mediprima/consultMediprima/${"66092552676"}?hcpQuality=${"doctor"}&hcpNihii=$nihii6&hcpSsin=$ssin6&hcpName=$name6" +
             "&passPhrase=$passPhrase&startDate=20250409&endDate=20250409&referenceDate=$todayDate",
             HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
-        println("Result: "+ ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: "+ ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -89,7 +89,7 @@ class MediprimaControllerTest: EhealthTest()  {
         val response = this.restTemplate.exchange("http://localhost:$port/mediprima/consultMediprima/${"97000080964"}?hcpQuality=${"doctor"}&hcpNihii=$nihii6&hcpSsin=$ssin6&hcpName=$name6" +
             "&passPhrase=$passPhrase&startDate=20250409&endDate=20250409&referenceDate=$todayDate",
             HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
-        println("Result: "+ ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: "+ ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -98,7 +98,7 @@ class MediprimaControllerTest: EhealthTest()  {
         val response = this.restTemplate.exchange("http://localhost:$port/mediprima/consultMediprima/${"95060180934"}?hcpQuality=${"doctor"}&hcpNihii=$nihii6&hcpSsin=$ssin6&hcpName=$name6" +
             "&passPhrase=$passPhrase&startDate=20250409&endDate=20250409&referenceDate=$todayDate",
             HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
-        println("Result: "+ ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: "+ ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -107,7 +107,7 @@ class MediprimaControllerTest: EhealthTest()  {
         val response = this.restTemplate.exchange("http://localhost:$port/mediprima/consultMediprima/${"79020561139"}?hcpQuality=${"doctor"}&hcpNihii=$nihii6&hcpSsin=$ssin6&hcpName=$name6" +
             "&passPhrase=$passPhrase&startDate=20250409&endDate=20250409&referenceDate=$todayDate",
             HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
-        println("Result: "+ ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: "+ ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -116,7 +116,7 @@ class MediprimaControllerTest: EhealthTest()  {
         val response = this.restTemplate.exchange("http://localhost:$port/mediprima/consultMediprima/${"92093065750"}?hcpQuality=${"doctor"}&hcpNihii=$nihii6&hcpSsin=$ssin6&hcpName=$name6" +
             "&passPhrase=$passPhrase&startDate=20250409&endDate=20250409&referenceDate=$todayDate",
             HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
-        println("Result: "+ ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: "+ ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -125,7 +125,7 @@ class MediprimaControllerTest: EhealthTest()  {
         val response = this.restTemplate.exchange("http://localhost:$port/mediprima/consultMediprima/${"95061847255"}?hcpQuality=${"doctor"}&hcpNihii=$nihii6&hcpSsin=$ssin6&hcpName=$name6" +
             "&passPhrase=$passPhrase&startDate=20250409&endDate=20250409&referenceDate=$todayDate",
             HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
-        println("Result: "+ ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: "+ ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -134,7 +134,7 @@ class MediprimaControllerTest: EhealthTest()  {
         val response = this.restTemplate.exchange("http://localhost:$port/mediprima/consultMediprima/${"09010240155"}?hcpQuality=${"doctor"}&hcpNihii=$nihii6&hcpSsin=$ssin6&hcpName=$name6" +
             "&passPhrase=$passPhrase&startDate=20250409&endDate=20250409&referenceDate=$todayDate",
             HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
-        println("Result: "+ ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: "+ ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -143,7 +143,7 @@ class MediprimaControllerTest: EhealthTest()  {
         val response = this.restTemplate.exchange("http://localhost:$port/mediprima/consultMediprima/${"97091669156"}?hcpQuality=${"doctor"}&hcpNihii=$nihii6&hcpSsin=$ssin6&hcpName=$name6" +
             "&passPhrase=$passPhrase&startDate=20250409&endDate=20250409&referenceDate=$todayDate",
             HttpMethod.POST, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java, passPhrase)
-        println("Result: "+ ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: "+ ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -168,7 +168,7 @@ class MediprimaControllerTest: EhealthTest()  {
                 String::class.java
             )
 
-            println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+            println("Result: " + ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -193,7 +193,7 @@ class MediprimaControllerTest: EhealthTest()  {
             String::class.java
         )
 
-        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: " + ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -218,7 +218,7 @@ class MediprimaControllerTest: EhealthTest()  {
             String::class.java
         )
 
-        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: " + ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -243,7 +243,7 @@ class MediprimaControllerTest: EhealthTest()  {
             String::class.java
         )
 
-        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: " + ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -268,7 +268,7 @@ class MediprimaControllerTest: EhealthTest()  {
             String::class.java
         )
 
-        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: " + ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -293,7 +293,7 @@ class MediprimaControllerTest: EhealthTest()  {
             String::class.java
         )
 
-        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: " + ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -318,7 +318,7 @@ class MediprimaControllerTest: EhealthTest()  {
             String::class.java
         )
 
-        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: " + ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -343,7 +343,7 @@ class MediprimaControllerTest: EhealthTest()  {
             String::class.java
         )
 
-        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: " + ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -368,7 +368,7 @@ class MediprimaControllerTest: EhealthTest()  {
             String::class.java
         )
 
-        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: " + ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -393,7 +393,7 @@ class MediprimaControllerTest: EhealthTest()  {
             String::class.java
         )
 
-        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: " + ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -418,7 +418,7 @@ class MediprimaControllerTest: EhealthTest()  {
             String::class.java
         )
 
-        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: " + ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -443,7 +443,7 @@ class MediprimaControllerTest: EhealthTest()  {
             String::class.java
         )
 
-        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: " + ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -468,7 +468,7 @@ class MediprimaControllerTest: EhealthTest()  {
             String::class.java
         )
 
-        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: " + ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -493,7 +493,7 @@ class MediprimaControllerTest: EhealthTest()  {
             String::class.java
         )
 
-        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: " + ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 
     @Test
@@ -518,6 +518,6 @@ class MediprimaControllerTest: EhealthTest()  {
             String::class.java
         )
 
-        println("Result: " + ObjectMapper().registerModule(KotlinModule()).writeValueAsString(response))
+        println("Result: " + ObjectMapper().registerKotlinModule().writeValueAsString(response))
     }
 }

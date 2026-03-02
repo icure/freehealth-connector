@@ -1,7 +1,8 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
 import org.assertj.core.api.Assertions
@@ -78,7 +79,7 @@ class EhboxControllerTest : EhealthTest(){
     @Test
     fun sendMessage(){
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
-        val msg = Gson().fromJson(
+        val msg = ObjectMapper().registerModule(KotlinModule.Builder().build()).readValue(
             """{
   "id": null,
   "publicationId": null,
@@ -142,7 +143,7 @@ class EhboxControllerTest : EhealthTest(){
     fun sendGuardPostMessage() {
         val (keystoreId, tokenId, passPhrase) = registerGuardPost(restTemplate!!, port, nihii4!!, password4!!)
         this.restTemplate.exchange("http://localhost:$port/admin/loglevel/debug?package=ROOT", HttpMethod.POST, HttpEntity<DocumentMessage>(null, createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
-        val msg = Gson().fromJson(
+        val msg = ObjectMapper().registerModule(KotlinModule.Builder().build()).readValue(
             """{
   "id": null,
   "publicationId": null,
