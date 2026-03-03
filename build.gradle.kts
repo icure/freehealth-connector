@@ -183,7 +183,7 @@ tasks.withType<Jar> {
     manifest {
         attributes(
             "Built-By" to System.getProperty("user.name"),
-            "Build-Revision" to gitVersion,
+            "Build-Revision" to version,
             "Created-By" to "Gradle ${gradle.gradleVersion}",
             "Build-Jdk" to "${System.getProperty("java.version")} (${System.getProperty("java.vendor")} ${System.getProperty("java.vm.version")})",
             "Build-OS" to "${System.getProperty("os.name")} ${System.getProperty("os.arch")} ${System.getProperty("os.version")}"
@@ -195,7 +195,7 @@ tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
     manifest {
         attributes(
             "Built-By" to System.getProperty("user.name"),
-            "Build-Revision" to gitVersion,
+            "Build-Revision" to version,
             "Created-By" to "Gradle ${gradle.gradleVersion}",
             "Build-Jdk" to "${System.getProperty("java.version")} (${System.getProperty("java.vendor")} ${System.getProperty("java.vm.version")})",
             "Build-OS" to "${System.getProperty("os.name")} ${System.getProperty("os.arch")} ${System.getProperty("os.version")}"
