@@ -22,11 +22,7 @@ configure<com.taktik.gradle.plugins.HelmRepositoryPluginExtension> {
     this.chartNameOverride = "freehealth-connector"
 }
 
-val gitVersion: String? by project
-
 group = "org.taktik"
-
-version = gitVersion ?: "0.0.1-SNAPSHOT"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -145,8 +141,6 @@ dependencies {
     implementation("com.sun.xml.wss:xws-security:3.0")
     implementation("com.hazelcast:hazelcast:5.3.5")
     implementation("net.sf.dozer:dozer:5.5.1")
-    //implementation("ma.glasnost.orika:orika-core:1.5.4") // Removed: incompatible with Java 21
-    //implementation("io.springfox:springfox-swagger2:2.6.1") // Removed: incompatible with Spring Boot 3 (javax.servlet)
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
     implementation("net.sf.saxon:Saxon-HE:9.9.1-5")
     implementation("org.bitbucket.b_c:jose4j:0.9.4")

@@ -1,5 +1,5 @@
 ARG version
-FROM --platform=$BUILDPLATFORM docker.taktik.be/icure/minimal-ktor-server:$version AS builder
+FROM --platform=$BUILDPLATFORM docker.taktik.be/icure/freehealth-connector:$version AS builder
 
 FROM gcr.io/distroless/java21-debian12:nonroot
 ARG version
