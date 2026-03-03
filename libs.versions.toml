@@ -19,6 +19,5 @@ kotlinSpring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotli
 springBootPlugin = { id = "org.springframework.boot", version.ref = "springBoot" }
 springBootDependenciesManagement = { id = "io.spring.dependency-management", version = "1.1.4" }
 mavenRepository = { id = "com.taktik.gradle.maven-repository", version = "1.0.7" }
-gitVersion = { id = "com.taktik.gradle.git-version", version = "2.0.8-gb47b2d0e35" }
 helmRepository = { id = "com.taktik.gradle.helm-repository", version = "0.2.24-g9f69211aad" }
 licenceReport = { id = "com.github.jk1.dependency-license-report", version = "2.0"}
