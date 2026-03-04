@@ -4,8 +4,11 @@ FROM --platform=$BUILDPLATFORM docker.taktik.be/icure/freehealth-connector:$vers
 FROM gcr.io/distroless/java21-debian12:nonroot
 ARG version
 WORKDIR /app
-COPY --from=builder /app/build/libs/*.jar /app
+COPY --from=builder /app/build/libs/*.jar /app/fhc.jar
+COPY --chown=nonroot:nonroot opt/ehealth /opt/ehealth
+
 # Expose the port
 EXPOSE 8080
+
 # Run the application
-ENTRYPOINT ["java", "-jar", "/app/*.jar"]
+ENTRYPOINT ["java", "-jar", "/app/fhc.jar"]

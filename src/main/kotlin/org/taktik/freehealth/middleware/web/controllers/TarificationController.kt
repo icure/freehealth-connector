@@ -55,7 +55,7 @@ import java.util.*
 class TarificationController(val tarificationService: TarificationService, val mapper: MapperFacade) {
     private val consultTarifErrors =
         ObjectMapper().readValue<Array<MycarenetError>>(
-            this.javaClass.getResourceAsStream("/be/errors/consultTarifErrors.json")!!
+            this.javaClass.getResourceAsStream("/be/errors/ConsultTarifErrors.json")!!
         ).associateBy({ it.uid }, { it })
 
     /**
