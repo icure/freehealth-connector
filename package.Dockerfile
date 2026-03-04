@@ -5,7 +5,7 @@ FROM gcr.io/distroless/java21-debian12:nonroot
 ARG version
 WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar /app/fhc.jar
-COPY misc/health-check/HealthCheck.class /app/HealthCheck.class
+COPY misc/health-check/HealthCheck.class /app/health-check/HealthCheck.class
 COPY --chown=nonroot:nonroot opt/ehealth /opt/ehealth
 
 # Expose the port
