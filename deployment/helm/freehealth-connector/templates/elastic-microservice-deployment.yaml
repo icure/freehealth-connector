@@ -1,0 +1,88 @@
+{{- if .Values.images.freehealthconnector.replicaCount }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ template "fullname" . }}-freehealthconnector"
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ template "chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    component: "freehealthconnector"
+spec:
+  replicas: {{ .Values.images.freehealthconnector.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "name" . }}
+      release: {{ .Release.Name }}
+      component: "freehealthconnector"
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}
+        release: {{ .Release.Name }}
+        component: "freehealthconnector"
+      {{- if .Values.images.freehealthconnector.zeropod }}
+      annotations:
+        zeropod.ctrox.dev/ports-map: "{{ .Chart.Name }}-freehealthconnector={{ .Values.images.freehealthconnector.servicePort }}"
+        zeropod.ctrox.dev/container-names: "{{ .Chart.Name }}-freehealthconnector"
+        zeropod.ctrox.dev/scaledown-duration: {{ .Values.images.freehealthconnector.scaledownDuration | default "10s" | quote }}
+      {{- end }}
+    spec:
+      {{- if .Values.images.freehealthconnector.zeropod }}
+      runtimeClassName: zeropod
+      {{- end}}
+      containers:
+        - name: "{{ .Chart.Name }}-freehealthconnector"
+          image: "{{ .Values.images.freehealthconnector.repository }}:{{ .Values.images.freehealthconnector.tag | default .Chart.Version }}"
+          imagePullPolicy: "{{ .Values.pullPolicy }}"
+          ports:
+            - containerPort: {{ .Values.images.freehealthconnector.servicePort }}
+              name: http
+                  {{- if or .Values.images.freehealthconnector.debug .Values.images.freehealthconnector.debugsuspend }}
+            - containerPort: 5005
+              name: "jvm-debug"
+                  {{- end }}
+          env:
+            - name: JAVA_OPTS
+              value: "{{ .Values.images.freehealthconnector.javaOpts }}{{ if .Values.images.freehealthconnector.debug }} -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005{{ end }}{{ if .Values.images.freehealthconnector.debugsuspend }} -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005{{ end }}"
+                  {{- range $key, $value := .Values.images.freehealthconnector.env }}
+            - name: "{{ $key }}"
+              value: "{{ $value }}"
+                  {{- end }}
+          resources:
+            requests:
+              memory: {{ .Values.images.freehealthconnector.memoryRequest | quote }}
+                      {{- if .Values.images.freehealthconnector.cpuRequest }}
+              cpu: {{ .Values.images.freehealthconnector.cpuRequest | quote }}
+                      {{- end }}
+            limits:
+              memory: {{ .Values.images.freehealthconnector.memoryLimit | quote }}
+                      {{- if .Values.images.freehealthconnector.cpuLimit }}
+              cpu: {{ .Values.images.freehealthconnector.cpuLimit | quote }}
+                      {{- end }}
+                {{- if .Values.images.freehealthconnector.readiness }}
+          readinessProbe:
+            httpGet:
+              path: /hello
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 2
+            failureThreshold: 3
+                {{- end }}
+                {{- if .Values.images.freehealthconnector.liveness }}
+          livenessProbe:
+            httpGet:
+              path: /hello
+              port: 8080
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 8
+            successThreshold: 1
+            failureThreshold: 3
+                {{- end }}
+      imagePullSecrets:
+        - name: regsecret
+  {{- end }}

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: "{{ template "fullname" . }}-freehealthconnector"
+    labels:
+        app: {{ template "name" . }}
+        chart: {{ template "chart" . }}
+        release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}
+        component: "freehealthconnector"
+spec:
+    ports:
+        -   protocol: TCP
+            port: {{ .Values.images.freehealthconnector.servicePort }}
+            name: http
+            targetPort: http
+    selector:
+        app: {{ template "name" . }}
+        release: {{ .Release.Name }}
+        component: "freehealthconnector"

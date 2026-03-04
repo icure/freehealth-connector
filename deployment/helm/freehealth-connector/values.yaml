@@ -1,0 +1,36 @@
+pullPolicy: "IfNotPresent"
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: freehealth-connector.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+
+  tls: []
+  #  - secretName: freehealth-connector-tls
+  #    hosts:
+  #      - freehealth-connector.example.com
+
+images:
+    freehealthconnector:
+        repository: "docker.taktik.be/icure/freehealth-connector"
+        tag: "" # helm install
+        replicaCount: 1
+        javaOpts: "" # config
+        memoryRequest: "128M"
+        memoryLimit: "128M"
+        cpuRequest: 100m
+        cpuLimit: 2
+        servicePort: 8080
+        debug: true
+        virtualHosts: []
+        readiness: true
+        liveness: true
+        zeropod: false
+        scaledownDuration: "1m"
