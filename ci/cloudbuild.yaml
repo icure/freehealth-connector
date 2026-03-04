@@ -22,7 +22,7 @@ steps:
 
   -   name: 'docker:24-git'
       entrypoint: 'sh'
-      args: [ '-c', 'docker build --builder multiarch --progress=plain -f package.Dockerfile --push --platform linux/amd64,linux/arm64 -t docker.taktik.be/icure/freehealth-connector:latest -t docker.taktik.be/icure/freehealth-connector:$(cat ./git.version) --build-arg "gitVersion=$(cat ./git.version)" .' ]
+      args: [ '-c', 'docker build --builder multiarch --progress=plain -f package.Dockerfile --push --platform linux/amd64,linux/arm64 -t docker.taktik.be/icure/freehealth-connector:latest -t docker.taktik.be/icure/freehealth-connector:$(cat ./git.version) --build-arg "version=$(cat ./git.version)" .' ]
 
   -   name: 'alpine/helm'
       entrypoint: 'sh'
