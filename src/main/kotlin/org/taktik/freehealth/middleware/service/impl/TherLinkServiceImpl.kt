@@ -529,11 +529,10 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
         GenericRequest().setEndpoint(config.getProperty("endpoint.therlink")).setCredential(
             token,
             TokenType.SAML
-                                                                                           ).addDefaulHandlerChain().addHandlerChain(
+        ).addHandlerChain(
             HandlerChainUtil.buildChainWithValidator(
                 "validation.incoming.therlink.message",
-                "/ehealth-hubservices/XSD/hubservices_protocol-2_2.xsd"
-                                                    )
-                                                                                                                                    )
-
+                "/ehealth-hubservices/XSD/hubservices_protocol-2_3.xsd"
+            )
+        )
 }

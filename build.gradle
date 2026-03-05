@@ -3,7 +3,7 @@ import com.github.jk1.license.render.CsvReportRenderer
 configurations {
 	jaxb
 	ktlint
-	all {
+    configureEach {
 		exclude group: 'log4j', module: 'log4j'
 		exclude module: 'spring-boot-starter-tomcat'
 		exclude group: 'org.apache.tomcat'
@@ -92,7 +92,6 @@ jar {
 
 repositories {
 	mavenCentral()
-	jcenter()
 	maven {
 		url = "https://maven.taktik.be/content/groups/public"
 	}
@@ -106,40 +105,40 @@ repositories {
 
 // tag::wsdl[]
 //TODO: Generate all jaxb classes from wsdls
-task genJaxb {
-	ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
-	ext.classesDir = "${buildDir}/classes/jaxb"
-	ext.schema = "src/resources/WSDL/sts_v1.wsdl"
+tasks.register('genJaxb') {
+    ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
+    ext.classesDir = "${buildDir}/classes/jaxb"
+    ext.schema = "src/resources/WSDL/sts_v1.wsdl"
 
-	outputs.dir classesDir
+    outputs.dir classesDir
 
-	doLast() {
-		project.ant {
-			taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
-					classpath: configurations.jaxb.asPath
-			mkdir(dir: sourcesDir)
-			mkdir(dir: classesDir)
+    doLast() {
+        project.ant {
+            taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
+                    classpath: configurations.jaxb.asPath
+            mkdir(dir: sourcesDir)
+            mkdir(dir: classesDir)
 
-			xjc(destdir: sourcesDir, schema: schema) {
-				arg(value: "-wsdl")
-				produces(dir: sourcesDir, includes: "**/*.java")
-			}
+            xjc(destdir: sourcesDir, schema: schema) {
+                arg(value: "-wsdl")
+                produces(dir: sourcesDir, includes: "**/*.java")
+            }
 
-			javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
-					debugLevel: "lines,vars,source",
-					classpath: configurations.jaxb.asPath) {
-				src(path: sourcesDir)
-				include(name: "**/*.java")
-				include(name: "*.java")
-			}
+            javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
+                    debugLevel: "lines,vars,source",
+                    classpath: configurations.jaxb.asPath) {
+                src(path: sourcesDir)
+                include(name: "**/*.java")
+                include(name: "*.java")
+            }
 
-			copy(todir: classesDir) {
-				fileset(dir: sourcesDir, erroronmissingdir: false) {
-					exclude(name: "**/*.java")
-				}
-			}
-		}
-	}
+            copy(todir: classesDir) {
+                fileset(dir: sourcesDir, erroronmissingdir: false) {
+                    exclude(name: "**/*.java")
+                }
+            }
+        }
+    }
 }
 // end::wsdl[]
 
@@ -235,7 +234,7 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
 
-task ktlint(type: JavaExec, group: "verification") {
+tasks.register('ktlint', JavaExec) {
 	description = "Check Kotlin code style."
 	classpath = configurations.ktlint
 	main = "com.github.shyiko.ktlint.Main"
@@ -246,7 +245,7 @@ task ktlint(type: JavaExec, group: "verification") {
 }
 //check.dependsOn ktlint
 
-task ktlintFormat(type: JavaExec, group: "formatting") {
+tasks.register('ktlintFormat', JavaExec) {
 	description = "Fix Kotlin code style deviations."
 	classpath = configurations.ktlint
 	main = "com.github.shyiko.ktlint.Main"
@@ -261,11 +260,11 @@ idea {
 	}
 }
 
-task releaseLocal(type: GradleBuild) {
+tasks.register('releaseLocal', GradleBuild) {
     tasks = ['build']
     startParameter.excludedTaskNames = ['test']
 }
-task releaseDocker(type: GradleBuild) {
+tasks.register('releaseDocker', GradleBuild) {
     tasks = ['dockerize']
     startParameter.excludedTaskNames = ['test']
 }

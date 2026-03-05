@@ -192,11 +192,16 @@ class ConsentServiceImpl(val stsService: STSService) : ConsentService {
         }
         isiCardNumber?.let {
             existingConsent.patient.ids.add(IDPATIENT().apply {
-                s = IDPATIENTschemes.ISI_CARDNO; sv =
-                "1.0"; value = it
+                s = IDPATIENTschemes.ISI_CARDNO;
+                sv = "1.0";
+                value = it
             })
         }
         existingConsent.revokedate = DateTime()
+
+        existingConsent.author.patient.ids.forEach {
+            it.sv = "1.0"
+        }
 
         val consentRequest =
             RequestObjectBuilderFactory.requestObjectBuilder.createRevokeRequest(author, existingConsent)
@@ -260,7 +265,7 @@ class ConsentServiceImpl(val stsService: STSService) : ConsentService {
         addHandlerChain(
             HandlerChainUtil.buildChainWithValidator(
                 "validation.incoming.wsconsent.message",
-                "/ehealth-hubservices/XSD/hubservices_protocol-2_3.xsd"
+                "/ehealth-hubservices/XSD/hubservices_protocol-2_4.xsd"
             )
         )
         addDefaulHandlerChain()
