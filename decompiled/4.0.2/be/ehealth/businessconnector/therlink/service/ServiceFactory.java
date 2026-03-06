@@ -25,7 +25,12 @@ public final class ServiceFactory {
       genReq.setEndpoint(config.getProperty("endpoint.therlink", "$uddi{uddi:ehealth-fgov-be:business:therlink:v1}"));
       genReq.setCredential(token, TokenType.SAML);
       genReq.addDefaulHandlerChain();
-      genReq.addHandlerChain(HandlerChainUtil.buildChainWithValidator("validation.incoming.therlink.message", "/ehealth-hubservices/XSD/hubservices_protocol-2_3.xsd"));
+      genReq.addHandlerChain(
+              HandlerChainUtil.buildChainWithValidator(
+                      "validation.incoming.therlink.message",
+                      "/ehealth-hubservices/XSD/hubservices_protocol-2_3.xsd"
+              )
+      );
       return genReq;
    }
 

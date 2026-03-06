@@ -199,10 +199,6 @@ class ConsentServiceImpl(val stsService: STSService) : ConsentService {
         }
         existingConsent.revokedate = DateTime()
 
-        existingConsent.author.patient.ids.forEach {
-            it.sv = "1.0"
-        }
-
         val consentRequest =
             RequestObjectBuilderFactory.requestObjectBuilder.createRevokeRequest(author, existingConsent)
 
