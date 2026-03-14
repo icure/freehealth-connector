@@ -166,7 +166,9 @@ public abstract class AbstractWsSender {
 
          SOAPEnvelope soapEnvelope = soapPart.getEnvelope();
          SOAPBody soapBody = soapEnvelope.getBody();
-         soapBody.addDocument(genericRequest.getPayload());
+         org.w3c.dom.Document payloadDoc = genericRequest.getPayload();
+         org.w3c.dom.Node importedNode = soapPart.importNode(payloadDoc.getDocumentElement(), true);
+         soapBody.appendChild(importedNode);
          Map<String, DataHandler> handlers = genericRequest.getDataHandlerMap();
 
          AttachmentPart part;

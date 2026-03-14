@@ -82,8 +82,8 @@ public class WSSecHeaderGeneratorWss4jImpl implements AbstractWsSecurityHandler.
     public AbstractWsSecurityHandler.WSSecHeaderGeneratorStep3 withSAMLToken(SAMLToken token) throws TechnicalConnectorException {
         this.cred = token;
         Element assertionElement = token.getAssertion();
-        Element importedAssertionElement = (Element) this.soapPart.importNode(assertionElement, true);
-      Element securityHeaderElement = this.wsSecHeader.getSecurityHeaderElement();
+        Element securityHeaderElement = this.wsSecHeader.getSecurityHeaderElement();
+        Element importedAssertionElement = (Element) securityHeaderElement.getOwnerDocument().importNode(assertionElement, true);
         securityHeaderElement.appendChild(importedAssertionElement);
         this.assertionId = assertionElement.getAttribute("AssertionID");
         return this;

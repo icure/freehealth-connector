@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.web.controllers
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.assertj.core.api.Assertions
@@ -47,7 +48,7 @@ class EattestControllerTest : EhealthTest() {
 
         results.forEachIndexed { index, it ->
             Assertions.assertThat(it?.length ?: 0 > 2 && it!!.startsWith("{"))
-            val res = ObjectMapper().registerModule(KotlinModule.Builder().build()).readValue(it, SendAttestResult::class.java)
+            val res = ObjectMapper().registerModule(KotlinModule.Builder().build()).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).readValue(it, SendAttestResult::class.java)
             println("${oas[index]}: ${res.invoicingNumber ?: "-"}")
             res.acknowledge?.errors?.forEach {
                 println(it.locFr + " : " + it.msgFr)

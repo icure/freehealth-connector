@@ -127,7 +127,7 @@ class RecipeServiceImplTest {
     }
 
 
-    val kmehrHelper = KmehrHelper(Properties().apply { load(javaClass.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties")) })
+    val kmehrHelper = KmehrHelper(Properties().apply { load(Thread.currentThread().contextClassLoader.getResourceAsStream("org/taktik/connector/business/recipe/validation.properties")) })
 
     @Test
     fun validatePrescription() {

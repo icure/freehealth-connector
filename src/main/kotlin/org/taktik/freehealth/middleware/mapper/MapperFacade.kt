@@ -29,8 +29,8 @@ import com.fasterxml.jackson.databind.SerializationFeature
  * Uses Jackson ObjectMapper.convertValue() for bean property copying and supports
  * explicit custom converters for type pairs that need special handling.
  */
-class MapperFacade {
-    private val objectMapper = ObjectMapper().apply {
+class MapperFacade(objectMapper: ObjectMapper? = null) {
+    private val objectMapper = (objectMapper?.copy() ?: ObjectMapper()).apply {
         configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
     }

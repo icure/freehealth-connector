@@ -37,7 +37,9 @@ public class SOAPUtils {
          SOAPPart soapPart = response.getSOAPPart();
          SOAPEnvelope soapEnvelope = soapPart.getEnvelope();
          SOAPBody soapBody = soapEnvelope.getBody();
-         soapBody.addDocument(ConnectorXmlUtils.toDocument(payload));
+         org.w3c.dom.Document payloadDoc = ConnectorXmlUtils.toDocument(payload);
+         org.w3c.dom.Node importedNode = soapPart.importNode(payloadDoc.getDocumentElement(), true);
+         soapBody.appendChild(importedNode);
          return response;
       } catch (Exception ex) {
          throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_TECHNICAL, ex);

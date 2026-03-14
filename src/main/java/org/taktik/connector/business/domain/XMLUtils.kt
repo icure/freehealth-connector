@@ -29,7 +29,7 @@ fun newXMLGregorianCalendar(
 }
 
 fun makeXMLGregorianCalendarFromHHMMSSLong(date: Long): XMLGregorianCalendar? {
-    return newXMLGregorianCalendar().apply {
+    return DatatypeFactory.newInstance().newXMLGregorianCalendar().apply {
         hour = (date / 10000 % 100).toInt()
         minute = (date / 100 % 100).toInt()
         second = (date % 100).toInt()

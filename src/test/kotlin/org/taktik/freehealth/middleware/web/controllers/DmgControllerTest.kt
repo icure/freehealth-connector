@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.web.controllers
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.assertj.core.api.Assertions.assertThat
@@ -30,7 +31,7 @@ import java.time.ZoneOffset
 class DmgControllerTest : EhealthTest() {
     @LocalServerPort
     private val port: Int = 0
-    private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
+    private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build()).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
     private val nisses = mapOf(
             100 to listOf("80010505329", "57072844360", "89031129009", "68021229115", "85120710797", "98051722943"),

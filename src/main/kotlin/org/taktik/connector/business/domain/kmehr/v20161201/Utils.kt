@@ -74,7 +74,7 @@ class Utils {
 
         @JvmStatic
         fun makeXMLGregorianCalendarFromHHMMSSLong(date: Long): XMLGregorianCalendar? {
-            return newXMLGregorianCalendar().apply {
+            return javax.xml.datatype.DatatypeFactory.newInstance().newXMLGregorianCalendar().apply {
                 hour = (date / 10000 % 100).toInt()
                 minute = (date / 100 % 100).toInt()
                 second = (date % 100).toInt()

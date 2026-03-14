@@ -25,8 +25,10 @@ class ExceptionDto(
         )
 
     fun toResponseEntity(): ResponseEntity<ExceptionDto> {
-        return ResponseEntity
-                .status(status)
-                .body(this)
+        val builder = ResponseEntity.status(status)
+        if (status == HttpStatus.UNAUTHORIZED.value()) {
+            builder.header("WWW-Authenticate", "Bearer")
+        }
+        return builder.body(this)
     }
 }

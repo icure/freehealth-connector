@@ -114,7 +114,9 @@ class ExceptionHandlersTest {
 
         override fun beforeBodyWrite(body: Any?, returnType: MethodParameter, selectedContentType: MediaType, selectedConverterType: Class<out HttpMessageConverter<*>>, request: ServerHttpRequest, response: ServerHttpResponse): Any? {
             if (request is ServletServerHttpRequest && response is ServletServerHttpResponse) {
-                response.headers.add("X-WebMvcTags-uri", request.servletRequest.toString() + ":" + response.servletResponse)
+                val uriPattern = request.servletRequest.getAttribute(org.springframework.web.servlet.HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE)?.toString()
+                    ?: request.servletRequest.requestURI
+                response.headers.add("X-WebMvcTags-uri", uriPattern)
             }
 
             return body

@@ -1,10 +1,13 @@
 package org.taktik.freehealth.middleware
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.boot.autoconfigure.web.ServerProperties
 import org.springframework.boot.autoconfigure.web.WebProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.converter.HttpMessageConverter
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
@@ -19,7 +22,7 @@ import org.taktik.freehealth.middleware.web.ExecutorTimeInterceptor
 @EnableGlobalMethodSecurity(jsr250Enabled = true)
 @ComponentScan
 @EnableConfigurationProperties(ServerProperties::class, WebProperties::class)
-class WebMvcConfigurer(val webProperties: WebProperties) : WebMvcConfigurer {
+class WebMvcConfigurer(val webProperties: WebProperties, val objectMapper: ObjectMapper) : WebMvcConfigurer {
     private val SERVLET_LOCATIONS = arrayOf("/")
 
 
@@ -52,6 +55,11 @@ class WebMvcConfigurer(val webProperties: WebProperties) : WebMvcConfigurer {
         System.arraycopy(SERVLET_LOCATIONS, 0, locations, staticLocations.size,
                          SERVLET_LOCATIONS.size)
         return locations.filterNotNull().toTypedArray()
+    }
+
+    override fun extendMessageConverters(converters: MutableList<HttpMessageConverter<*>>) {
+        converters.removeIf { it is MappingJackson2HttpMessageConverter }
+        converters.add(MappingJackson2HttpMessageConverter(objectMapper))
     }
 
     override fun addInterceptors(registry: InterceptorRegistry) {

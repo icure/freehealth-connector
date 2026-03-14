@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.assertj.core.api.Assertions.assertThat
@@ -48,7 +49,7 @@ class TherLinkControllerTest : EhealthTest() {
     @Autowired
     private val restTemplate: TestRestTemplate? = null
 
-    private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
+    private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build()).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
     private fun getTherapeuticLink(): TherapeuticLinkDto {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
