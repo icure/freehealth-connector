@@ -79,6 +79,7 @@ class SecurityConfig {
         val loginUrlAuthenticationEntryPoint = LoginUrlAuthenticationEntryPoint("/", mapOf("/api" to "api/login.html"))
 
         http
+            .cors { }
             .csrf { it.disable() }
             .addFilterBefore(
                 FilterChainProxy(
