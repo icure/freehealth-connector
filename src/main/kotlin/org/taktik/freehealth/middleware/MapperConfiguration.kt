@@ -38,6 +38,8 @@ import org.joda.time.LocalDateTime
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.taktik.freehealth.middleware.dto.Address
 import org.taktik.freehealth.middleware.dto.common.KmehrCd
 import org.taktik.freehealth.middleware.dto.common.KmehrId
@@ -109,6 +111,17 @@ class MapperConfiguration {
             })
         })
     }
+
+    /**
+     * Primary JSON-only ObjectMapper for MVC controllers. Built from the Spring
+     * Jackson2ObjectMapperBuilder so our customJson() serializers are applied.
+     * Does NOT use a Smile factory, ensuring controllers always return application/json.
+     * (jackson-dataformat-smile lands on the classpath via Elasticsearch but must
+     * not affect HTTP responses.)
+     */
+    @Bean
+    @Primary
+    fun objectMapper(builder: Jackson2ObjectMapperBuilder): ObjectMapper = builder.build()
 
     @Bean
     fun mapper(objectMapper: ObjectMapper): MapperFacade {

@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.web.WebProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
@@ -59,13 +58,12 @@ class WebMvcConfigurer(val webProperties: WebProperties, val objectMapper: Objec
     }
 
     override fun extendMessageConverters(converters: MutableList<HttpMessageConverter<*>>) {
-        converters.removeIf {
-            it is MappingJackson2HttpMessageConverter ||
-            it.supportedMediaTypes.any { mt -> mt.subtype.contains("smile") }
-        }
-        converters.add(MappingJackson2HttpMessageConverter(objectMapper).apply {
-            supportedMediaTypes = listOf(MediaType.APPLICATION_JSON)
-        })
+        // Remove Smile HTTP converter (auto-configured because jackson-dataformat-smile is on the
+        // classpath via the Elasticsearch transitive dependency). Controllers must only return JSON.
+        converters.removeIf { it.supportedMediaTypes.any { mt -> mt.subtype.contains("smile") } }
+        // Replace default JSON converter with one backed by our configured ObjectMapper
+        converters.removeIf { it is MappingJackson2HttpMessageConverter }
+        converters.add(MappingJackson2HttpMessageConverter(objectMapper))
     }
 
     override fun addInterceptors(registry: InterceptorRegistry) {
