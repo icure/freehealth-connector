@@ -108,6 +108,7 @@ The upgrade to Jakarta SOAP API (`saaj-impl` 3.0.4) changed the behavior of `SOA
 
 **Fix:** Replaced `soapBody.addDocument(doc)` with:
 ```java
+
 Node importedNode = soapPart.importNode(doc.getDocumentElement(), true);
 soapBody.appendChild(importedNode);
 ```
