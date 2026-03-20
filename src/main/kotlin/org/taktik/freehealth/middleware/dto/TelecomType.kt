@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.dto
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import org.taktik.freehealth.utils.FailSafeEnumDeserializer
 import java.io.Serializable
@@ -32,4 +33,5 @@ enum class TelecomType : Serializable {
     mobile, phone, email, fax, skype, im, medibridge, ehealthbox, apicrypt, web, print, disk, other, pager
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class TelecomTypeDeserializer:FailSafeEnumDeserializer<TelecomType>(TelecomType::class.java)

@@ -1,5 +1,7 @@
 package org.taktik.freehealth.middleware.domain.common
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 class BusinessError {
     var context: String? = null
     var subcontext: String? = null

@@ -20,8 +20,10 @@
 
 package org.taktik.freehealth.middleware.dto.genins
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.io.Serializable
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class HospitalizedInfoDto(
     val hospital: String? = null,
     val admissionDate: Long? = null,

@@ -1,9 +1,11 @@
 package org.taktik.freehealth.middleware.dto.recipe
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.domain.recipe.Medication
 import org.taktik.freehealth.middleware.dto.HealthcareParty
 import java.util.*
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class StructuredPrescription(
     var creationDate: Date,
     var rid: String,

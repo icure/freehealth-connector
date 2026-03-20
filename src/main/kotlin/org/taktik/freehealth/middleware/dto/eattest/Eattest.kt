@@ -20,11 +20,14 @@
 
 package org.taktik.freehealth.middleware.dto.eattest
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.dto.efact.InvoicingSideCode
 import org.taktik.freehealth.middleware.dto.efact.InvoicingTransplantationCode
 import java.io.Serializable
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Eattest(var codes: List<EattestCode> = listOf()) : Serializable {
+    @JsonIgnoreProperties(ignoreUnknown = true)
     class EattestCode(
         var date: Int? = null,
         var riziv: String? = null,
@@ -47,6 +50,7 @@ class Eattest(var codes: List<EattestCode> = listOf()) : Serializable {
         var transplantationCode: InvoicingTransplantationCode? = null
     ) : Serializable
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     class EattestCardReading(
         var date: Int? = null,
         var time: Int? = null,
@@ -57,6 +61,7 @@ class Eattest(var codes: List<EattestCode> = listOf()) : Serializable {
         var serial: String? = null
     ) : Serializable
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     class EattestHcParty(
         var idHcParty: String? = null,
         var idSsin: String? = null,
@@ -65,5 +70,6 @@ class Eattest(var codes: List<EattestCode> = listOf()) : Serializable {
         var lastName: String? = null
     ) : Serializable
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     class EattestRequestor(var date: Int? = null, var hcp: EattestHcParty? = null) : Serializable
 }

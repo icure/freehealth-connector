@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.domain.consent
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.dto.common.AuthorWithPatientDto
 import org.taktik.freehealth.middleware.dto.common.KmehrCd
 import java.io.Serializable
@@ -27,6 +28,7 @@ import java.io.Serializable
 /**
  * Created by aduchate on 9/11/13, 15:06
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Consent : Serializable {
     var patient: PatientId? = null
     var cds: List<KmehrCd> = mutableListOf()

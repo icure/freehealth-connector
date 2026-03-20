@@ -20,9 +20,11 @@
 
 package org.taktik.freehealth.middleware.dto.common
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.domain.consent.PatientId
 import java.io.Serializable
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class AuthorWithPatientDto : Serializable {
     var patient: PatientId? = null
     var hcparties: List<HcPartyDto> = mutableListOf()

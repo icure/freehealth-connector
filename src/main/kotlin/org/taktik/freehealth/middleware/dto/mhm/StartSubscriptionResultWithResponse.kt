@@ -20,12 +20,14 @@
 
 package org.taktik.freehealth.middleware.dto.mhm
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import be.cin.types.v1.FaultType
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class StartSubscriptionResultWithResponse(
     reference: String? = null,
     subscriptionsStartDate: Int? = null,

@@ -20,12 +20,14 @@
 
 package org.taktik.freehealth.middleware.domain.recipe
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.taktik.freehealth.middleware.dto.Code
 import java.io.Serializable
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Medicinalproduct : Serializable {
     var samId: String? = null
     var intendedcds: List<Code> = LinkedList()

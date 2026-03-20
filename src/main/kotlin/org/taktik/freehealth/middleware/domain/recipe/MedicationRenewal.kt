@@ -20,8 +20,10 @@
 
 package org.taktik.freehealth.middleware.domain.recipe
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 /**
  * @author Bernard Paulus on 12/04/17.
  */
 //data class MedicationRenewal(var allowedRenewals: Int? = null, var delayBetweenDeliveries: Duration? = null)
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class MedicationRenewal(var decimal: Int? = null, var duration: Duration? = null)

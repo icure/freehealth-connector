@@ -18,8 +18,10 @@
 
 package org.taktik.freehealth.middleware.dto.efact
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.io.Serializable
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class ErrorDetail : Serializable {
     var creationDate: Int = 0
     var errorCodeComment: String? = null

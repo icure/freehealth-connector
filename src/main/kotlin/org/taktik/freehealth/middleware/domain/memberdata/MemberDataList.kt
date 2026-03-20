@@ -1,11 +1,13 @@
 package org.taktik.freehealth.middleware.domain.memberdata
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import be.cin.types.v1.FaultType
 import org.taktik.freehealth.middleware.dto.memberdata.MemberDataAckDto
 import org.taktik.freehealth.middleware.dto.memberdata.MemberDataMessageDto
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import java.util.*
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class MemberDataList (
     val mycarenetConversation: MycarenetConversation?,
     val acks: List<MemberDataAck>?,

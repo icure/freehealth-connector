@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.domain.ehbox
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.dto.common.Addressee
 import java.io.Serializable
 
@@ -30,6 +31,7 @@ import java.io.Serializable
  * Time: 11:36
  * To change this template use File | Settings | File Templates.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 open class EhealthMessage : Serializable {
     var id: String? = null
     var publicationId: String? = null

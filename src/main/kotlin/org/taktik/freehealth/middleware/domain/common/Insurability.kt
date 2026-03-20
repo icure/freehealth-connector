@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.domain.common
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import java.io.Serializable
 import java.util.*
@@ -28,6 +29,7 @@ import java.util.*
  * Created by aduchate on 21/01/13, 15:37
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Insurability : Serializable {
     //Key from InsuranceParameter
     var parameters: MutableMap<String, String> = HashMap()

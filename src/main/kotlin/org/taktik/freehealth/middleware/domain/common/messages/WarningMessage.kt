@@ -18,6 +18,7 @@
 
 package org.taktik.freehealth.middleware.domain.common.messages
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 /**
  * Created with IntelliJ IDEA.
  * User: aduchate
@@ -25,4 +26,5 @@ package org.taktik.freehealth.middleware.domain.common.messages
  * Time: 17:50
  * To change this template use File | Settings | File Templates.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 class WarningMessage : AbstractMessage()

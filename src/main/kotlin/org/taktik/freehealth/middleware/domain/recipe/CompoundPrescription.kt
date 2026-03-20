@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.domain.recipe
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -30,13 +31,17 @@ import org.taktik.freehealth.utils.CompoundPrescriptionDeserializer
 sealed class CompoundPrescription(var galenicForm : GalenicForm? = null, var quantity : KmehrQuantity? = null) {
 
     @JsonDeserialize(using = JsonDeserializer.None::class)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     data class Compounds(var compounds : MutableList<Compound> = mutableListOf()) : CompoundPrescription()
     @JsonDeserialize(using = JsonDeserializer.None::class)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     data class MagistralText(var text : String? = null) : CompoundPrescription()
 
     @JsonDeserialize(using = JsonDeserializer.None::class)
     sealed class FormularyReference : CompoundPrescription() {
+        @JsonIgnoreProperties(ignoreUnknown = true)
         data class FormularyName(var name: String? = null) : FormularyReference()
+        @JsonIgnoreProperties(ignoreUnknown = true)
         data class Formulary(var formularyId : String? = null /* CD-FORMULARY */, var reference : Code? = null /* CD-FORMULARYREFERENCE */) : FormularyReference()
     }
 }

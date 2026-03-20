@@ -20,7 +20,9 @@
 
 package org.taktik.freehealth.middleware.dto
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.io.Serializable
 import java.util.UUID
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class UUIDType(val uuid: UUID? = null) : Serializable

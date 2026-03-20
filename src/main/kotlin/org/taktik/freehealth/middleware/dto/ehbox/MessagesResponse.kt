@@ -20,8 +20,10 @@
 
 package org.taktik.freehealth.middleware.dto.ehbox
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.domain.common.Error
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class MessagesResponse(
     val messages: List<Message>,
     val error: Error? = null

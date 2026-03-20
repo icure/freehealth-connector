@@ -20,15 +20,18 @@
 
 package org.taktik.freehealth.middleware.dto.ehbox
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import be.fgov.ehealth.ehbox.core.v3.EhboxIdentifierType
 import org.taktik.freehealth.middleware.domain.common.Error
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class MessageStatusOperationResponse(
     success: Boolean,
     error: Error? = null,
 val acks: List<Acknowledgement> = emptyList()
                               ) : MessageOperationResponse(success = success, error = error)
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Acknowledgement(
     val recipient: EhboxIdentifierType,
     val published: Long?,

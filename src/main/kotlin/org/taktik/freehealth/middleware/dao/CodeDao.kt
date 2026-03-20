@@ -20,11 +20,14 @@
 
 package org.taktik.freehealth.middleware.dao
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.springframework.stereotype.Repository
 import org.taktik.freehealth.middleware.dto.Code
 
 @Repository
+@JsonIgnoreProperties(ignoreUnknown = true)
 class CodeDao {
+    @JsonIgnoreProperties(ignoreUnknown = true)
     class CodesMap {
         val version: String? = null
         val date: String? = null

@@ -20,6 +20,8 @@
 
 package org.taktik.freehealth.middleware.dto.eattest
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class EattestAcknowledgeType(var errors: List<MycarenetError> = listOf(), var iscomplete: Boolean = false)

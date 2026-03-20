@@ -18,6 +18,8 @@
 
 package org.taktik.freehealth.middleware.dto.efact
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Acknowledgment {
     var messageName: String? = null
     var reserve: String? = null

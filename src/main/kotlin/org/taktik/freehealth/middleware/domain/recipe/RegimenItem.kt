@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.domain.recipe
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.apache.commons.lang3.StringUtils
 import org.taktik.freehealth.middleware.dto.Code
@@ -27,6 +28,7 @@ import java.io.Serializable
 import java.text.SimpleDateFormat
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 class RegimenItem : Serializable {
     //Day definition (One and only one of the three following should be not null)
     //The three are null if it applies to every day
@@ -41,11 +43,13 @@ class RegimenItem : Serializable {
 
     var administratedQuantity: AdministrationQuantity? = null
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     class Weekday : Serializable {
         var weekDay: Code? = null //CD-WEEKDAY
         var weekNumber: Int? = null //Can be null
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     class AdministrationQuantity : Serializable {
         var quantity: Double? = null
         var administrationUnit: Code? = null //CD-ADMINISTRATIONUNIT

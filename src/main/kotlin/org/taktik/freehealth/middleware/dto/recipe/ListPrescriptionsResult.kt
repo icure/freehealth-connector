@@ -6,15 +6,18 @@
 //
 package org.taktik.freehealth.middleware.dto.recipe
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import be.recipe.services.core.StatusType
 import org.taktik.freehealth.middleware.domain.recipe.Prescription
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class ListPrescriptionsResult(
     var status: StatusType? = null,
     var id: String? = null,
     var partial: Partial? = null
 )
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Partial(
     var prescriptions: List<Prescription>? = null,
     var hasHidden: Boolean = false,

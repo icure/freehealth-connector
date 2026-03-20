@@ -1,7 +1,9 @@
 package org.taktik.freehealth.middleware.dao
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.springframework.security.core.userdetails.UserDetails
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class User(
     var _id: String? = null,
     var passwordHash: String? = null,

@@ -1,10 +1,12 @@
 package org.taktik.freehealth.middleware.dto.mycarenet
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.eclipse.jetty.io.WriterOutputStream
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.io.StringWriter
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class MycarenetConversation(
     soapRequest: String? = null,
     soapResponse: String? = null,

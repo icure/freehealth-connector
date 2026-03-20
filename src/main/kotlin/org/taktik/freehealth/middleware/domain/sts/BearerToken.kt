@@ -20,7 +20,9 @@
 
 package org.taktik.freehealth.middleware.domain.sts
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.io.Serializable
 import java.util.*
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class BearerToken(var token:String) : Serializable

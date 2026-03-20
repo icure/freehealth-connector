@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.dto.dmg
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import be.fgov.ehealth.standards.kmehr.schema.v1.HcpartyType
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
@@ -14,6 +15,7 @@ import java.io.Serializable
  * Time: 07:55
  * To change this template use File | Settings | File Templates.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 class DmgNotification(
     isComplete: Boolean? = null,
     io: String? = null,

@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.dto.genins
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
@@ -33,6 +34,7 @@ import java.util.ArrayList
  * Time: 09:07
  * To change this template use File | Settings | File Templates.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 class InsurabilityInfoDto(
     var commonOutput: CommonOutput? = null,
     var mycarenetConversation: MycarenetConversation? = null,

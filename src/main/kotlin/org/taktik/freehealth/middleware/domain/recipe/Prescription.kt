@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.domain.recipe
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.connector.business.domain.kmehr.v20190301.be.fgov.ehealth.standards.kmehr.schema.v1.Kmehrmessage
 import java.io.Serializable
 import java.util.Date
@@ -31,6 +32,7 @@ import java.util.Date
  * Time: 10:07
  * To change this template use File | Settings | File Templates.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 open class Prescription(
     var creationDate: Date,
     var encryptionKeyId: String,

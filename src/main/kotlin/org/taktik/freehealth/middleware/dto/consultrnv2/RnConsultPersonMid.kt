@@ -1,5 +1,7 @@
 package org.taktik.freehealth.middleware.dto.consultrnv2
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 class RnConsultPersonMid(
     var firstName: String? = null,
     var lastName: String? = null,
@@ -13,6 +15,7 @@ class RnConsultPersonMid(
     var language: String
 
 ){
+    @JsonIgnoreProperties(ignoreUnknown = true)
     class BirthPlace(
         var countryCode: Int? = 0,
         var countryIsoCode: String? = null,
@@ -21,6 +24,7 @@ class RnConsultPersonMid(
         var countryName: String? = null
     )
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     class ResidentialAddress(
         var countryCode: Int? = 0,
         var countryIsoCode: String? = null,
@@ -32,6 +36,7 @@ class RnConsultPersonMid(
         var boxNumber: String? = null
     )
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     class ContactAddress(
         var countryCode: Int? = 0,
         var countryIsoCode: String? = null,

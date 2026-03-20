@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.domain.hub
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.dto.common.AuthorDto
 import org.taktik.freehealth.middleware.dto.hub.HcPartyIdDto
 
@@ -32,6 +33,7 @@ import java.io.Serializable
  * Time: 20:44
  * To change this template use File | Settings | File Templates.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 class HcPartyConsent(
     var hcparty: HcPartyIdDto? = null,
     var signdate: Long? = null,

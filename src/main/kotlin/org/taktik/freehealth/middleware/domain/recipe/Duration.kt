@@ -20,11 +20,13 @@
 
 package org.taktik.freehealth.middleware.domain.recipe
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.taktik.freehealth.middleware.dto.Code
 import java.io.Serializable
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Duration : Serializable {
     var value: Double? = null
     var unit: Code? = null //CD-TIMEUNIT

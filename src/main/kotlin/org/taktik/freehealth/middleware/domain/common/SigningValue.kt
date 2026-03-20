@@ -20,8 +20,10 @@
 
 package org.taktik.freehealth.middleware.domain.common
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.io.Serializable
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class SigningValue : Serializable {
     var signingDownloadFileName: String? = null
     var textSigningContent: String? = null

@@ -20,11 +20,13 @@
 
 package org.taktik.freehealth.middleware.dto.ehbox
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.dto.common.Addressee
 import org.taktik.freehealth.middleware.dto.common.Document
 import java.util.ArrayList
 import java.util.HashMap
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 open class DocumentMessage(
     id: String? = null,
     publicationId: String? = null,

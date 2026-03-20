@@ -20,8 +20,10 @@
 
 package org.taktik.freehealth.middleware.domain.common
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.io.Serializable
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class FinancialInstitutionInformation : Serializable {
     var name: String? = null
     var key: String? = null

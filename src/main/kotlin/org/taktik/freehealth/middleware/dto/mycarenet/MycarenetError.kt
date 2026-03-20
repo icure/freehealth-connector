@@ -20,6 +20,8 @@
 
 package org.taktik.freehealth.middleware.dto.mycarenet
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 class MycarenetError(
     var uid: String? = null,
     var path: String? = null,

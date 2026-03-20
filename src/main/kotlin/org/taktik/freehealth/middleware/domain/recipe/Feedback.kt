@@ -20,9 +20,11 @@
 
 package org.taktik.freehealth.middleware.domain.recipe
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.io.Serializable
 import java.util.Date
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Feedback(
     var rid: String? = null,
     var sentBy: Long? = null,

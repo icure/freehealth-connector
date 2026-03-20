@@ -20,9 +20,11 @@
 
 package org.taktik.freehealth.middleware.dto.therlink
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.dto.common.ErrorDto
 import java.util.ArrayList
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class TherapeuticLinkMessageDto {
     var isComplete: Boolean = false
     var errors: List<ErrorDto> = ArrayList()

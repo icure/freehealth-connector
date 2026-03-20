@@ -1,8 +1,10 @@
 package org.taktik.freehealth.middleware.dto.efact
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import be.cin.nip.async.generic.TAck
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class EfactMessage {
     var detail: String? = null
     var messageReference: String? = null

@@ -1,5 +1,7 @@
 package org.taktik.freehealth.middleware.domain.rsw
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class RswEndpoints(
     var issuer: String? = null,
     var jwks_uri: String? = null,

@@ -18,6 +18,8 @@
 
 package org.taktik.freehealth.middleware.dto.efact.segments
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 class RecordOrSegmentDescription {
     var zoneDescriptions: List<ZoneDescription>? = null
     override fun toString(): String {

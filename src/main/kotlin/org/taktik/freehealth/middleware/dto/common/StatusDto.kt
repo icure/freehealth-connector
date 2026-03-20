@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.dto.common
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import be.fgov.ehealth.commons._1_0.core.LocalisedString
 
 import jakarta.xml.bind.annotation.XmlAccessType
@@ -10,4 +11,5 @@ import jakarta.xml.bind.annotation.XmlType
 import java.io.Serializable
 import java.util.ArrayList
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class StatusDto(var code: String? = null, var messages: List<LocalisedString>? = null) : Serializable

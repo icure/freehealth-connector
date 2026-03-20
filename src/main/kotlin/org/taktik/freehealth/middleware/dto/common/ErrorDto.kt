@@ -20,6 +20,8 @@
 
 package org.taktik.freehealth.middleware.dto.common
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 class ErrorDto(
     var code: String? = null,
     var descr: String? = null,

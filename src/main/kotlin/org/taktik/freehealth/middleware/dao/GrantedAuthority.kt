@@ -1,5 +1,7 @@
 package org.taktik.freehealth.middleware.dao
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 class GrantedAuthority(var role: String = "DEFAULT") : org.springframework.security.core.GrantedAuthority {
     override fun getAuthority() = role
 

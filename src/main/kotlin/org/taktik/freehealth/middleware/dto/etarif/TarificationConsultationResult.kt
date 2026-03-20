@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.dto.etarif
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
@@ -7,6 +8,7 @@ import java.io.Serializable
 import java.util.ArrayList
 import java.util.Date
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class TarificationConsultationResult {
     var commonOutput: CommonOutput? = null
     var mycarenetConversation: MycarenetConversation? = null
@@ -28,11 +30,13 @@ class TarificationConsultationResult {
         MALE, FEMALE
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     class Payment : Serializable {
         var amount: Double = 0.toDouble()
         var currencyUnit: String? = null
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     class CodeResult : Serializable {
         var code: String? = null
         var fee: Payment? = null

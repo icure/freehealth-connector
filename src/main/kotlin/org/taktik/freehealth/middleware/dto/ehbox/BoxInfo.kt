@@ -20,8 +20,10 @@
 
 package org.taktik.freehealth.middleware.dto.ehbox
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.dto.common.ErrorDto
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class BoxInfo(
     val boxId: String? = null,
     val quality: String? = null,

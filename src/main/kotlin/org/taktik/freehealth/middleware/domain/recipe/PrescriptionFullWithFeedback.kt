@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.domain.recipe
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.util.*
 
 /**
@@ -29,6 +30,7 @@ import java.util.*
  * Time: 15:14
  * To change this template use File | Settings | File Templates.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 class PrescriptionFullWithFeedback(
     creationDate: Date,
     encryptionKeyId: String,

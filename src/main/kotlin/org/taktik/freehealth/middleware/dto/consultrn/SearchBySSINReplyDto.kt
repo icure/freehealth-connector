@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.dto.consultrn
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import be.fgov.ehealth.consultrn._1_0.core.ErrorType
 import be.fgov.ehealth.consultrn._1_0.core.PersonType
 import be.fgov.ehealth.consultrn._1_0.protocol.ConsultRnReplyType
@@ -12,4 +13,5 @@ import jakarta.xml.bind.annotation.XmlRootElement
 import jakarta.xml.bind.annotation.XmlType
 import java.io.Serializable
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class SearchBySSINReplyDto(status: StatusDto? = null, id: String? = null, errorInformations: List<ErrorType>? = null, var person: ConsultRnPersonDto? = null) : ConsultRnReplyDto(status, id, errorInformations), Serializable

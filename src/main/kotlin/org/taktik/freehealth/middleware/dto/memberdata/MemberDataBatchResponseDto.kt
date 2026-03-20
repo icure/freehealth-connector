@@ -1,10 +1,12 @@
 package org.taktik.freehealth.middleware.dto.memberdata
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import be.cin.types.v1.FaultType
 import org.taktik.freehealth.middleware.domain.memberdata.MdaStatus
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Assertion
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class MemberDataBatchResponseDto (
     var assertions: List<Assertion> = ArrayList(),
     var status: MdaStatus? = null,

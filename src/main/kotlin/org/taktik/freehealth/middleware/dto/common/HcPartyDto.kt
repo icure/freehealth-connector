@@ -20,9 +20,11 @@
 
 package org.taktik.freehealth.middleware.dto.common
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.io.Serializable
 import java.util.ArrayList
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class HcPartyDto : Serializable {
     var name: String? = null
     var firstname: String? = null

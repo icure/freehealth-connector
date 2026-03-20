@@ -8,6 +8,7 @@
 
 package org.taktik.freehealth.middleware.dto.memberdata
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.AdviceType
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Conditions
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.NameIDType
@@ -17,6 +18,7 @@ import org.taktik.icure.cin.saml.org.w3._2000._09.xmldsig_.Signature
 import java.io.Serializable
 import java.util.ArrayList
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class AssertionDto(
     var issuer: NameIDType? = null,
     var signature: Signature? = null,

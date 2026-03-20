@@ -20,9 +20,11 @@
 
 package org.taktik.freehealth.middleware.dto.mhm
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 open class CancelSubscriptionResult(
     var decisionReference: String? = null,
     var subscriptionsCancelDate: Int? = null,

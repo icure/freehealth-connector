@@ -20,9 +20,11 @@
 
 package org.taktik.freehealth.middleware.dto.consent
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.dto.common.ErrorDto
 import java.util.ArrayList
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class ConsentMessageDto {
     var complete: Boolean = false
     var consent: ConsentTypeDto? = null

@@ -20,7 +20,9 @@
 
 package org.taktik.freehealth.middleware.domain.sts
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.io.Serializable
 import java.util.*
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class SamlTokenResult(var tokenId: UUID? = null, var token: String? = null, var timestamp: Long? = null, var validity: Long? = null, var quality: String? = null) : Serializable

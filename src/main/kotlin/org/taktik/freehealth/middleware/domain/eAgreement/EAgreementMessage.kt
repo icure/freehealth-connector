@@ -1,10 +1,12 @@
 package org.taktik.freehealth.middleware.domain.eAgreement
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import be.cin.types.v1.FaultType
 import org.taktik.freehealth.middleware.domain.memberdata.MemberDataBatchResponse
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class EAgreementMessage (
     var commonOutput: CommonOutput? = null,
     var complete: Boolean? = false,

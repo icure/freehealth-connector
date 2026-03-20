@@ -20,8 +20,10 @@
 
 package org.taktik.freehealth.middleware.dto
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.io.Serializable
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Telecom(var telecomType: TelecomType = TelecomType.email, var telecomNumber: String? = null) : Serializable {
     fun mergeFrom(other: Telecom): Telecom = Telecom(
         telecomNumber = if (this.telecomNumber == null && other.telecomNumber != null) other.telecomNumber else this.telecomNumber

@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.dto
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import org.taktik.freehealth.utils.FailSafeEnumDeserializer
 import java.io.Serializable
@@ -29,5 +30,6 @@ enum class AddressType : Serializable {
     home, work, vacation, hospital, clinic, hq, other, diplomatic, reference, postal, temporary
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class AddressTypeDeserializer:FailSafeEnumDeserializer<AddressType>(AddressType::class.java)
 

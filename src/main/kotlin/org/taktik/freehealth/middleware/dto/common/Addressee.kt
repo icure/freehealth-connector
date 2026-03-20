@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.dto.common
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.io.Serializable
 
 import org.apache.commons.lang3.StringUtils.defaultString
@@ -28,6 +29,7 @@ import org.apache.commons.lang3.StringUtils.isEmpty
 /**
  * Created by aduchate on 8/11/13, 16:16
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Addressee(
     var identifierType: IdentifierType? = null,
     var id: String? = null,

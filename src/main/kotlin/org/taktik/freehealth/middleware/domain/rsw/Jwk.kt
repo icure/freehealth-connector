@@ -1,5 +1,7 @@
 package org.taktik.freehealth.middleware.domain.rsw
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class Jwk(
     var kty: String? = null,
     var use: String? = null,

@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.dto.dmg
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.io.Serializable
 import java.util.ArrayList
 import java.util.Date
@@ -11,6 +12,7 @@ import java.util.Date
  * Time: 14:29
  * To change this template use File | Settings | File Templates.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 class DmgsList : DmgMessage(), Serializable {
 
     var lists: MutableList<DmgsList> = ArrayList()

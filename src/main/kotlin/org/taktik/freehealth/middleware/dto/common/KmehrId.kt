@@ -20,8 +20,10 @@
 
 package org.taktik.freehealth.middleware.dto.common
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.io.Serializable
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class KmehrId : Serializable {
     var sv: String? = null
     var sl: String? = null

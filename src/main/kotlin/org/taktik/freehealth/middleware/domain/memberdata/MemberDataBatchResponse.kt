@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.domain.memberdata
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import be.cin.types.v1.FaultType
 import be.fgov.ehealth.mycarenet.commons.core.v3.CommonOutputType
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
@@ -7,6 +8,7 @@ import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Assertion
 import javax.xml.datatype.XMLGregorianCalendar
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class MemberDataBatchResponse (
     var assertions: List<Assertion> = ArrayList(),
     var status: MdaStatus? = null,

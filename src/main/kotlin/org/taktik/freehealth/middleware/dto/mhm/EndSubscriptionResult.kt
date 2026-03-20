@@ -20,9 +20,11 @@
 
 package org.taktik.freehealth.middleware.dto.mhm
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 open class EndSubscriptionResult(
     var reference: String? = null,
     var subscriptionsEndDate: Int? = null,

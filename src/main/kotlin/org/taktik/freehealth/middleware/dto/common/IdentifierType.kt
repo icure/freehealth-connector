@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.dto.common
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.io.Serializable
 
 /**
@@ -28,4 +29,5 @@ import java.io.Serializable
  * Date: 02/12/13
  * Time: 15:07
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 class IdentifierType(var type: String? = null) : Serializable

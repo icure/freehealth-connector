@@ -20,9 +20,11 @@
 
 package org.taktik.freehealth.middleware.dto.common
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import be.fgov.ehealth.standards.kmehr.id.v1.IDPATIENT
 import java.io.Serializable
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class KmehrPatientDto : Serializable {
     var inss: String? = null
     var regNrWithMut: String? = null

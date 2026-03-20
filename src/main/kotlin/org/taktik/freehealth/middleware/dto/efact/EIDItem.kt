@@ -18,9 +18,11 @@
 
 package org.taktik.freehealth.middleware.dto.efact
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.util.Calendar
 import java.util.Date
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class EIDItem {
     var deviceType: String? = null
     var readDate: Long? = null

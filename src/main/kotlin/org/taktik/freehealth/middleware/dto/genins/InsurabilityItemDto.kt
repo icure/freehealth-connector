@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware.dto.genins
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.io.Serializable
 
 /**
@@ -29,6 +30,7 @@ import java.io.Serializable
  * Time: 09:23
  * To change this template use File | Settings | File Templates.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 class InsurabilityItemDto(
     val regNrWithMut: String? = null,
     val mutuality: String? = null,

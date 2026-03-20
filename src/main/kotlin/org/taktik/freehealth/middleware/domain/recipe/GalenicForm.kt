@@ -20,6 +20,8 @@
 
 package org.taktik.freehealth.middleware.domain.recipe
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.dto.Code
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class GalenicForm(var galenicForm: Code? = null /* CD-GALENICFORM */, var text: String? = null)

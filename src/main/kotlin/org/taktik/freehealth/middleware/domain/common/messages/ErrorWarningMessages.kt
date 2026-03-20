@@ -18,6 +18,7 @@
 
 package org.taktik.freehealth.middleware.domain.common.messages
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node

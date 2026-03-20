@@ -20,11 +20,13 @@
 
 package org.taktik.freehealth.middleware.dto
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import java.util.*
 import kotlin.collections.HashSet
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Code(var type: String? = null, var code: String? = null, var version: String? = null) {
     //ex: type ICD (type + version + code combination must be unique) (or from tags -> CD-ITEM), code I06.2 (or from tags -> healthcareelement). Local codes are encoded as LOCAL:SLLOCALFROMMYSOFT, version must be lexicographically sortable
     var regions: Set<String> = HashSet() //ex: be,fr

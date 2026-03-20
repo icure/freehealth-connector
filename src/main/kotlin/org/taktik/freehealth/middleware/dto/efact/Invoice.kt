@@ -18,9 +18,11 @@
 
 package org.taktik.freehealth.middleware.dto.efact
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.domain.common.Patient
 import java.util.LinkedList
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Invoice {
     var patient: Patient? = null
     var ioCode: String? = null

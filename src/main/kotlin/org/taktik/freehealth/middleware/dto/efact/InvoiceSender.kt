@@ -18,8 +18,10 @@
 
 package org.taktik.freehealth.middleware.dto.efact
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.util.*
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class InvoiceSender {
     var nihii: Long? = null
     var bic: String? = null

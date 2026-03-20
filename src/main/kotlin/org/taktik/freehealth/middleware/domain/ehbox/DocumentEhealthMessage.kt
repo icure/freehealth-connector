@@ -20,11 +20,13 @@
 
 package org.taktik.freehealth.middleware.domain.ehbox
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.dto.common.Document
 
 /**
  * Created by aduchate on 8/11/13, 15:52
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 class DocumentEhealthMessage : EhealthMessage() {
     var document: Document? = null
     var freeText: String? = null

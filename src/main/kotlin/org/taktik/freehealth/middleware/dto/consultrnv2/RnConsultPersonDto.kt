@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.dto.consultrnv2
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import be.fgov.ehealth.rn.baselegaldata.v1.AddressBaseType
 import be.fgov.ehealth.rn.baselegaldata.v1.AdministratorBaseType
 import be.fgov.ehealth.rn.baselegaldata.v1.BirthInfoBaseType
@@ -16,6 +17,7 @@ import be.fgov.ehealth.rn.registries.commons.v1.AnomaliesType
 import org.joda.time.DateTime
 import java.io.Serializable
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class RnConsultPersonDto(
     var ssin: String? = null,
     var nobilityTitle: NobilityTitleBaseType? = null,

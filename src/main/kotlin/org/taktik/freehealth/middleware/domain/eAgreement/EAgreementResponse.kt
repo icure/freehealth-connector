@@ -1,10 +1,12 @@
 package org.taktik.freehealth.middleware.domain.eAgreement
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import be.cin.types.v1.FaultType
 import org.taktik.freehealth.middleware.domain.memberdata.MdaStatus
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import javax.xml.datatype.XMLGregorianCalendar
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class EAgreementResponse(
     var status: MdaStatus? = null,
     var errors: List<FaultType>? = null,

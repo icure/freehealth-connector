@@ -18,9 +18,11 @@
 
 package org.taktik.freehealth.middleware.dto.efact.segments
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.apache.commons.lang3.StringUtils
 import java.lang.IllegalArgumentException
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class ZoneDescription(var label: String? = null,
                                           var property: String? = null,
                                           var position: Int? = null,

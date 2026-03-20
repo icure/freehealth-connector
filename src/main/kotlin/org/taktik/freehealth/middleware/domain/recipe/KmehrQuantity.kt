@@ -20,7 +20,9 @@
 
 package org.taktik.freehealth.middleware.domain.recipe
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.taktik.freehealth.middleware.dto.Code
 import java.math.BigDecimal
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class KmehrQuantity(var amount: BigDecimal = BigDecimal.ZERO, var unit: Code? = null /* CD_UNIT */)
