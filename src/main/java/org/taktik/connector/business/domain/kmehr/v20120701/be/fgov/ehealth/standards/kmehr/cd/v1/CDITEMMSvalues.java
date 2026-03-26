@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020. Taktik SA, All rights reserved.
+ * Copyright (c) 2020. iCure SA, All rights reserved.
  */
 
 //
