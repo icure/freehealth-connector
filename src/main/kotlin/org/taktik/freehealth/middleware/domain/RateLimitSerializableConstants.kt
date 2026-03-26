@@ -22,7 +22,7 @@ package org.taktik.freehealth.middleware.domain
 
 object RateLimitSerializableConstants {
     const val FACTORY_ID = 1001
-    const val RATE_LIMIT_ENTRY_CLASS_ID = 1
-    const val RATE_LIMIT_RESULT_CLASS_ID = 2
-    const val RATE_LIMIT_ENTRY_PROCESSOR_CLASS_ID = 3
+    const val RATE_LIMIT_ENTRY_PROCESSOR_CLASS_ID = 1
+    const val RATE_LIMIT_ENTRY_SERIALIZER_TYPE_ID = 2001
+    const val RATE_LIMIT_RESULT_SERIALIZER_TYPE_ID = 2002
 }

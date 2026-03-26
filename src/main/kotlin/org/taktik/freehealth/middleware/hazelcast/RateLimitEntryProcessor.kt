@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (C) 2018 Taktik SA
+ * Copyright (C) 2018 iCure SA
  *
  * This file is part of FreeHealthConnector.
  *
@@ -42,24 +42,15 @@ class RateLimitEntryProcessor() : EntryProcessor<String, RateLimitEntry, RateLim
     @Suppress("UNCHECKED_CAST")
     override fun process(entry: MutableMap.MutableEntry<String, RateLimitEntry>): RateLimitResult {
         // Hazelcast passes null value for missing keys despite the non-null type signature
-        val e = (entry as MutableMap.MutableEntry<String, RateLimitEntry?>).value
-            ?: RateLimitEntry(0, 0, nowMillis)
+        val raw = (entry as MutableMap.MutableEntry<String, RateLimitEntry?>).value
+            ?: RateLimitEntry(windowStartMillis = nowMillis)
 
         // Advance windows if needed
-        val elapsed = nowMillis - e.windowStartMillis
-        when {
-            elapsed >= windowMillis * 2 -> {
-                // Both windows expired — reset
-                e.previousCount = 0
-                e.currentCount = 0
-                e.windowStartMillis = nowMillis
-            }
-            elapsed >= windowMillis -> {
-                // Current window becomes previous, start new current
-                e.previousCount = e.currentCount
-                e.currentCount = 0
-                e.windowStartMillis = e.windowStartMillis + windowMillis
-            }
+        val elapsed = nowMillis - raw.windowStartMillis
+        val e = when {
+            elapsed >= windowMillis * 2 -> raw.copy(previousCount = 0, currentCount = 0, windowStartMillis = nowMillis)
+            elapsed >= windowMillis -> raw.copy(previousCount = raw.currentCount, currentCount = 0, windowStartMillis = raw.windowStartMillis + windowMillis)
+            else -> raw
         }
 
         // Weighted estimate: previous window contribution decays linearly
@@ -71,8 +62,7 @@ class RateLimitEntryProcessor() : EntryProcessor<String, RateLimitEntry, RateLim
         val remaining = (maxRequests - estimatedCount - 1).coerceAtLeast(0).toInt()
 
         return if (estimatedCount < maxRequests) {
-            e.currentCount++
-            entry.setValue(e)
+            entry.setValue(e.copy(currentCount = e.currentCount + 1))
             RateLimitResult(
                 allowed = true,
                 remaining = remaining,

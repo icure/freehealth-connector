@@ -20,15 +20,26 @@
 
 package org.taktik.freehealth.middleware.hazelcast
 
-import com.hazelcast.nio.serialization.DataSerializableFactory
-import com.hazelcast.nio.serialization.IdentifiedDataSerializable
+import com.hazelcast.nio.ObjectDataInput
+import com.hazelcast.nio.ObjectDataOutput
+import com.hazelcast.nio.serialization.StreamSerializer
+import org.taktik.freehealth.middleware.domain.RateLimitEntry
 import org.taktik.freehealth.middleware.domain.RateLimitSerializableConstants
 
-class RateLimitSerializableFactory : DataSerializableFactory {
-    override fun create(typeId: Int): IdentifiedDataSerializable? {
-        return when (typeId) {
-            RateLimitSerializableConstants.RATE_LIMIT_ENTRY_PROCESSOR_CLASS_ID -> RateLimitEntryProcessor()
-            else -> null
-        }
+class RateLimitEntrySerializer : StreamSerializer<RateLimitEntry> {
+    override fun getTypeId(): Int = RateLimitSerializableConstants.RATE_LIMIT_ENTRY_SERIALIZER_TYPE_ID
+
+    override fun write(out: ObjectDataOutput, entry: RateLimitEntry) {
+        out.writeInt(entry.previousCount)
+        out.writeInt(entry.currentCount)
+        out.writeLong(entry.windowStartMillis)
+    }
+
+    override fun read(input: ObjectDataInput): RateLimitEntry {
+        return RateLimitEntry(
+            previousCount = input.readInt(),
+            currentCount = input.readInt(),
+            windowStartMillis = input.readLong()
+        )
     }
 }

@@ -41,9 +41,13 @@ import org.springframework.stereotype.Component
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken
 import org.taktik.connector.technical.service.kgss.domain.SerializableKeyResult
 import org.taktik.connector.technical.utils.IdentifierType
+import com.hazelcast.config.SerializerConfig
 import org.taktik.freehealth.middleware.domain.RateLimitEntry
+import org.taktik.freehealth.middleware.domain.RateLimitResult
 import org.taktik.freehealth.middleware.domain.RateLimitSerializableConstants
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
+import org.taktik.freehealth.middleware.hazelcast.RateLimitEntrySerializer
+import org.taktik.freehealth.middleware.hazelcast.RateLimitResultSerializer
 import org.taktik.freehealth.middleware.hazelcast.RateLimitSerializableFactory
 import java.util.UUID
 
@@ -118,6 +122,12 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
         serializationConfig.addDataSerializableFactory(
             RateLimitSerializableConstants.FACTORY_ID,
             RateLimitSerializableFactory()
+        )
+        serializationConfig.addSerializerConfig(
+            SerializerConfig().setImplementation(RateLimitEntrySerializer()).setTypeClass(RateLimitEntry::class.java)
+        )
+        serializationConfig.addSerializerConfig(
+            SerializerConfig().setImplementation(RateLimitResultSerializer()).setTypeClass(RateLimitResult::class.java)
         )
     }
 
