@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AuthorRequestType", propOrder = {
+@XmlType(name = "AuthorRequestType", namespace = "urn:be:fgov:ehealth:commons:protocol:v2", propOrder = {
     "author"
 })
 @XmlSeeAlso({
