@@ -90,13 +90,19 @@ configurations {
         exclude(group = "commons-logging", module = "commons-logging")
         exclude(group = "org.bouncycastle", module = "bcprov-jdk15on")
         exclude(group = "org.springframework", module = "spring-jcl")
+        resolutionStrategy.eachDependency {
+            if (requested.group == "io.netty" && requested.name.startsWith("netty-")) {
+                useVersion(rootProject.libs.versions.netty.get())
+                because("4.1.131.Final has a DDoS vulnerability")
+            }
+        }
     }
 }
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jetty")
-    implementation("com.icure:icure-hazelcast-hyperion-metrics-starter:0.2.1")
-
+    implementation("com.icure:icure-hazelcast-hyperion-metrics-starter:0.2.2")
+    implementation(libs.reactorNetty)
     implementation("com.taktik.boot:spring-boot-starter-micrometer:3.4.34-g3238a3228e")
     implementation("io.micrometer:micrometer-core")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -113,8 +119,8 @@ dependencies {
     }
     implementation("com.github.ben-manes.caffeine:caffeine")
     implementation("org.eclipse.jetty.http2:jetty-http2-server")
-    implementation("com.nimbusds:nimbus-jose-jwt:9.7")
-    implementation("com.nimbusds:oauth2-oidc-sdk:9.2.1")
+    implementation("com.nimbusds:nimbus-jose-jwt:9.37.4")
+    implementation("com.nimbusds:oauth2-oidc-sdk:9.37.3")
 
     implementation("jakarta.xml.ws:jakarta.xml.ws-api")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api")
