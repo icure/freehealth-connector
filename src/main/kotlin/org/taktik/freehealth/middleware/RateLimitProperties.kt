@@ -27,8 +27,7 @@ import org.springframework.stereotype.Component
 @ConfigurationProperties("fhc.ratelimit")
 class RateLimitProperties {
     var enabled: Boolean = false
-    var keyHeader: String = "X-FHC-keystoreId"
-    var fallbackKeyHeader: String = "X-FHC-tokenId"
+    var keyHeader: String = "X-FHC-tokenId"
     var windowSeconds: Long = 60
     var maxRequests: Int = 100
     var anonymousLimit: Int = 20

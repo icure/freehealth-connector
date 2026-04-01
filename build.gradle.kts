@@ -95,6 +95,8 @@ configurations {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jetty")
+    implementation("com.icure:icure-hazelcast-hyperion-metrics-starter:0.2.1")
+
     implementation("com.taktik.boot:spring-boot-starter-micrometer:3.4.34-g3238a3228e")
     implementation("io.micrometer:micrometer-core")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -109,15 +111,15 @@ dependencies {
     implementation("org.springframework.ws:spring-ws-security") {
         exclude(group = "org.bouncycastle")
     }
-    implementation("com.github.ben-manes.caffeine:caffeine:2.9.3")
-    implementation("org.eclipse.jetty.http2:jetty-http2-server:12.0.25")
+    implementation("com.github.ben-manes.caffeine:caffeine")
+    implementation("org.eclipse.jetty.http2:jetty-http2-server")
     implementation("com.nimbusds:nimbus-jose-jwt:9.7")
     implementation("com.nimbusds:oauth2-oidc-sdk:9.2.1")
 
-    implementation("jakarta.xml.ws:jakarta.xml.ws-api:4.0.1")
-    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
-    implementation("jakarta.xml.soap:jakarta.xml.soap-api:3.0.2")
-    implementation("jakarta.validation:jakarta.validation-api:3.0.2")
+    implementation("jakarta.xml.ws:jakarta.xml.ws-api")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api")
+    implementation("jakarta.xml.soap:jakarta.xml.soap-api")
+    implementation("jakarta.validation:jakarta.validation-api")
 
     implementation("com.taktik.boot:spring-boot-starter-hazelcast:2.1-0-g4d5d84ad53") {
         exclude(module = "kotlin-runtime")
@@ -136,14 +138,14 @@ dependencies {
     implementation("org.apache.wss4j:wss4j-ws-security-dom:2.3.1")
     implementation("net.sf.jsignature.io-tools:easystream:1.2.12")
     implementation("uk.org.lidalia:sysout-over-slf4j:1.0.2")
-    implementation("org.apache.commons:commons-lang3:3.18.0")
+    implementation("org.apache.commons:commons-lang3")
     implementation("org.apache.velocity:velocity:1.7")
     implementation("commons-io:commons-io:2.20.0")
-    implementation("commons-codec:commons-codec:1.13")
+    implementation("commons-codec:commons-codec")
     implementation("joda-time:joda-time:2.14.0")
-    implementation("com.sun.xml.messaging.saaj:saaj-impl:3.0.4")
+    implementation("com.sun.xml.messaging.saaj:saaj-impl")
     implementation("com.sun.xml.wss:xws-security:3.0")
-    implementation("com.hazelcast:hazelcast:5.3.5")
+    implementation("com.hazelcast:hazelcast")
     implementation("net.sf.dozer:dozer:5.5.1")
     //implementation("ma.glasnost.orika:orika-core:1.5.4") // Removed: incompatible with Java 21
     //implementation("io.springfox:springfox-swagger2:2.6.1") // Removed: incompatible with Spring Boot 3 (javax.servlet)
@@ -157,10 +159,10 @@ dependencies {
 
     implementation("org.json:json:20231013")
 
-    implementation("org.slf4j:log4j-over-slf4j:1.7.25")
+    implementation("org.slf4j:log4j-over-slf4j")
     implementation("com.taktik.boot:spring-boot-starter-gke-logging:3.4.34-g3238a3228e")
 
-    testImplementation("junit:junit:4.13.2")
+    testImplementation("junit:junit")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 

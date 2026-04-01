@@ -1,5 +1,5 @@
 [versions]
-springBoot = "3.5.5"
+springBoot = "3.5.13"
 bouncyCastle = "1.71.1"
 kotlin = "2.2.0"
 
@@ -17,7 +17,7 @@ kotlin = { id = "org.jetbrains.kotlin", version.ref = "kotlin" }
 kotlinAllOpen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
 kotlinSpring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 springBootPlugin = { id = "org.springframework.boot", version.ref = "springBoot" }
-springBootDependenciesManagement = { id = "io.spring.dependency-management", version = "1.1.4" }
+springBootDependenciesManagement = { id = "io.spring.dependency-management", version = "1.1.7" }
 mavenRepository = { id = "com.taktik.gradle.maven-repository", version = "1.0.7" }
 helmRepository = { id = "com.taktik.gradle.helm-repository", version = "0.2.24-g9f69211aad" }
 licenceReport = { id = "com.github.jk1.dependency-license-report", version = "2.0"}

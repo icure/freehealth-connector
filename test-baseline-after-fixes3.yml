@@ -1,0 +1,49 @@
+920000:
+	200 [1  ]:	# Test
+	2001[7  ]:	 B
+	201 [9  ]:	as
+	2011[11 ]:	el
+	202 [13 ]:	in
+	2021[15 ]:	e 
+	203 [17 ]:	- 
+	2031[19 ]:	br
+	204 [21 ]:	anch: spring-b
+	2041[35 ]:	oo
+	205 [37 ]:	t-3.5.5-virtua
+	2051[51 ]:	l-
+	206 [53 ]:	threads
+# Commi
+300:
+	300 [1  ]:	t: 361
+	3001[7  ]:	7a
+	301 [9  ]:	ce1
+	3011[12 ]:	7
+
+	302 [14 ]:	# Date: 
+	3021[22 ]:	20
+	303 [24 ]:	26-03-13T16:1
+	3031[37 ]:	1:
+	304 [39 ]:	14Z
+# T
+	3041[46 ]:	ot
+	305 [48 ]:	al: 368 | Pass: 174 | Fail: 194 | Error: 0 | 
+	3051[93 ]:	Sk
+	306 [95 ]:	ip: 0
+#
+FAIL   | org.tak
+	3061[119]:	ti
+	307 [121]:	k.freeheal
+	3071[131]:	th
+	308 [133]:	.m
+	3081[135]:	id
+	309 [137]:	dl
+	3091[139]:	ew
+	310 [141]:	are.s
+	3101[146]:	er
+	311 [148]:	vi
+	3111[150]:	ce
+	312 [152]:	.impl.CreatePrescriptionTest.testCompoundPrescriptionP2
+FAIL   | org.taktik.freehealth.middleware.service.impl.CreatePrescriptionTest.testMedicinalProductP0
+FAIL   | org.taktik.freehealth.middleware.service.impl.CreatePrescriptionTest.testMedicinalProductP1
+FAIL   | org.taktik.freehealth.middleware.service.impl.CreatePrescriptionTest.testSubstanceProductP0
+FAIL   | org.taktik.freehealth.middleware.service.impl.CreatePrescriptionTest.testSubstanceProductP1
