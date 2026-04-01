@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (C) 2018 Taktik SA
+ * Copyright (C) 2018 iCure SA
  *
  * This file is part of FreeHealthConnector.
  *
@@ -41,7 +41,14 @@ import org.springframework.stereotype.Component
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken
 import org.taktik.connector.technical.service.kgss.domain.SerializableKeyResult
 import org.taktik.connector.technical.utils.IdentifierType
+import com.hazelcast.config.SerializerConfig
+import org.taktik.freehealth.middleware.domain.RateLimitEntry
+import org.taktik.freehealth.middleware.domain.RateLimitResult
+import org.taktik.freehealth.middleware.domain.RateLimitSerializableConstants
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
+import org.taktik.freehealth.middleware.hazelcast.RateLimitEntrySerializer
+import org.taktik.freehealth.middleware.hazelcast.RateLimitResultSerializer
+import org.taktik.freehealth.middleware.hazelcast.RateLimitSerializableFactory
 import java.util.UUID
 
 @Component
@@ -103,6 +110,25 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
                 .setMaxSizePolicy(MaxSizePolicy.FREE_HEAP_SIZE)
                 .setEvictionPolicy(EvictionPolicy.LRU)
         })
+        addMapConfig(MapConfig("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.RATELIMITS").apply {
+            timeToLiveSeconds = 120
+            asyncBackupCount = 1
+            isReadBackupData = false
+            evictionConfig = EvictionConfig()
+                .setSize(128)
+                .setMaxSizePolicy(MaxSizePolicy.FREE_HEAP_SIZE)
+                .setEvictionPolicy(EvictionPolicy.LRU)
+        })
+        serializationConfig.addDataSerializableFactory(
+            RateLimitSerializableConstants.FACTORY_ID,
+            RateLimitSerializableFactory()
+        )
+        serializationConfig.addSerializerConfig(
+            SerializerConfig().setImplementation(RateLimitEntrySerializer()).setTypeClass(RateLimitEntry::class.java)
+        )
+        serializationConfig.addSerializerConfig(
+            SerializerConfig().setImplementation(RateLimitResultSerializer()).setTypeClass(RateLimitResult::class.java)
+        )
     }
 
     @Bean
@@ -169,5 +195,10 @@ class HazelcastConfiguration(val hazelcastProperties: HazelcastProperties) {
                 }
             }, false)
         }
+    }
+
+    @Bean
+    fun rateLimitsMap(hazelcastInstance: HazelcastInstance): IMap<String, RateLimitEntry> {
+        return hazelcastInstance.getMap("ORG.TAKTIK.FREEHEALTH.MIDDLEWARE.RATELIMITS")
     }
 }

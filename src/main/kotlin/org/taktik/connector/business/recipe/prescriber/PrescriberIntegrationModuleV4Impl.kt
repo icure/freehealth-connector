@@ -123,15 +123,13 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
         prescriptionType: String
     ): KeyResult? {
         val cacheId = "($nihii#$patientId#$prescriptionType)"
-        return keyCache.get(cacheId) {
-            getNewKeyFromKgss(
-                credential,
-                prescriptionType,
-                nihii,
-                patientId,
-                stsService.getHolderOfKeysEtk(credential, nihii)!!.encoded
-            )
-        }
+        return keyCache.getIfPresent(cacheId) ?: getNewKeyFromKgss(
+            credential,
+            prescriptionType,
+            nihii,
+            patientId,
+            stsService.getHolderOfKeysEtk(credential, nihii)!!.encoded
+        )?.also { keyCache.put(cacheId, it) }
     }
 
     /**

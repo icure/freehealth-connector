@@ -17,7 +17,7 @@ Freehealth Connector is a multi-user REST API middleware that wraps the Belgian 
 ./gradlew ktlintFormat      # Auto-fix Kotlin code style
 ```
 
-Requires JDK 21. Kotlin version is 2.2.10, Spring Boot 3.5.5.
+Requires JDK 21. Kotlin version is 2.2.10, Spring Boot 3.5.13.
 
 ## Architecture
 
