@@ -103,6 +103,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jetty")
     implementation("com.icure:icure-hazelcast-hyperion-metrics-starter:0.2.2")
     implementation(libs.reactorNetty)
+    implementation(libs.kotlinxCoroutinesReactor)
+
     implementation("com.taktik.boot:spring-boot-starter-micrometer:3.4.34-g3238a3228e")
     implementation("io.micrometer:micrometer-core")
     implementation("org.springframework.boot:spring-boot-starter-actuator")

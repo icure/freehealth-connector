@@ -6,6 +6,7 @@ netty = "4.1.132.Final"
 
 [libraries]
 reactorNetty = { group = "io.projectreactor.netty", name = "reactor-netty" }
+kotlinxCoroutinesReactor = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactor" }
 bouncyCastleBcmail = { group = "org.bouncycastle", name = "bcmail-jdk18on", version.ref = "bouncyCastle" }
 bouncyCastleBcprov = { group = "org.bouncycastle", name = "bcprov-jdk18on", version.ref = "bouncyCastle" }
 
