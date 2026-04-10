@@ -553,6 +553,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                     errors = errors ?: listOf()
                 ),
                 xades = xades,
+                commonOutput = CommonOutput(commonOutput?.inputReference, commonOutput?.nipReference, commonOutput?.outputReference),
                 mycarenetConversation = MycarenetConversation().apply {
                     this.transactionResponse = MarshallerHelper(SendTransactionResponse::class.java, SendTransactionResponse::class.java).toXMLByteArray(decryptedAndVerifiedResponse.sendTransactionResponse).toString(Charsets.UTF_8)
                     this.transactionRequest = MarshallerHelper(SendTransactionRequest::class.java, SendTransactionRequest::class.java).toXMLByteArray(sendTransactionRequest).toString(Charsets.UTF_8)

@@ -149,7 +149,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         attemptNbr,
         decisionReference,
         attest
-    )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
+    )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest, it.commonOutput) }
 
     @DeleteMapping("/send/{patientSsin}")
     fun cancelAttest(
