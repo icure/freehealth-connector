@@ -341,6 +341,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         referenceDate: Long?,
         attemptNbr: Int?,
         decisionReference: String?,
+        timestamp: String?,
         attest: Eattest): SendAttestResultWithResponse? {
         val derivedHcpQuality = hcpQuality ?: guardPostNihii?.let {"guardpost"} ?: "doctor"
 
@@ -354,14 +355,23 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
-        val inputReference = InputReference().inputReference
         val attribute = AttributeType().apply {
             key = "urn:be:cin:nippin:attemptNbr"
             value = attemptNbr ?: 1
         }
 
         val instant = DateTime.now()
-        val now = DateTime(0).withYear(instant.year).withMonthOfYear(instant.monthOfYear).withDayOfMonth(instant.dayOfMonth).withHourOfDay(instant.hourOfDay).withMinuteOfHour(instant.minuteOfHour).withSecondOfMinute(instant.secondOfMinute).withMillisOfSecond(0)
+        val systemNow = DateTime(0).withYear(instant.year).withMonthOfYear(instant.monthOfYear).withDayOfMonth(instant.dayOfMonth).withHourOfDay(instant.hourOfDay).withMinuteOfHour(instant.minuteOfHour).withSecondOfMinute(instant.secondOfMinute).withMillisOfSecond(0)
+        val now = timestamp?.let {
+            try {
+                val parsed = DateTime.parse(it)
+                DateTime(0).withYear(parsed.year).withMonthOfYear(parsed.monthOfYear).withDayOfMonth(parsed.dayOfMonth).withHourOfDay(parsed.hourOfDay).withMinuteOfHour(parsed.minuteOfHour).withSecondOfMinute(parsed.secondOfMinute).withMillisOfSecond(0)
+            } catch (e: Exception) {
+                log.warn("sendAttestV3 - failed to parse timestamp '{}', falling back to system time. Error: {}", it, e.message)
+                null
+            }
+        } ?: systemNow
+        val inputReference = InputReference(now.toString("yyyyMMddHHmmss")).inputReference
         val calendar = GregorianCalendar()
         calendar.time = now.toDate()
         val refDateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar)
@@ -419,7 +429,6 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                             "encryptedForKnownBED"
                         )
                 blob.messageName = "E-ATTEST"
-
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
                 val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
 

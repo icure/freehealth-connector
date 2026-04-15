@@ -10,4 +10,7 @@ public class KmehrIdGenerator implements IdGenerator {
       DateTime currentDateTime = new DateTime();
       return currentDateTime.toString("yyyyMMddHHmmss");
    }
+    public String generateId(DateTime date) {
+        return date.toString("yyyyMMddHHmmss");
+    }
 }

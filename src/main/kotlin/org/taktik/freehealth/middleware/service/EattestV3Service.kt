@@ -51,6 +51,7 @@ interface EattestV3Service {
         referenceDate: Long?,
         attemptNbr: Int?,
         decisionReference: String?,
+        timestamp: String?,
         attest: Eattest
     ): SendAttestResultWithResponse?
 

@@ -7,6 +7,8 @@ services:
     ports:
       - "8080:8080"
       - "5005:5005"
+    environment:
+      - TZ=Europe/Brussels
     volumes:
       - ./config.json:/opt/freehealth/config.json:ro
       - ./logs:/opt/freehealth/logs
