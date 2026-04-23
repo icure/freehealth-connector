@@ -575,17 +575,21 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         var noSIS: String? = if (patient.ssin != null) patient.ssin else ""
         noSIS = noSIS!!.replace("[^0-9]".toRegex(), "")
 
+        val isManualEntry = eidItem.readType == "4"
+        val isDeferredCase = isManualEntry && eidItem.manualEntryReason in listOf(3, 4, 5, 6, 8)
+        val vignetteReason = if (eidItem.deviceType == "7") eidItem.vignetteReason else 0
+
         ws.write("2", recordNumber)
-        ws.write("3", 0)
+        ws.write("3", if (isManualEntry) (eidItem.manualEntryReason ?: 0) else 0)
         ws.write("4", icd.codeNomenclature)
         ws.write("5", FuzzyValues.getLocalDateTime(icd.dateCode!!)!!.format(dtf))
-        ws.write("6a", FuzzyValues.getLocalDateTime(eidItem.readDate!!)!!.format(dtf))
+        ws.write("6a", if (isDeferredCase) "00000000" else FuzzyValues.getLocalDateTime(eidItem.readDate!!)!!.format(dtf))
         ws.write("7", 0)
         ws.write("8a", noSIS)
-        ws.write("9", 0)
+        ws.write("9", eidItem.readType ?: 0)
         ws.write("10", eidItem.deviceType)
-        ws.write("11", eidItem.readType)
-        ws.write("12", nf4.format(eidItem.readHour))
+        ws.write("11", vignetteReason)
+        ws.write("12", if (isDeferredCase) "0000" else nf4.format(eidItem.readHour))
         ws.write("14", 0)
         ws.write("15", invoiceSender.nihii.toString().padEnd(11, '0'))
         ws.write("16", eidItem.readvalue)
