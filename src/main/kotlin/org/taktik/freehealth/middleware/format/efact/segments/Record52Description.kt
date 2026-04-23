@@ -39,7 +39,7 @@ object Record52Description : RecordOrSegmentDescription() {
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "8a,8b", "Numero NISS du patient sauf en cas de convention internationale ou nouveaux-nes (1 et 2)", "patientINSS", "N", pos, 13)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "9", "Type de saisie document identite electronique", "eidInputType", "A", pos, 1)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "10", "Type de support document identite electronique", "eidSupportType", "A", pos, 1)
-        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "11", "Raison utilisation vignette", "eidvignetteReason", "N", pos, 1)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "11", "Raison utilisation vignette", "eidVignetteReason", "N", pos, 1)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "12,13", "Heure de lecture document identite electronique (1 et 2)", "eidReadingHour", "N", pos, 4)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "14", "reserve", null, "N", pos, 12)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "15", "Numero INAMI", "nihii", "N", pos, 12)
