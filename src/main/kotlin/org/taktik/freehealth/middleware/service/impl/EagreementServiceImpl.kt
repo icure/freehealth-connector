@@ -19,6 +19,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang.StringUtils
+import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.json.JSONObject
 import org.json.XML
@@ -91,7 +92,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
     private val keyDepotManager = KeyDepotManagerImpl.getInstance(keyDepotService)
     private val config = ConfigFactory.getConfigValidator(emptyList())
 
-    val agreementServiceUtils: EagreementServiceUtilsImpl = EagreementServiceUtilsImpl();
+    val agreementServiceUtils: EagreementServiceUtilsImpl = EagreementServiceUtilsImpl()
     private val genAsyncService = GenAsyncServiceImpl("eagreement")
 
     enum class RequestTypeEnum(val requestType: String) {
@@ -137,6 +138,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for EAgreement operations")
+        log.info("getEAgreementMessages: ")
 
         requireNotNull(keystoreId) { "Keystore id cannot be null" }
         requireNotNull(tokenId) { "Token id cannot be null" }
@@ -250,6 +252,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for EAgreement operations")
 
+        log.info("confirmMessages: ")
         val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
         val confirm = Confirm();
         confirm.origin = buildOriginType(samlToken.quality, hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
@@ -312,6 +315,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Agreement operations")
+        log.info("askAgreement: ")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
@@ -500,6 +504,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Agreement operations")
+        log.info("askAgreement: ")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
@@ -718,6 +723,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Agreement operations")
+        log.info("consultAgreementList: ")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
