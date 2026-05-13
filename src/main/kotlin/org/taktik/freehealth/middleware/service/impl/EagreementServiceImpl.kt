@@ -2,10 +2,16 @@ package org.taktik.freehealth.middleware.service.impl
 
 import be.cin.encrypted.BusinessContent
 import be.cin.encrypted.EncryptedKnownContent
-import be.cin.mycarenet.esb.common.v2.CommonInput
 import be.cin.mycarenet.esb.common.v2.OrigineType
-import be.cin.nip.async.generic.GetResponse
 import be.cin.nip.async.generic.Confirm
+import be.cin.nip.async.generic.Get
+import be.cin.nip.async.generic.GetResponse
+import be.cin.nip.async.generic.MsgQuery
+import be.cin.nip.async.generic.Query
+import be.cin.types.v1.DetailType
+import be.cin.types.v1.DetailsType
+import be.cin.types.v1.FaultType
+import be.cin.types.v1.StringLangType
 import be.fgov.ehealth.agreement.protocol.v1.*
 import be.fgov.ehealth.agreement.protocol.v1.ObjectFactory
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
@@ -19,7 +25,6 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang.StringUtils
-import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.json.JSONObject
 import org.json.XML
@@ -27,15 +32,13 @@ import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.taktik.connector.business.agreement.domain.Agreement
-import org.taktik.connector.business.agreement.domain.AgreementMessage
 import org.taktik.connector.business.agreement.exception.AgreementBusinessConnectorException
-import org.taktik.connector.business.domain.agreement.AgreementResponse
 import org.taktik.connector.business.domain.agreement.EAgreementResponse
-import org.taktik.connector.business.genericasync.builders.BuilderFactory
 import org.taktik.connector.business.genericasync.service.impl.GenAsyncServiceImpl
 import org.taktik.connector.business.mycarenet.attest.domain.InputReference
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
+import org.taktik.connector.business.mycarenetdomaincommons.mapper.DomainBlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.business.mycarenetdomaincommons.util.PropertyUtil
 import org.taktik.connector.business.mycarenetdomaincommons.util.WsAddressingUtil
@@ -48,31 +51,38 @@ import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
 import org.taktik.connector.technical.service.etee.Crypto
 import org.taktik.connector.technical.service.etee.CryptoFactory
 import org.taktik.connector.technical.service.etee.domain.EncryptionToken
+import org.taktik.connector.technical.service.keydepot.KeyDepotManager
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.sts.security.Credential
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.connector.technical.utils.CertificateParser
+import org.taktik.connector.technical.utils.ConnectorIOUtils
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
 import org.taktik.freehealth.middleware.dao.User
+import org.taktik.freehealth.middleware.domain.eAgreement.EAgreementBatchResponse
+import org.taktik.freehealth.middleware.domain.eAgreement.EAgreementList
+import org.taktik.freehealth.middleware.domain.eAgreement.EAgreementMessage
+import org.taktik.freehealth.middleware.domain.memberdata.MdaStatus
 import org.taktik.freehealth.middleware.dto.mycarenet.CommonOutput
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetConversation
 import org.taktik.freehealth.middleware.dto.mycarenet.MycarenetError
 import org.taktik.freehealth.middleware.exception.MissingTokenException
+import org.taktik.freehealth.middleware.exception.UnauthorizedException
 import org.taktik.freehealth.middleware.service.EagreementService
 import org.taktik.freehealth.middleware.service.STSService
 import org.taktik.freehealth.middleware.web.UserAgentInterceptorFilter.Companion.getUserAgent
 import org.taktik.freehealth.middleware.web.controllers.EagreementController
+import org.taktik.icure.cin.saml.extensions.ResponseList
+import org.taktik.icure.cin.saml.oasis.names.tc.saml._2_0.assertion.Assertion
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
-import java.io.IOException
 import java.io.StringWriter
 import java.net.URI
-import java.net.URISyntaxException
 import java.util.*
 import java.util.function.Consumer
 import javax.xml.bind.JAXBContext
@@ -84,16 +94,15 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 import javax.xml.ws.soap.SOAPFaultException
 
-
 @Service
 class EagreementServiceImpl(private val stsService: STSService, private val keyDepotService: KeyDepotService) : EagreementService {
     private val freehealthAgreementService: org.taktik.connector.business.agreement.service.AgreementService = org.taktik.connector.business.agreement.service.impl.AgreementServiceImpl()
 
     private val keyDepotManager = KeyDepotManagerImpl.getInstance(keyDepotService)
     private val config = ConfigFactory.getConfigValidator(emptyList())
+    private val genAsyncService = GenAsyncServiceImpl("eagreement")
 
     val agreementServiceUtils: EagreementServiceUtilsImpl = EagreementServiceUtilsImpl()
-    private val genAsyncService = GenAsyncServiceImpl("eagreement")
 
     enum class RequestTypeEnum(val requestType: String) {
         ASK("claim-ask"),
@@ -125,7 +134,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         error.errors = Arrays.asList(MycarenetError(code = e.errorCode, msgFr = e.message, msgNl = e.message))
         return error
     }
-    override fun getEAgreementMessages(
+    override fun getMessages(
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
@@ -133,119 +142,192 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        limit: Int
-    ): List<AgreementMessage> {
-        val samlToken =
-            stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-                ?: throw MissingTokenException("Cannot obtain token for EAgreement operations")
+        hcpQuality: String
+    ): EAgreementList? {
+        val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
+            ?: throw MissingTokenException("Cannot obtain token for eAgreement async operations")
         log.info("getEAgreementMessages: ")
-
-        requireNotNull(keystoreId) { "Keystore id cannot be null" }
-        requireNotNull(tokenId) { "Token id cannot be null" }
-
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
+        val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
-        val token = extractEtk(credential)
-
-        val inputReference = "" + System.currentTimeMillis()
-        val requestObjectBuilder = try {
-            BuilderFactory.getRequestObjectBuilder("eagreement")
-        } catch (e: Exception) {
-            throw IllegalArgumentException(e)
+        val getHeader = WsAddressingHeader(URI("urn:be:cin:nip:async:generic:get:query")).apply {
+            messageID = URI(IdGeneratorFactory.getIdGenerator("uuid").generateId())
         }
 
-        val responseObjectBuilder = try {
-            BuilderFactory.getResponseObjectBuilder()
-        } catch (e: Exception) {
-            throw IllegalArgumentException(e)
-        }
-
-        val ci = CommonInput().apply {
-            request = be.cin.mycarenet.esb.common.v2.RequestType().apply {
-                isIsTest = config.getProperty("endpoint.eagreement")?.contains("-acpt") ?: false
+        val get = Get().apply {
+            msgQuery = MsgQuery().apply {
+                isInclude = true
+                max = 100
+                messageNames?.let { this.messageNames.addAll(it) }
             }
-            origin = buildOriginType(samlToken.quality, hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
-            this.inputReference = inputReference
+            tAckQuery = Query().apply {
+                isInclude = true
+                max = 100
+            }
+            origin = buildOriginType(hcpNihii, hcpFirstName, hcpQuality,hcpSsin)
+            replyToEtk = keyDepotManager.getETK(credential, keystoreId).encoded
         }
 
-        val header = try {
-            WsAddressingHeader(URI("urn:be:cin:nip:async:generic:get:query")).apply {
-                faultTo = "http://www.w3.org/2005/08/addressing/anonymous"
-                replyTo = "http://www.w3.org/2005/08/addressing/anonymous"
-                messageID = URI("" + UUID.randomUUID())
-            }
-        } catch (e: URISyntaxException) {
-            throw IllegalStateException(e)
-        }
+        val response = genAsyncService.getRequest(samlToken, get, getHeader)
+        val listOfEagreementDecryptedResponseContent : ArrayList<String> = arrayListOf()
+        var xades : ByteArray? = null
+        var responseXML : ByteArray? = null
 
-        var batchSize = Math.min(64, limit)
-        var retries = 8
+        return try {
+            EAgreementList(
+                eAgreementMessageList = response.`return`.msgResponses?.map {
 
-        val agreementMessages = ArrayList<AgreementMessage>()
+                    var data: ByteArray? = if (it.detail.contentEncoding == "deflate") ConnectorIOUtils.decompress(DomainBlobMapper.mapToBlob(it.detail).content) else DomainBlobMapper.mapToBlob(it.detail).content
+                    val responseList = if (it.detail.contentEncryption == "encryptedForKnownRecipient") {
+                        val unsealedData = crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, data).contentAsByte
+                        val decryptedKnownContent = MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(unsealedData)
 
-        while (retries-- > 0) {
-            val msgQuery = requestObjectBuilder.createMsgQuery(batchSize, true, "eAgreement-response")
-            val query = requestObjectBuilder.createQuery(batchSize, true)
+                        xades = decryptedKnownContent?.xades
+                        responseXML = decryptedKnownContent?.businessContent?.value
 
-            val getResponse: GetResponse
-            try {
-                getResponse =
-                    genAsyncService.getRequest(samlToken, requestObjectBuilder.buildGetRequest(ci.origin, msgQuery, query, token?.encoded), header)
-            } catch (e: TechnicalConnectorException) {
-                if ((e.message?.contains("SocketTimeout") == true) && batchSize > 1) {
-                    batchSize /= 4
-                    continue
-                }
-                throw IllegalStateException(e)
-            } catch (e: SOAPFaultException) {
-                if (e.message?.contains("Not enough time") == true) {
-                    Thread.sleep(30000)
-                    continue
-                }
-                throw IllegalStateException(e)
-            }
+                        MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(
+                            if (decryptedKnownContent.businessContent.contentEncoding == "deflate")
+                                ConnectorIOUtils.decompress(decryptedKnownContent.businessContent.value) else decryptedKnownContent.businessContent.value
+                        )
 
-            val processedGetResponse = responseObjectBuilder.processResponse(getResponse, ByteArray::class.java , "eagreement", credential, hokPrivateKeys)
-
-            agreementMessages += processedGetResponse.msgResponses.map { r ->
-                val msgResponse = r.msgResponse;
-                AgreementMessage().apply {
-                    id = msgResponse.detail.id
-                    name = msgResponse.detail.messageName
-
-                    commonOutput = CommonOutput().apply {
-                        this.inputReference = msgResponse.commonOutput.inputReference
-                        this.nipReference = msgResponse.commonOutput.nipReference
-                        this.outputReference = msgResponse.commonOutput.outputReference
+                    } else {
+                        MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(data)
                     }
-                    try {
-                        detail = r.businessResponse as ByteArray?
 
-                        xades = r.rawDecryptedBlob.xades
-                        reference = msgResponse.detail.reference
-                    } catch (e: IOException) {
-                    }
-                }
-            }
+                    listOfEagreementDecryptedResponseContent.add(ConnectorXmlUtils.toString(responseList))
+                    EAgreementMessage(
+                        commonOutput = CommonOutput(
+                            inputReference = it.commonOutput.inputReference,
+                            outputReference = it.commonOutput.outputReference,
+                            nipReference = it.commonOutput.nipReference
+                        ),
+                        errors = null,
+                        genericErrors = null,
+                        reference = it.detail.reference,
+                        appliesTo = null,
+                        complete = null,
+                        io = null,
+                        eagreementResponse = responseList.responses.map {
+                            EAgreementBatchResponse(
+                                status = MdaStatus(
+                                    it.status.statusCode?.value,
+                                    it.status.statusCode?.statusCode?.value
+                                ),
+                                errors = it.status?.statusDetail?.anies?.map {
+                                    FaultType().apply {
+                                        faultCode =
+                                            it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultCode")
+                                                .item(0)?.textContent
+                                        faultSource =
+                                            it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultSource")
+                                                .item(0)?.textContent
+                                        message =
+                                            it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message")
+                                                .item(0)?.let {
+                                                    StringLangType().apply {
+                                                        value = it.textContent
+                                                        lang = it.attributes.getNamedItem("lang")?.textContent
+                                                    }
+                                                }
 
-            break
+                                        it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Detail").let {
+                                            if (it.length > 0) {
+                                                details = DetailsType()
+                                            }
+                                            for (i in 0 until it.length) {
+                                                details.details.add(DetailType().apply {
+                                                    it.item(i).let {
+                                                        detailCode =
+                                                            (it as Element).getElementsByTagNameWithOrWithoutNs(
+                                                                "urn:be:cin:types:v1",
+                                                                "DetailCode"
+                                                            ).item(0)?.textContent
+                                                        detailSource = it.getElementsByTagNameWithOrWithoutNs(
+                                                            "urn:be:cin:types:v1",
+                                                            "DetailSource"
+                                                        ).item(0)?.textContent
+                                                        location = it.getElementsByTagNameWithOrWithoutNs(
+                                                            "urn:be:cin:types:v1",
+                                                            "Location"
+                                                        ).item(0)?.textContent
+                                                        message = it.getElementsByTagNameWithOrWithoutNs(
+                                                            "urn:be:cin:types:v1",
+                                                            "Message"
+                                                        ).item(0)?.let {
+                                                            StringLangType().apply {
+                                                                value = it.textContent
+                                                                lang = it.attributes.getNamedItem("lang")?.textContent
+                                                            }
+                                                        }
+                                                    }
+                                                })
+                                            }
+                                        }
+                                    }
+                                },
+                                issueInstant = it.issueInstant,
+                                inResponseTo = it.inResponseTo,
+                                issuer = it.issuer?.value,
+                                responseId = it.id,
+                                assertions = it.anies.map {
+                                    MarshallerHelper(Assertion::class.java, Assertion::class.java).toObject(it)
+                                }
+                            )
+                        }
+                    )
+                },
+                mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionRequest = MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(kotlin.text.Charsets.UTF_8)
+                    this.transactionResponse = MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(
+                        Charsets.UTF_8)
+                    response?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    soapRequest = MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
+                    this.decryptedResponseContent = listOfEagreementDecryptedResponseContent
+                    this.xades = xades
+                    this.content = responseXML
+                },
+                date = null,
+                genericErrors = null
+            )
+        }catch (e:SOAPFaultException){
+            return EAgreementList(
+                mycarenetConversation = MycarenetConversation().apply {
+                    this.transactionRequest =
+                        MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
+                    this.transactionResponse =
+                        MarshallerHelper(GetResponse::class.java, GetResponse::class.java).toXMLByteArray(response)
+                            .toString(
+                                Charsets.UTF_8
+                            )
+                    response?.soapResponse?.writeTo(this.soapResponseOutputStream())
+                    soapRequest =
+                        MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
+                    this.decryptedResponseContent = listOfEagreementDecryptedResponseContent
+                },
+                date = null,
+                eAgreementMessageList = null,
+                genericErrors = listOf(FaultType().apply {
+                    faultSource = e.message
+                    faultCode = e.fault?.faultCode
+                })
+            )
         }
-        return agreementMessages
     }
 
     override fun confirmMessages(
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        hcpQuality: String,
         hcpNihii: String,
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        references: List<String>
-    ): Boolean {
-        if (references.isEmpty()) {
+        eagreementMessagesReference: List<String>
+    ): Boolean? {
+        if (eagreementMessagesReference.isEmpty()) {
             return true
         }
         val samlToken =
@@ -255,63 +337,58 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         log.info("confirmMessages: ")
         val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
         val confirm = Confirm();
-        confirm.origin = buildOriginType(samlToken.quality, hcpNihii, hcpSsin, hcpFirstName, hcpLastName)
-        confirm.msgRefValues.addAll(references)
+        confirm.origin = buildOriginType(hcpNihii, hcpFirstName, hcpQuality, hcpSsin)
+        confirm.msgRefValues.addAll(eagreementMessagesReference)
 
         genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
 
         return true
     }
 
-    private fun buildOriginType(quality: String, nihii: String, ssin: String, firstName: String, lastName: String): OrigineType =
+    private fun buildOriginType(hcpNihii: String, hcpName: String, hcpQuality: String?, hcpSsin: String?): OrigineType =
         OrigineType().apply {
             val principal = SecurityContextHolder.getContext().authentication?.principal as? User
             val userAgent = getUserAgent();
             val productName = userAgent?.split("/")?.get(0) ?: "";
-            val packageInfo = McnConfigUtil.retrievePackageInfo("eagreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName, productName, quality)
+            val packageInfo = McnConfigUtil.retrievePackageInfo("eagreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName, productName, hcpQuality)
 
             `package` = be.cin.mycarenet.esb.common.v2.PackageType().apply {
                 name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = packageInfo.packageName }
                 license = be.cin.mycarenet.esb.common.v2.LicenseType().apply {
-                    this.username = packageInfo.userName
-                    this.password = packageInfo.password
+                    username = packageInfo?.userName ?: throw UnauthorizedException("No MCN license found")
+                    password = packageInfo.password ?: throw UnauthorizedException("No MCN license found")
                 }
             }
             careProvider = be.cin.mycarenet.esb.common.v2.CareProviderType().apply {
-                if (quality == "guardpost" || quality == "medicalhouse") {
-                    this.nihii = be.cin.mycarenet.esb.common.v2.NihiiType().apply {
-                        this.quality = quality
-                        this.value = be.cin.mycarenet.esb.common.v2.ValueRefString()
-                            .apply { value = nihii.padEnd(11, '0') }
+                this.nihii = be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                    quality = hcpQuality?: "medicalhouse"
+                    value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii }
+                }
+
+                physicalPerson = be.cin.mycarenet.esb.common.v2.IdType().apply {
+                    nihii = be.cin.mycarenet.esb.common.v2.NihiiType().apply {
+                        quality = hcpQuality;
+                        value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = hcpNihii.padEnd(11, '0') }
                     }
-                    this.organization = be.cin.mycarenet.esb.common.v2.IdType().apply {
-                        this.nihii = be.cin.mycarenet.esb.common.v2.NihiiType()
-                            .apply { value = be.cin.mycarenet.esb.common.v2.ValueRefString()
-                                .apply { value = nihii.padEnd(11, '0') } }
-                        this.ssin = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = ssin }
-                        this.name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = "$firstName $lastName" }
-                    }
-                } else {
-                    this.nihii = be.cin.mycarenet.esb.common.v2.NihiiType().apply {
-                        this.quality = quality
-                        this.value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = nihii }
-                    }
-                    this.physicalPerson = be.cin.mycarenet.esb.common.v2.IdType().apply {
-                        this.nihii = be.cin.mycarenet.esb.common.v2.NihiiType()
-                            .apply { value = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = nihii } }
-                        this.ssin = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = ssin }
-                        this.name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = "$firstName $lastName" }
+
+                    hcpSsin?.let {
+                        ssin = be.cin.mycarenet.esb.common.v2.ValueRefString().apply {
+                            value = hcpSsin;
+                        }
                     }
                 }
+
+
             }
         }
+
 
     override fun askAgreement(
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
         agreement: Agreement
-    ): AgreementResponse? {
+    ): EAgreementResponse? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Agreement operations")
@@ -443,7 +520,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                         agreementResponse?.`return`?.commonOutput?.outputReference
                     )
 
-                var res = AgreementResponse()
+                var res = EAgreementResponse()
                 res.isAcknowledged = true
                 res.commonOutput = commonOutput
                 res.mycarenetConversation = MycarenetConversation().apply {
@@ -462,7 +539,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
             }
         }
     }
-
 
     override fun askAgreement(
         keystoreId: UUID,
@@ -611,7 +687,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                     MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(
                         unsealedData)
 
-                val xades = decryptedKnownContent!!.xades
+                val xades = decryptedKnownContent.xades
                 val signatureVerificationResult = xades?.let {
                     val builder = SignatureBuilderFactory.getSignatureBuilder(AdvancedElectronicSignatureEnumeration.XAdES)
                     val options = emptyMap<String, Any>()
@@ -649,8 +725,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         }
     }
 
-
-
     override fun consultAgreementList(
         keystoreId: UUID,
         tokenId: UUID,
@@ -676,7 +750,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         agreementStartDate: DateTime?,
         agreementEndDate: DateTime?,
         agreementType: String?
-    ): AgreementResponse? {
+    ): EAgreementResponse? {
         val requestBundleJSON = createConsultAgreementBundle(
             requestType,
             messageEventSystem,
@@ -719,7 +793,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         tokenId: UUID,
         passPhrase: String,
         agreement: Agreement
-    ): AgreementResponse? {
+    ): EAgreementResponse? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Agreement operations")
@@ -851,7 +925,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                         consultAgreementResponse?.`return`?.commonOutput?.outputReference
                     )
 
-                var res = AgreementResponse()
+                var res = EAgreementResponse()
                 res.isAcknowledged = true
                 res.commonOutput = commonOutput
                 res.mycarenetConversation = MycarenetConversation().apply {
@@ -894,7 +968,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
             element.setAttribute("value", textContent)
         }
     }
-
 
     // TODO check if this is needed. This transform request the same way we receive response : <xmlTag value="hello"/> instead of <xmlTag>hello</xmlTag>
     fun transformXml(inputXml: String): String {
@@ -1075,5 +1148,9 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         }
 
         return sb.toString()
+    }
+
+    private fun Element.getElementsByTagNameWithOrWithoutNs(ns: String, name: String): NodeList {
+        return this.getElementsByTagNameNS(ns, name).let { if (it.length > 0) it else this.getElementsByTagName(name) }
     }
 }

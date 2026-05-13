@@ -22,10 +22,10 @@
         <xs:attribute name="Id" type="xs:ID">
             <xs:annotation>
                 <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
-                The ID of an element.  Can be used by other elements with the
-                same name and type to reference this element.  An ID should only be
-                unique inside a document, in this case the SOAP message.
-                In other words, each request can reuse the same ID values.
+                    The ID of an element.  Can be used by other elements with the
+                    same name and type to reference this element.  An ID should only be
+                    unique inside a document, in this case the SOAP message.
+                    In other words, each request can reuse the same ID values.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -33,24 +33,24 @@
             <xs:annotation>
                 <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
                     <p>
-                A XPoiter reference to another element with the same name and type.
-                When this is present, the content of the element should be 
-                empty.  MyCareNet will substitute the this element by the element
-                it references.
+                        A XPoiter reference to another element with the same name and type.
+                        When this is present, the content of the element should be
+                        empty.  MyCareNet will substitute the this element by the element
+                        it references.
                         <br />
-                The XPointer should result in a single element with the same
-                type the this element.
+                        The XPointer should result in a single element with the same
+                        type the this element.
                     </p>
                     <p>
-                See ValueRefString type for more information about XPointer.
+                        See ValueRefString type for more information about XPointer.
                     </p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
-	
+
     <xs:complexType name="ValueRefString">
-    	<xs:annotation>
+        <xs:annotation>
             <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
                 Elements of this type do not require any content, instead
                 it is also possible to refer to another element in
@@ -65,19 +65,19 @@
                     <xs:annotation>
                         <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
                             <p>
-                A XPoiter reference to another element with the same type.
-                When this is present, the content of the element should be 
-                empty.  MyCareNet will substitute the content of this element by 
-                the result of the XPointer.
+                                A XPoiter reference to another element with the same type.
+                                When this is present, the content of the element should be
+                                empty.  MyCareNet will substitute the content of this element by
+                                the result of the XPointer.
                                 <br />
-                The XPointer should result in a node-set that is compliant with
-                the type of this element.
+                                The XPointer should result in a node-set that is compliant with
+                                the type of this element.
                             </p>
                             <p>
-                XPointer is a W3C standard that is commonly used to reference
-                other elements.  This is for example used by the XMLDSig
-                standard, although it only requires a sub-section to be 
-                implemented.  See service catalogue for more information.
+                                XPointer is a W3C standard that is commonly used to reference
+                                other elements.  This is for example used by the XMLDSig
+                                standard, although it only requires a sub-section to be
+                                implemented.  See service catalogue for more information.
                             </p>
                         </xs:documentation>
                     </xs:annotation>
@@ -86,4 +86,3 @@
         </xs:simpleContent>
     </xs:complexType>
 </xs:schema>
-
