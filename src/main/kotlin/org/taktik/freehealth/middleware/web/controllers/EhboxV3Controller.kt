@@ -46,9 +46,7 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
         @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
         @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean
     ): BoxInfo {
-        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val getInfosResult = ehboxService.getInfos(keystoreId, tokenId, passPhrase)
-        LoggingMdcUtil.clearMDC()
         return getInfosResult
     }
 
@@ -63,9 +61,7 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
         @RequestParam limit: Int?,
         @RequestParam(defaultValue = "0") skip: Int
     ): MessagesResponse{
-        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val loadMessagesResult = ehboxService.loadMessages(keystoreId, tokenId, passPhrase, boxId, limit, skip)
-        LoggingMdcUtil.clearMDC()
         return loadMessagesResult
     }
 
@@ -80,9 +76,7 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
         @PathVariable boxId: String,
         @PathVariable messageId: String
     ): MessageResponse{
-        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val getFullMessageResult = ehboxService.getFullMessage(keystoreId, tokenId, passPhrase, boxId, messageId)
-        LoggingMdcUtil.clearMDC()
         return getFullMessageResult
     }
 
@@ -98,9 +92,7 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
         @RequestParam(defaultValue = "0") skip: Int,
         @RequestBody alternateKeystores: AltKeystoresList
     ): MessagesResponse{
-        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val loadMessagesResult = ehboxService.loadMessages(keystoreId, tokenId, passPhrase, boxId, limit, skip, alternateKeystores.keystores)
-        LoggingMdcUtil.clearMDC()
         return loadMessagesResult
     }
 
@@ -115,9 +107,7 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
         @PathVariable messageId: String,
         @RequestBody alternateKeystores: AltKeystoresList
     ): MessageResponse{
-        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val getFullMessageResult = ehboxService.getFullMessage(keystoreId, tokenId, passPhrase, boxId, messageId, alternateKeystores.keystores)
-        LoggingMdcUtil.clearMDC()
         return getFullMessageResult
     }
 
@@ -133,7 +123,6 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
         @RequestParam receptionReceipt: Boolean?,
         @RequestParam readReceipt: Boolean?
     ): MessageOperationResponse{
-        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val getFullMessageResult =
             ehboxService.sendMessage(
                 keystoreId,
@@ -144,7 +133,6 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
                 receptionReceipt ?: false,
                 readReceipt ?: false
             )
-        LoggingMdcUtil.clearMDC()
         return getFullMessageResult;
     }
 
@@ -157,9 +145,7 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
         @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable messageId: String
     ): MessageStatusOperationResponse {
-        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val getMessageAckStatusResult =  ehboxService.getMessageAckStatus(keystoreId, tokenId, passPhrase, messageId)
-        LoggingMdcUtil.clearMDC()
         return getMessageAckStatusResult
     }
 
@@ -175,7 +161,6 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
         @RequestParam receptionReceipt: Boolean?,
         @RequestParam readReceipt: Boolean?
     ): MessageOperationResponse {
-        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val sendMessage2EboxResult =  ehboxService.sendMessage2Ebox(
             keystoreId,
             tokenId,
@@ -185,7 +170,6 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
             receptionReceipt ?: false,
             readReceipt ?: false
         )
-        LoggingMdcUtil.clearMDC()
         return sendMessage2EboxResult
     }
 
@@ -200,9 +184,7 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
         @PathVariable source: String,
         @PathVariable destination: String
     ): MessageOperationResponse{
-        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val moveMessagesResult = ehboxService.moveMessages(keystoreId, tokenId, passPhrase, messageIds, source, destination)
-        LoggingMdcUtil.clearMDC()
         return moveMessagesResult
     }
 
@@ -216,9 +198,7 @@ class EhboxV3Controller(val ehboxService: EhboxService) {
         @RequestBody messageIds: List<String>,
         @PathVariable source: String
     ): MessageOperationResponse{
-        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val deleteMessagesResult = ehboxService.deleteMessages(keystoreId, tokenId, passPhrase, messageIds, source)
-        LoggingMdcUtil.clearMDC()
         return deleteMessagesResult
     }
 }

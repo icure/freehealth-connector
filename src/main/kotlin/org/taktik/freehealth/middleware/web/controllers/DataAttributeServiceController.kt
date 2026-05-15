@@ -38,6 +38,8 @@ class DataAttributeServiceController(val dataAttributeService: DataAttributeServ
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable nihii: String,
         @PathVariable ssin: String,
         @RequestParam(required = true) dateOfBirth: Int,

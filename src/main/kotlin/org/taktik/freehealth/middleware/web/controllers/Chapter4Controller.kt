@@ -54,8 +54,8 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
     @GetMapping("/sam/docpreviews/{chapterName}/{paragraphName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getAddedDocuments(
         @PathVariable chapterName: String,
-        @PathVariable paragraphName: String): List<AddedDocumentPreview> =
-        chapter4Service.getAddedDocuments(chapterName, paragraphName)
+        @PathVariable paragraphName: String
+    ): List<AddedDocumentPreview> = chapter4Service.getAddedDocuments(chapterName, paragraphName)
 
     @GetMapping("/sam/docpreview/{chapterName}/{paragraphName}/{verseSeq}/{docSeq}/{language}", produces = ["application/octet-stream"])
     @ResponseBody
@@ -65,7 +65,8 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
         @PathVariable verseSeq: Long,
         @PathVariable docSeq: Long,
         @PathVariable language: String,
-        response : HttpServletResponse) {
+        response : HttpServletResponse
+    ) {
         val url = chapter4Service.getAddedDocuments(chapterName, paragraphName).find {d -> d.documentSeq == docSeq && d.verseSeq == verseSeq}?.addressUrl
         url?.let { response.contentType = MediaType.APPLICATION_PDF_VALUE
             val url = URL(it.replace("@lng@",language))
@@ -78,39 +79,41 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
     @GetMapping("/sam/search/{searchString}/{language}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun findParagraphs(
         @PathVariable searchString: String,
-        @PathVariable language: String): List<ParagraphPreview> =
-        chapter4Service.findParagraphs(searchString, language)
+        @PathVariable language: String
+    ): List<ParagraphPreview> = chapter4Service.findParagraphs(searchString, language)
 
     @GetMapping("/sam/bycnk/{cnk}/{language}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun findParagraphsWithCnk(
         @PathVariable cnk: Long,
-        @PathVariable language: String): List<ParagraphPreview> =
-        chapter4Service.findParagraphsWithCnk(cnk, language)
+        @PathVariable language: String
+    ): List<ParagraphPreview> = chapter4Service.findParagraphsWithCnk(cnk, language)
 
     @GetMapping("/sam/mpps/{chapterName}/{paragraphName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getMppsForParagraph(
         @PathVariable chapterName: String,
-        @PathVariable paragraphName: String) : List<MppPreview> =
-        chapter4Service.getMppsForParagraph(chapterName, paragraphName)
+        @PathVariable paragraphName: String
+    ) : List<MppPreview> = chapter4Service.getMppsForParagraph(chapterName, paragraphName)
 
     @GetMapping("/sam/vtms/{chapterName}/{paragraphName}/{language}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getVtmNamesForParagraph(
         @PathVariable chapterName: String,
         @PathVariable paragraphName: String,
-        @PathVariable language: String) : List<String> =
-        chapter4Service.getVtmNamesForParagraph(chapterName, paragraphName, language)
+        @PathVariable language: String
+    ) : List<String> = chapter4Service.getVtmNamesForParagraph(chapterName, paragraphName, language)
 
     @GetMapping("/sam/info/{chapterName}/{paragraphName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getParagraphInfos(
         @PathVariable chapterName: String,
-        @PathVariable paragraphName: String) : ParagraphInfos? =
-        chapter4Service.getParagraphInfos(chapterName, paragraphName)
+        @PathVariable paragraphName: String
+    ) : ParagraphInfos? = chapter4Service.getParagraphInfos(chapterName, paragraphName)
 
     @GetMapping("/consult/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun agreementRequestsConsultation(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
@@ -124,50 +127,54 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
         @RequestParam(required = false) paragraph: String?,
         @RequestParam(required = false) start: Long?,
         @RequestParam(required = false) end: Long?,
-        @RequestParam(required = false) reference: String?) = chapter4Service.agreementRequestsConsultation(
-        keystoreId = keystoreId,
-        tokenId = tokenId,
-        passPhrase = passPhrase,
-        hcpNihii = hcpNihii,
-        hcpSsin = hcpSsin,
-        hcpFirstName = hcpFirstName,
-        hcpLastName = hcpLastName,
-        patientSsin = patientSsin,
-        patientDateOfBirth = patientDateOfBirth,
-        patientFirstName = patientFirstName,
-        patientLastName = patientLastName,
-        patientGender = patientGender,
-        civicsVersion = civicsVersion,
-        paragraph = paragraph,
-        start = start ?: LocalDate.now().minusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(),
-        end = end,
-        reference = reference)
+        @RequestParam(required = false) reference: String?
+    ) = chapter4Service.agreementRequestsConsultation(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpFirstName = hcpFirstName,
+            hcpLastName = hcpLastName,
+            patientSsin = patientSsin,
+            patientDateOfBirth = patientDateOfBirth,
+            patientFirstName = patientFirstName,
+            patientLastName = patientLastName,
+            patientGender = patientGender,
+            civicsVersion = civicsVersion,
+            paragraph = paragraph,
+            start = start ?: LocalDate.now().minusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+            end = end,
+            reference = reference
+    )
 
     @PostMapping("/new/{patientSsin}/{civicsVersion}/{requestType}/{paragraph}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun requestAgreement(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
-                         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
-                         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
-                         @RequestParam hcpNihii: String,
-                         @RequestParam hcpSsin: String,
-                         @RequestParam hcpFirstName: String,
-                         @RequestParam hcpLastName: String,
-                         @PathVariable patientSsin: String,
-                         @RequestParam patientDateOfBirth: Long,
-                         @RequestParam patientFirstName: String,
-                         @RequestParam patientLastName: String,
-                         @RequestParam patientGender: String,
-                         @PathVariable requestType: String,
-                         @PathVariable civicsVersion: String,
-                         @PathVariable paragraph: String,
-                         @RequestParam(required = false) verses: String?,
-                         @RequestParam(required = false) incomplete: Boolean?,
-                         @RequestParam(required = false) start: Long?,
-                         @RequestParam(required = false) end: Long?,
-                         @RequestParam(required = false) decisionReference: String?,
-                         @RequestParam(required = false) ioRequestReference: String?,
-                         @RequestBody appendices: List<Appendix>
-                        ) =
-        chapter4Service.requestAgreement(
+    fun requestAgreement(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @PathVariable patientSsin: String,
+        @RequestParam patientDateOfBirth: Long,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String,
+        @RequestParam patientGender: String,
+        @PathVariable requestType: String,
+        @PathVariable civicsVersion: String,
+        @PathVariable paragraph: String,
+        @RequestParam(required = false) verses: String?,
+        @RequestParam(required = false) incomplete: Boolean?,
+        @RequestParam(required = false) start: Long?,
+        @RequestParam(required = false) end: Long?,
+        @RequestParam(required = false) decisionReference: String?,
+        @RequestParam(required = false) ioRequestReference: String?,
+        @RequestBody appendices: List<Appendix>
+    ) = chapter4Service.requestAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
@@ -190,24 +197,28 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
             end = end,
             decisionReference = decisionReference,
             ioRequestReference = ioRequestReference,
-            appendices = appendices)
+            appendices = appendices
+    )
 
     @DeleteMapping("/cancel/{patientSsin}")
-    fun cancelAgreement(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
-                        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
-                        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
-                        @RequestParam hcpNihii: String,
-                        @RequestParam hcpSsin: String,
-                        @RequestParam hcpFirstName: String,
-                        @RequestParam hcpLastName: String,
-                        @PathVariable patientSsin: String,
-                        @RequestParam patientDateOfBirth: Long,
-                        @RequestParam patientFirstName: String,
-                        @RequestParam patientLastName: String,
-                        @RequestParam patientGender: String,
-                        @RequestParam(required = false) decisionReference: String?,
-                        @RequestParam(required = false) iorequestReference: String?) =
-        chapter4Service.cancelAgreement(
+    fun cancelAgreement(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @PathVariable patientSsin: String,
+        @RequestParam patientDateOfBirth: Long,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String,
+        @RequestParam patientGender: String,
+        @RequestParam(required = false) decisionReference: String?,
+        @RequestParam(required = false) iorequestReference: String?
+    ) = chapter4Service.cancelAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
             hcpNihii = hcpNihii,
@@ -222,23 +233,26 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
             patientGender = patientGender,
             decisionReference = decisionReference,
             iorequestReference = iorequestReference
-                                       )
+    )
 
     @DeleteMapping("/close/{patientSsin}")
-    fun closeAgreement(@RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
-                       @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
-                       @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
-                       @RequestParam hcpNihii: String,
-                       @RequestParam hcpSsin: String,
-                       @RequestParam hcpFirstName: String,
-                       @RequestParam hcpLastName: String,
-                       @PathVariable patientSsin: String,
-                       @RequestParam patientDateOfBirth: Long,
-                       @RequestParam patientFirstName: String,
-                       @RequestParam patientLastName: String,
-                       @RequestParam patientGender: String,
-                       @RequestParam decisionReference: String) =
-        chapter4Service.closeAgreement(
+    fun closeAgreement(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @PathVariable patientSsin: String,
+        @RequestParam patientDateOfBirth: Long,
+        @RequestParam patientFirstName: String,
+        @RequestParam patientLastName: String,
+        @RequestParam patientGender: String,
+        @RequestParam decisionReference: String
+    ) = chapter4Service.closeAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
             hcpNihii = hcpNihii,
@@ -252,5 +266,5 @@ class Chapter4Controller(private val chapter4Service: Chapter4Service) {
             patientLastName = patientLastName,
             patientGender = patientGender,
             decisionReference = decisionReference
-                                      )
+    )
 }

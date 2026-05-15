@@ -21,6 +21,8 @@ class RSWFhirController(val rswFhirService: RswFhirService, val mapper: MapperFa
         @RequestHeader(name = "X-FHC-RSW-actor-secret") clientSecret: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable patientSsin: String
                     ) = rswFhirService.search(nihii, clientId, clientType, clientSecret, keystoreId, passPhrase, patientSsin)
 }

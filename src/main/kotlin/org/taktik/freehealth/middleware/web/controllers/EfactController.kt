@@ -44,6 +44,8 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestBody batch: InvoicesBatch
                  ) =
         efactService.sendBatch(
@@ -58,6 +60,8 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestBody invoice: InvoiceFlatFile
     ) =
         efactService.sendFlatFile(
@@ -69,6 +73,8 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
 
     @PostMapping("/flat", produces = [MediaType.TEXT_PLAIN_VALUE])
     fun makeFlatFile(
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestBody batch: InvoicesBatch
                     ) =
         efactService.makeFlatFile(
@@ -79,6 +85,8 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
 
     @PostMapping("/flatcore", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun makeFlatFileCore(
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestBody batch: InvoicesBatch
                     ) =
         efactService.makeFlatFileCoreWithMetadata(
@@ -89,8 +97,9 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
 
     @PostMapping("/flat/test", produces = [MediaType.TEXT_PLAIN_VALUE])
     fun makeFlatFileTest(
-        @RequestBody batch: InvoicesBatch
-                        ) =
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
+        @RequestBody batch: InvoicesBatch) =
         efactService.makeFlatFile(
             batch = batch,
             isTest = true,
@@ -104,6 +113,8 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestParam ssin: String,
         @RequestParam firstName: String,
         @RequestParam lastName: String,
@@ -127,6 +138,8 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestParam ssin: String,
         @RequestParam firstName: String,
         @RequestParam lastName: String,
@@ -149,6 +162,8 @@ class EfactController(val efactService: EfactService, val mapper: MapperFacade) 
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestParam ssin: String,
         @RequestParam firstName: String,
         @RequestParam lastName: String,

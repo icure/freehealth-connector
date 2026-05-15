@@ -49,6 +49,8 @@ class ConsultrnController(val consultRnService: ConsultRnService, val mapper: Ma
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable(value = "ssin") ssin: String
                  ) = consultRnService.identify(keystoreId, tokenId, passPhrase, ssin).let { mapper.map(it, SearchBySSINReplyDto::class.java) }
 
@@ -57,6 +59,8 @@ class ConsultrnController(val consultRnService: ConsultRnService, val mapper: Ma
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable(value = "ssin") ssin: String
                 ) = consultRnService.history(keystoreId, tokenId, passPhrase, ssin)
 
@@ -65,6 +69,8 @@ class ConsultrnController(val consultRnService: ConsultRnService, val mapper: Ma
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable(value = "dateOfBirth") dateOfBirth: Int,
         @PathVariable(value = "lastName") lastName: String,
         @RequestParam(required = false) firstName: String?,
@@ -82,6 +88,8 @@ class ConsultrnController(val consultRnService: ConsultRnService, val mapper: Ma
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestBody mid: PersonMid
                       ) = try {
         mapRegisterResponse(consultRnService.registerPerson(keystoreId, tokenId, passPhrase, mid))

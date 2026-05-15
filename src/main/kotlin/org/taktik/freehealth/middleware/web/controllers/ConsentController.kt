@@ -44,6 +44,8 @@ class ConsentController(val consentService: ConsentService, val mapper: MapperFa
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
@@ -66,13 +68,15 @@ class ConsentController(val consentService: ConsentService, val mapper: MapperFa
         patientLastName = patientLastName,
         eidCardNumber = eidCardNumber,
         isiCardNumber = isiCardNumber
-                                                  ).let { mapper.map(it, ConsentMessageDto::class.java) }
+    ).let { mapper.map(it, ConsentMessageDto::class.java) }
 
     @GetMapping("/{patientSsin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun getPatientConsent(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
@@ -91,13 +95,15 @@ class ConsentController(val consentService: ConsentService, val mapper: MapperFa
         patientSsin = patientSsin,
         patientFirstName = patientFirstName,
         patientLastName = patientLastName
-                                             ).let { mapper.map(it, ConsentMessageDto::class.java) }
+    ).let { mapper.map(it, ConsentMessageDto::class.java) }
 
     @PostMapping("/revoke", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun revokePatientConsent(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestParam hcpNihii: String,
         @RequestParam hcpSsin: String,
         @RequestParam hcpFirstName: String,
@@ -116,5 +122,5 @@ class ConsentController(val consentService: ConsentService, val mapper: MapperFa
         existingConsent = mapper.map(existingConsent, ConsentType::class.java),
         eidCardNumber = eidCardNumber,
         isiCardNumber = isiCardNumber
-                                                ).let { mapper.map(it, ConsentMessageDto::class.java) }
+    ).let { mapper.map(it, ConsentMessageDto::class.java) }
 }

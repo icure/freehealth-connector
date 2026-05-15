@@ -38,20 +38,32 @@ import org.springframework.security.web.access.ExceptionTranslationFilter
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.taktik.freehealth.middleware.dao.CouchDbProperties
 import org.taktik.freehealth.middleware.dao.CouchdbUserDetailsService
+import org.taktik.freehealth.middleware.dao.PostgresProperties
+import org.taktik.freehealth.middleware.dao.PostgresUserDetailsService
 import org.taktik.freehealth.middleware.web.Http401UnauthorizedEntryPoint
 import org.taktik.freehealth.middleware.web.LoginUrlAuthenticationEntryPoint
 
 @Configuration
 class SecurityConfig {
-	@Bean fun securityConfigAdapter(httpClient: HttpClient, couchDbProperties: CouchDbProperties, authenticationProperties: AuthenticationProperties, cacheManager: CacheManager, userDetailsService: UserDetailsService) = SecurityConfigAdapter(httpClient, couchDbProperties, authenticationProperties, cacheManager, userDetailsService)
+    @Bean fun securityConfigAdapter(httpClient: HttpClient, authenticationProperties: AuthenticationProperties, cacheManager: CacheManager, userDetailsService: UserDetailsService) = SecurityConfigAdapter(httpClient, authenticationProperties, cacheManager, userDetailsService)
     @Bean fun httpClient() = HttpClient().apply { start() }
     @Bean fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder(8)
-    @Bean fun userDetailsService(passwordEncoder: PasswordEncoder, httpClient: HttpClient, couchDbProperties: CouchDbProperties, authenticationProperties: AuthenticationProperties): CouchdbUserDetailsService = CouchdbUserDetailsService(httpClient, couchDbProperties, authenticationProperties, passwordEncoder)
+
+    @Bean
+    @ConditionalOnProperty(name = ["org.taktik.connector.auth.backend"], havingValue = "couchdb", matchIfMissing = true)
+    fun couchdbUserDetailsService(passwordEncoder: PasswordEncoder, httpClient: HttpClient, couchDbProperties: CouchDbProperties, authenticationProperties: AuthenticationProperties): CouchdbUserDetailsService =
+        CouchdbUserDetailsService(httpClient, couchDbProperties, authenticationProperties, passwordEncoder)
+
+    @Bean
+    @ConditionalOnProperty(name = ["org.taktik.connector.auth.backend"], havingValue = "postgres")
+    fun postgresUserDetailsService(passwordEncoder: PasswordEncoder, postgresProperties: PostgresProperties, authenticationProperties: AuthenticationProperties): PostgresUserDetailsService =
+        PostgresUserDetailsService(postgresProperties, authenticationProperties, passwordEncoder)
 }
 
-class SecurityConfigAdapter(val httpClient: HttpClient, val couchDbProperties: CouchDbProperties, val authenticationProperties: AuthenticationProperties, val cacheManager: CacheManager, private val userDetailsService: UserDetailsService) : WebSecurityConfigurerAdapter(false) {
+class SecurityConfigAdapter(val httpClient: HttpClient, val authenticationProperties: AuthenticationProperties, val cacheManager: CacheManager, private val userDetailsService: UserDetailsService) : WebSecurityConfigurerAdapter(false) {
     @Bean
     override fun authenticationManagerBean(): AuthenticationManager {
         return super.authenticationManagerBean()

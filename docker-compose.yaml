@@ -1,17 +1,36 @@
 version: '3.8'
 services:
+
+  postgres:
+    image: postgres:16
+    container_name: freehealth-postgres
+    environment:
+      - POSTGRES_DB=fhc
+      - POSTGRES_USER=fhc
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    restart: unless-stopped
+
   freehealth:
     build: .
     image: freehealth-connector:dev
     container_name: freehealth
+    depends_on:
+      - postgres
     ports:
       - "8080:8080"
       - "5005:5005"
     environment:
       - TZ=Europe/Brussels
+      - ORG_TAKTIK_CONNECTOR_AUTH_BACKEND=postgres
+      - ORG_TAKTIK_CONNECTOR_POSTGRES_URL=jdbc:postgresql://postgres:5432/fhc
+      - ORG_TAKTIK_CONNECTOR_POSTGRES_USERNAME=fhc
+      - ORG_TAKTIK_CONNECTOR_POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
     volumes:
       - ./config.json:/opt/freehealth/config.json:ro
       - ./logs:/opt/freehealth/logs
 
     restart: unless-stopped
- 

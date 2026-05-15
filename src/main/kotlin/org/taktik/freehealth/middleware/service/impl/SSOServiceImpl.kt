@@ -22,7 +22,6 @@ import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.sso.SingleSignOnService
 import org.taktik.connector.technical.service.sso.impl.SingleSignOnServiceImpl
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
-import org.taktik.freehealth.middleware.dao.CouchdbUserDetailsService
 import org.taktik.freehealth.middleware.dao.KeystoreProviderService
 import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.domain.sts.BearerToken
