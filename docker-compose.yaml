@@ -3,34 +3,50 @@ services:
 
   postgres:
     image: postgres:16
-    container_name: freehealth-postgres
+    container_name: postgres
+    env_file:
+      - .env
     environment:
-      - POSTGRES_DB=fhc
-      - POSTGRES_USER=fhc
+      - TZ=${TIMEZONE}
+      - POSTGRES_DB=${POSTGRES_DB:-fhc}
+      - POSTGRES_USER=${POSTGRES_USER:-fhc}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT}:5432"
     volumes:
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   freehealth:
     build: .
     image: freehealth-connector:dev
     container_name: freehealth
+    env_file:
+      - .env
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     ports:
       - "8080:8080"
       - "5005:5005"
     environment:
-      - TZ=Europe/Brussels
+      - TZ=${TIMEZONE}
       - ORG_TAKTIK_CONNECTOR_AUTH_BACKEND=postgres
-      - ORG_TAKTIK_CONNECTOR_POSTGRES_URL=jdbc:postgresql://postgres:5432/fhc
-      - ORG_TAKTIK_CONNECTOR_POSTGRES_USERNAME=fhc
+      - ORG_TAKTIK_CONNECTOR_POSTGRES_URL=jdbc:postgresql://${POSTGRES_HOST:-postgres}:${POSTGRES_PORT}/${POSTGRES_DB}
+      - ORG_TAKTIK_CONNECTOR_POSTGRES_USERNAME=${POSTGRES_USER}
       - ORG_TAKTIK_CONNECTOR_POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
     volumes:
       - ./config.json:/opt/freehealth/config.json:ro
       - ./logs:/opt/freehealth/logs
-
     restart: unless-stopped
+    healthcheck:
+      test: "curl -Is localhost:8080 | head -n 1 | grep 302 || exit 1"
+      interval: 20s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
