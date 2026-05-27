@@ -11,7 +11,9 @@ class MycarenetConversation(
     var transactionRequest: String? = null,
     var transactionResponse: String? = null,
     var decryptedResponseContent: ArrayList<String>? = arrayListOf()
-                           ) {
+) {
+    var content: ByteArray? = null
+    var xades: ByteArray? = null
 
     var soapRequest: String? = soapRequest
         get() = field ?: soapRequestBos?.toByteArray()?.toString(Charsets.UTF_8)

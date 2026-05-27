@@ -2,9 +2,8 @@ package org.taktik.freehealth.middleware.service
 
 import org.joda.time.DateTime
 import org.taktik.connector.business.agreement.domain.Agreement
-import org.taktik.connector.business.agreement.domain.AgreementMessage
-import org.taktik.connector.business.domain.agreement.AgreementResponse
 import org.taktik.connector.business.domain.agreement.EAgreementResponse
+import org.taktik.freehealth.middleware.domain.eAgreement.EAgreementList
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
 import org.taktik.freehealth.middleware.web.controllers.EagreementController
 import java.util.*
@@ -24,7 +23,7 @@ interface EagreementService {
         tokenId: UUID,
         passPhrase: String,
         agreement: Agreement
-    ): AgreementResponse?
+    ): EAgreementResponse?
 
     /**
      * @name askAgreement
@@ -101,7 +100,7 @@ interface EagreementService {
         agreementStartDate: DateTime?,
         agreementEndDate: DateTime?,
         agreementType: String?
-    ): AgreementResponse?
+    ): EAgreementResponse?
 
 
     /**
@@ -113,27 +112,28 @@ interface EagreementService {
       tokenId: UUID,
       passPhrase: String,
       agreement: Agreement
-  ): AgreementResponse?
+  ): EAgreementResponse?
 
-  fun getEAgreementMessages(
-        keystoreId: UUID,
-        tokenId: UUID,
-        passPhrase: String,
-        hcpNihii: String,
-        hcpSsin: String,
-        hcpFirstName: String,
-        hcpLastName: String,
-        limit: Int
-    ): List<AgreementMessage>
+  fun getMessages(
+      keystoreId: UUID,
+      tokenId: UUID,
+      passPhrase: String,
+      hcpNihii: String,
+      hcpSsin: String,
+      hcpFirstName: String,
+      hcpLastName: String,
+      hcpQuality: String
+  ): EAgreementList?
 
   fun confirmMessages(
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
+        hcpQuality: String,
         hcpNihii: String,
         hcpSsin: String,
         hcpFirstName: String,
         hcpLastName: String,
-        references: List<String>
-    ): Boolean
+        eagreementMessagesReference: List<String>
+    ): Boolean?
 }

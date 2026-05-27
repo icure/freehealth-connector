@@ -1,18 +1,17 @@
 package org.taktik.freehealth.middleware.web.controllers
 
 import ma.glasnost.orika.MapperFacade
-import org.joda.time.format.DateTimeFormat
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import org.taktik.connector.business.agreement.domain.Agreement
-import org.taktik.connector.business.agreement.domain.AgreementMessage
-import org.taktik.connector.business.domain.agreement.AgreementResponse
 import org.taktik.connector.business.domain.agreement.EAgreementResponse
+import org.taktik.freehealth.middleware.domain.eAgreement.EAgreementList
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EagreementService
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
+import org.taktik.freehealth.utils.LoggingMdcUtil
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.xml.ws.soap.SOAPFaultException
@@ -78,8 +77,9 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) numberOfSessionForPrescription2: Float?,
         @RequestBody(required = false) attachments: List<Attachment>?
     ): EAgreementResponse? {
-        val formatter = DateTimeFormat.forPattern("yyyyMMdd")
-        return eagreementService.askAgreement(
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
+        val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
+        val askEagreementResult = eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
@@ -116,6 +116,9 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             sctDisplay = sctDisplay,
             attachments = attachments?.filter { it.type != "prescription1" && it.type != "prescription2" }
         )
+        LoggingMdcUtil.clearMDC()
+
+        return askEagreementResult
     }
 
     @PostMapping("/sendAsk", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -126,13 +129,17 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
         @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestBody agreement: Agreement
-    ): AgreementResponse? {
-        return eagreementService.askAgreement(
+    ): EAgreementResponse? {
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
+        val sendAskResult = eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
             agreement = agreement
         )
+        LoggingMdcUtil.clearMDC()
+
+        return sendAskResult
     }
 
     @PostMapping("/sendConsult", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -143,40 +150,49 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
         @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestBody agreement: Agreement
-    ): AgreementResponse? {
-        return eagreementService.consultAgreementList(
+    ): EAgreementResponse? {
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
+        val consultResult = eagreementService.consultAgreementList(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
             agreement = agreement
         )
+        LoggingMdcUtil.clearMDC()
+
+        return consultResult
     }
 
-    @GetMapping("/getMessages/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun getAgreementMessages(
-        @PathVariable nihii: String,
+    @PostMapping("async/getMessages", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun getMessageList(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
         @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
-        @RequestParam ssin: String,
-        @RequestParam firstName: String,
-        @RequestParam lastName: String,
-        @RequestParam limit: Int?
-    ): List<AgreementMessage> =
-        eagreementService.getEAgreementMessages(
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam hcpSpeciality: String
+    ): EAgreementList? {
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
+        val getEAgreementMessagesResult = eagreementService.getMessages(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
-            hcpSsin = ssin,
-            hcpNihii = nihii,
-            hcpFirstName = firstName,
-            hcpLastName = lastName,
-            limit = limit ?: Integer.MAX_VALUE
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpFirstName = hcpFirstName,
+            hcpLastName = hcpLastName,
+            hcpQuality = hcpSpeciality
         )
+        LoggingMdcUtil.clearMDC()
+        return getEAgreementMessagesResult
+    }
 
-    @PutMapping("/confirm/msgs/{nihii}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+
+    @PostMapping("async/confirmMessage", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun confirmMessages(
         @PathVariable nihii: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -184,21 +200,29 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
         @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
         @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
-        @RequestParam ssin: String,
-        @RequestParam firstName: String,
-        @RequestParam lastName: String,
-        @RequestBody references: List<String>
-    ) =
-        eagreementService.confirmMessages(
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam hcpSpeciality: String,
+        @RequestBody eagreementMessagesReference: List<String>
+    ) : Boolean? {
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
+        val confirmMessageResult = eagreementService.confirmMessages(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
-            hcpNihii = nihii,
-            hcpSsin = ssin,
-            hcpFirstName = firstName,
-            hcpLastName = lastName,
-            references = references
+            hcpQuality = hcpSpeciality,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpFirstName = hcpFirstName,
+            hcpLastName = hcpLastName,
+            eagreementMessagesReference = eagreementMessagesReference
         )
+        LoggingMdcUtil.clearMDC()
+        return confirmMessageResult
+    }
+
 
     @PostMapping("/consultList", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun consultList(
@@ -227,9 +251,10 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) agreementStartDate: Int?,
         @RequestParam(required = false) agreementEndDate: Int?,
         @RequestParam(required = false) agreementType: String?
-    ): AgreementResponse? {
-        val formatter = DateTimeFormat.forPattern("yyyyMMdd")
-        return eagreementService.consultAgreementList(
+    ): EAgreementResponse? {
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
+        val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
+        val consultAgreementResult =  eagreementService.consultAgreementList(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
@@ -255,6 +280,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             agreementEndDate = formatter.parseDateTime(agreementEndDate.toString()),
             agreementType = agreementType
         )
+        LoggingMdcUtil.clearMDC()
+        return consultAgreementResult
     }
 
     @PostMapping("/cancelAgreement", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -280,7 +307,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) organizationType: String?,
         @RequestParam(required = false) agreementType: String?
     ): EAgreementResponse? {
-        return eagreementService.askAgreement(
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
+        val askAgreementResult = eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
@@ -317,6 +345,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             sctDisplay = null,
             attachments = null
         )
+        LoggingMdcUtil.clearMDC()
+        return askAgreementResult
     }
 
     @PostMapping("/extendAgreement", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -354,8 +384,9 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) numberOfSessionForPrescription2: Float?,
         @RequestBody(required = false) attachments: List<Attachment>?
     ): EAgreementResponse? {
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
         val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
-        return eagreementService.askAgreement(
+        val extendAgreementResult = eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
@@ -392,6 +423,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             sctDisplay = sctDisplay,
             attachments = attachments?.filter { it.type != "prescription1" && it.type != "prescription2" }
         )
+        LoggingMdcUtil.clearMDC()
+        return extendAgreementResult
     }
 
     @PostMapping("/completeAgreement", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -425,7 +458,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) numberOfSessionForPrescription2: Float?,
         @RequestBody(required = false) attachments: List<Attachment>?
     ): EAgreementResponse? {
-        return eagreementService.askAgreement(
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
+        val completeAgreementResult = eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
@@ -462,6 +496,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             sctDisplay = sctDisplay,
             attachments = attachments?.filter { it.type != "prescription1" && it.type != "prescription2" }
         )
+        LoggingMdcUtil.clearMDC()
+        return completeAgreementResult
     }
 
     @PostMapping("/argueAgreement", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
@@ -495,7 +531,8 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) numberOfSessionForPrescription2: Float?,
         @RequestBody(required = false) attachments: List<Attachment>?
     ): EAgreementResponse? {
-        return eagreementService.askAgreement(
+        LoggingMdcUtil.setMDC(keystoreId, company, debug)
+        val argueAgreementResult = eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
             passPhrase = passPhrase,
@@ -532,5 +569,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             sctDisplay = sctDisplay,
             attachments = attachments?.filter { it.type != "prescription1" && it.type != "prescription2" }
         )
+        LoggingMdcUtil.clearMDC()
+        return argueAgreementResult
     }
 }
