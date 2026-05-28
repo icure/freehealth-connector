@@ -40,13 +40,28 @@ class EIDItem {
         readHour = cal.get(Calendar.HOUR_OF_DAY) * 100 + cal.get(Calendar.MINUTE)
     }
 
-    constructor(readDate: Long?, readHour: Int?, readvalue: String, vignetteReason:Int?) {
+    constructor(readDate: Long?, readHour: Int, readvalue: String, vignetteReason: Int = 0) {
         deviceType = "1"
         readType = "1"
 
         this.readvalue = readvalue
         this.readDate = readDate
-        this.readHour = readHour!!
-        this.vignetteReason = vignetteReason ?: 0
+        this.readHour = readHour
+        this.vignetteReason = vignetteReason
+    }
+
+    /** @deprecated Use constructor with vignetteReason parameter instead */
+    constructor(readDate: Long?, readHour: Int, readvalue: String) : this(readDate, readHour, readvalue, 0)
+
+    companion object {
+        const val READ_TYPE_CHIP = "1"
+        const val READ_TYPE_BARCODE = "2"
+        const val READ_TYPE_DATAMATRIX = "3"
+        const val READ_TYPE_MANUAL = "4"
+        const val READ_TYPE_ELECTRONIC = "A"
+
+        const val DEVICE_TYPE_VIGNETTE = "7"
+
+        val DEFERRED_REASONS = setOf(3, 4, 5, 6, 8)
     }
 }
