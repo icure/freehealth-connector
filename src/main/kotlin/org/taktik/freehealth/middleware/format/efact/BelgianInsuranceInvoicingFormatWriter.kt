@@ -580,13 +580,13 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         val vignetteReason = if (eidItem.deviceType == "7") eidItem.vignetteReason else 0
 
         ws.write("2", recordNumber)
-        ws.write("3", if (isManualEntry) (eidItem.manualEntryReason ?: 0) else 0)
+        ws.write("3", if (isManualEntry) requireNotNull(eidItem.manualEntryReason) { "manualEntryReason is required when readType=4 (manual entry)" } else 0)
         ws.write("4", icd.codeNomenclature)
         ws.write("5", FuzzyValues.getLocalDateTime(icd.dateCode!!)!!.format(dtf))
         ws.write("6a", if (isDeferredCase) "00000000" else FuzzyValues.getLocalDateTime(eidItem.readDate!!)!!.format(dtf))
         ws.write("7", 0)
         ws.write("8a", noSIS)
-        ws.write("9", eidItem.readType ?: 0)
+        ws.write("9", eidItem.readType ?: "0")
         ws.write("10", eidItem.deviceType)
         ws.write("11", vignetteReason)
         ws.write("12", if (isDeferredCase) "0000" else nf4.format(eidItem.readHour))

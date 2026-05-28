@@ -31,7 +31,7 @@ object Record52Description : RecordOrSegmentDescription() {
 
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "1", "Enregistrement de type 52", "recordType", "N", pos, 2, "52")
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "2", "Numero d'ordre de l'enregistrement", "recordOrderNumber", "N", pos, 6)
-        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "3", "reserve", null, "N", pos, 1)
+        pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "3", "Raison saisie manuelle", "manualEntryReason", "N", pos, 1)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "4", "Code nomenclature", "nomenCode", "N", pos, 7)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "5", "Date de prestation", "prestationDate", "N", pos, 8)
         pos = register(ZONE_DESCRIPTIONS_BY_ZONE, "6a,6b", "Date de lecture document identite electronique (1 et 2)", "eidDate", "N", pos, 8)

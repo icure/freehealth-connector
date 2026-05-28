@@ -27,7 +27,7 @@ class EIDItem {
     var readHour: Int = 0
     var readType: String? = null // Zone 9: 1=chip, 2=barcode, 3=datamatrix, 4=manual, A=electronic (itsme)
     var readvalue: String? = null
-    var vignetteReason: Int? = 0  // Zone 11: Only when Z10 =7
+    var vignetteReason: Int = 0  // Zone 11: Only when Z10 =7
     var manualEntryReason: Int? = null  // Zone 3: Only when inputType=4. 1-2,7=direct (date/time mandatory), 3-6,8=deferred (date/time forbidden)
 
     constructor() {
@@ -47,6 +47,6 @@ class EIDItem {
         this.readvalue = readvalue
         this.readDate = readDate
         this.readHour = readHour!!
-        this.vignetteReason = vignetteReason
+        this.vignetteReason = vignetteReason ?: 0
     }
 }
