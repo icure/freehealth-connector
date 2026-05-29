@@ -50,7 +50,7 @@ class EIDItem {
         this.vignetteReason = vignetteReason
     }
 
-    /** @deprecated Use constructor with vignetteReason parameter instead */
+    @Deprecated("Use constructor with vignetteReason parameter instead", ReplaceWith("EIDItem(readDate, readHour, readvalue, 0)"))
     constructor(readDate: Long?, readHour: Int, readvalue: String) : this(readDate, readHour, readvalue, 0)
 
     companion object {
@@ -63,5 +63,6 @@ class EIDItem {
         const val DEVICE_TYPE_VIGNETTE = "7"
 
         val DEFERRED_REASONS = setOf(3, 4, 5, 6, 8)
+        val VALID_READ_TYPES = setOf(READ_TYPE_CHIP, READ_TYPE_BARCODE, READ_TYPE_DATAMATRIX, READ_TYPE_MANUAL, READ_TYPE_ELECTRONIC)
     }
 }

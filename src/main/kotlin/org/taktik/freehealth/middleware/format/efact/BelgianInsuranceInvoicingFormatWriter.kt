@@ -580,31 +580,37 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         val vignetteReason = if (eidItem.deviceType == EIDItem.DEVICE_TYPE_VIGNETTE) eidItem.vignetteReason else 0
 
         // Validate all required fields before writing to avoid partial record corruption
-        val validatedReadType = requireNotNull(eidItem.readType) { "readType is required for Record 52 (valid values: 1, 2, 3, 4, A)" }
+        val validatedReadType = requireNotNull(eidItem.readType) { "readType is required for Record 52" }
+        require(validatedReadType in EIDItem.VALID_READ_TYPES) {
+            "readType must be one of 1 (chip), 2 (barcode), 3 (datamatrix), 4 (manual), A (electronic), got: $validatedReadType"
+        }
+        val validatedDeviceType = requireNotNull(eidItem.deviceType) { "deviceType is required for Record 52" }
         val manualEntryReasonValue = if (isManualEntry) {
             requireNotNull(eidItem.manualEntryReason) { "manualEntryReason is required when readType=4 (manual entry)" }
         } else 0
 
+        val validatedReadDate: Long?
         if (isDeferredCase) {
-            require(eidItem.readDate == null || eidItem.readHour == 0) { "readDate and readHour must not be set for deferred cases (manualEntryReason in ${EIDItem.DEFERRED_REASONS})" }
+            require(eidItem.readDate == null && eidItem.readHour == 0) { "readDate and readHour must not be set for deferred cases (manualEntryReason in ${EIDItem.DEFERRED_REASONS})" }
+            validatedReadDate = null
         } else {
-            requireNotNull(eidItem.readDate) { "readDate is required when not in deferred case" }
+            validatedReadDate = requireNotNull(eidItem.readDate) { "readDate is required when not in deferred case" }
         }
 
         ws.write("2", recordNumber)
         ws.write("3", manualEntryReasonValue)
         ws.write("4", icd.codeNomenclature)
         ws.write("5", FuzzyValues.getLocalDateTime(icd.dateCode!!)!!.format(dtf))
-        ws.write("6a", if (isDeferredCase) "00000000" else FuzzyValues.getLocalDateTime(eidItem.readDate!!)!!.format(dtf))
+        ws.write("6a", if (isDeferredCase) "00000000" else FuzzyValues.getLocalDateTime(validatedReadDate!!)!!.format(dtf))
         ws.write("7", 0)
         ws.write("8a", noSIS)
         ws.write("9", validatedReadType)
-        ws.write("10", eidItem.deviceType)
+        ws.write("10", validatedDeviceType)
         ws.write("11", vignetteReason)
         ws.write("12", if (isDeferredCase) "0000" else nf4.format(eidItem.readHour))
         ws.write("14", 0)
         ws.write("15", invoiceSender.nihii.toString().padEnd(11, '0'))
-        ws.write("16", eidItem.readvalue)
+        ws.write("16", eidItem.readvalue ?: "")
 
         ws.writeFieldsWithCheckSum()
 
