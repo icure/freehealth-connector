@@ -21,11 +21,11 @@ package org.taktik.freehealth.middleware.dto.efact
 import java.util.Calendar
 
 class EIDItem {
-    var deviceType: String? = "1"
+    var deviceType: String = "1"
     var readDate: Long? = null
     var readHour: Int = 0
-    var readType: String? = "1" // Zone 9: 1=chip, 2=barcode, 3=datamatrix, 4=manual, A=electronic (itsme)
-    var readvalue: String? = null
+    var readType: String = "1" // Zone 9: 1=chip, 2=barcode, 3=datamatrix, 4=manual, A=electronic (itsme)
+    var readValue: String? = null
     var vignetteReason: Int = 0  // Zone 11: Only when Z10 =7
     var manualEntryReason: Int? = null  // Zone 3: Only when readType=4 (manual entry). 1-2,7=direct (date/time mandatory), 3-6,8=deferred (date/time forbidden)
 
@@ -37,20 +37,20 @@ class EIDItem {
         readHour = cal.get(Calendar.HOUR_OF_DAY) * 100 + cal.get(Calendar.MINUTE)
     }
 
-    constructor(readDate: Long?, readHour: Int, readvalue: String, vignetteReason: Int) {
-        this.readvalue = readvalue
+    constructor(readDate: Long?, readHour: Int, readValue: String, vignetteReason: Int) {
+        this.readValue = readValue
         this.readDate = readDate
         this.readHour = readHour
         this.vignetteReason = vignetteReason
     }
 
-    constructor(readDate: Long?, readHour: Int, readvalue: String) : this(readDate, readHour, readvalue, 0)
+    constructor(readDate: Long?, readHour: Int, readValue: String) : this(readDate, readHour, readValue, 0)
 
-    @Deprecated("Use constructor with non-nullable readHour and vignetteReason instead", ReplaceWith("EIDItem(readDate, readHour ?: 0, readvalue, vignetteReason ?: 0)"))
-    constructor(readDate: Long?, readHour: Int?, readvalue: String, vignetteReason: Int?) : this(readDate, readHour ?: 0, readvalue, vignetteReason ?: 0)
+    @Deprecated("Use constructor with non-nullable readHour and vignetteReason instead", ReplaceWith("EIDItem(readDate, readHour ?: 0, readValue, vignetteReason ?: 0)"))
+    constructor(readDate: Long?, readHour: Int?, readValue: String, vignetteReason: Int?) : this(readDate, readHour ?: 0, readValue, vignetteReason ?: 0)
 
-    @Deprecated("Use constructor with non-nullable readHour instead", ReplaceWith("EIDItem(readDate, readHour ?: 0, readvalue, 0)"))
-    constructor(readDate: Long?, readHour: Int?, readvalue: String) : this(readDate, readHour ?: 0, readvalue, 0)
+    @Deprecated("Use constructor with non-nullable readHour instead", ReplaceWith("EIDItem(readDate, readHour ?: 0, readValue, 0)"))
+    constructor(readDate: Long?, readHour: Int?, readValue: String) : this(readDate, readHour ?: 0, readValue, 0)
 
     companion object {
         const val READ_TYPE_CHIP = "1"
@@ -63,5 +63,7 @@ class EIDItem {
 
         val DEFERRED_REASONS = setOf(3, 4, 5, 6, 8)
         val VALID_READ_TYPES = setOf(READ_TYPE_CHIP, READ_TYPE_BARCODE, READ_TYPE_DATAMATRIX, READ_TYPE_MANUAL, READ_TYPE_ELECTRONIC)
+        val MANUAL_ENTRY_REASON_RANGE = 1..8
+        val VIGNETTE_REASON_RANGE = 0..9
     }
 }
