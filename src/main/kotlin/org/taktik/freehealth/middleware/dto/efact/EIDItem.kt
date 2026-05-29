@@ -28,7 +28,7 @@ class EIDItem {
     var readType: String? = null // Zone 9: 1=chip, 2=barcode, 3=datamatrix, 4=manual, A=electronic (itsme)
     var readvalue: String? = null
     var vignetteReason: Int = 0  // Zone 11: Only when Z10 =7
-    var manualEntryReason: Int? = null  // Zone 3: Only when inputType=4. 1-2,7=direct (date/time mandatory), 3-6,8=deferred (date/time forbidden)
+    var manualEntryReason: Int? = null  // Zone 3: Only when readType=4 (manual entry). 1-2,7=direct (date/time mandatory), 3-6,8=deferred (date/time forbidden)
 
     constructor() {
         deviceType = "1"
@@ -40,7 +40,7 @@ class EIDItem {
         readHour = cal.get(Calendar.HOUR_OF_DAY) * 100 + cal.get(Calendar.MINUTE)
     }
 
-    constructor(readDate: Long?, readHour: Int, readvalue: String, vignetteReason: Int = 0) {
+    constructor(readDate: Long?, readHour: Int, readvalue: String, vignetteReason: Int) {
         deviceType = "1"
         readType = "1"
 
