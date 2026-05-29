@@ -29,6 +29,11 @@ class EIDItem {
     var vignetteReason: Int = 0  // Zone 11: Only when Z10 =7
     var manualEntryReason: Int? = null  // Zone 3: Only when readType=4 (manual entry). 1-2,7=direct (date/time mandatory), 3-6,8=deferred (date/time forbidden)
 
+    /**
+     * Default constructor initializes readDate and readHour to current time.
+     * Note: for deferred manual entry cases (readType=4, manualEntryReason in 3-6,8),
+     * readDate must be set to null and readHour to 0 before writing.
+     */
     constructor() {
         readDate = System.currentTimeMillis()
 
@@ -72,7 +77,6 @@ class EIDItem {
         val VALID_DEVICE_TYPES = setOf(DEVICE_TYPE_EID, DEVICE_TYPE_ISI, DEVICE_TYPE_ISI_PLUS, DEVICE_TYPE_KIDS_ID, DEVICE_TYPE_FOREIGNER_CARD, DEVICE_TYPE_ITSME, DEVICE_TYPE_VIGNETTE)
         val MANUAL_ENTRY_REASON_RANGE = 1..8
         val VIGNETTE_REASON_RANGE = 0..9
-        val VALID_READ_HOUR_RANGE = 0..2359
 
         /**
          * Validates that readHour is a valid HHMM time (HH in 0-23, MM in 0-59).
