@@ -577,7 +577,6 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
 
         val isManualEntry = eidItem.readType == EIDItem.READ_TYPE_MANUAL
         val isDeferredCase = isManualEntry && eidItem.manualEntryReason in EIDItem.DEFERRED_REASONS
-        val vignetteReason = if (eidItem.deviceType == EIDItem.DEVICE_TYPE_VIGNETTE) eidItem.vignetteReason else 0
 
         // Validate all required fields before writing to avoid partial record corruption
         val validatedReadType = requireNotNull(eidItem.readType) { "readType is required for Record 52" }
@@ -586,8 +585,16 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         }
         val validatedDeviceType = requireNotNull(eidItem.deviceType) { "deviceType is required for Record 52" }
         val manualEntryReasonValue = if (isManualEntry) {
-            requireNotNull(eidItem.manualEntryReason) { "manualEntryReason is required when readType=4 (manual entry)" }
+            val reason = requireNotNull(eidItem.manualEntryReason) { "manualEntryReason is required when readType=4 (manual entry)" }
+            require(reason in 1..8) { "manualEntryReason must be in range 1-8, got: $reason" }
+            reason
         } else 0
+
+        require(eidItem.vignetteReason in 0..9) { "vignetteReason must be a single digit (0-9), got: ${eidItem.vignetteReason}" }
+        if (validatedDeviceType != EIDItem.DEVICE_TYPE_VIGNETTE) {
+            require(eidItem.vignetteReason == 0) { "vignetteReason must be 0 when deviceType is not 7 (vignette), got: ${eidItem.vignetteReason}" }
+        }
+        val vignetteReason = if (validatedDeviceType == EIDItem.DEVICE_TYPE_VIGNETTE) eidItem.vignetteReason else 0
 
         val validatedReadDate: Long?
         if (isDeferredCase) {

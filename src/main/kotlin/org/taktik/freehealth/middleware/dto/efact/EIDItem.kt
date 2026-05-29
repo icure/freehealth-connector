@@ -19,39 +19,38 @@
 package org.taktik.freehealth.middleware.dto.efact
 
 import java.util.Calendar
-import java.util.Date
 
 class EIDItem {
-    var deviceType: String? = null
+    var deviceType: String? = "1"
     var readDate: Long? = null
     var readHour: Int = 0
-    var readType: String? = null // Zone 9: 1=chip, 2=barcode, 3=datamatrix, 4=manual, A=electronic (itsme)
+    var readType: String? = "1" // Zone 9: 1=chip, 2=barcode, 3=datamatrix, 4=manual, A=electronic (itsme)
     var readvalue: String? = null
     var vignetteReason: Int = 0  // Zone 11: Only when Z10 =7
     var manualEntryReason: Int? = null  // Zone 3: Only when readType=4 (manual entry). 1-2,7=direct (date/time mandatory), 3-6,8=deferred (date/time forbidden)
 
     constructor() {
-        deviceType = "1"
-        readType = "1"
-        readDate = Date().time
+        readDate = System.currentTimeMillis()
 
-        var cal = Calendar.getInstance()
+        val cal = Calendar.getInstance()
 
         readHour = cal.get(Calendar.HOUR_OF_DAY) * 100 + cal.get(Calendar.MINUTE)
     }
 
     constructor(readDate: Long?, readHour: Int, readvalue: String, vignetteReason: Int) {
-        deviceType = "1"
-        readType = "1"
-
         this.readvalue = readvalue
         this.readDate = readDate
         this.readHour = readHour
         this.vignetteReason = vignetteReason
     }
 
-    @Deprecated("Use constructor with vignetteReason parameter instead", ReplaceWith("EIDItem(readDate, readHour, readvalue, 0)"))
     constructor(readDate: Long?, readHour: Int, readvalue: String) : this(readDate, readHour, readvalue, 0)
+
+    @Deprecated("Use constructor with non-nullable readHour and vignetteReason instead", ReplaceWith("EIDItem(readDate, readHour ?: 0, readvalue, vignetteReason ?: 0)"))
+    constructor(readDate: Long?, readHour: Int?, readvalue: String, vignetteReason: Int?) : this(readDate, readHour ?: 0, readvalue, vignetteReason ?: 0)
+
+    @Deprecated("Use constructor with non-nullable readHour instead", ReplaceWith("EIDItem(readDate, readHour ?: 0, readvalue, 0)"))
+    constructor(readDate: Long?, readHour: Int?, readvalue: String) : this(readDate, readHour ?: 0, readvalue, 0)
 
     companion object {
         const val READ_TYPE_CHIP = "1"
