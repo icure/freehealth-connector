@@ -582,6 +582,9 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         require(eidItem.readType in EIDItem.VALID_READ_TYPES) {
             "readType must be one of 1 (chip), 2 (barcode), 3 (datamatrix), 4 (manual), A (electronic), got: ${eidItem.readType}"
         }
+        require(eidItem.deviceType in EIDItem.VALID_DEVICE_TYPES) {
+            "deviceType must be one of ${EIDItem.VALID_DEVICE_TYPES}, got: ${eidItem.deviceType}"
+        }
         val manualEntryReasonValue = if (isManualEntry) {
             val reason = requireNotNull(eidItem.manualEntryReason) { "manualEntryReason is required when readType=4 (manual entry)" }
             require(reason in EIDItem.MANUAL_ENTRY_REASON_RANGE) { "manualEntryReason must be in range ${EIDItem.MANUAL_ENTRY_REASON_RANGE}, got: $reason" }
@@ -600,6 +603,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
             validatedReadDate = null
         } else {
             validatedReadDate = requireNotNull(eidItem.readDate) { "readDate is required when not in deferred case" }
+            require(EIDItem.isValidReadHour(eidItem.readHour)) { "readHour must be a valid HHMM time (HH:00-23, MM:00-59), got: ${eidItem.readHour}" }
         }
 
         ws.write("2", recordNumber)

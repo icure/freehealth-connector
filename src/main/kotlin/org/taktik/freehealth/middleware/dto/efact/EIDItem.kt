@@ -59,11 +59,28 @@ class EIDItem {
         const val READ_TYPE_MANUAL = "4"
         const val READ_TYPE_ELECTRONIC = "A"
 
+        const val DEVICE_TYPE_EID = "1"
+        const val DEVICE_TYPE_ISI = "2"
+        const val DEVICE_TYPE_ISI_PLUS = "3"
+        const val DEVICE_TYPE_KIDS_ID = "4"
+        const val DEVICE_TYPE_FOREIGNER_CARD = "5"
+        const val DEVICE_TYPE_ITSME = "6"
         const val DEVICE_TYPE_VIGNETTE = "7"
 
         val DEFERRED_REASONS = setOf(3, 4, 5, 6, 8)
         val VALID_READ_TYPES = setOf(READ_TYPE_CHIP, READ_TYPE_BARCODE, READ_TYPE_DATAMATRIX, READ_TYPE_MANUAL, READ_TYPE_ELECTRONIC)
+        val VALID_DEVICE_TYPES = setOf(DEVICE_TYPE_EID, DEVICE_TYPE_ISI, DEVICE_TYPE_ISI_PLUS, DEVICE_TYPE_KIDS_ID, DEVICE_TYPE_FOREIGNER_CARD, DEVICE_TYPE_ITSME, DEVICE_TYPE_VIGNETTE)
         val MANUAL_ENTRY_REASON_RANGE = 1..8
         val VIGNETTE_REASON_RANGE = 0..9
+        val VALID_READ_HOUR_RANGE = 0..2359
+
+        /**
+         * Validates that readHour is a valid HHMM time (HH in 0-23, MM in 0-59).
+         */
+        fun isValidReadHour(readHour: Int): Boolean {
+            val hh = readHour / 100
+            val mm = readHour % 100
+            return hh in 0..23 && mm in 0..59
+        }
     }
 }
