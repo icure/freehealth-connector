@@ -1,11 +1,10 @@
 package org.taktik.freehealth.middleware
 
-import be.fgov.ehealth.technicalconnector.bootstrap.bcp.EndpointDistributor
-import be.fgov.ehealth.technicalconnector.bootstrap.bcp.EndpointUpdater
+import org.springframework.boot.web.servlet.ServletContextInitializer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
+import org.springframework.web.servlet.HandlerExceptionResolver
 
 
 @Configuration
@@ -14,5 +13,15 @@ class MiddlewareConfiguration {
     fun threadPoolTaskScheduler() = ThreadPoolTaskScheduler().apply {
         poolSize = 5
         threadNamePrefix = "ThreadPoolTaskScheduler"
+    }
+
+    @Bean
+    fun sentryExceptionResolver(): HandlerExceptionResolver {
+        return io.sentry.spring.SentryExceptionResolver()
+    }
+
+    @Bean
+    fun sentryServletContextInitializer(): ServletContextInitializer {
+        return io.sentry.spring.SentryServletContextInitializer()
     }
 }

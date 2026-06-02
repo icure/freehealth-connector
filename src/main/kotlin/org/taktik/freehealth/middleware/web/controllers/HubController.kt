@@ -61,6 +61,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare party")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare party")
@@ -116,6 +118,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare party")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare party")
@@ -159,6 +163,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The Nihii of the healthcare provider")
         @PathVariable hcpNihii: String,
         @ApiParam("The last name of the healthcare provider")
@@ -200,6 +206,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare provider")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare provider")
@@ -250,6 +258,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare provider")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare provider")
@@ -299,6 +309,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare provider")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare provider")
@@ -343,6 +355,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare provider")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare provider")
@@ -401,6 +415,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare provider")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare provider")
@@ -452,6 +468,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare provider")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare provider")
@@ -508,6 +526,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare provider")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare provider")
@@ -574,6 +594,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare provider")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare provider")
@@ -637,6 +659,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare provider")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare provider")
@@ -701,6 +725,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare provider")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare provider")
@@ -758,6 +784,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare provider")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare provider")
@@ -812,6 +840,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare provider")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare provider")
@@ -873,6 +903,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare provider")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare provider")
@@ -934,6 +966,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare provider")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare provider")
@@ -986,6 +1020,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare provider")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare provider")
@@ -1056,6 +1092,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare provider")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare provider")
@@ -1114,6 +1152,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase")passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare provider")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare provider")
@@ -1163,6 +1203,8 @@ class HubController(val hubService: HubService, val mapper: MapperFacade) {
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @ApiParam("The passphrase for the keystore")
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @ApiParam("The last name of the healthcare provider")
         @RequestParam hcpLastName: String,
         @ApiParam("The first name of the healthcare provider")

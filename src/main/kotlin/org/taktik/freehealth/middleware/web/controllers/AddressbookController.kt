@@ -39,6 +39,8 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable lastName: String,
         @RequestParam(required = false) firstName: String?,
         @RequestParam(required = false) type: String?
@@ -51,6 +53,8 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable name: String,
         @RequestParam(required = false) type: String?
     ): List<HealthcareParty> = addressbookService.searchOrg(
@@ -62,6 +66,8 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable nihii: String,
         @RequestParam(required = false) language: String?
     ): HealthcareParty? = addressbookService.getHcp(
@@ -73,6 +79,8 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable ssin: String,
         @RequestParam(required = false) quality: String?,
         @RequestParam(required = false) language: String?
@@ -85,6 +93,8 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable nihii: String,
         @RequestParam(required = false) language: String?
     ): HealthcareParty? = addressbookService.getOrg(
@@ -96,6 +106,8 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable cbe: String?,
         @RequestParam(required = false) language: String?
     ): HealthcareParty? = addressbookService.getOrg(
@@ -107,6 +119,8 @@ class AddressbookController(val addressbookService: AddressbookService) {
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable ehp: String?,
         @RequestParam(required = false) language: String?
     ): HealthcareParty? = addressbookService.getOrg(

@@ -20,33 +20,16 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
-import be.fgov.ehealth.mycarenet.mhm.protocol.v1.SendSubscriptionResponse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
-import org.taktik.freehealth.middleware.dto.eattest.Eattest
-import org.taktik.freehealth.middleware.dto.eattest.SendAttestResult
+import org.springframework.web.bind.annotation.*
 import org.taktik.freehealth.middleware.dto.mhm.CancelSubscriptionResultWithResponse
 import org.taktik.freehealth.middleware.dto.mhm.EndSubscriptionResultWithResponse
 import org.taktik.freehealth.middleware.dto.mhm.StartSubscriptionResultWithResponse
 import org.taktik.freehealth.middleware.exception.MissingTokenException
-import org.taktik.freehealth.middleware.service.EattestV2Service
 import org.taktik.freehealth.middleware.service.MhmService
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
-import java.util.UUID
+import java.util.*
 import javax.servlet.http.HttpServletRequest
 
 @RestController
@@ -76,6 +59,8 @@ class MhmController(val mhmService: MhmService) {
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
         @RequestParam patientFirstName: String,
@@ -114,6 +99,8 @@ class MhmController(val mhmService: MhmService) {
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
         @RequestParam patientFirstName: String,
@@ -145,6 +132,8 @@ class MhmController(val mhmService: MhmService) {
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestParam hcpNihii: String,
         @RequestParam hcpName: String,
         @RequestParam patientFirstName: String,

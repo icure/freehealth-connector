@@ -38,6 +38,8 @@ class SchematronController(val schematronService: SchematronService) {
     @PostMapping("/validate/{schema}", consumes = [MediaType.APPLICATION_XML_VALUE], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun validateUsingShematron(
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable schema: String,
         @RequestBody(required = true) body: ByteArray
     ) = schematronService.validate(tokenId, schema, body.inputStream())

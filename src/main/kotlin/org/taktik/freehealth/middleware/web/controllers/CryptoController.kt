@@ -43,11 +43,13 @@ class CryptoController(val cryptoService: CryptoService) {
     fun encrypt(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable(value = "identifier") identifier: String,
         @PathVariable(value = "id") id: String,
         @RequestParam(value = "applicationId", required = false) applicationId: String?,
         @RequestBody plainData: ByteArray
-               ): ByteArray? = cryptoService.encrypt(keystoreId, passPhrase, Addressee(IdentifierType.valueOf(identifier)).apply { this.id = id; this.applicationId = applicationId ?: "" }, plainData)
+    ): ByteArray? = cryptoService.encrypt(keystoreId, passPhrase, Addressee(IdentifierType.valueOf(identifier)).apply { this.id = id; this.applicationId = applicationId ?: "" }, plainData)
 
 
     @ApiOperation(value = "Encrypt data", httpMethod = "POST", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -55,11 +57,13 @@ class CryptoController(val cryptoService: CryptoService) {
     fun encryptFile(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable(value = "identifier") identifier: String,
         @PathVariable(value = "id") id: String,
         @RequestParam(value = "applicationId", required = false) applicationId: String?,
         @RequestParam plainData: MultipartFile
-               ): ByteArray? = cryptoService.encrypt(keystoreId, passPhrase, Addressee(IdentifierType.valueOf(identifier)).apply { this.id = id; this.applicationId = applicationId ?: "" }, plainData.bytes)
+    ): ByteArray? = cryptoService.encrypt(keystoreId, passPhrase, Addressee(IdentifierType.valueOf(identifier)).apply { this.id = id; this.applicationId = applicationId ?: "" }, plainData.bytes)
 
 
     @ApiOperation(value = "Decrypt data", httpMethod = "POST", consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -67,14 +71,18 @@ class CryptoController(val cryptoService: CryptoService) {
     fun decrypt(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestBody encryptedData: ByteArray
-               ): ByteArray? = cryptoService.decrypt(keystoreId, passPhrase, encryptedData)
+    ): ByteArray? = cryptoService.decrypt(keystoreId, passPhrase, encryptedData)
 
     @ApiOperation(value = "Decrypt data", httpMethod = "POST", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @PostMapping("/decryptFile", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
     fun decryptFile(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestBody encryptedData: MultipartFile
-               ): ByteArray? = cryptoService.decrypt(keystoreId, passPhrase, encryptedData.bytes)
+    ): ByteArray? = cryptoService.decrypt(keystoreId, passPhrase, encryptedData.bytes)
 }

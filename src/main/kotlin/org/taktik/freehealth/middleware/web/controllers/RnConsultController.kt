@@ -65,6 +65,8 @@ class RnConsultController(val rnConsultService: RnConsultService, val mapper: Ma
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable(value = "ssin") ssin: String
     ): RnConsultSearchPersonBySsinResponseDto?{
         return rnConsultService.searchPersonBySsin(
@@ -80,6 +82,8 @@ class RnConsultController(val rnConsultService: RnConsultService, val mapper: Ma
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable(value = "dateOfBirth") dateOfBirth: Int,
         @PathVariable(value = "lastName") lastName: String,
         @RequestParam(required = false) firstName: String?,
@@ -113,6 +117,8 @@ class RnConsultController(val rnConsultService: RnConsultService, val mapper: Ma
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestBody mid: RnConsultPersonMid
     ) = rnConsultService.registerPerson(
         keystoreId,
@@ -126,6 +132,8 @@ class RnConsultController(val rnConsultService: RnConsultService, val mapper: Ma
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @PathVariable(value = "ssin") ssin: String
     ) = rnConsultService.consultCurrentSsin(
         keystoreId,
@@ -139,6 +147,8 @@ class RnConsultController(val rnConsultService: RnConsultService, val mapper: Ma
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
         @RequestParam(required = false) ssin: String?,
         @RequestParam(required = false) cardNumber: String?,
         @RequestParam(required = false) barCoded: String?

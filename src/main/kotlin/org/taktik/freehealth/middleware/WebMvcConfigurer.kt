@@ -14,6 +14,7 @@ import org.springframework.web.servlet.config.annotation.PathMatchConfigurer
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.taktik.freehealth.middleware.web.ExecuterTimeInterceptor
+import org.taktik.freehealth.middleware.web.MdcInterceptor
 
 @Configuration
 @EnableWebMvc
@@ -57,6 +58,7 @@ class WebMvcConfigurer(val resourceProperties: ResourceProperties) : WebMvcConfi
 
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(ExecuterTimeInterceptor()).addPathPatterns("/**")
+        registry.addInterceptor(MdcInterceptor()).addPathPatterns("/**")
     }
 
 }
