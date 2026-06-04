@@ -575,20 +575,51 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         var noSIS: String? = if (patient.ssin != null) patient.ssin else ""
         noSIS = noSIS!!.replace("[^0-9]".toRegex(), "")
 
+        val isManualEntry = eidItem.readType == EIDItem.READ_TYPE_MANUAL
+        val isDeferredCase = isManualEntry && eidItem.manualEntryReason?.let { it in EIDItem.DEFERRED_REASONS } == true
+
+        // Validate all required fields before writing to avoid partial record corruption
+        require(eidItem.readType in EIDItem.VALID_READ_TYPES) {
+            "readType must be one of 1 (chip), 2 (barcode), 3 (datamatrix), 4 (manual), A (electronic), got: ${eidItem.readType}"
+        }
+        require(eidItem.deviceType in EIDItem.VALID_DEVICE_TYPES) {
+            "deviceType must be one of ${EIDItem.VALID_DEVICE_TYPES}, got: ${eidItem.deviceType}"
+        }
+        val manualEntryReasonValue = if (isManualEntry) {
+            val reason = requireNotNull(eidItem.manualEntryReason) { "manualEntryReason is required when readType=4 (manual entry)" }
+            require(reason in EIDItem.MANUAL_ENTRY_REASON_RANGE) { "manualEntryReason must be in range ${EIDItem.MANUAL_ENTRY_REASON_RANGE}, got: $reason" }
+            reason
+        } else 0
+
+        require(eidItem.vignetteReason in EIDItem.VIGNETTE_REASON_RANGE) { "vignetteReason must be a single digit (${EIDItem.VIGNETTE_REASON_RANGE}), got: ${eidItem.vignetteReason}" }
+        if (eidItem.deviceType != EIDItem.DEVICE_TYPE_VIGNETTE) {
+            require(eidItem.vignetteReason == 0) { "vignetteReason must be 0 when deviceType is not 7 (vignette), got: ${eidItem.vignetteReason}" }
+        }
+        val vignetteReason = if (eidItem.deviceType == EIDItem.DEVICE_TYPE_VIGNETTE) eidItem.vignetteReason else 0
+
+        val validatedReadDate: Long?
+        if (isDeferredCase) {
+            require(eidItem.readDate == null && eidItem.readHour == 0) { "readDate and readHour must not be set for deferred cases (manualEntryReason in ${EIDItem.DEFERRED_REASONS})" }
+            validatedReadDate = null
+        } else {
+            validatedReadDate = requireNotNull(eidItem.readDate) { "readDate is required when not in deferred case" }
+            require(EIDItem.isValidReadHour(eidItem.readHour)) { "readHour must be a valid HHMM time (HH:00-23, MM:00-59), got: ${eidItem.readHour}" }
+        }
+
         ws.write("2", recordNumber)
-        ws.write("3", 0)
+        ws.write("3", manualEntryReasonValue)
         ws.write("4", icd.codeNomenclature)
         ws.write("5", FuzzyValues.getLocalDateTime(icd.dateCode!!)!!.format(dtf))
-        ws.write("6a", FuzzyValues.getLocalDateTime(eidItem.readDate!!)!!.format(dtf))
+        ws.write("6a", if (isDeferredCase) "00000000" else FuzzyValues.getLocalDateTime(validatedReadDate!!)!!.format(dtf))
         ws.write("7", 0)
         ws.write("8a", noSIS)
-        ws.write("9", 0)
+        ws.write("9", eidItem.readType)
         ws.write("10", eidItem.deviceType)
-        ws.write("11", eidItem.readType)
-        ws.write("12", nf4.format(eidItem.readHour))
+        ws.write("11", vignetteReason)
+        ws.write("12", if (isDeferredCase) "0000" else nf4.format(eidItem.readHour))
         ws.write("14", 0)
         ws.write("15", invoiceSender.nihii.toString().padEnd(11, '0'))
-        ws.write("16", eidItem.readvalue)
+        ws.write("16", eidItem.readValue ?: "")
 
         ws.writeFieldsWithCheckSum()
 
