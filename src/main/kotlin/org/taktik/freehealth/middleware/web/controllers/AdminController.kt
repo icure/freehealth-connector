@@ -60,11 +60,6 @@ class AdminController(val addressbookService: AddressbookService) {
 
     @GetMapping("/bcp", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun bcpStatus(): EndpointDistributorStatusDto {
-        val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-
-        if (principal?.authorities?.any { it.authority == "ROLE_ADMIN" } != true) {
-            throw IllegalAccessException("You are not an administrator. This illegal access attempt has been logged")
-        }
         val distributor = EndpointDistributor.getInstance()
         return EndpointDistributorStatusDto(mustPoll = distributor.mustPoll(), isBcpMode = distributor.isBCPMode, active = distributor.service2ActiveEndpoint, default = distributor.service2DefaultEndpoint)
     }
