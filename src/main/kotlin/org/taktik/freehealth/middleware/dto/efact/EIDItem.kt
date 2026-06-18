@@ -28,6 +28,7 @@ class EIDItem {
     var readValue: String? = null
     var vignetteReason: Int = 0  // Zone 11: Only when Z10 =7
     var manualEntryReason: Int? = null  // Zone 3: Only when readType=4 (manual entry). 1-2,7=direct (date/time mandatory), 3-6,8=deferred (date/time forbidden)
+    var justificationDocumentNumber : Int =0  // Zone 17 : Always present,
 
     /**
      * Default constructor initializes readDate and readHour to current time.
@@ -42,20 +43,22 @@ class EIDItem {
         readHour = cal.get(Calendar.HOUR_OF_DAY) * 100 + cal.get(Calendar.MINUTE)
     }
 
-    constructor(readDate: Long?, readHour: Int, readValue: String, vignetteReason: Int) {
+    constructor(readDate: Long?, readHour: Int, readValue: String, vignetteReason: Int, justificationDocumentNumber: Int) {
         this.readValue = readValue
         this.readDate = readDate
         this.readHour = readHour
         this.vignetteReason = vignetteReason
+        this.justificationDocumentNumber = justificationDocumentNumber
     }
 
-    constructor(readDate: Long?, readHour: Int, readValue: String) : this(readDate, readHour, readValue, 0)
+    @Deprecated("Use constructor with non-nullable readHour and vignetteReason instead", ReplaceWith("EIDItem(readDate, readHour, readValue, vignetteReason)"))
+    constructor(readDate: Long?, readHour: Int, readValue: String) : this(readDate, readHour, readValue, 0, 0)
 
     @Deprecated("Use constructor with non-nullable readHour and vignetteReason instead", ReplaceWith("EIDItem(readDate, readHour ?: 0, readValue, vignetteReason ?: 0)"))
-    constructor(readDate: Long?, readHour: Int?, readValue: String, vignetteReason: Int?) : this(readDate, readHour ?: 0, readValue, vignetteReason ?: 0)
+    constructor(readDate: Long?, readHour: Int?, readValue: String, vignetteReason: Int?) : this(readDate, readHour ?: 0, readValue, vignetteReason ?: 0, 0)
 
     @Deprecated("Use constructor with non-nullable readHour instead", ReplaceWith("EIDItem(readDate, readHour ?: 0, readValue, 0)"))
-    constructor(readDate: Long?, readHour: Int?, readValue: String) : this(readDate, readHour ?: 0, readValue, 0)
+    constructor(readDate: Long?, readHour: Int?, readValue: String) : this(readDate, readHour ?: 0, readValue, 0, 0)
 
     companion object {
         const val READ_TYPE_CHIP = "1"
