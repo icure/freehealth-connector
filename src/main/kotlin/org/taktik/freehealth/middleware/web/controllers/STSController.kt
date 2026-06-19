@@ -57,7 +57,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
     fun uploadKeystore(
         @RequestParam file: MultipartFile,
         @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
-        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean
     ): UUIDType {
         val uuidTypeResponse = UUIDType(stsService.uploadKeystore(file))
         return uuidTypeResponse
@@ -139,7 +139,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestParam(required = false) quality: String?,
         @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
-        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean
     ) : Boolean{
         val registerTokenResponse = stsService.registerToken(tokenId, token, quality ?: "doctor")
         return registerTokenResponse
@@ -153,7 +153,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
     fun checkKeystoreExist(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
-        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean
     ): Boolean {
         val checkIfKeyStoreExistsResponse = stsService.checkIfKeystoreExist(keystoreId)
         return checkIfKeyStoreExistsResponse
@@ -167,7 +167,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
     fun checkTokenValid(
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
-        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean
     ): Boolean {
         val checkTokenValidResponse = stsService.checkTokenValid(tokenId)
         return checkTokenValidResponse
@@ -184,7 +184,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
         @RequestParam ssin: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
-        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean
     ): BearerToken? {
         val bearerTokenResponse = ssoService.getBearerToken(tokenId, keystoreId, passPhrase)
         return bearerTokenResponse
@@ -212,7 +212,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
     fun mergeKeystores(
         @RequestBody request: MergeKeystoresRequestBody,
         @RequestHeader(name = "X-Company", required = false, defaultValue = "NA") company: String,
-        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean,
+        @RequestHeader(name = "X-FHC-debug", required = false, defaultValue = "false") debug: Boolean
     ): MergeKeystoresResponseDto {
         val mergeKeystoresResponse = stsService.mergeKeystores(request.newKeystore, request.oldKeystore, request.newPassword, request.oldPassword)
         return mergeKeystoresResponse
