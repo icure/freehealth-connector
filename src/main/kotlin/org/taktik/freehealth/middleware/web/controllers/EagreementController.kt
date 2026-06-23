@@ -194,7 +194,6 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
 
     @PostMapping("async/confirmMessage", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun confirmMessages(
-        @PathVariable nihii: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
         @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
