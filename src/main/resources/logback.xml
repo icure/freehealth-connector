@@ -82,6 +82,12 @@
 		</filter>
 	</appender>
 
+	<appender name="SENTRY" class="io.sentry.logback.SentryAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+	</appender>
+
     <!-- ADDED: Sifting appender for ERROR logs when debug=true -->
     <appender name="FILE-DEBUG-WARN" class="ch.qos.logback.classic.sift.SiftingAppender">
         <discriminator>
@@ -143,11 +149,8 @@
 	<root level="INFO">
 		<appender-ref ref="CONSOLE" />
 		<appender-ref ref="FILE-THREAD" />
-	</root>
-    <root level="DEBUG">
-        <appender-ref ref="FILE-DEBUG-WARN" />
-    </root>
-	<root level="ERROR">
+		<appender-ref ref="FILE-DEBUG-WARN" />
 		<appender-ref ref="FILE-GeneralErrors" />
+		<appender-ref ref="SENTRY" />
 	</root>
 </configuration>

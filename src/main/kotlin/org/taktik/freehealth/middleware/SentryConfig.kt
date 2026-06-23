@@ -1,7 +1,6 @@
 package org.taktik.freehealth.middleware
 
 import io.sentry.Sentry
-import org.apache.log4j.MDC
 import org.slf4j.LoggerFactory
 
 import org.springframework.beans.factory.annotation.Value
@@ -33,11 +32,21 @@ class SentryConfig {
             return
         }
 
-        Sentry.init(sentryDsn)
-        Sentry.getStoredClient()?.release = release
-        Sentry.getStoredClient()?.environment = activeProfile
-        Sentry.getStoredClient()?.addTag("OS", System.getenv("os.name"))
+        if(sentryDsn.isNullOrBlank()) {
+            log.warn("Sentry DSN is not configured.")
+            return
+        }
 
-        log.info("Sentry initialized for environment: {}", activeProfile)
+        Sentry.init(sentryDsn)
+        val client = Sentry.getStoredClient()
+        
+        if(client != null) {
+            client.release = release
+            client.environment = activeProfile
+            client.addTag("OS", System.getenv("os.name"))
+            log.info("Sentry initialized for environment: {} with release: {}", activeProfile, release)
+        } else {
+            log.error("Failed to initialize Sentry client")
+        }
     }
 }
