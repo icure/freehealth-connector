@@ -134,6 +134,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         error.errors = Arrays.asList(MycarenetError(code = e.errorCode, msgFr = e.message, msgNl = e.message))
         return error
     }
+
     override fun getMessages(
         keystoreId: UUID,
         tokenId: UUID,
@@ -143,10 +144,10 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         hcpFirstName: String,
         hcpLastName: String,
         hcpQuality: String
-    ): EAgreementList? {
+    ):
+        EAgreementList? {
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
-            ?: throw MissingTokenException("Cannot obtain token for eAgreement async operations")
-        log.info("getEAgreementMessages: ")
+            ?: throw MissingTokenException("Cannot obtain token for eAgreement asyn operations")
         val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
@@ -155,126 +156,119 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         val getHeader = WsAddressingHeader(URI("urn:be:cin:nip:async:generic:get:query")).apply {
             messageID = URI(IdGeneratorFactory.getIdGenerator("uuid").generateId())
         }
+        val replyToEtk = extractEtk(credential)?.encoded
 
         val get = Get().apply {
+            this.replyToEtk = replyToEtk
             msgQuery = MsgQuery().apply {
                 isInclude = true
                 max = 100
-                messageNames?.let { this.messageNames.addAll(it) }
+                this.messageNames.addAll(
+                    listOf(
+                        "eAgreement-response"
+                    )
+                )
             }
             tAckQuery = Query().apply {
                 isInclude = true
                 max = 100
             }
-            origin = buildOriginType(hcpNihii, hcpFirstName, hcpQuality,hcpSsin)
-            replyToEtk = keyDepotManager.getETK(credential, keystoreId).encoded
+            origin = buildOriginType(hcpNihii, hcpFirstName, "physiotherapist", hcpSsin)
         }
 
         val response = genAsyncService.getRequest(samlToken, get, getHeader)
         val listOfEagreementDecryptedResponseContent : ArrayList<String> = arrayListOf()
-        var xades : ByteArray? = null
-        var responseXML : ByteArray? = null
+        var xades: ByteArray? = null
 
         return try {
             EAgreementList(
-                eAgreementMessageList = response.`return`.msgResponses?.map {
-
-                    var data: ByteArray? = if (it.detail.contentEncoding == "deflate") ConnectorIOUtils.decompress(DomainBlobMapper.mapToBlob(it.detail).content) else DomainBlobMapper.mapToBlob(it.detail).content
-                    val responseList = if (it.detail.contentEncryption == "encryptedForKnownRecipient") {
+                eAgreementMessageList = response.`return`.msgResponses?.map { msgResponse ->
+                    val data: ByteArray? = if (msgResponse.detail.contentEncoding == "deflate") ConnectorIOUtils.decompress(DomainBlobMapper.mapToBlob(msgResponse.detail).content) else DomainBlobMapper.mapToBlob(msgResponse.detail).content
+                    var decryptedPayloadXml: String? = null
+                    val responseList = if (msgResponse.detail.contentEncryption == "encryptedForKnownRecipient") {
                         val unsealedData = crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, data).contentAsByte
                         val decryptedKnownContent = MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(unsealedData)
-
-                        xades = decryptedKnownContent?.xades
-                        responseXML = decryptedKnownContent?.businessContent?.value
-
-                        MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(
-                            if (decryptedKnownContent.businessContent.contentEncoding == "deflate")
-                                ConnectorIOUtils.decompress(decryptedKnownContent.businessContent.value) else decryptedKnownContent.businessContent.value
-                        )
-
+                        xades = decryptedKnownContent?.getXades()
+                        val decryptedPayload = if (decryptedKnownContent.businessContent.contentEncoding == "deflate") {
+                            ConnectorIOUtils.decompress(decryptedKnownContent.businessContent.value)
+                        } else {
+                            decryptedKnownContent.businessContent.value
+                        }
+                        decryptedPayloadXml = String(decryptedPayload, Charsets.UTF_8)
+                        val parsedResponseList = MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(decryptedPayload)
+                        parsedResponseList
                     } else {
+                        decryptedPayloadXml = data?.let { String(it, Charsets.UTF_8) }
                         MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(data)
                     }
-
                     listOfEagreementDecryptedResponseContent.add(ConnectorXmlUtils.toString(responseList))
+                    val mappedEagreementResponses = responseList.responses.map {
+                        EAgreementBatchResponse(
+                            status = MdaStatus(
+                                it.status.statusCode?.value,
+                                it.status.statusCode?.statusCode?.value
+                            ),
+                            errors = it.status?.statusDetail?.anies?.map {
+                                FaultType().apply {
+                                    faultCode = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultCode").item(0)?.textContent
+                                    faultSource = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultSource").item(0)?.textContent
+                                    message = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message").item(0)?.let {
+                                        StringLangType().apply {
+                                            value = it.textContent
+                                            lang = it.attributes.getNamedItem("lang")?.textContent
+                                        }
+                                    }
+
+                                    it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Detail").let {
+                                        if (it.length > 0) {
+                                            details = DetailsType()
+                                        }
+                                        for (i in 0 until it.length) {
+                                            details.details.add(DetailType().apply {
+                                                it.item(i).let {
+                                                    detailCode = (it as Element).getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailCode").item(0)?.textContent
+                                                    detailSource = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailSource").item(0)?.textContent
+                                                    location = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Location").item(0)?.textContent
+                                                    message = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message").item(0)?.let {
+                                                        StringLangType().apply {
+                                                            value = it.textContent
+                                                            lang = it.attributes.getNamedItem("lang")?.textContent
+                                                        }
+                                                    }
+                                                }
+                                            })
+                                        }
+                                    }
+                                }
+                            },
+                            issueInstant = it.issueInstant,
+                            inResponseTo = it.inResponseTo,
+                            issuer = it.issuer?.value,
+                            responseId = it.id,
+                            assertions = it.anies.map{
+                                MarshallerHelper(Assertion::class.java, Assertion::class.java).toObject(it)
+                            },
+                            value = it.anies.firstOrNull { element ->
+                                (element.localName ?: element.nodeName.substringAfter(':', element.nodeName)) == "Bundle"
+                            }?.let { bundleElement -> ConnectorXmlUtils.toString(bundleElement) } ?: decryptedPayloadXml
+                        )
+                    }
                     EAgreementMessage(
                         commonOutput = CommonOutput(
-                            inputReference = it.commonOutput.inputReference,
-                            outputReference = it.commonOutput.outputReference,
-                            nipReference = it.commonOutput.nipReference
+                            inputReference = msgResponse.commonOutput.inputReference,
+                            outputReference = msgResponse.commonOutput.outputReference,
+                            nipReference = msgResponse.commonOutput.nipReference
                         ),
                         errors = null,
                         genericErrors = null,
-                        reference = it.detail.reference,
+                        reference = msgResponse.detail.reference,
                         appliesTo = null,
                         complete = null,
                         io = null,
-                        eagreementResponse = responseList.responses.map {
-                            EAgreementBatchResponse(
-                                status = MdaStatus(
-                                    it.status.statusCode?.value,
-                                    it.status.statusCode?.statusCode?.value
-                                ),
-                                errors = it.status?.statusDetail?.anies?.map {
-                                    FaultType().apply {
-                                        faultCode =
-                                            it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultCode")
-                                                .item(0)?.textContent
-                                        faultSource =
-                                            it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultSource")
-                                                .item(0)?.textContent
-                                        message =
-                                            it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message")
-                                                .item(0)?.let {
-                                                    StringLangType().apply {
-                                                        value = it.textContent
-                                                        lang = it.attributes.getNamedItem("lang")?.textContent
-                                                    }
-                                                }
-
-                                        it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Detail").let {
-                                            if (it.length > 0) {
-                                                details = DetailsType()
-                                            }
-                                            for (i in 0 until it.length) {
-                                                details.details.add(DetailType().apply {
-                                                    it.item(i).let {
-                                                        detailCode =
-                                                            (it as Element).getElementsByTagNameWithOrWithoutNs(
-                                                                "urn:be:cin:types:v1",
-                                                                "DetailCode"
-                                                            ).item(0)?.textContent
-                                                        detailSource = it.getElementsByTagNameWithOrWithoutNs(
-                                                            "urn:be:cin:types:v1",
-                                                            "DetailSource"
-                                                        ).item(0)?.textContent
-                                                        location = it.getElementsByTagNameWithOrWithoutNs(
-                                                            "urn:be:cin:types:v1",
-                                                            "Location"
-                                                        ).item(0)?.textContent
-                                                        message = it.getElementsByTagNameWithOrWithoutNs(
-                                                            "urn:be:cin:types:v1",
-                                                            "Message"
-                                                        ).item(0)?.let {
-                                                            StringLangType().apply {
-                                                                value = it.textContent
-                                                                lang = it.attributes.getNamedItem("lang")?.textContent
-                                                            }
-                                                        }
-                                                    }
-                                                })
-                                            }
-                                        }
-                                    }
-                                },
-                                issueInstant = it.issueInstant,
-                                inResponseTo = it.inResponseTo,
-                                issuer = it.issuer?.value,
-                                responseId = it.id,
-                                assertions = it.anies.map {
-                                    MarshallerHelper(Assertion::class.java, Assertion::class.java).toObject(it)
-                                }
-                            )
+                        eagreementResponse = if (mappedEagreementResponses.isNotEmpty()) {
+                            mappedEagreementResponses
+                        } else {
+                            decryptedPayloadXml?.let { listOf(EAgreementBatchResponse(value = it)) } ?: emptyList()
                         }
                     )
                 },
@@ -284,9 +278,8 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                         Charsets.UTF_8)
                     response?.soapResponse?.writeTo(this.soapResponseOutputStream())
                     soapRequest = MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
-                    this.decryptedResponseContent = listOfEagreementDecryptedResponseContent
                     this.xades = xades
-                    this.content = responseXML
+                    this.decryptedResponseContent = listOfEagreementDecryptedResponseContent
                 },
                 date = null,
                 genericErrors = null
@@ -294,20 +287,16 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         }catch (e:SOAPFaultException){
             return EAgreementList(
                 mycarenetConversation = MycarenetConversation().apply {
-                    this.transactionRequest =
-                        MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
-                    this.transactionResponse =
-                        MarshallerHelper(GetResponse::class.java, GetResponse::class.java).toXMLByteArray(response)
-                            .toString(
-                                Charsets.UTF_8
-                            )
+                    this.transactionRequest = MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(kotlin.text.Charsets.UTF_8)
+                    this.transactionResponse = MarshallerHelper(be.cin.nip.async.generic.GetResponse::class.java, be.cin.nip.async.generic.GetResponse::class.java).toXMLByteArray(response).toString(
+                        Charsets.UTF_8)
                     response?.soapResponse?.writeTo(this.soapResponseOutputStream())
-                    soapRequest =
-                        MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
+                    soapRequest = MarshallerHelper(Get::class.java, Get::class.java).toXMLByteArray(get).toString(Charsets.UTF_8)
+                    this.xades = xades
                     this.decryptedResponseContent = listOfEagreementDecryptedResponseContent
                 },
                 date = null,
-                eAgreementMessageList = null,
+                eAgreementMessageList =  null,
                 genericErrors = listOf(FaultType().apply {
                     faultSource = e.message
                     faultCode = e.fault?.faultCode
