@@ -1496,6 +1496,8 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
             localName == "cd" && node is Element -> {
                 if (node.getAttribute("SL")?.isNotEmpty() == true) "cd[${node.getAttribute("SL")}]" else "cd[${node.getAttribute("S")}]"
             }
+            localName == "id" && node is Element && node.getAttribute("SL")?.isNotEmpty() == true ->
+                "id[${node.getAttribute("SL")}]"
             else -> localName
         }
     }
