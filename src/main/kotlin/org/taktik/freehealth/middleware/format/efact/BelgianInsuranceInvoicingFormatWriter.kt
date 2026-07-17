@@ -620,6 +620,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("14", 0)
         ws.write("15", invoiceSender.nihii.toString().padEnd(11, '0'))
         ws.write("16", eidItem.readValue ?: "")
+        ws.write("17", eidItem.justificationDocumentNumber)
 
         ws.writeFieldsWithCheckSum()
 

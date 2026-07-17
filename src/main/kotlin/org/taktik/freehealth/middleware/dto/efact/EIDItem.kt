@@ -28,6 +28,7 @@ class EIDItem {
     var readValue: String? = null
     var vignetteReason: Int = 0  // Zone 11: Only when Z10 =7
     var manualEntryReason: Int? = null  // Zone 3: Only when readType=4 (manual entry). 1-2,7=direct (date/time mandatory), 3-6,8=deferred (date/time forbidden)
+    var justificationDocumentNumber : Int =0  // Zone 17 : Always present,
 
     /**
      * Default constructor initializes readDate and readHour to current time.
@@ -42,20 +43,22 @@ class EIDItem {
         readHour = cal.get(Calendar.HOUR_OF_DAY) * 100 + cal.get(Calendar.MINUTE)
     }
 
-    constructor(readDate: Long?, readHour: Int, readValue: String, vignetteReason: Int) {
+    constructor(readDate: Long?, readHour: Int, readValue: String, vignetteReason: Int, justificationDocumentNumber: Int) {
         this.readValue = readValue
         this.readDate = readDate
         this.readHour = readHour
         this.vignetteReason = vignetteReason
+        this.justificationDocumentNumber = justificationDocumentNumber
     }
 
-    constructor(readDate: Long?, readHour: Int, readValue: String) : this(readDate, readHour, readValue, 0)
+    @Deprecated("Use constructor with non-nullable readHour and vignetteReason instead", ReplaceWith("EIDItem(readDate, readHour, readValue, vignetteReason)"))
+    constructor(readDate: Long?, readHour: Int, readValue: String) : this(readDate, readHour, readValue, 0, 0)
 
     @Deprecated("Use constructor with non-nullable readHour and vignetteReason instead", ReplaceWith("EIDItem(readDate, readHour ?: 0, readValue, vignetteReason ?: 0)"))
-    constructor(readDate: Long?, readHour: Int?, readValue: String, vignetteReason: Int?) : this(readDate, readHour ?: 0, readValue, vignetteReason ?: 0)
+    constructor(readDate: Long?, readHour: Int?, readValue: String, vignetteReason: Int?) : this(readDate, readHour ?: 0, readValue, vignetteReason ?: 0, 0)
 
     @Deprecated("Use constructor with non-nullable readHour instead", ReplaceWith("EIDItem(readDate, readHour ?: 0, readValue, 0)"))
-    constructor(readDate: Long?, readHour: Int?, readValue: String) : this(readDate, readHour ?: 0, readValue, 0)
+    constructor(readDate: Long?, readHour: Int?, readValue: String) : this(readDate, readHour ?: 0, readValue, 0, 0)
 
     companion object {
         const val READ_TYPE_CHIP = "1"
@@ -71,10 +74,11 @@ class EIDItem {
         const val DEVICE_TYPE_FOREIGNER_CARD = "5"
         const val DEVICE_TYPE_ITSME = "6"
         const val DEVICE_TYPE_VIGNETTE = "7"
+        const val DEVICE_TYPE_UNKNOWN = "0"
 
         val DEFERRED_REASONS = setOf(3, 4, 5, 6, 8)
         val VALID_READ_TYPES = setOf(READ_TYPE_CHIP, READ_TYPE_BARCODE, READ_TYPE_DATAMATRIX, READ_TYPE_MANUAL, READ_TYPE_ELECTRONIC)
-        val VALID_DEVICE_TYPES = setOf(DEVICE_TYPE_EID, DEVICE_TYPE_ISI, DEVICE_TYPE_ISI_PLUS, DEVICE_TYPE_KIDS_ID, DEVICE_TYPE_FOREIGNER_CARD, DEVICE_TYPE_ITSME, DEVICE_TYPE_VIGNETTE)
+        val VALID_DEVICE_TYPES = setOf(DEVICE_TYPE_EID, DEVICE_TYPE_ISI, DEVICE_TYPE_ISI_PLUS, DEVICE_TYPE_KIDS_ID, DEVICE_TYPE_FOREIGNER_CARD, DEVICE_TYPE_ITSME, DEVICE_TYPE_VIGNETTE, DEVICE_TYPE_UNKNOWN)
         val MANUAL_ENTRY_REASON_RANGE = 1..8
         val VIGNETTE_REASON_RANGE = 0..9
 
