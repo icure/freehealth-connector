@@ -997,14 +997,14 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                         value = (itemId++).toString()
                                     })
                                     cds.add(CDITEM().apply { s = CD_ITEM_MYCARENET; sv = "1.6"; value = "decisionreference" })
-                                    contents.addAll(listOf(ContentType().apply {
-                                        cds.add(CDCONTENT().apply {
-                                            s = CDCONTENTschemes.LOCAL;
-                                            sv = "1.0";
-                                            sl = "OAreferencesystemname";
-                                            value = decisionReference.toString();
+                                    contents.add(ContentType().apply {
+                                        ids.add(IDKMEHR().apply {
+                                            s = IDKMEHRschemes.LOCAL
+                                            sv = "1.0"
+                                            sl = "OAreferencesystemname"
+                                            value = decisionReference
                                         })
-                                    }))
+                                    })
                                 }
                             }, code.location?.let { loc ->
                                 ItemType().apply {
