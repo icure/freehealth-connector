@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import org.taktik.connector.technical.idgenerator.IdGeneratorFactory
@@ -768,6 +769,41 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             gson.getAsJsonObject("Bundle").getAsJsonArray("entry").add(parameter)
         }
 
+        resolveBundleReferences(gson)
+
         return gson
+    }
+
+    /**
+     * Les entrées du bundle sont identifiées par un fullUrl `urn:uuid:` : une référence interne
+     * relative de la forme `Type/Id` n'y est pas résoluble et l'OA rejette la demande
+     * (`fatal-error`, une référence signalée par échange). On remplace donc, une fois le bundle
+     * construit, chaque référence interne par le fullUrl de l'entrée visée. Les références qui ne
+     * correspondent à aucune entrée (ressources `contained`, entrées absentes) restent inchangées.
+     */
+    private fun resolveBundleReferences(bundle: JsonObject) {
+        val entries = bundle.getAsJsonObject("Bundle").getAsJsonArray("entry")
+        val fullUrlByResource = mutableMapOf<String, String>()
+        entries.forEach { entry ->
+            val fullUrl = entry.asJsonObject.get("fullUrl")?.asString ?: return@forEach
+            val resource = entry.asJsonObject.getAsJsonObject("resource") ?: return@forEach
+            resource.entrySet().forEach { (type, content) ->
+                content.asJsonObject.get("id")?.asString?.let { fullUrlByResource["$type/$it"] = fullUrl }
+            }
+        }
+        entries.forEach { replaceReferences(it, fullUrlByResource) }
+    }
+
+    private fun replaceReferences(element: JsonElement, fullUrlByResource: Map<String, String>) {
+        when {
+            element.isJsonObject -> {
+                val jsonObject = element.asJsonObject
+                jsonObject.entrySet().toList().forEach { (key, value) ->
+                    val fullUrl = if (key == "reference" && value.isJsonPrimitive) fullUrlByResource[value.asString] else null
+                    if (fullUrl != null) jsonObject.addProperty(key, fullUrl) else replaceReferences(value, fullUrlByResource)
+                }
+            }
+            element.isJsonArray -> element.asJsonArray.forEach { replaceReferences(it, fullUrlByResource) }
+        }
     }
 }
