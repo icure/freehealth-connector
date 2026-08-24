@@ -713,10 +713,16 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         OrigineType().apply {
             val principal = SecurityContextHolder.getContext().authentication?.principal as? User
             `package` = be.cin.mycarenet.esb.common.v2.PackageType().apply {
-                name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = config.getProperty("genericasync.dmg.package.name") }
+                name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = config.getProperty("genericasync.eagreement.package.name") }
                 license = be.cin.mycarenet.esb.common.v2.LicenseType().apply {
-                    username = principal?.mcnLicense ?: throw UnauthorizedException("No MCN license found")
-                    password = principal.mcnPassword ?: throw UnauthorizedException("No MCN license found")
+                    // Same resolution order as every other flow: the authenticated user's licence
+                    // when there is one, the configured licence otherwise.
+                    username = principal?.mcnLicense
+                        ?: config.getProperty("genericasync.eagreement.package.license.username")
+                        ?: throw UnauthorizedException("No MCN license found")
+                    password = principal?.mcnPassword
+                        ?: config.getProperty("genericasync.eagreement.package.license.password")
+                        ?: throw UnauthorizedException("No MCN license found")
                 }
             }
             careProvider = be.cin.mycarenet.esb.common.v2.CareProviderType().apply {
