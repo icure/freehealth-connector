@@ -102,6 +102,11 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
 
     val agreementServiceUtils: EagreementServiceUtilsImpl = EagreementServiceUtilsImpl();
 
+    companion object {
+        /** Value the CIN message definition mandates for the Detail's MessageVersion attribute (eAgreement v2). */
+        const val MESSAGE_VERSION = "V4"
+    }
+
     enum class RequestTypeEnum(val requestType: String) {
         ASK("claim-ask"),
         EXTEND("claim-extend"),
@@ -212,6 +217,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                             "encryptedForKnownBED"
                         )
                 blob.messageName = "eAgreement-ask"
+                blob.messageVersion = MESSAGE_VERSION
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
                 val packageInfo = McnConfigUtil.retrievePackageInfo("agreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
@@ -402,6 +408,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                             "encryptedForKnownBED"
                         )
                 blob.messageName = "eAgreement-consult"
+                blob.messageVersion = MESSAGE_VERSION
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
                 val packageInfo = McnConfigUtil.retrievePackageInfo("agreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
