@@ -37,10 +37,15 @@ import org.taktik.icure.fhir.entities.r4.practitioner.Practitioner
 import org.taktik.icure.fhir.entities.r4.practitionerrole.PractitionerRole
 import org.taktik.icure.fhir.entities.r4.reference.Reference
 import org.taktik.icure.fhir.entities.r4.servicerequest.ServiceRequest
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class EagreementServiceUtilsImpl(): EagreementServiceUtils {
+
+    // MyCareNet attend un horodatage en heure belge : à Bruxelles l'offset n'est jamais nul,
+    // donc le patron XXX rend bien +01:00/+02:00 et non Z (règle be-rule-eagreementclaim-2).
+    private val mcnTimezone: ZoneId = ZoneId.of("Europe/Brussels")
 
     enum class MetaProfileEnum(val metaProfile: String){
         BE_MESSAGEHEADER("https://www.ehealth.fgov.be/standards/fhir/mycarenet/StructureDefinition/be-messageheader"),
@@ -148,7 +153,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             subType = getCodableConcept(CodingSystemEnum.AGREEMENT_TYPE.codingSystem, subTypeCode)
             use = "preauthorization"
             if(requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND) billablePeriod = getBillablePeriod(agreementStartDate!!)
-            created = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"))
+            created = ZonedDateTime.now(mcnTimezone).format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"))
             enterer = Reference().apply { reference = "PractitionerRole/PractitionerRole1"}
             if (requestType == EagreementServiceImpl.RequestTypeEnum.ASK || requestType == EagreementServiceImpl.RequestTypeEnum.COMPLETE_AGREEMENT || requestType == EagreementServiceImpl.RequestTypeEnum.EXTEND || requestType == EagreementServiceImpl.RequestTypeEnum.ARGUE) {
                 referral = Reference().apply {
@@ -593,7 +598,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                 }
             )
             type = "message"
-            timestamp = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"))
+            timestamp = ZonedDateTime.now(mcnTimezone).format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"))
             entry = entries
         }
 
