@@ -34,6 +34,18 @@ class InvoiceItem {
     var insuranceRef: String? = null
     var insuranceRefDate: Long? = null
 
+    /**
+     * Agreement number, written to ET 52 Z 19 (20 positions, INAMI annexe 6.8).
+     *
+     * This is *not* [insuranceRef], which goes to ET 51 Z 42. It is the number an insurer assigned to an agreement
+     * decision and returned through eAgreement; INAMI annexe 26.4 makes it mandatory for physiotherapists since
+     * 01/05/2022, and its absence on e.g. code 567011 is rejected with 521904.
+     *
+     * Structure: XXX (mutuality) + 15 digits unique per insurer + DD (check-digit, modulo 97). Optional: when it is
+     * null the zone is written as twenty zeroes, exactly as before this field existed.
+     */
+    var agreementNumber: String? = null
+
     var units: Int = 0
 
     var reimbursedAmount: Long = 0
