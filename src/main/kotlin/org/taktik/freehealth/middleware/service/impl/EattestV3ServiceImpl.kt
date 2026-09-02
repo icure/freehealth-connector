@@ -341,6 +341,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         referenceDate: Long?,
         attemptNbr: Int?,
         decisionReference: String?,
+        inputReference: String?,
         attest: Eattest): SendAttestResultWithResponse? {
         val derivedHcpQuality = hcpQuality ?: guardPostNihii?.let {"guardpost"} ?: "doctor"
 
@@ -354,7 +355,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         val crypto = CryptoFactory.getCrypto(credential, hokPrivateKeys)
 
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
-        val inputReference = InputReference().inputReference
+        val derivedInputReference = inputReference ?: InputReference().inputReference
         val attribute = AttributeType().apply {
             key = "urn:be:cin:nippin:attemptNbr"
             value = attemptNbr ?: 1
@@ -427,7 +428,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                     request =
                         be.fgov.ehealth.mycarenet.commons.core.v4.RequestType()
                             .apply { isIsTest = config.getProperty("endpoint.genins")?.contains("-acpt") ?: false }
-                    this.inputReference = inputReference
+                    this.inputReference = derivedInputReference
                     this.attribute.add(attribute)
                     origin = OriginType().apply {
                         `package` = PackageType().apply {
