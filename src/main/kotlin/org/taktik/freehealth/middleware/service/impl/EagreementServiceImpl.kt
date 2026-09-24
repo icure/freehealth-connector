@@ -11,10 +11,10 @@ import be.cin.types.v1.DetailType
 import be.cin.types.v1.DetailsType
 import be.cin.types.v1.FaultType
 import be.cin.types.v1.StringLangType
-import be.fgov.ehealth.agreement.protocol.v1.*
-import be.fgov.ehealth.agreement.protocol.v1.ObjectFactory
+import be.fgov.ehealth.mycarenet.agreement.protocol.v2.*
+import be.fgov.ehealth.mycarenet.agreement.protocol.v2.ObjectFactory
 import be.fgov.ehealth.etee.crypto.utils.KeyManager
-import be.fgov.ehealth.mycarenet.commons.core.v3.*
+import be.fgov.ehealth.mycarenet.commons.core.v4.*
 import be.fgov.ehealth.technicalconnector.signature.AdvancedElectronicSignatureEnumeration
 import be.fgov.ehealth.technicalconnector.signature.SignatureBuilderFactory
 import be.fgov.ehealth.technicalconnector.signature.domain.SignatureVerificationError
@@ -26,6 +26,8 @@ import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang.StringUtils
 import org.joda.time.DateTime
 import org.json.JSONObject
+import java.util.GregorianCalendar
+import javax.xml.datatype.DatatypeFactory
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
@@ -33,7 +35,7 @@ import org.taktik.connector.business.agreement.exception.AgreementBusinessConnec
 import org.taktik.connector.business.domain.agreement.EAgreementResponse
 import org.taktik.connector.business.genericasync.service.impl.GenAsyncServiceImpl
 import org.taktik.connector.business.mycarenet.attest.domain.InputReference
-import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
+import org.taktik.connector.business.mycarenetcommons.mapper.v4.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
 import org.taktik.connector.business.mycarenetdomaincommons.mapper.DomainBlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
@@ -92,13 +94,18 @@ import javax.xml.ws.soap.SOAPFaultException
 
 @Service
 class EagreementServiceImpl(private val stsService: STSService, private val keyDepotService: KeyDepotService) : EagreementService {
-    private val freehealthAgreementService: org.taktik.connector.business.agreement.service.AgreementService = org.taktik.connector.business.agreement.service.impl.AgreementServiceImpl()
+    private val freehealthAgreementService: org.taktik.connector.business.agreementv2.service.AgreementService = org.taktik.connector.business.agreementv2.service.impl.AgreementServiceImpl()
 
     private val keyDepotManager = KeyDepotManagerImpl.getInstance(keyDepotService)
     private val config = ConfigFactory.getConfigValidator(emptyList())
     private val genAsyncService = GenAsyncServiceImpl("eagreement")
 
     val agreementServiceUtils: EagreementServiceUtilsImpl = EagreementServiceUtilsImpl();
+
+    companion object {
+        /** Value the CIN message definition mandates for the Detail's MessageVersion attribute (eAgreement v2). */
+        const val MESSAGE_VERSION = "V4"
+    }
 
     enum class RequestTypeEnum(val requestType: String) {
         ASK("claim-ask"),
@@ -210,6 +217,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                             "encryptedForKnownBED"
                         )
                 blob.messageName = "eAgreement-ask"
+                blob.messageVersion = MESSAGE_VERSION
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
                 val packageInfo = McnConfigUtil.retrievePackageInfo("agreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
@@ -218,7 +226,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                     request =
                         RequestType()
                             .apply {
-                                isIsTest = config.getProperty("endpoint.agreement")?.contains("-acpt") ?: false
+                                isIsTest = config.getProperty("endpoint.agreement2")?.contains("-acpt") ?: false
                             }
                     inputReference = InputReference().inputReference
                     origin = OriginType().apply {
@@ -261,7 +269,11 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                             regNrWithMut = patientIoMembership
                         }
                     }
-                    referenceDate = DateTime()
+                    // v4 types referenceDate as XMLGregorianCalendar, unlike v3's joda DateTime
+                    referenceDate = GregorianCalendar().let { cal ->
+                        cal.time = DateTime().toDate()
+                        DatatypeFactory.newInstance().newXMLGregorianCalendar(cal)
+                    }
                 }
                 issueInstant = DateTime()
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
@@ -396,6 +408,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                             "encryptedForKnownBED"
                         )
                 blob.messageName = "eAgreement-consult"
+                blob.messageVersion = MESSAGE_VERSION
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
                 val packageInfo = McnConfigUtil.retrievePackageInfo("agreement", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
@@ -404,7 +417,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                     request =
                         RequestType()
                             .apply {
-                                isIsTest = config.getProperty("endpoint.agreement")?.contains("-acpt") ?: false
+                                isIsTest = config.getProperty("endpoint.agreement2")?.contains("-acpt") ?: false
                             }
                     inputReference = InputReference().inputReference
                     origin = OriginType().apply {
@@ -447,7 +460,11 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                             regNrWithMut = patientIoMembership
                         }
                     }
-                    referenceDate = DateTime()
+                    // v4 types referenceDate as XMLGregorianCalendar, unlike v3's joda DateTime
+                    referenceDate = GregorianCalendar().let { cal ->
+                        cal.time = DateTime().toDate()
+                        DatatypeFactory.newInstance().newXMLGregorianCalendar(cal)
+                    }
                 }
                 issueInstant = DateTime()
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
@@ -696,10 +713,16 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         OrigineType().apply {
             val principal = SecurityContextHolder.getContext().authentication?.principal as? User
             `package` = be.cin.mycarenet.esb.common.v2.PackageType().apply {
-                name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = config.getProperty("genericasync.dmg.package.name") }
+                name = be.cin.mycarenet.esb.common.v2.ValueRefString().apply { value = config.getProperty("genericasync.eagreement.package.name") }
                 license = be.cin.mycarenet.esb.common.v2.LicenseType().apply {
-                    username = principal?.mcnLicense ?: throw UnauthorizedException("No MCN license found")
-                    password = principal.mcnPassword ?: throw UnauthorizedException("No MCN license found")
+                    // Same resolution order as every other flow: the authenticated user's licence
+                    // when there is one, the configured licence otherwise.
+                    username = principal?.mcnLicense
+                        ?: config.getProperty("genericasync.eagreement.package.license.username")
+                        ?: throw UnauthorizedException("No MCN license found")
+                    password = principal?.mcnPassword
+                        ?: config.getProperty("genericasync.eagreement.package.license.password")
+                        ?: throw UnauthorizedException("No MCN license found")
                 }
             }
             careProvider = be.cin.mycarenet.esb.common.v2.CareProviderType().apply {
