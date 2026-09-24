@@ -16,6 +16,7 @@ import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient
 import org.bouncycastle.util.Selector
 import org.jose4j.jwt.consumer.JwtConsumerBuilder
 import org.springframework.stereotype.Service
+import org.taktik.connector.technical.config.ConfigFactory
 import org.taktik.freehealth.middleware.domain.rsw.Jwks
 import org.taktik.freehealth.middleware.domain.rsw.Jwt
 import org.taktik.freehealth.middleware.domain.rsw.RswEndpoints
@@ -56,6 +57,11 @@ class RswFhirServiceImpl(val stsService: STSService) : RswFhirService {
     private val objectMapper: ObjectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
     private var rswPublicKey: PublicKey? = null
     private val fhirSearchEndpoint = "https://www.ehealth.fgov.be/standards/fhir/NamingSystem/ssin|"
+    private val config = ConfigFactory.getConfigValidator(listOf())
+
+    // RSW FHIR proxy and identity provider base URLs, defined per environment in org.taktik.connector.technical.properties
+    private fun rswEndpoint(key: String) = config.getProperty(key)?.takeIf { it.isNotBlank() }?.trimEnd('/')
+        ?: throw IllegalStateException("RSW FHIR is not configured for this environment: missing $key")
 
     override fun search(nihii: String,
         clientId: String,
@@ -115,7 +121,7 @@ class RswFhirServiceImpl(val stsService: STSService) : RswFhirService {
         accessToken: String,
         patientSsin: String): Bundle? {
         return objectMapper.readValue(
-            (URL("https://jacc.reseausantewallon.be/proxy/fhir/caresets/AllergyIntolerance?patient:Patient.identifier=${
+            (URL("${rswEndpoint("endpoint.rsw.fhir")}/caresets/AllergyIntolerance?patient:Patient.identifier=${
                 URLEncoder.encode(fhirSearchEndpoint, Charsets.UTF_8.name())
             }${patientSsin}").openConnection() as? HttpURLConnection)?.apply {
                 requestMethod = "GET"
@@ -140,7 +146,7 @@ class RswFhirServiceImpl(val stsService: STSService) : RswFhirService {
         }
 
     private fun obtainAccessToken(clientId: String, clientSecret: String, nihii: String) =
-        (URL("https://jacc.reseausantewallon.be/is4acc/careset/v1/token").openConnection() as? HttpURLConnection)?.postForm( //Request token
+        (URL("${rswEndpoint("endpoint.rsw.idp")}/careset/v1/token").openConnection() as? HttpURLConnection)?.postForm( //Request token
             listOf(
                 "grant_type" to "client_credentials",
                 "scope" to audience,
@@ -153,7 +159,7 @@ class RswFhirServiceImpl(val stsService: STSService) : RswFhirService {
         }
 
     private fun fetchRSWPublicKey(): PublicKey =
-        rswPublicKey ?: objectMapper.readValue(URL("https://jacc.reseausantewallon.be/is4acc/.well-known/openid-configuration").readBytes(), //load endpoints
+        rswPublicKey ?: objectMapper.readValue(URL("${rswEndpoint("endpoint.rsw.idp")}/.well-known/openid-configuration").readBytes(), //load endpoints
                                                RswEndpoints::class.java)?.let { endpoints ->
             objectMapper.readValue(URL(endpoints.jwks_uri).readBytes(), Jwks::class.java)
                 ?.let { it.keys?.firstOrNull()?.x5c?.joinToString("") }
