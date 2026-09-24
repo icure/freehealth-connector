@@ -20,6 +20,7 @@
 
 package org.taktik.freehealth.middleware
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.cors.CorsConfiguration
@@ -29,11 +30,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 class CrossOriginConfiguration {
     @Bean
-    fun corsConfigurationSource(): CorsConfigurationSource {
+    fun corsConfigurationSource(
+        @Value("\${fhc.cors.allowed-origin-patterns:*}") allowedOriginPatterns: List<String>
+    ): CorsConfigurationSource {
         val source = UrlBasedCorsConfigurationSource()
         val config = CorsConfiguration()
         config.allowCredentials = true
-        config.addAllowedOriginPattern("*")
+        allowedOriginPatterns.map { it.trim() }.filter { it.isNotEmpty() }.forEach { config.addAllowedOriginPattern(it) }
         config.addAllowedHeader("*")
         config.addAllowedMethod("*")
         source.registerCorsConfiguration("/**", config)
