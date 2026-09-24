@@ -160,7 +160,7 @@ interface RecipeV4Service {
     ): UpdateFeedbackFlagResult
 
     fun getGalToAdministrationUnit(galId: String): Code?
-    fun getPrescription(rid: String): PrescriptionFullWithFeedback?
+    fun getPrescription(keystoreId: UUID, passPhrase: String, rid: String): PrescriptionFullWithFeedback?
     fun getPrescriptionMessage(
         keystoreId: UUID,
         tokenId: UUID,

@@ -121,6 +121,7 @@ import java.util.concurrent.Callable
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import java.util.zip.DataFormatException
 import jakarta.xml.bind.JAXBContext
 import jakarta.xml.bind.JAXBException
@@ -135,9 +136,12 @@ class RecipeV4ServiceImpl(
 ) : RecipeV4Service {
     val log = LoggerFactory.getLogger(this.javaClass)!!
 
-    private val ridCache = CacheBuilder.newBuilder().build<String, GetPrescriptionForPrescriberResult>()
+    // Keyed by "keystoreId:rid" so that a prescription is only served back to the keystore that fetched it
+    private val ridCache = CacheBuilder.newBuilder().expireAfterWrite(12, TimeUnit.HOURS).maximumSize(100_000).build<String, GetPrescriptionForPrescriberResult>()
     private val feedbacksCache: Cache<String, SortedSet<Feedback>> =
-        CacheBuilder.newBuilder().build<String, SortedSet<Feedback>>()
+        CacheBuilder.newBuilder().expireAfterWrite(12, TimeUnit.HOURS).maximumSize(100_000).build<String, SortedSet<Feedback>>()
+
+    private fun cacheKey(keystoreId: UUID, rid: String) = "$keystoreId:$rid"
     private val service = PrescriberIntegrationModuleV4Impl(stsService, keyDepotService)
     private val validator = KmehrValidator();
 
@@ -169,7 +173,7 @@ class RecipeV4ServiceImpl(
             }
             val futures = es.invokeAll<GetPrescriptionForPrescriberResult>(ridList.prescriptions.map { rid ->
                 Callable<GetPrescriptionForPrescriberResult> {
-                    ridCache[rid, {
+                    ridCache[cacheKey(keystoreId, rid), {
                         service.getPrescription(
                             samlToken,
                             credential,
@@ -191,7 +195,7 @@ class RecipeV4ServiceImpl(
 
             try {
                 for (d in getFeedback.get()) {
-                    feedbacksCache[d.rid!!, { TreeSet() }].add(d)
+                    feedbacksCache[cacheKey(keystoreId, d.rid!!), { TreeSet() }].add(d)
                 }
             } catch (e: ExecutionException) {
                 log.error("Unexpected error", e)
@@ -1265,9 +1269,11 @@ class RecipeV4ServiceImpl(
     }
 
     @Throws(JAXBException::class)
-    override fun getPrescription(rid: String): PrescriptionFullWithFeedback? {
-        val r = ridCache.getIfPresent(rid) ?: return null
-        val fd = feedbacksCache.getIfPresent(rid)
+    override fun getPrescription(keystoreId: UUID, passPhrase: String, rid: String): PrescriptionFullWithFeedback? {
+        stsService.getKeyStore(keystoreId, passPhrase)
+            ?: throw IllegalArgumentException("Cannot open keystore $keystoreId")
+        val r = ridCache.getIfPresent(cacheKey(keystoreId, rid)) ?: return null
+        val fd = feedbacksCache.getIfPresent(cacheKey(keystoreId, rid))
         val result =
             PrescriptionFullWithFeedback(r.creationDate.time, r.encryptionKeyId, r.rid, r.feedbackAllowed, r.patientId)
         fd?.let { result.feedbacks = ArrayList(fd) }

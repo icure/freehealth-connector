@@ -655,8 +655,12 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
 
     @Operation(
         summary = "Get a prescription with feedback",
-        description = "Retrieves a full electronic prescription along with its associated feedback messages, identified by its Recipe ID (RID). Returns the complete prescription details including medications, patient info, and any pharmacist feedback."
+        description = "Retrieves a full electronic prescription along with its associated feedback messages, identified by its Recipe ID (RID), from the prescriptions previously loaded with the same keystore through GET /recipe/patient. Returns the complete prescription details including medications, patient info, and any pharmacist feedback, or an empty body if the prescription has not been loaded by this keystore."
     )
     @GetMapping("/{rid}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun getPrescription(@PathVariable rid: String): PrescriptionFullWithFeedback? = recipeV4Service.getPrescription(rid)
+    fun getPrescription(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @PathVariable rid: String
+    ): PrescriptionFullWithFeedback? = recipeV4Service.getPrescription(keystoreId, passPhrase, rid)
 }
