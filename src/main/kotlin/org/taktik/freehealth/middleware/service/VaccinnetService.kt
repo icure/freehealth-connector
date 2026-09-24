@@ -43,6 +43,7 @@ interface VaccinnetService {
         patientDateOfBirth: Long,
         softwareId: String,
         vaccinnetId: String,
-        injections: List<VaccineInjection>
+        injections: List<VaccineInjection>,
+        patientGender: String? = null
     ): AddVaccinationsResponseType
 }

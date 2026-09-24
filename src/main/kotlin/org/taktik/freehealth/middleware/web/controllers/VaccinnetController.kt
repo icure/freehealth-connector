@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.connector.business.domain.vaccinnet.VaccineInjection
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.service.VaccinnetService
 import java.util.*
@@ -91,6 +92,8 @@ class VaccinnetController(val vaccinnetService: VaccinnetService) {
         @RequestParam patientDateOfBirth: Long,
         @RequestParam softwareId: String,
         @RequestParam vaccinnetId: String,
+        @Parameter(description = "Patient sex (male, female, unknown or changed). Defaults to unknown.")
+        @RequestParam(required = false) patientGender: String?,
         @RequestBody injections: List<VaccineInjection>
-    ) = vaccinnetService.addVaccinations(keystoreId, tokenId, passPhrase, hcpNihii, hcpName, hcpQuality, hcpSupervisorNihii, hcpSupervisorName, hcpSupervisorQuality, patientId, patientFirstName, patientLastName, patientDateOfBirth, softwareId, vaccinnetId, injections)
+    ) = vaccinnetService.addVaccinations(keystoreId, tokenId, passPhrase, hcpNihii, hcpName, hcpQuality, hcpSupervisorNihii, hcpSupervisorName, hcpSupervisorQuality, patientId, patientFirstName, patientLastName, patientDateOfBirth, softwareId, vaccinnetId, injections, patientGender)
 }

@@ -92,8 +92,13 @@ class VaccinnetServiceImpl(private val stsService: STSService) : VaccinnetServic
         patientDateOfBirth: Long,
         softwareId: String,
         vaccinnetId: String,
-        injections: List<VaccineInjection>
+        injections: List<VaccineInjection>,
+        patientGender: String?
     ): AddVaccinationsResponseType {
+        val patientSex = patientGender?.let { g ->
+            CDSEXvalues.values().find { it.value().equals(g, ignoreCase = true) }
+                ?: throw IllegalArgumentException("Invalid patientGender $g, expected one of ${CDSEXvalues.values().joinToString { it.value() }}")
+        } ?: CDSEXvalues.UNKNOWN
         val now = FuzzyValues.getXMLGregorianCalendarFromFuzzyLong(FuzzyValues.currentFuzzyDateTime)
         val marshallerHelper = MarshallerHelper<Kmehrmessage, Kmehrmessage>(Kmehrmessage::class.java, Kmehrmessage::class.java)
         val samlToken = stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
@@ -133,7 +138,7 @@ class VaccinnetServiceImpl(private val stsService: STSService) : VaccinnetServic
                                 firstnames.add(patientFirstName)
                                 familyname = patientLastName
                                 birthdate = DateType().apply { date = FuzzyValues.getXMLGregorianCalendarFromFuzzyLong(patientDateOfBirth) }
-                                sex = SexType().apply { cd = CDSEX().apply { s= "CD-SEX"; sv="1.0"; value= CDSEXvalues.MALE } }
+                                sex = SexType().apply { cd = CDSEX().apply { s= "CD-SEX"; sv="1.0"; value= patientSex } }
                             }
                             transactions.add(
                                 TransactionType().apply {
