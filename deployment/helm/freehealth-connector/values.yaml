@@ -22,13 +22,13 @@ images:
         repository: "docker.taktik.be/icure/freehealth-connector"
         tag: "" # helm install
         replicaCount: 1
-        javaOpts: "" # config
-        memoryRequest: "128M"
-        memoryLimit: "128M"
+        javaOpts: "" # JVM options, e.g. -Dorg.taktik.connector.technical.config.location=/prod/org.taktik.connector.technical.properties
+        memoryRequest: "1Gi"
+        memoryLimit: "2Gi"
         cpuRequest: 100m
         cpuLimit: 2
         servicePort: 8080
-        debug: true
+        debug: false
         virtualHosts: []
         readiness: true
         liveness: true

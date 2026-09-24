@@ -44,7 +44,9 @@ spec:
               name: "jvm-debug"
                   {{- end }}
           env:
-            - name: JAVA_OPTS
+            - name: SERVER_PORT
+              value: "{{ .Values.images.freehealthconnector.servicePort }}"
+            - name: JDK_JAVA_OPTIONS
               value: "{{ .Values.images.freehealthconnector.javaOpts }}{{ if .Values.images.freehealthconnector.debug }} -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005{{ end }}{{ if .Values.images.freehealthconnector.debugsuspend }} -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005{{ end }}"
                   {{- range $key, $value := .Values.images.freehealthconnector.env }}
             - name: "{{ $key }}"
@@ -64,8 +66,8 @@ spec:
                 {{- if .Values.images.freehealthconnector.readiness }}
           readinessProbe:
             httpGet:
-              path: /hello
-              port: 8080
+              path: /actuator/health
+              port: http
             initialDelaySeconds: 20
             periodSeconds: 10
             timeoutSeconds: 5
@@ -75,8 +77,8 @@ spec:
                 {{- if .Values.images.freehealthconnector.liveness }}
           livenessProbe:
             httpGet:
-              path: /hello
-              port: 8080
+              path: /actuator/health
+              port: http
             initialDelaySeconds: 300
             periodSeconds: 30
             timeoutSeconds: 8
