@@ -89,15 +89,16 @@ class RateLimitFilter(
 
         val limit: Int
         val window: Long
-        val primaryKey = httpRequest.getHeader(rateLimitProperties.keyHeader)
+        val keyHeader = listOfNotNull(rateLimitProperties.keyHeader, rateLimitProperties.fallbackKeyHeader)
+            .firstOrNull { !httpRequest.getHeader(it).isNullOrBlank() }
         val keyType: String
         val keyValue: String
 
-        if (primaryKey != null) {
-            keyType = rateLimitProperties.keyHeader
-            keyValue = primaryKey
+        if (keyHeader != null) {
+            keyType = keyHeader
+            keyValue = httpRequest.getHeader(keyHeader)
             limit = groupLimit?.maxRequests ?: rateLimitProperties.maxRequests
-    } else {
+        } else {
             keyType = "ip"
             keyValue = httpRequest.remoteAddr
             limit = rateLimitProperties.anonymousLimit

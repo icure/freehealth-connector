@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component
 class RateLimitProperties {
     var enabled: Boolean = false
     var keyHeader: String = "X-FHC-tokenId"
+    var fallbackKeyHeader: String? = null
     var windowSeconds: Long = 60
     var maxRequests: Int = 100
     var anonymousLimit: Int = 20
