@@ -44,7 +44,7 @@ import org.taktik.freehealth.middleware.dto.EndpointDistributorStatusDto
 /**
  * REST controller exposing administrative endpoints for system management tasks such as
  * adjusting log levels and monitoring or forcing Business Continuity Plan (BCP) endpoint updates.
- * All endpoints in this controller require ROLE_ADMIN authority.
+ * All endpoints in this controller require ROLE_ADMIN authority, except the BCP status (GET /admin/bcp).
  *
  * @property addressbookService the addressbook service (injected dependency)
  */
@@ -84,13 +84,13 @@ class AdminController(val addressbookService: AddressbookService) {
     /**
      * Returns the current Business Continuity Plan (BCP) endpoint distributor status, including
      * whether polling is required, whether BCP mode is active, and the mapping of services to
-     * their active and default endpoints. Requires ROLE_ADMIN authority.
+     * their active and default endpoints. No authentication is required, so that monitoring can poll it.
      *
      * @return an [EndpointDistributorStatusDto] containing the current BCP status information
      */
     @Operation(
         summary = "Get BCP status",
-        description = "Returns the current Business Continuity Plan (BCP) endpoint distributor status. Requires ROLE_ADMIN authority."
+        description = "Returns the current Business Continuity Plan (BCP) endpoint distributor status. No authentication required."
     )
     @GetMapping("/bcp", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun bcpStatus(): EndpointDistributorStatusDto {
