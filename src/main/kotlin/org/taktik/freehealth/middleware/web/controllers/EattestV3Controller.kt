@@ -113,6 +113,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam(required = false) guardPostName: String?,
         @RequestParam(required = false) attemptNbr: Int?,
         @RequestParam(required = false) decisionReference: String?,
+        @RequestParam(required = false) inputReference: String?,
         @RequestBody attest: Eattest
     ) = eattestService.sendAttestV3(
         keystoreId,
@@ -140,6 +141,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         date,
         attemptNbr,
         decisionReference,
+        inputReference,
         attest
     )
 
@@ -210,6 +212,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam(required = false) guardPostName: String?,
         @RequestParam(required = false) attemptNbr: Int?,
         @RequestParam(required = false) decisionReference: String?,
+        @RequestParam(required = false) inputReference: String?,
         @RequestBody attest: Eattest
     ): SendAttestResult? = eattestService.sendAttestV3(
         keystoreId,
@@ -237,6 +240,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         date,
         attemptNbr,
         decisionReference,
+        inputReference,
         attest
     )?.let { SendAttestResult(it.acknowledge, it.invoicingNumber, it.attest) }
 

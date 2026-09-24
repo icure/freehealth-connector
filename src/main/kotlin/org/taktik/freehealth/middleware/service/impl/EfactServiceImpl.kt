@@ -174,7 +174,8 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
                         metadata.recordsCount++
                     }
 
-                    if (it.eidItem != null) {
+                    // ET 52 carries the eID reading and ET 52 Z 19, the agreement number; either one calls for the record
+                    if (it.eidItem != null || it.agreementNumber != null) {
                         rn = iv.writeEid(rn, it, invoice.patient!!, batch.sender!!)
                         recordCodes.add(it.codeNomenclature)
                         recordsCountPerOA[0]++

@@ -18,7 +18,6 @@ public class ETKHelper {
 
     private static final Logger LOG = LogManager.getLogger(ETKHelper.class);
     private static final String RECIPE_ID = "0206653946"; // Previously "0823257311";
-    private static final String ALT_RECIPE_ID = "0823257311"; // Previously "0823257311";
     private static final String KGSS_ID = "0809394427";
 
     private KeyDepotService keyDepotService;
@@ -32,7 +31,7 @@ public class ETKHelper {
     }
 
     public List<EncryptionToken> getRecipe_ETK() throws IntegrationModuleException {
-        return getEtks(KgssIdentifierType.CBE, ALT_RECIPE_ID, "");
+        return getEtks(KgssIdentifierType.CBE, RECIPE_ID, "RECIPE");
     }
 
     public List<EncryptionToken> getEtks(KgssIdentifierType identifierType, String identifierValue) throws IntegrationModuleException {

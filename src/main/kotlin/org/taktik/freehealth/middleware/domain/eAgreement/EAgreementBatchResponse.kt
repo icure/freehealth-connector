@@ -16,5 +16,6 @@ data class EAgreementBatchResponse(
     var issueInstant: XMLGregorianCalendar? = null,
     var inResponseTo: String? = null,
     var responseId: String? = null,
-    var assertions: List<Assertion> = ArrayList()
+    var assertions: List<Assertion> = ArrayList(),
+    var value: String? = null
 )
