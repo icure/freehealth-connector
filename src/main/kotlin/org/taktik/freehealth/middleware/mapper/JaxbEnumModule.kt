@@ -39,9 +39,12 @@ import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
 /**
- * Maps JAXB generated enums (KMEHR schemes such as IDHCPARTYschemes.ID_HCPARTY) through their XML value ("ID-HCPARTY")
- * instead of their Java constant name, as the Orika based mapper did before. When reading, both the XML value and the
- * constant name are accepted. Other enums serialize as usual and also accept such XML values when read.
+ * Keeps MapperFacade compatible with the Orika based mapper it replaced:
+ * - the ID-HCPARTY and CD-HCPARTY schemes (be.fgov.ehealth.standards.kmehr id/cd v1) are written with their XML value
+ *   ("ID-HCPARTY"), as Orika's dedicated IDHCPARTY/CDHCPARTY converters did;
+ * - all other enums are written with their constant name ("CD_ITEM"), as Orika's toString() conversion did;
+ * - when reading, JAXB enums accept both the XML value and the constant name, and other enums also accept a JAXB XML
+ *   value such as "ID-HCPARTY" for a constant named ID_HCPARTY.
  */
 class JaxbEnumModule : SimpleModule("JaxbEnumModule") {
     init {
@@ -51,7 +54,8 @@ class JaxbEnumModule : SimpleModule("JaxbEnumModule") {
                 valueType: JavaType,
                 beanDesc: BeanDescription,
                 serializer: JsonSerializer<*>
-            ): JsonSerializer<*> = xmlValueGetter(valueType.rawClass)?.let { JaxbEnumSerializer(it) } ?: serializer
+            ): JsonSerializer<*> =
+                xmlValueGetter(valueType.rawClass)?.takeIf { it.declaringClass.name in XML_VALUE_ENUMS }?.let { JaxbEnumSerializer(it) } ?: serializer
         })
         setDeserializerModifier(object : BeanDeserializerModifier() {
             override fun modifyEnumDeserializer(
@@ -101,6 +105,11 @@ class JaxbEnumModule : SimpleModule("JaxbEnumModule") {
     }
 
     companion object {
+        /** The only enums the Orika based mapper converted with their XML value. */
+        private val XML_VALUE_ENUMS = setOf(
+            "be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes",
+            "be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes"
+        )
         private val JAXB_ENUM_ANNOTATIONS = setOf("jakarta.xml.bind.annotation.XmlEnum", "javax.xml.bind.annotation.XmlEnum")
 
         /** The `value()` method JAXB generates on enums whose XML values differ from their constant names. */

@@ -2,6 +2,8 @@ package org.taktik.freehealth.middleware.mapper
 
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTY
 import be.fgov.ehealth.standards.kmehr.cd.v1.CDHCPARTYschemes
+import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEM
+import be.fgov.ehealth.standards.kmehr.cd.v1.CDITEMschemes
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTY
 import be.fgov.ehealth.standards.kmehr.id.v1.IDHCPARTYschemes
 import be.fgov.ehealth.standards.kmehr.schema.v1.AuthorType
@@ -18,8 +20,9 @@ import org.taktik.freehealth.middleware.dto.common.KmehrId
 import org.taktik.freehealth.middleware.dto.hub.TransactionSummaryDto
 
 /**
- * Nested KMEHR (JAXB) enums must be mapped with their XML value (ID-HCPARTY, CD-HCPARTY), as the Orika based
- * mapper used to do, and not with the Java constant name (ID_HCPARTY, CD_HCPARTY).
+ * Mapping must stay compatible with the former Orika based mapper: ID-HCPARTY and CD-HCPARTY schemes are mapped
+ * with their XML value (Orika had dedicated IDHCPARTY/CDHCPARTY converters), all other JAXB enums with their
+ * Java constant name (Orika used toString()).
  */
 class MapperFacadeJaxbEnumTest {
     private val objectMapper = ObjectMapper().registerKotlinModule()
@@ -85,5 +88,23 @@ class MapperFacadeJaxbEnumTest {
         val holder = mapper.map(JaxbSchemeHolder().apply { s = IDHCPARTYschemes.ID_HCPARTY }, SchemeHolder::class.java)
 
         assertThat(holder.s).isEqualTo(Scheme.ID_HCPARTY)
+    }
+
+    class CdHolder { var cd: KmehrCd? = null }
+    class JaxbCdItemHolder { var cd: CDITEM? = null }
+
+    @Test
+    fun otherJaxbEnumsKeepTheirConstantNameAsWithOrika() {
+        val holder = mapper.map(JaxbCdItemHolder().apply { cd = CDITEM().apply { s = CDITEMschemes.CD_ITEM; sv = "1.0"; value = "medication" } }, CdHolder::class.java)
+
+        assertThat(holder.cd?.s).isEqualTo("CD_ITEM")
+    }
+
+    @Test
+    fun otherJaxbEnumsAcceptBothFormsWhenMappingBack() {
+        listOf("CD_ITEM", "CD-ITEM").forEach { scheme ->
+            val holder = mapper.map(CdHolder().apply { cd = KmehrCd().apply { s = scheme; value = "medication" } }, JaxbCdItemHolder::class.java)
+            assertThat(holder.cd?.s).isEqualTo(CDITEMschemes.CD_ITEM)
+        }
     }
 }
