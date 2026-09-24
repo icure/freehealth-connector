@@ -33,6 +33,7 @@ class MapperFacade(objectMapper: ObjectMapper? = null) {
     private val objectMapper = (objectMapper?.copy() ?: ObjectMapper()).apply {
         configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+        registerModule(JaxbEnumModule())
     }
 
     private data class TypePair(val sourceType: Class<*>, val destType: Class<*>)
