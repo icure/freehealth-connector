@@ -1,20 +1,29 @@
 # Freehealth Connector
-A streamlined mmu (Massively Multi User) version of the eHealth connector
+A streamlined mmu (Massively Multi User) version of the eHealth connector: a REST/JSON middleware in front of the Belgian eHealth platform and MyCareNet.
+
+## Documentation
+
+- [Documentation index and feature overview](docs/README.md)
+- [Installation guide](docs/installation.md)
+- API reference:
+  [authentication & utilities](docs/api/authentication-and-utilities.md) ·
+  [MyCareNet insurability & billing](docs/api/mycarenet-insurance-and-billing.md) ·
+  [eAttest, Chapter IV & eAgreement](docs/api/attestations-and-agreements.md) ·
+  [Recip-e, eHealthBox, Vaccinnet & RSW](docs/api/prescriptions-and-messaging.md) ·
+  [hubs, consent & therapeutic links](docs/api/hubs-consent-and-therapeutic-links.md)
 
 ## Run via gradlew
 ```
 ./gradlew bootRun
-
-go to http://127.0.0.1:8080/api/index.html for documentation
-
 ```
-You need to set the mycarenet license info in org.taktik.connector.technical.properties
 
-(mycarenet.license.username & mycarenet.license.password). Make sure you have credentials adapted to the environment.
+The server listens on port 8090. The OpenAPI UI is at http://127.0.0.1:8090/swagger-ui.html (JSON at `/v3/api-docs`).
+
+You need to set the MyCareNet licence (`mycarenet.license.username` & `mycarenet.license.password`) in `org.taktik.connector.technical.properties`, with credentials suited to the target environment. See the [installation guide](docs/installation.md#mycarenet-licence).
 
 ## Test config
 
-File test/resources/test.properties:
+File `src/test/resources/test.properties` (copy `test.template.properties`):
 ```
 org.taktik.icure.keystore1.ssin=...
 org.taktik.icure.keystore1.nihii=...
@@ -29,37 +38,38 @@ org.taktik.icure.keystore2.name=...
 
 ### Obtaining a token
 
-Most of the endpoints require a valid token to be passed in the headers. You can obtain a token by calling the following endpoint:
+Most of the endpoints require a valid token to be passed in the headers. You can obtain a token by calling the following endpoints:
 
 ```bash
-SSIN='78010136212'
-FHC_PASS_PHRASE='********'
+FHC='https://fhcprd.icure.cloud'
+SSIN='<your SSIN>'
+FHC_PASS_PHRASE='<keystore passphrase>'
 KEYSTORE_PATH='/path/to/your/keystore.p12'
-KEYSTORE_ID="$(curl -s -X POST "https://fhcprd.icure.cloud/sts/keystore" \
+KEYSTORE_ID="$(curl -s -X POST "$FHC/sts/keystore" \
  -H "accept: */*" -H "content-type: multipart/form-data" \
  -F "file=@$KEYSTORE_PATH;type=application/x-pkcs12" | jq -r .uuid)"
-TOKEN_ID=curl -X GET "https://fhcprd.icure.cloud/sts/token?ssin=$SSIN" \
+TOKEN_ID="$(curl -s -X GET "$FHC/sts/token?ssin=$SSIN" \
  -H "accept: */*" -H "X-FHC-passPhrase: $FHC_PASS_PHRASE" \
- -H "X-FHC-keystoreId: $KEYSTORE_ID"
+ -H "X-FHC-keystoreId: $KEYSTORE_ID" | jq -r .tokenId)"
 ```
 
-This call is actually made of two calls:
+This is actually made of two calls:
 
 1. Uploading the keystore to the server, which returns a `keystoreId`.
 2. Using the `keystoreId` to obtain a token for the given SSIN.
 
 ### Using the token
 
-Once you have obtained a token, you can use it to access the endpoints by including it in the headers of your requests:
+Once you have obtained a token, you can use it to access the endpoints by including it in the headers of your requests.
 
-To create a prescription on recipe, you can use the following example:
+To create a prescription on Recip-e, you can use the following example:
 
 ```bash
-curl "https://fhcprd.icure.cloud/recipe/v4?hcpQuality=persphysician&hcpNihii=$NIHII&hcpSsin=$SSIN&hcpName=$HCPNAME" \
+curl "$FHC/recipe/v4?hcpQuality=persphysician&hcpNihii=$NIHII&hcpSsin=$SSIN&hcpName=$HCPNAME" \
   -H "content-type: application/json" \
   -H "x-fhc-keystoreid: $KEYSTORE_ID" \
-  -H "x-fhc-passphrase: Ztf993pf" \
-  -H "x-fhc-tokenid: 86a9c30c-3de5-4c39-9482-8a9c71e26165" \
+  -H "x-fhc-passphrase: $FHC_PASS_PHRASE" \
+  -H "x-fhc-tokenid: $TOKEN_ID" \
   --data-raw '{ "medications": ... }'
 ```
 
@@ -67,4 +77,4 @@ curl "https://fhcprd.icure.cloud/recipe/v4?hcpQuality=persphysician&hcpNihii=$NI
 
 The endpoints are documented in the OpenAPI format and can be accessed at:
 
-```https://fhcprd.icure.cloud/api/index.html```
+```https://fhcprd.icure.cloud/swagger-ui.html```
