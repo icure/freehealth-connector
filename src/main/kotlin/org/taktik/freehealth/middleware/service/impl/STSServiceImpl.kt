@@ -152,11 +152,12 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, quality)
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val etk = getHolderOfKeysEtk(credential, nihiiOrSsin)
+        val normalizedQuality = quality.toLowerCase(Locale.ROOT)
         if (hokPrivateKeys.isNotEmpty() && !hokPrivateKeys.containsKey(etk?.certificate?.serialNumber?.toString(10))) {
             throw java.lang.IllegalArgumentException("The certificate from the ETK don't match with the one in the encryption keystore")
         }
 
-        val designators = when (quality) {
+        val designators = when (normalizedQuality) {
             "institution" -> listOf(
                 SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:certificateholder:enterprise:cbe-number",
@@ -282,6 +283,20 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 ),
                 SAMLAttributeDesignator(
                     "urn:be:fgov:ehealth:1.0:certificateholder:groupofnurses:nihii-number:recognisedgroupofnurses:boolean",
+                    "urn:be:fgov:certified-namespace:ehealth"
+                )
+            )
+            "group_doctors" -> listOf(
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:groupdoctors:nihii-number",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:groupofdoctors:nihii-number",
+                    "urn:be:fgov:identification-namespace"
+                ),
+                SAMLAttributeDesignator(
+                    "urn:be:fgov:ehealth:1.0:groupofdoctors:nihii-number:recognisedgroupofdoctors:boolean",
                     "urn:be:fgov:certified-namespace:ehealth"
                 )
             )
@@ -626,7 +641,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             else -> throw IllegalArgumentException("unsupported quality")
         } + extraDesignators.map { SAMLAttributeDesignator(it.second, it.first) }
 
-        val attributes = when (quality) {
+        val attributes = when (normalizedQuality) {
             "institution" -> listOf(
                 SAMLAttribute(
                     "urn:be:fgov:ehealth:1.0:certificateholder:enterprise:cbe-number",
@@ -700,6 +715,18 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 ),
                 SAMLAttribute(
                     "urn:be:fgov:ehealth:1.0:certificateholder:groupofnurses:nihii-number",
+                    "urn:be:fgov:identification-namespace",
+                    nihiiOrSsin
+                )
+            )
+            "group_doctors" -> listOf(
+                SAMLAttribute(
+                    "urn:be:fgov:ehealth:1.0:certificateholder:groupdoctors:nihii-number",
+                    "urn:be:fgov:identification-namespace",
+                    nihiiOrSsin
+                ),
+                SAMLAttribute(
+                    "urn:be:fgov:ehealth:1.0:groupofdoctors:nihii-number",
                     "urn:be:fgov:identification-namespace",
                     nihiiOrSsin
                 )
