@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.web
 
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -17,6 +18,8 @@ import javax.xml.ws.soap.SOAPFaultException
  */
 @ControllerAdvice
 class ExceptionHandlers {
+    private val log = LoggerFactory.getLogger(this.javaClass)
+
     @ExceptionHandler(TechnicalConnectorException::class)
     fun handleTechnicalConnectorException(request: HttpServletRequest, exception: TechnicalConnectorException) =
             ExceptionDto(exception.category.httpStatus, exception, request.servletPath).toResponseEntity()
@@ -27,7 +30,9 @@ class ExceptionHandlers {
 
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgumentException(request: HttpServletRequest, exception: IllegalArgumentException) =
-            ExceptionDto(HttpStatus.BAD_REQUEST, exception, request.servletPath).toResponseEntity()
+            ExceptionDto(HttpStatus.BAD_REQUEST, exception, request.servletPath).toResponseEntity().also {
+                log.warn("Bad request on ${request.servletPath}: ${exception.message}", exception)
+            }
 
     @ExceptionHandler(SOAPFaultException::class)
     fun handleSoapFaultException(request: HttpServletRequest, exception: SOAPFaultException) =
@@ -38,5 +43,7 @@ class ExceptionHandlers {
 
     @ExceptionHandler(Exception::class)
     fun handleException(request: HttpServletRequest, exception: Exception) =
-            ExceptionDto(HttpStatus.INTERNAL_SERVER_ERROR, exception, request.servletPath).toResponseEntity()
+            ExceptionDto(HttpStatus.INTERNAL_SERVER_ERROR, exception, request.servletPath).toResponseEntity().also {
+                log.error("Internal error on ${request.servletPath}: ${exception.message}", exception)
+            }
 }
