@@ -71,7 +71,6 @@ import org.taktik.connector.business.memberdata.validators.impl.MemberDataXmlVal
 import org.taktik.connector.business.mycarenetcommons.mapper.SendRequestMapper
 import org.taktik.connector.business.mycarenetcommons.mapper.v3.BlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.builders.BlobBuilderFactory
-import org.taktik.connector.business.mycarenetdomaincommons.mapper.DomainBlobMapper
 import org.taktik.connector.business.mycarenetdomaincommons.util.McnConfigUtil
 import org.taktik.connector.business.mycarenetdomaincommons.util.PropertyUtil
 import org.taktik.connector.business.mycarenetdomaincommons.util.WsAddressingUtil
@@ -83,7 +82,6 @@ import org.taktik.connector.technical.service.etee.CryptoFactory
 import org.taktik.connector.technical.service.keydepot.KeyDepotService
 import org.taktik.connector.technical.service.keydepot.impl.KeyDepotManagerImpl
 import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
-import org.taktik.connector.technical.utils.ConnectorIOUtils
 import org.taktik.connector.technical.utils.ConnectorXmlUtils
 import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.utils.MarshallerHelper
@@ -102,6 +100,8 @@ import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.exception.UnauthorizedException
 import org.taktik.freehealth.middleware.service.MemberDataService
 import org.taktik.freehealth.middleware.service.STSService
+import org.taktik.freehealth.utils.AsyncPayloadDecoder
+import org.taktik.freehealth.utils.AsyncPayloadDecodingException
 import org.taktik.icure.cin.saml.extensions.AttributeQueryList
 import org.taktik.icure.cin.saml.extensions.ExtensionsType
 import org.taktik.icure.cin.saml.extensions.Facet
@@ -348,90 +348,98 @@ class MemberDataServiceImpl(val stsService: STSService, keyDepotService: KeyDepo
         return try {
             MemberDataList(
                 memberDataMessageList = response.`return`.msgResponses?.map {
-                    var data: ByteArray? = if (it.detail.contentEncoding == "deflate") ConnectorIOUtils.decompress(DomainBlobMapper.mapToBlob(it.detail).content) else DomainBlobMapper.mapToBlob(it.detail).content
-                    val responseList = if (it.detail.contentEncryption == "encryptedForKnownRecipient") {
-                        val unsealedData = crypto.unseal(Crypto.SigningPolicySelector.WITHOUT_NON_REPUDIATION, data).contentAsByte
-                        val encryptedKnownContent = MarshallerHelper(EncryptedKnownContent::class.java, EncryptedKnownContent::class.java).toObject(unsealedData)
-                        MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(
-                            if (encryptedKnownContent.businessContent.contentEncoding == "deflate")
-                                ConnectorIOUtils.decompress(encryptedKnownContent.businessContent.value) else encryptedKnownContent.businessContent.value
-                        )
-                    } else {
-                        MarshallerHelper(ResponseList::class.java, ResponseList::class.java).toObject(data)
-                    }
+                    // A message that cannot be decoded is reported on its own instead of failing the whole mailbox
+                    try {
+                        val responseList = AsyncPayloadDecoder.unmarshal(AsyncPayloadDecoder.decodeDetail(it.detail, crypto), ResponseList::class.java)
 
-                    listOfMdaDecryptedResponseContent.add(ConnectorXmlUtils.toString(responseList))
+                        listOfMdaDecryptedResponseContent.add(ConnectorXmlUtils.toString(responseList))
 
-                    MemberDataMessage(
-                        commonOutput = CommonOutput(
-                            inputReference = it.commonOutput.inputReference,
-                            outputReference = it.commonOutput.outputReference,
-                            nipReference = it.commonOutput.nipReference
-                        ),
-                        errors = null,
-                        genericErrors = null,
-                        reference = it.detail.reference,
-                        appliesTo = null,
-                        complete = null,
-                        io = null,
-                        memberDataResponse = responseList.responses.map {
-                            MemberDataBatchResponse(
-                                assertions = it.anies.map{
-                                    MarshallerHelper(Assertion::class.java, Assertion::class.java).toObject(it)
-                                },
-                                status = MdaStatus(
-                                    it.status.statusCode?.value,
-                                    it.status.statusCode?.statusCode?.value
-                                ),
-                                errors = it.status?.statusDetail?.anies?.map {
-                                    FaultType().apply {
-                                        faultCode = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultCode").item(0)?.textContent
-                                        faultSource = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultSource").item(0)?.textContent
-                                        message = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message").item(0)?.let {
-                                            StringLangType().apply {
-                                                value = it.textContent
-                                                lang = it.attributes.getNamedItem("lang")?.textContent
+                        MemberDataMessage(
+                            commonOutput = CommonOutput(
+                                inputReference = it.commonOutput.inputReference,
+                                outputReference = it.commonOutput.outputReference,
+                                nipReference = it.commonOutput.nipReference
+                            ),
+                            errors = null,
+                            genericErrors = null,
+                            reference = it.detail.reference,
+                            appliesTo = null,
+                            complete = null,
+                            io = null,
+                            memberDataResponse = responseList.responses.map {
+                                MemberDataBatchResponse(
+                                    assertions = it.anies.map{
+                                        MarshallerHelper(Assertion::class.java, Assertion::class.java).toObject(it)
+                                    },
+                                    status = MdaStatus(
+                                        it.status.statusCode?.value,
+                                        it.status.statusCode?.statusCode?.value
+                                    ),
+                                    errors = it.status?.statusDetail?.anies?.map {
+                                        FaultType().apply {
+                                            faultCode = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultCode").item(0)?.textContent
+                                            faultSource = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "FaultSource").item(0)?.textContent
+                                            message = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message").item(0)?.let {
+                                                StringLangType().apply {
+                                                    value = it.textContent
+                                                    lang = it.attributes.getNamedItem("lang")?.textContent
+                                                }
                                             }
-                                        }
 
-                                        it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Detail").let {
-                                            if (it.length > 0) {
-                                                details = DetailsType()
-                                            }
-                                            for (i in 0 until it.length) {
-                                                details.details.add(DetailType().apply {
-                                                    it.item(i).let {
-                                                        detailCode = (it as Element).getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailCode").item(0)?.textContent
-                                                        detailSource = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailSource").item(0)?.textContent
-                                                        location = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Location").item(0)?.textContent
-                                                        message = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message").item(0)?.let {
-                                                            StringLangType().apply {
-                                                                value = it.textContent
-                                                                lang = it.attributes.getNamedItem("lang")?.textContent
+                                            it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Detail").let {
+                                                if (it.length > 0) {
+                                                    details = DetailsType()
+                                                }
+                                                for (i in 0 until it.length) {
+                                                    details.details.add(DetailType().apply {
+                                                        it.item(i).let {
+                                                            detailCode = (it as Element).getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailCode").item(0)?.textContent
+                                                            detailSource = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "DetailSource").item(0)?.textContent
+                                                            location = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Location").item(0)?.textContent
+                                                            message = it.getElementsByTagNameWithOrWithoutNs("urn:be:cin:types:v1", "Message").item(0)?.let {
+                                                                StringLangType().apply {
+                                                                    value = it.textContent
+                                                                    lang = it.attributes.getNamedItem("lang")?.textContent
+                                                                }
                                                             }
                                                         }
-                                                    }
-                                                })
+                                                    })
+                                                }
                                             }
                                         }
-                                    }
-                                },
-                                issueInstant = it.issueInstant,
-                                inResponseTo = it.inResponseTo,
-                                issuer = it.issuer?.value,
-                                responseId = it.id
-                            )
-                                .apply {
-                                this.errors?.forEach {
-                                    it.details?.details?.forEach { d ->
-                                        this.myCarenetErrors += extractError(this.status?.code1, this.status?.code2, d.location, d.detailCode).toList()
+                                    },
+                                    issueInstant = it.issueInstant,
+                                    inResponseTo = it.inResponseTo,
+                                    issuer = it.issuer?.value,
+                                    responseId = it.id
+                                )
+                                    .apply {
+                                    this.errors?.forEach {
+                                        it.details?.details?.forEach { d ->
+                                            this.myCarenetErrors += extractError(this.status?.code1, this.status?.code2, d.location, d.detailCode).toList()
+                                        }
                                     }
                                 }
-                            }
-                        },
-                        valueHash = it.detail?.hashValue?.let { b64.encodeToString(it)}
-                    )
-
+                            },
+                            valueHash = it.detail?.hashValue?.let { b64.encodeToString(it)}
+                        )
+                    } catch (e: Exception) {
+                        val stage = (e as? AsyncPayloadDecodingException)?.stage ?: "map response"
+                        log.error("Cannot decode MDA async message reference=${it.detail?.reference} messageName=${it.detail?.messageName} contentType=${it.detail?.contentType} contentEncoding=${it.detail?.contentEncoding} contentEncryption=${it.detail?.contentEncryption} nipReference=${it.commonOutput?.nipReference} at stage [$stage], payload head: ${(e as? AsyncPayloadDecodingException)?.payloadHead}", e)
+                        MemberDataMessage(
+                            commonOutput = CommonOutput(
+                                inputReference = it.commonOutput?.inputReference,
+                                outputReference = it.commonOutput?.outputReference,
+                                nipReference = it.commonOutput?.nipReference
+                            ),
+                            genericErrors = listOf(FaultType().apply {
+                                faultCode = "DECODING_ERROR"
+                                faultSource = e.message
+                            }),
+                            reference = it.detail?.reference,
+                            valueHash = it.detail?.hashValue?.let { b64.encodeToString(it) }
+                        )
+                    }
                 },
                 acks = response.`return`.tAckResponses?.map {
                     MemberDataAck(
