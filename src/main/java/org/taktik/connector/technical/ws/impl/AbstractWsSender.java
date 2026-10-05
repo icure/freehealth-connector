@@ -78,13 +78,15 @@ public abstract class AbstractWsSender {
          request.put("javax.xml.ws.handler.message.outbound", true);
          executeHandlers(chain, request);
          conn = scf.createConnection();
-         SOAPMessage message = request.getMessage();
-         SOAPMessageContext reply = createSOAPMessageCtx(conn.call(message, generateEndpoint(request)));
+         SOAPMessage messageRequest = request.getMessage();
+         URL url = generateEndpoint(request);
+         SOAPMessage messageResponse = conn.call(messageRequest, url );
+         SOAPMessageContext reply = createSOAPMessageCtx(messageResponse);
          reply.putAll(genericRequest.getRequestMap());
          reply.put("javax.xml.ws.handler.message.outbound", false);
          ArrayUtils.reverse(chain);
          executeHandlers(chain, reply);
-         genericResponse = new GenericResponse(reply.getMessage());
+         genericResponse = new GenericResponse(reply.getMessage(), request.getMessage());
       } catch (Exception ex) {
          throw translate(ex);
       } finally {

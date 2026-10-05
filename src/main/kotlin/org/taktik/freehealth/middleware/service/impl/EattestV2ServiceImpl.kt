@@ -239,7 +239,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                 blob.messageName = "E-ATTEST-CANCEL"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
+                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnPackageName, samlToken.quality)
 
                 this.commonInput = CommonInputType().apply {
                     request =
@@ -434,7 +434,7 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                 blob.messageName = "E-ATTEST-V2"
 
                 val principal = SecurityContextHolder.getContext().authentication?.principal as? User
-                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnLicense, principal?.mcnPassword, principal?.mcnPackageName)
+                val packageInfo = McnConfigUtil.retrievePackageInfo("attest", principal?.mcnPackageName, samlToken.quality)
 
                 this.commonInput = CommonInputType().apply {
                     request =
@@ -1020,6 +1020,21 @@ class EattestV2ServiceImpl(private val stsService: STSService, private val keyDe
                                                                }
                                                            }).filterNotNull())
                                 }
+                            } ?: run {
+                                    code.requestorNorm?.let { norm ->
+                                        ItemType().apply {
+                                            ids.add(IDKMEHR().apply {
+                                                s = IDKMEHRschemes.ID_KMEHR; sv = "1.0"; value =
+                                                (itemId++).toString()
+                                            })
+                                            cds.add(CDITEM().apply { s = CD_ITEM; sv = "1.11"; value = "requestor" })
+                                            contents.addAll(listOf(ContentType().apply {
+                                                cds.add(CDCONTENT().apply {
+                                                    s = CDCONTENTschemes.LOCAL; sv = "1.0"; sl = "NIHDI-REQUESTOR-NORM"; value = norm.toString()
+                                                })
+                                            }))
+                                        }
+                                    }
                             }, code.gmdManager?.let { gmdm ->
                                 ItemType().apply {
                                     ids.add(IDKMEHR().apply {
