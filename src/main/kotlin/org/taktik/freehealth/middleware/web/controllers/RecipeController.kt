@@ -42,6 +42,7 @@ import org.taktik.freehealth.middleware.domain.recipe.PrescriptionFullWithFeedba
 import org.taktik.freehealth.middleware.dto.Code
 import org.taktik.freehealth.middleware.dto.recipe.ListStructuredPrescriptionsResult
 import org.taktik.freehealth.middleware.dto.recipe.PrescriptionRequest
+import org.taktik.freehealth.middleware.dto.recipe.PrescriptionsRequest
 import org.taktik.freehealth.middleware.service.RecipeV4Service
 import org.taktik.freehealth.utils.FuzzyValues
 import java.util.*
@@ -128,6 +129,46 @@ class RecipeController(val recipeV4Service: RecipeV4Service) {
             expirationDate = prescription.expirationDate?.let {FuzzyValues.getLocalDateTime(it)},
             lang = prescription.lang
         )
+
+    @PostMapping("/batch", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun createPrescriptions(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpQuality: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam(required = false) hcpSsin: String?,
+        @RequestParam(required = false) hcpName: String?,
+        @RequestBody prescription: PrescriptionsRequest,
+        @RequestHeader(required = false, name = "X-FHC-vendorName") vendorName: String?,
+        @RequestHeader(required = false, name = "X-FHC-packageVersion") packageVersion: String?
+    ): List<Prescription> =
+        recipeV4Service.createPrescriptions(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpQuality = hcpQuality,
+            hcpNihii = hcpNihii,
+            patient = prescription.patient!!,
+            hcp = prescription.hcp!!,
+            feedback = prescription.feedback!!,
+            medications = prescription.medicationsBatches!!,
+            prescriptionType = prescription.prescriptionType,
+            notification = prescription.notification,
+            executorId = prescription.executorId,
+            samVersion = prescription.samVersion,
+            deliveryDate = prescription.deliveryDate?.let {FuzzyValues.getLocalDateTime(it)},
+            vendorName = prescription.vendorName ?: vendorName,
+            packageName = prescription.packageName ?: packageVersion,
+            packageVersion = prescription.packageVersion,
+            vendorEmail = prescription.vendorEmail,
+            vendorPhone = prescription.vendorPhone,
+            vision = prescription.vision,
+            visionOthers = prescription.visionOthers?. let { VisionOtherPrescribers.fromValue(it) },
+            expirationDate = prescription.expirationDate?.let {FuzzyValues.getLocalDateTime(it)},
+            lang = prescription.lang
+        )
+
 
     @GetMapping("/patient", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun listOpenPrescriptionsByPatient(

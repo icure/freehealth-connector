@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.connector.business.domain.agreement.EAgreementResponse
+import org.taktik.freehealth.middleware.domain.eAgreement.EAgreementList
 import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.EagreementService
 import org.taktik.freehealth.middleware.service.impl.EagreementServiceImpl
@@ -66,6 +67,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam pathologyStartDate: Int,
         @RequestParam pathologyCode: String,
         @RequestParam sctCode: String,
+        @RequestParam prescriptionDate: Int,
         @RequestParam(required = false) sctDisplay: String?,
         @RequestParam(required = false) patientSsin: String?,
         @RequestParam(required = false) patientIo: String?,
@@ -114,6 +116,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             numberOfSessionForPrescription1 = numberOfSessionForPrescription1,
             numberOfSessionForPrescription2 = numberOfSessionForPrescription2,
             sctCode = sctCode,
+            prescriptionDate = formatter.parseDateTime(prescriptionDate.toString()),
             sctDisplay = sctDisplay,
             attachments = attachments?.filter { it.type != "prescription1" && it.type != "prescription2" }
         )
@@ -188,6 +191,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
         @RequestParam insuranceRef: String,
+        @RequestParam prescriptionDate: Int,
         @RequestParam(required = false) patientSsin: String?,
         @RequestParam(required = false) patientIo: String?,
         @RequestParam(required = false) patientIoMembership: String?,
@@ -195,6 +199,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) organizationType: String?,
         @RequestParam(required = false) agreementType: String?
     ): EAgreementResponse? {
+        val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -229,6 +234,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             numberOfSessionForPrescription1 = null,
             numberOfSessionForPrescription2 = null,
             sctCode = null,
+            prescriptionDate = formatter.parseDateTime(prescriptionDate.toString()),
             sctDisplay = null,
             attachments = null
         )
@@ -253,6 +259,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam pathologyStartDate: Int,
         @RequestParam pathologyCode: String,
         @RequestParam insuranceRef: String,
+        @RequestParam prescriptionDate: Int,
         @RequestParam(required = false) sctCode: String?,
         @RequestParam(required = false) sctDisplay: String?,
         @RequestParam(required = false) patientSsin: String?,
@@ -302,6 +309,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             numberOfSessionForPrescription1 = numberOfSessionForPrescription1,
             numberOfSessionForPrescription2 = numberOfSessionForPrescription2,
             sctCode = sctCode,
+            prescriptionDate = formatter.parseDateTime(prescriptionDate.toString()),
             sctDisplay = sctDisplay,
             attachments = attachments?.filter { it.type != "prescription1" && it.type != "prescription2" }
         )
@@ -325,6 +333,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
         @RequestParam insuranceRef: String,
+        @RequestParam prescriptionDate: Int,
         @RequestParam(required = false) sctCode: String?,
         @RequestParam(required = false) sctDisplay: String?,
         @RequestParam(required = false) patientSsin: String?,
@@ -337,6 +346,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) numberOfSessionForPrescription2: Float?,
         @RequestBody(required = false) attachments: List<Attachment>?
     ): EAgreementResponse? {
+        val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -371,6 +381,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             numberOfSessionForPrescription1 = numberOfSessionForPrescription1,
             numberOfSessionForPrescription2 = numberOfSessionForPrescription2,
             sctCode = sctCode,
+            prescriptionDate = formatter.parseDateTime(prescriptionDate.toString()),
             sctDisplay = sctDisplay,
             attachments = attachments?.filter { it.type != "prescription1" && it.type != "prescription2" }
         )
@@ -394,6 +405,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
         @RequestParam insuranceRef: String,
+        @RequestParam prescriptionDate: Int,
         @RequestParam(required = false) sctCode: String?,
         @RequestParam(required = false) sctDisplay: String?,
         @RequestParam(required = false) patientSsin: String?,
@@ -406,6 +418,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) numberOfSessionForPrescription2: Float?,
         @RequestBody(required = false) attachments: List<Attachment>?
     ): EAgreementResponse? {
+        val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
         return eagreementService.askAgreement(
             keystoreId = keystoreId,
             tokenId = tokenId,
@@ -440,8 +453,58 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             numberOfSessionForPrescription1 = numberOfSessionForPrescription1,
             numberOfSessionForPrescription2 = numberOfSessionForPrescription2,
             sctCode = sctCode,
+            prescriptionDate = formatter.parseDateTime(prescriptionDate.toString()),
             sctDisplay = sctDisplay,
             attachments = attachments?.filter { it.type != "prescription1" && it.type != "prescription2" }
         )
     }
+
+    @PostMapping("async/getMessages", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun getMessageList(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam hcpSpeciality: String
+    ): EAgreementList?{
+        return eagreementService.getMessages(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpFirstName = hcpFirstName,
+            hcpLastName = hcpLastName,
+            hcpQuality = hcpSpeciality
+        )
+    }
+
+    @PostMapping("async/confirmMessage", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun confirmMessage(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestParam hcpNihii: String,
+        @RequestParam hcpSsin: String,
+        @RequestParam hcpFirstName: String,
+        @RequestParam hcpLastName: String,
+        @RequestParam hcpSpeciality: String,
+        @RequestBody eagreementMessagesReference: List<String>) : Boolean?{
+
+        return eagreementService.confirmMessages(
+            keystoreId = keystoreId,
+            tokenId = tokenId,
+            passPhrase = passPhrase,
+            hcpQuality = hcpSpeciality,
+            hcpNihii = hcpNihii,
+            hcpSsin = hcpSsin,
+            hcpFirstName = hcpFirstName,
+            hcpLastName = hcpLastName,
+            eagreementMessagesReference = eagreementMessagesReference
+        )
+    }
+
 }

@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AuthorPaginationRequestType")
+@XmlType(name = "AuthorPaginationRequestType", namespace = "urn:be:fgov:ehealth:commons:protocol:v2")
 public class AuthorPaginationRequestType
     extends AuthorRequestType
 {

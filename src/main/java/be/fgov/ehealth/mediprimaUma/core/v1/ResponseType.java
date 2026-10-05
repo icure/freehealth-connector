@@ -35,7 +35,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ResponseType")
+@XmlType(name = "ResponseType", namespace = "urn:be:fgov:ehealth:commons:protocol:v2")
 @XmlSeeAlso({
     PaginationResponseType.class,
     StatusResponseType.class
