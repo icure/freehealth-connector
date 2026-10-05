@@ -275,8 +275,11 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
             }
 
             val errors = sendTransactionResponse.acknowledge.errors?.flatMap { e ->
-                e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
-                    extractError(requestXml, ec, e.url)
+                val errorCode = e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value
+                    ?: e.cds.find { it.s == CDERRORMYCARENETschemes.CD_REFUSAL_MYCARENET }?.value
+                    ?: e.cds.firstOrNull()?.value
+                errorCode?.let { ec ->
+                    extractError(requestXml, ec, e.url, e.description?.value)
                 } ?: setOf()
             }
             val commonOutput = cancelAttestationResponse.`return`.commonOutput
@@ -340,6 +343,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         referenceDate: Long?,
         attemptNbr: Int?,
         decisionReference: String?,
+        inputReference: String?,
         attest: Eattest): SendAttestResultWithResponse? {
         val derivedHcpQuality = hcpQuality ?: guardPostNihii?.let {"guardpost"} ?: "doctor"
 
@@ -354,6 +358,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
 
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
         val inputReference = referenceDate?.toString() ?: InputReference().inputReference
+        val derivedInputReference = inputReference ?: InputReference().inputReference
         val attribute = AttributeType().apply {
             key = "urn:be:cin:nippin:attemptNbr"
             value = attemptNbr ?: 1
@@ -426,7 +431,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                     request =
                         be.fgov.ehealth.mycarenet.commons.core.v4.RequestType()
                             .apply { isIsTest = config.getProperty("endpoint.genins")?.contains("-acpt") ?: false }
-                    this.inputReference = inputReference
+                    this.inputReference = derivedInputReference
                     this.attribute.add(attribute)
                     origin = OriginType().apply {
                         `package` = PackageType().apply {
@@ -514,8 +519,11 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                        )
 
             val errors = decryptedAndVerifiedResponse.sendTransactionResponse.acknowledge.errors?.flatMap { e ->
-                e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value?.let { ec ->
-                    extractError(requestXml, ec, e.url)
+                val errorCode = e.cds.find { it.s == CDERRORMYCARENETschemes.CD_ERROR }?.value
+                    ?: e.cds.find { it.s == CDERRORMYCARENETschemes.CD_REFUSAL_MYCARENET }?.value
+                    ?: e.cds.firstOrNull()?.value
+                errorCode?.let { ec ->
+                    extractError(requestXml, ec, e.url, e.description?.value)
                 } ?: setOf()
             }
             val commonOutput = sendAttestationResponse.`return`.commonOutput
@@ -996,14 +1004,14 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                                         value = (itemId++).toString()
                                     })
                                     cds.add(CDITEM().apply { s = CD_ITEM_MYCARENET; sv = "1.6"; value = "decisionreference" })
-                                    contents.addAll(listOf(ContentType().apply {
-                                        cds.add(CDCONTENT().apply {
-                                            s = CDCONTENTschemes.LOCAL;
-                                            sv = "1.0";
-                                            sl = "OAreferencesystemname";
-                                            value = decisionReference.toString();
+                                    contents.add(ContentType().apply {
+                                        ids.add(IDKMEHR().apply {
+                                            s = IDKMEHRschemes.LOCAL
+                                            sv = "1.0"
+                                            sl = "OAreferencesystemname"
+                                            value = decisionReference
                                         })
-                                    }))
+                                    })
                                 }
                             }, code.location?.let { loc ->
                                 ItemType().apply {
@@ -1464,7 +1472,7 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
         DateTime(0).withYear(year).withMonthOfYear(month).withDayOfMonth(day).withHourOfDay(hour).withMinuteOfHour(minutes).withSecondOfMinute(seconds).withMillisOfSecond(0)
     }
 
-    private fun extractError(sendTransactionRequest: ByteArray, ec: String, errorUrl: String?): Set<MycarenetError> {
+    private fun extractError(sendTransactionRequest: ByteArray, ec: String, errorUrl: String?, description: String? = null): Set<MycarenetError> {
         return errorUrl?.let { url ->
             val factory = DocumentBuilderFactory.newInstance()
             factory.isNamespaceAware = true
@@ -1493,8 +1501,20 @@ class EattestV3ServiceImpl(private val stsService: STSService, private val keyDe
                         eAttestErrors.values.filter {
                             it.path == base && it.code == ec && (it.regex == null || url.matches(Regex(".*" + it.regex + ".*")))
                         }
-                    elements.forEach { it.value = textContent }
-                    result.addAll(elements)
+                    if (elements.isNotEmpty()) {
+                        elements.forEach { it.value = textContent }
+                        result.addAll(elements)
+                    } else {
+                        result.add(
+                            MycarenetError(
+                                code = ec,
+                                path = base,
+                                value = textContent,
+                                msgFr = description ?: "Erreur $ec",
+                                msgNl = description ?: "Fout $ec"
+                                          )
+                                  )
+                    }
                 } else {
                     result.add(
                         MycarenetError(

@@ -47,6 +47,8 @@ import be.recipe.services.prescriber.UpdateFeedbackFlagParam
 import be.recipe.services.prescriber.UpdateFeedbackFlagResult
 import be.recipe.services.prescriber.ValidationPropertiesParam
 import be.recipe.services.prescriber.ValidationPropertiesResult
+import com.github.benmanes.caffeine.cache.Cache
+import com.github.benmanes.caffeine.cache.Caffeine
 import com.sun.xml.internal.ws.client.ClientTransportException
 import org.apache.commons.lang3.StringUtils
 import org.joda.time.DateTime
@@ -85,10 +87,10 @@ import org.xml.sax.SAXException
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.math.BigInteger
-import java.math.BigInteger.ZERO
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
@@ -103,7 +105,13 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
     AbstractIntegrationModule(keyDepotService), PrescriberIntegrationModuleV4 {
     private val log = LoggerFactory.getLogger(PrescriberIntegrationModuleV4Impl::class.java)
     private val recipePrescriberServiceV4 = RecipePrescriberServiceV4Impl()
-    private val keyCache = HashMap<String, KeyResult>()
+    private val keyCache: Cache<String, KeyResult> = Caffeine.newBuilder()
+        .expireAfterWrite(5, TimeUnit.MINUTES)
+        .maximumWeight((Runtime.getRuntime().maxMemory() * 0.2).toLong())
+        .weigher { key: String, value: KeyResult ->
+            (key.length + (value.keyId?.length ?: 0)) * 2 + 128
+        }
+        .build()
     private val kmehrHelper = KmehrHelper(Properties().apply {
         load(PrescriberIntegrationModuleV4Impl::class.java.getResourceAsStream("/org/taktik/connector/business/recipe/validation.properties"))
     })
@@ -114,14 +122,9 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
         patientId: String,
         prescriptionType: String
     ): KeyResult? {
-        val key: KeyResult?
-
-        val cacheId = "($patientId#$prescriptionType)"
-        if (keyCache.containsKey(cacheId)) {
-            key = keyCache[cacheId]
-            keyCache.remove(cacheId)
-        } else {
-            key = getNewKeyFromKgss(
+        val cacheId = "($nihii#$patientId#$prescriptionType)"
+        return keyCache.get(cacheId) {
+            getNewKeyFromKgss(
                 credential,
                 prescriptionType,
                 nihii,
@@ -129,7 +132,6 @@ class PrescriberIntegrationModuleV4Impl(val stsService: STSService, keyDepotServ
                 stsService.getHolderOfKeysEtk(credential, nihii)!!.encoded
             )
         }
-        return key
     }
 
     /**

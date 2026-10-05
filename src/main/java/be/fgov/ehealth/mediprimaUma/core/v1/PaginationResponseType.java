@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PaginationResponseType")
+@XmlType(name = "PaginationResponseType", namespace = "urn:be:fgov:ehealth:commons:protocol:v2")
 public class PaginationResponseType
     extends ResponseType
 {
