@@ -12,6 +12,9 @@ object BlobMapper {
             hashValue = blob.hashValue
             contentType = blob.contentType
             contentEncryption = blob.contentEncryption
+            // v4 adds MessageVersion on the Detail element; the service rejects the
+            // request with INVALID_DETAIL_REQUEST when it is missing.
+            messageVersion = blob.messageVersion
         }
     }
 
