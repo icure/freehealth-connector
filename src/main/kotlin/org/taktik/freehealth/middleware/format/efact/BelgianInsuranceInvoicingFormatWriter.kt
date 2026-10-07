@@ -591,6 +591,10 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
             reason
         } else 0
 
+        if (eidItem.deviceType == EIDItem.DEVICE_TYPE_NONE) {
+            require(manualEntryReasonValue == EIDItem.MANUAL_ENTRY_REASON_NO_ID_DOCUMENT) { "deviceType 0 (no identity document) is only allowed when manualEntryReason is ${EIDItem.MANUAL_ENTRY_REASON_NO_ID_DOCUMENT}, got: $manualEntryReasonValue" }
+        }
+
         require(eidItem.vignetteReason in EIDItem.VIGNETTE_REASON_RANGE) { "vignetteReason must be a single digit (${EIDItem.VIGNETTE_REASON_RANGE}), got: ${eidItem.vignetteReason}" }
         if (eidItem.deviceType != EIDItem.DEVICE_TYPE_VIGNETTE) {
             require(eidItem.vignetteReason == 0) { "vignetteReason must be 0 when deviceType is not 7 (vignette), got: ${eidItem.vignetteReason}" }
