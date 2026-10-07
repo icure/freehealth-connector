@@ -51,30 +51,68 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
         keystoreId: UUID,
         tokenId: UUID,
         passPhrase: String,
-        queryLastName: String,
-        queryFirstName: String?,
-        type: String
+        lastName: String?,
+        firstName: String?,
+        profession: String?,
+        nihii: String?,
+        ssin: String?,
+        zipCode: String?,
+        city: String?,
+        email: String?,
+        offset: Int,
+        limit: Int
     ): List<HealthcareParty> {
+        val queryLastName = lastName?.trim()?.takeIf { it.isNotEmpty() }
+        val queryFirstName = firstName?.trim()?.takeIf { it.isNotEmpty() }
+        val queryProfession = profession?.trim()?.takeIf { it.isNotEmpty() && !it.equals("ALL", true) }
+        val queryNihii = nihii?.trim()?.takeIf { it.isNotEmpty() }
+        val querySsin = ssin?.trim()?.takeIf { it.isNotEmpty() }
+        val queryZipCode = zipCode?.trim()?.takeIf { it.isNotEmpty() }
+        val queryCity = city?.trim()?.takeIf { it.isNotEmpty() }
+        val queryEmail = email?.trim()?.takeIf { it.isNotEmpty() }
+        // Hoisted: inside apply {} a bare `offset` would resolve to the receiver's own member, not to this parameter
+        val queryOffset = offset.coerceAtLeast(0)
+        val queryLimit = limit.coerceIn(1, MAX_SEARCH_RESULTS)
+
+        require(queryNihii == null || querySsin == null) { "nihii and ssin are mutually exclusive" }
+        require(queryZipCode == null || queryCity == null) { "zipCode and city are mutually exclusive" }
+        // Only guard against the fully empty query; which combinations the addressbook actually supports is the
+        // service's call, and its refusal ("This combination of search criteria is not supported.") now reaches the
+        // caller through ExceptionHandlers.
+        require(
+            listOfNotNull(
+                queryLastName, queryFirstName, queryProfession, queryNihii, querySsin, queryZipCode, queryCity,
+                queryEmail
+            ).isNotEmpty()
+        ) { "At least one search criterion is required" }
+
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Addressbook operations")
         val searchProfessionals =
             freehealthTokenAddressbookService.searchProfessionals(samlToken, SearchProfessionalsRequest().apply {
-                firstName = queryFirstName; lastName = queryLastName; issueInstant = DateTime.now(); profession = type
-                offset = 0; maxElements = 100
+                this.lastName = queryLastName; this.firstName = queryFirstName
+                this.profession = queryProfession
+                this.nihii = queryNihii; this.ssin = querySsin
+                this.zipCode = queryZipCode; this.city = queryCity
+                this.eMail = queryEmail
+                issueInstant = DateTime.now()
+                this.offset = queryOffset
+                maxElements = queryLimit
             })
-        return searchProfessionals.healthCareProfessionals.filter {
-            queryFirstName == null || it.firstName != null && it.firstName.startsWith(
-                queryFirstName,
-                true
-            )
-        }.map {
-            HealthcareParty(lastName = it.lastName,
-                            firstName = it.firstName,
-                            gender = Gender.fromCode(it.gender) ?: Gender.unknown,
-                            nihii = (it.professions.find { it.professionCodes.any { it.value == "PHYSICIAN" } }
-                                ?: it.professions.firstOrNull())?.nihii,
-                            ssin = it.ssin,
+        return searchProfessionals.healthCareProfessionals.map { hcp ->
+            val hcpProfession = queryProfession?.let { wanted ->
+                hcp.professions?.find { p -> p.professionCodes?.any { it.value.equals(wanted, true) } ?: false }
+            } ?: hcp.professions?.firstOrNull()
+            HealthcareParty(lastName = hcp.lastName,
+                            firstName = hcp.firstName,
+                            gender = Gender.fromCode(hcp.gender) ?: Gender.unknown,
+                            speciality = hcpProfession?.specialities?.firstOrNull()?.let { spec ->
+                                spec.specialityFriendlyNames?.firstOrNull()?.value ?: spec.specialityCode
+                            },
+                            nihii = hcpProfession?.nihii,
+                            ssin = hcp.ssin,
+                            professionCodes = hcpProfession?.professionCodes ?: listOf(),
                             ehealthBoxes = listOf())
         }
     }
@@ -212,5 +250,11 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
                 }
             } ?: listOf())
         }
+    }
+
+    companion object {
+        // The addressbook service refuses maxElements above 100 with
+        // "The maxElements paging attribute is too high." (measured against acceptance)
+        private const val MAX_SEARCH_RESULTS = 100
     }
 }
