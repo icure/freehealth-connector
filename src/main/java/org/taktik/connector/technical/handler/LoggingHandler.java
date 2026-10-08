@@ -6,6 +6,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.taktik.connector.technical.utils.RequestDebug;
 
 public class LoggingHandler extends AbstractSOAPHandler {
    private static final Logger LOG = LoggerFactory.getLogger(LoggingHandler.class);
@@ -20,7 +21,7 @@ public class LoggingHandler extends AbstractSOAPHandler {
          msg.getMimeHeaders().getHeader("X-CorrelationID");
       }
 
-      if (LOG.isDebugEnabled()) {
+      if (LOG.isDebugEnabled() || RequestDebug.isEnabled()) {
          dumpMessage(msg, "OUT", LOG);
       }
 
@@ -36,7 +37,7 @@ public class LoggingHandler extends AbstractSOAPHandler {
          }
       }
 
-      if (LOG.isDebugEnabled()) {
+      if (LOG.isDebugEnabled() || RequestDebug.isEnabled()) {
          dumpMessage(msg, "IN", LOG);
       }
 

@@ -32,10 +32,10 @@ object LoggingMdcUtil {
     /**
      * Get the MDC for logging
      * @param key The key
-     * @return The value
+     * @return The value, or null when the key is absent on the current thread
      */
-    fun getMDC(key: String): String {
-        return MDC.get(key) as String
+    fun getMDC(key: String): String? {
+        return MDC.get(key)?.toString()
     }
 
     /**
@@ -44,6 +44,6 @@ object LoggingMdcUtil {
      * @return The value
      */
     fun getBooleanMDC(key: String): Boolean {
-        return getMDC(key).toBoolean()
+        return getMDC(key)?.toBoolean() ?: false
     }
 }

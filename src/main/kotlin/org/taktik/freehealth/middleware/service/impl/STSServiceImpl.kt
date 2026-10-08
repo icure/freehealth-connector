@@ -46,6 +46,8 @@ import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredenti
 import org.taktik.connector.technical.service.sts.utils.SAMLConverter
 import org.taktik.connector.technical.service.sts.utils.SAMLHelper
 import org.taktik.connector.technical.utils.CertificateParser
+import org.taktik.connector.technical.utils.IdentifierType
+import org.taktik.connector.technical.utils.RequestDebug
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
 import org.taktik.freehealth.middleware.dto.CertificateInfo
 import org.taktik.freehealth.middleware.dto.MergeKeystoresResponseDto
@@ -88,6 +90,14 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             return KeyManager.getKeyStore(keyStoreData.inputStream(), "PKCS12", key.second.toCharArray())
         }
     })
+
+    // X-FHC-debug is put in the MDC by MdcInterceptor; RequestDebug routes the output to the fhc.trace logger.
+    private fun debugLog(message: () -> String) {
+        when {
+            RequestDebug.isEnabled() -> RequestDebug.trace("{}", message())
+            log.isDebugEnabled -> log.debug(message())
+        }
+    }
 
     override fun isAcceptance() = config.getProperty("endpoint.sts").contains("-acpt")
 
@@ -132,6 +142,14 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         extraDesignators: List<Pair<String, String>>
     ): SamlTokenResult? {
         val now = System.currentTimeMillis()
+        val normalizedQuality = quality.toLowerCase(Locale.ROOT)
+
+        debugLog {
+            "requestToken: start keystoreId=$keystoreId quality='$quality' (normalized='$normalizedQuality') " +
+                "nihiiOrSsin='$nihiiOrSsin' (length=${nihiiOrSsin.length}) cbeNumber='$cbeNumber' " +
+                "previousTokenId=$tokenId extraDesignators=$extraDesignators acceptance=${isAcceptance()}"
+        }
+
         val currentToken = tokenId?.let { id -> tokensMap[id] }
         val isStillRecommendedForUse = currentToken?.let {
             val valid = it.validity
@@ -146,13 +164,39 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             }
         } ?: false
 
+        debugLog {
+            "requestToken: cached token " +
+                (currentToken?.let { "found (quality='${it.quality}' timestamp=${it.timestamp} validity=${it.validity})" } ?: "absent") +
+                " -> reuse=$isStillRecommendedForUse"
+        }
+
         if (isStillRecommendedForUse) return currentToken
 
         val keystore = getKeyStore(keystoreId, passPhrase)
         val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, quality)
+
+        val certParser = CertificateParser(credential.certificate)
+        debugLog {
+            "requestToken: authentication certificate subject=[${credential.certificate.subjectX500Principal.name}] " +
+                "issuer=[${credential.certificate.issuerX500Principal.name}] type=${certParser.type} id=${certParser.id} " +
+                "application=${certParser.application} owner=${certParser.owner} " +
+                "serial=${credential.certificate.serialNumber.toString(10)} notBefore=${credential.certificate.notBefore} notAfter=${credential.certificate.notAfter}"
+        }
+
+        // The certificateholder claim must carry the identifier that is actually in the certificate, otherwise the STS answers RequestDenied.
+        val expectedCertificateHolderValue = if (normalizedQuality == "institution") cbeNumber else nihiiOrSsin
+        if (certParser.id != null && certParser.id != expectedCertificateHolderValue) {
+            log.warn(
+                "requestToken: certificate holder ${certParser.type}=${certParser.id} does not match the identifier " +
+                    "'$expectedCertificateHolderValue' that will be sent as certificateholder claim for quality '$normalizedQuality'"
+            )
+        }
+
         val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
         val etk = getHolderOfKeysEtk(credential, nihiiOrSsin)
-        val normalizedQuality = quality.toLowerCase(Locale.ROOT)
+        debugLog {
+            "requestToken: encryption keystore serials=${hokPrivateKeys.keys} etkSerial=${etk?.certificate?.serialNumber?.toString(10) ?: "<none>"}"
+        }
         if (hokPrivateKeys.isNotEmpty() && !hokPrivateKeys.containsKey(etk?.certificate?.serialNumber?.toString(10))) {
             throw java.lang.IllegalArgumentException("The certificate from the ETK don't match with the one in the encryption keystore")
         }
@@ -288,7 +332,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             )
             "group_doctors" -> listOf(
                 SAMLAttributeDesignator(
-                    "urn:be:fgov:ehealth:1.0:certificateholder:groupdoctors:nihii-number",
+                    "urn:be:fgov:ehealth:1.0:certificateholder:groupofdoctors:nihii-number",
                     "urn:be:fgov:identification-namespace"
                 ),
                 SAMLAttributeDesignator(
@@ -721,7 +765,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             )
             "group_doctors" -> listOf(
                 SAMLAttribute(
-                    "urn:be:fgov:ehealth:1.0:certificateholder:groupdoctors:nihii-number",
+                    "urn:be:fgov:ehealth:1.0:certificateholder:groupofdoctors:nihii-number",
                     "urn:be:fgov:identification-namespace",
                     nihiiOrSsin
                 ),
@@ -771,7 +815,22 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             )
         }
 
+        attributes.filter { it.values.isEmpty() || it.values.first().isNullOrBlank() }.forEach {
+            log.warn("requestToken: attribute ${it.name} has no value for quality '$normalizedQuality'")
+        }
+
+        debugLog {
+            "requestToken: claims for quality '$normalizedQuality':\n" +
+                attributes.joinToString("\n") { "  attribute  ${it.name} = ${it.values.joinToString(";")} [${it.namespace}]" } +
+                (if (designators.isEmpty()) "" else "\n") +
+                designators.joinToString("\n") { "  designator ${it.name} [${it.namespace}]" }
+        }
+
         return try {
+            debugLog {
+                "requestToken: calling STS ${config.getProperty("endpoint.sts")} with ${attributes.size} attributes, " +
+                    "${designators.size} designators, holder-of-key, validity 24h"
+            }
             val assertion =
                 freehealthStsService.getToken(
                     credential,
@@ -791,11 +850,25 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             val samlTokenResult =
                 SamlTokenResult(randomUUID, samlToken, now, SAMLHelper.getNotOnOrAfterCondition(assertion).toInstant().millis, quality)
             tokensMap[randomUUID] = samlTokenResult
+            debugLog {
+                "requestToken: STS issued tokenId=$randomUUID for quality '$normalizedQuality' in ${System.currentTimeMillis() - now}ms, " +
+                    "validUntil=${samlTokenResult.validity} assertionLength=${samlToken.length}"
+            }
             log.info("requestToken: tokensMap size: ${tokensMap.size}")
             samlTokenResult
         } catch (e: TechnicalConnectorException) {
-            log.error("requestToken: STS token request failure: ${e.errorCode} : ${e.message} : ${e.stackTrace}")
+            log.error(
+                "requestToken: STS token request failure for quality '$normalizedQuality' id='$nihiiOrSsin' " +
+                    "cert=${certParser.type}/${certParser.id}: ${e.errorCode} : ${e.message}", e
+            )
             currentToken // FIXME: should throw if no currentToken
+        } catch (e: Exception) {
+            log.error(
+                "requestToken: STS rejected the request for quality '$normalizedQuality' id='$nihiiOrSsin' " +
+                    "cert=${certParser.type}/${certParser.id} | attributes: ${attributes.joinToString { "${it.name}=${it.values.joinToString(";")}" }} " +
+                    "| designators: ${designators.joinToString { it.name }}", e
+            )
+            throw e
         }
     }
 
@@ -826,13 +899,22 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             val identifierValue = parser.id
             val application = parser.application
 
-            this.keyDepotService.getETKSet(
+            debugLog {
+                "getHolderOfKeysEtk: looking up ETK for identifierType=${identifierType.getType(IdentifierType.ETKDEPOT)} (certType=${parser.type}) " +
+                    "value=$identifierValue application=$application keystoreId=${credential.keystoreId} nihiiOrSsin=$nihiiOrSsin"
+            }
+
+            val etkSet = this.keyDepotService.getETKSet(
                 identifierType,
                 identifierType.formatIdentifierValue(java.lang.Long.parseLong(identifierValue)),
                 application,
                 credential.keystoreId,
                 true
-            )?.let { if (it.size == 1) it.iterator().next() else null } ?: throw TechnicalConnectorException(
+            )
+
+            debugLog { "getHolderOfKeysEtk: ETK set size=${etkSet?.size ?: 0} for $identifierValue" }
+
+            etkSet?.let { if (it.size == 1) it.iterator().next() else null } ?: throw TechnicalConnectorException(
                 ERROR_ETK_NOTFOUND,
                 arrayOfNulls<Any>(0)
             )

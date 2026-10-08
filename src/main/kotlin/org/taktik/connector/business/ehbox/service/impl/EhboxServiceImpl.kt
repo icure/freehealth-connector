@@ -36,6 +36,7 @@ import org.taktik.connector.technical.exception.TechnicalConnectorExceptionValue
 import org.taktik.connector.technical.service.sts.security.SAMLToken
 import org.taktik.connector.technical.ws.domain.GenericRequest
 import org.taktik.connector.technical.ws.domain.GenericResponse
+import org.taktik.connector.technical.utils.RequestDebug
 import org.taktik.freehealth.utils.LoggingMdcUtil
 import org.taktik.freehealth.utils.SOAPMessageConverter.toXmlString
 
@@ -273,11 +274,11 @@ class EhboxServiceImpl(val replyValidator: EhboxReplyValidator) : EhboxService {
                 .replace("urn:be:fgov:ehealth:ehbox:consultation:protocol:v3:", "")
 
             if(xmlResponse != null &&  xmlRequest != null){
-                log.warn("{} Request: [{}]", action, xmlRequest.payload.toXmlString())
-                log.warn("{} Response: [{}]", action, xmlResponse.soapMessage.toXmlString())
+                RequestDebug.trace("{} Request: [{}]", action, xmlRequest.payload.toXmlString())
+                RequestDebug.trace("{} Response: [{}]", action, xmlResponse.soapMessage.toXmlString())
             }else{
-                log.warn("{} Request: [{}]", action, "No data")
-                log.warn("{} Response: [{}]", action, "No data")
+                RequestDebug.trace("{} Request: [{}]", action, "No data")
+                RequestDebug.trace("{} Response: [{}]", action, "No data")
             }
         }
     }

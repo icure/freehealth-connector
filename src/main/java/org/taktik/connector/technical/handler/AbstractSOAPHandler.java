@@ -2,6 +2,7 @@ package org.taktik.connector.technical.handler;
 
 import org.taktik.connector.technical.enumeration.Charset;
 import org.taktik.connector.technical.utils.ConnectorXmlUtils;
+import org.taktik.connector.technical.utils.RequestDebug;
 import java.util.HashSet;
 import java.util.Set;
 import javax.xml.namespace.QName;
@@ -45,13 +46,15 @@ public abstract class AbstractSOAPHandler implements SOAPHandler<SOAPMessageCont
          try {
             String content = ConnectorXmlUtils.toString((Node)msg.getSOAPPart().getEnvelope());
             int size = content.getBytes(Charset.UTF_8.getName()).length;
-            if (content.getBytes().length < 1048576) {
-               log.debug("[" + mode + "] - " + size + " bytes - " + content);
-            } else {
+            if (content.getBytes().length >= 1048576) {
                log.warn("[" + mode + "] - " + size + " bytes - " + "message to large to log");
+            } else if (RequestDebug.isEnabled()) {
+               RequestDebug.trace("[{}] - {} bytes - {}", mode, size, content);
+            } else {
+               log.debug("[" + mode + "] - " + size + " bytes - " + content);
             }
          } catch (Exception var5) {
-            log.debug("Unable to dump message", var5);
+            log.warn("Unable to dump message", var5);
          }
 
       }

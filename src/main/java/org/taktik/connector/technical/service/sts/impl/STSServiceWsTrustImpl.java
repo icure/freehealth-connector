@@ -12,6 +12,7 @@ import org.taktik.connector.technical.service.ws.ServiceFactory;
 import org.taktik.connector.technical.utils.ConnectorIOUtils;
 import org.taktik.connector.technical.utils.ConnectorXmlUtils;
 import org.taktik.connector.technical.utils.DateUtils;
+import org.taktik.connector.technical.utils.RequestDebug;
 import org.taktik.connector.technical.ws.domain.GenericRequest;
 import org.taktik.connector.technical.ws.domain.GenericResponse;
 
@@ -26,6 +27,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.util.encoders.Base64;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -33,6 +36,24 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class STSServiceWsTrustImpl extends AbstractSTSService implements STSService {
+    private static final Logger LOG = LoggerFactory.getLogger(STSServiceWsTrustImpl.class);
+
+    private static void trace(String label, Node node) {
+        if (!RequestDebug.isEnabled() && !LOG.isDebugEnabled()) {
+            return;
+        }
+        try {
+            String xml = ConnectorXmlUtils.toString(node);
+            if (RequestDebug.isEnabled()) {
+                RequestDebug.trace("STS [{}]: {}", label, xml);
+            } else {
+                LOG.debug("STS [{}]: {}", label, xml);
+            }
+        } catch (Exception e) {
+            LOG.warn("STS [{}]: unable to serialize node", label, e);
+        }
+    }
+
     public Element getToken(@NotNull Credential headerCredentials, @NotNull Credential bodyCredentials, List<SAMLAttribute> attributes, List<SAMLAttributeDesignator> designators, String authenticationMethod, String nameQualifier, String value, String subjectConfirmationMethod, int validity) throws TechnicalConnectorException {
         try {
             Element issuePayload;
@@ -76,6 +97,8 @@ public class STSServiceWsTrustImpl extends AbstractSTSService implements STSServ
                     claim.appendChild(x509Cert);
                     claims.appendChild(claim);
                     claimsURI.add(attr.getName());
+                } else {
+                    RequestDebug.trace("STS [claims]: skipping duplicate attribute {}", attr.getName());
                 }
             }
 
@@ -84,6 +107,8 @@ public class STSServiceWsTrustImpl extends AbstractSTSService implements STSServ
                     Element claim = doc.createElementNS("http://docs.oasis-open.org/wsfed/authorization/200706", "auth:ClaimType");
                     claim.setAttribute("Uri", attr.getName());
                     claims.appendChild(claim);
+                } else {
+                    RequestDebug.trace("STS [claims]: designator {} already sent as a valued attribute, no empty ClaimType added", attr.getName());
                 }
             }
 
@@ -94,6 +119,7 @@ public class STSServiceWsTrustImpl extends AbstractSTSService implements STSServ
             claim.setTextContent(DateUtils.printDateTime(now.plusHours(validity)));
             x509Cert = (Element) issuePayload.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "X509Certificate").item(0);
             x509Cert.setTextContent(new String(Base64.encode(bodyCredentials.getCertificate().getEncoded())));
+            trace("RequestSecurityToken (holder-of-key, before security headers)", issuePayload);
             return issuePayload;
         } catch (CertificateEncodingException var13) {
             throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, var13, var13.getMessage());
@@ -158,6 +184,9 @@ public class STSServiceWsTrustImpl extends AbstractSTSService implements STSServ
         GenericRequest request = ServiceFactory.getSTSService(headerCredentials.getCertificate(), headerCredentials.getPrivateKey());
         request.setSoapAction("urn:be:fgov:ehealth:sts:protocol:v1:RequestSecurityToken");
         request.setPayload(payload.getOwnerDocument());
+        RequestDebug.trace("STS [endpoint]: {} signed with certificate [{}]",
+            request.getRequestMap().get("javax.xml.ws.service.endpoint.address"),
+            headerCredentials.getCertificate().getSubjectX500Principal().getName());
         GenericResponse response = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(request);
         Element wsTrustElement = (Element) response.asNode();
         NodeList nodeChallenge = wsTrustElement.getElementsByTagNameNS("http://docs.oasis-open.org/ws-sx/ws-trust/200512", "Challenge");
@@ -170,6 +199,7 @@ public class STSServiceWsTrustImpl extends AbstractSTSService implements STSServ
             Element issuePayload = ConnectorXmlUtils.toElement(flattenRequest.getBytes());
             Document doc = issuePayload.getOwnerDocument();
             requestChallenge.setPayload(doc);
+            trace("SignChallenge (before security headers)", issuePayload);
             response = org.taktik.connector.technical.ws.ServiceFactory.getGenericWsSender().send(requestChallenge);
             wsTrustElement = (Element) response.asNode();
         }
@@ -178,6 +208,7 @@ public class STSServiceWsTrustImpl extends AbstractSTSService implements STSServ
         if (nodeRequestedSecurityToken != null && nodeRequestedSecurityToken.getLength() >= 1) {
             return ConnectorXmlUtils.getFirstChildElement(nodeRequestedSecurityToken.item(0));
         } else {
+            trace("RequestSecurityTokenResponse without RequestedSecurityToken", wsTrustElement);
             throw new TechnicalConnectorException(TechnicalConnectorExceptionValues.ERROR_WS, "Unable to obtain token: reason unkown.");
         }
     }

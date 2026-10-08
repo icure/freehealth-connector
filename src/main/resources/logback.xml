@@ -88,8 +88,13 @@
 		</filter>
 	</appender>
 
-    <!-- ADDED: Sifting appender for ERROR logs when debug=true -->
+    <!-- Per-request trace file, fed by the X-FHC-debug header -->
     <appender name="FILE-DEBUG-WARN" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <!-- Filtered here rather than on the nested appender, so non-debug requests never create a file -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <filter class="org.taktik.freehealth.middleware.logging.RequestDebugFilter" />
         <discriminator>
             <key>keystoreId</key>
             <defaultValue>0-debug-noKeyStoreId</defaultValue>
@@ -112,22 +117,8 @@
                 </rollingPolicy>
                 <triggeringPolicy
                         class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-                    <MaxFileSize>1MB</MaxFileSize>
+                    <MaxFileSize>10MB</MaxFileSize>
                 </triggeringPolicy>
-                <!-- Only accept ERROR level logs -->
-                <filter class="ch.qos.logback.classic.filter.LevelFilter">
-                    <level>DEBUG</level>
-                    <onMatch>NEUTRAL</onMatch>
-                    <onMismatch>DENY</onMismatch>
-                </filter>
-                <!-- Only accept logs with debug=true in MDC -->
-                <filter class="ch.qos.logback.classic.filter.EvaluatorFilter">
-                    <evaluator>
-                        <expression>return "true".equals(mdc["debug"]);</expression>
-                    </evaluator>
-                    <OnMismatch>DENY</OnMismatch>
-                    <OnMatch>ACCEPT</OnMatch>
-                </filter>
             </appender>
         </sift>
     </appender>
@@ -143,6 +134,9 @@
 	<logger name="org.taktik.freehealth.middleware.service.impl" level="INFO" />
 	<logger name="org.taktik.freehealth.middleware.HazelcastConfiguration" level="WARN" />
 	<logger name="org.taktik.connector.business.hubv3.service" level="DEBUG" />
+
+	<!-- X-FHC-debug output; RequestDebug only emits when the header is set, so this stays silent otherwise -->
+	<logger name="fhc.trace" level="DEBUG" />
 
 	<logger name="org.springframework.web.client" level="DEBUG" />
 
