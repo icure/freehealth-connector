@@ -566,22 +566,6 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         return recordNumber+1
     }
 
-    /**
-     * Writes an ET 52. It carries the electronic identity document data *and* ET 52 Z 19, the agreement number that
-     * INAMI annexe 26.4 makes mandatory for physiotherapists. The record is produced as soon as
-     * [InvoiceItem.eidItem] or [InvoiceItem.agreementNumber] is set, and when both are set they end up in the same
-     * record, as annexe 26.4 prescribes.
-     *
-     * For a physiotherapist (ET 10 Z 18 = [KINE_PROFESSION_CODE]) the two are *not* independent. Annexe 26.4 is
-     * titled "Enregistrement de type 52 (facultatif, sauf zone 19)": what makes the record mandatory is indeed
-     * zone 19 alone. But once the record exists, the same table makes "Z 9 Type de saisie document identite -
-     * Obligation de completer" and "Z 10 Type de support document identite - Obligation de completer", **with no
-     * exception clause** - unlike Z 6a/6b and Z 12/13 ("sauf lorsque Z 9 = 4 et Z 3 = 3") or Z 16 ("sauf lorsque
-     * Z 10 = 7, 8 ou 9"). So there is no conformant ET 52 with an empty Z 9 / Z 10, and an agreement number without
-     * an [InvoiceItem.eidItem] is refused rather than written as blanks. Note that satisfying Z 9 / Z 10 does not
-     * require an actual card reading: readType 4 (manual) with a deferred manualEntryReason, or deviceType 7
-     * (vignette), are exactly the escape routes the annexe provides, and [EIDItem] already models them.
-     */
     @Throws(IOException::class)
     fun writeEid(recordNumber: Int,
                  icd: InvoiceItem, patient: Patient, invoiceSender: InvoiceSender): Int {
@@ -589,18 +573,7 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
 
         if (icd.eidItem == null && icd.agreementNumber == null) { return recordNumber }
 
-        require(icd.eidItem != null || invoiceSender.professionCode != KINE_PROFESSION_CODE) {
-            "an ET 52 carrying an agreement number must also carry the identity document capture: INAMI annexe 26.4 " +
-                "makes Z 9 (type de saisie) and Z 10 (type de support) mandatory for physiotherapists with no " +
-                "exception. Set InvoiceItem.eidItem - readType 4 with a deferred manualEntryReason, or deviceType 7, " +
-                "when there was no card reading."
-        }
-
         val agreementNumber = icd.agreementNumber?.also {
-            // ET 52 Z 19 is declared 20 A but holds only digits; a shorter value would be silently blank padded and
-            // rejected as 521901 ("contenu de la zone non numerique") by the insurer. The check-digit itself is not
-            // verified here: annexe 6.8 names "modulo 97" without giving the operand, and the caller owns the value.
-            // The value never appears in these messages: they surface in the 400 body and in the logs.
             require(it.length == Record52Description.AGREEMENT_NUMBER_LENGTH) {
                 "agreementNumber (ET 52 Z 19) expected exactly ${Record52Description.AGREEMENT_NUMBER_LENGTH} " +
                     "digits, got ${it.length} characters"
@@ -628,8 +601,6 @@ class BelgianInsuranceInvoicingFormatWriter(private val writer: Writer) {
         ws.write("19", agreementNumber)
 
         if (eidItem == null) {
-            // Agreement number only, for a sector whose annexe does not impose the eID zones: they keep their
-            // default. Refused above for physiotherapists, and no identity document data is ever fabricated here.
             ws.write("3", 0)
             ws.write("17", 0)
             ws.writeFieldsWithCheckSum()
