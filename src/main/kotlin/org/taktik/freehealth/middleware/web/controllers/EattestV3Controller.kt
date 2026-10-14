@@ -287,6 +287,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpCbe: String,
+        @RequestParam hcpQuality: String?,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
@@ -297,7 +298,10 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam(required = false) traineeSupervisorSsin: String?,
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
-        @RequestParam(required = false) traineeSupervisorLastName: String?
+        @RequestParam(required = false) traineeSupervisorLastName: String?,
+        @RequestParam(required = false) guardPostNihii: String?,
+        @RequestParam(required = false) guardPostSsin: String?,
+        @RequestParam(required = false) guardPostName: String?
                   ): SendAttestResult? =
         eattestService.cancelAttest(
             keystoreId,
@@ -307,10 +311,14 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
             hcpFirstName,
             hcpLastName,
             hcpCbe,
+            hcpQuality,
             traineeSupervisorSsin,
             traineeSupervisorNihii,
             traineeSupervisorFirstName,
             traineeSupervisorLastName,
+            guardPostNihii,
+            guardPostSsin,
+            guardPostName,
             passPhrase,
             patientSsin,
             patientFirstName,
@@ -365,6 +373,7 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam hcpFirstName: String,
         @RequestParam hcpLastName: String,
         @RequestParam hcpCbe: String,
+        @RequestParam hcpQuality: String?,
         @RequestParam patientFirstName: String,
         @RequestParam patientLastName: String,
         @RequestParam patientGender: String,
@@ -375,7 +384,10 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
         @RequestParam(required = false) traineeSupervisorSsin: String?,
         @RequestParam(required = false) traineeSupervisorNihii: String?,
         @RequestParam(required = false) traineeSupervisorFirstName: String?,
-        @RequestParam(required = false) traineeSupervisorLastName: String?
+        @RequestParam(required = false) traineeSupervisorLastName: String?,
+        @RequestParam(required = false) guardPostNihii: String?,
+        @RequestParam(required = false) guardPostSsin: String?,
+        @RequestParam(required = false) guardPostName: String?
                     ) =
         eattestService.cancelAttest(
             keystoreId,
@@ -385,10 +397,14 @@ class EattestV3Controller(val eattestService: EattestV3Service) {
             hcpFirstName,
             hcpLastName,
             hcpCbe,
+            hcpQuality,
             traineeSupervisorSsin,
             traineeSupervisorNihii,
             traineeSupervisorFirstName,
             traineeSupervisorLastName,
+            guardPostNihii,
+            guardPostSsin,
+            guardPostName,
             passPhrase,
             patientSsin,
             patientFirstName,
