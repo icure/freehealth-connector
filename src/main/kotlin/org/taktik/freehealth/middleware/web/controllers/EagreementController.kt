@@ -1,5 +1,6 @@
 package org.taktik.freehealth.middleware.web.controllers
 
+import io.swagger.annotations.ApiOperation
 import ma.glasnost.orika.MapperFacade
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -48,6 +49,10 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         val data: String
     )
 
+    @ApiOperation(
+        value = "Ask for a new agreement (eAgreement v2)",
+        notes = "Submits a new agreement request to the patient's insurer (OA/MC) over MyCareNet eAgreement v2. The decision may come back immediately, or later through the asynchronous channel when the medical adviser has to rule on it. hcpQuality must match the token's quality (e.g. physiotherapist)."
+    )
     @PostMapping("/askAgreement", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun askAgreement(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -122,6 +127,10 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         )
     }
 
+    @ApiOperation(
+        value = "List the agreement decisions for one patient (eAgreement v2)",
+        notes = "Read-only consultation of the agreements known to the insurer for the given patient. subTypeCode selects the agreement family, e.g. physiotherapy. Identify the patient by ssin, or by the io/ioMembership pair."
+    )
     @PostMapping("/consultList", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun consultList(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -176,6 +185,10 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         )
     }
 
+    @ApiOperation(
+        value = "Cancel an agreement (eAgreement v2)",
+        notes = "Cancels an agreement previously granted by the insurer, identified by insuranceRef."
+    )
     @PostMapping("/cancelAgreement", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun cancelAgreement(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -240,6 +253,10 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         )
     }
 
+    @ApiOperation(
+        value = "Extend an existing agreement (eAgreement v2)",
+        notes = "Requests the extension of a running agreement, for the same pathology (pathologyCode / pathologyStartDate)."
+    )
     @PostMapping("/extendAgreement", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun extendAgreement(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -315,6 +332,10 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         )
     }
 
+    @ApiOperation(
+        value = "Complete an agreement request (eAgreement v2)",
+        notes = "Supplies the additional information the insurer asked for on a pending request, identified by insuranceRef."
+    )
     @PostMapping("/completeAgreement", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun completeAgreement(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -387,6 +408,10 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         )
     }
 
+    @ApiOperation(
+        value = "Argue an agreement decision (eAgreement v2)",
+        notes = "Sends supporting arguments or attachments contesting a decision, identified by insuranceRef."
+    )
     @PostMapping("/argueAgreement", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun argueAgreement(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
