@@ -118,4 +118,18 @@ class STSController(private val stsService: STSService, private val ssoService: 
         @PathVariable(name = "cbe") cbe: String,
         @PathVariable(name = "kid") kid: String
     ) = ssoService.getOauth2Token(tokenId, keystoreId, passPhrase, cbe, kid)
+
+    @Operation(
+        summary = "Exchange a SAML HOK token for an IAM Connect JWT",
+        description = "Exchanges a previously obtained SAML holder-of-key token for a JWT issued by the IAM Connect healthcare realm. The actor token required by the exchange is generated and signed with the holder-of-key private key of the keystore (RSA or EC). The clientId is the IAM Connect client id of the calling application. The ssin defaults to the certificate holder SSIN found in the SAML token. If refreshable is true, a refresh token is returned along with the access token."
+    )
+    @PostMapping("/token/exchange/iam", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun exchangeTokenForIam(
+        @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
+        @RequestHeader(name = "X-FHC-passPhrase") passPhrase: String,
+        @RequestHeader(name = "X-FHC-tokenId") tokenId: UUID,
+        @RequestParam clientId: String,
+        @RequestParam(required = false) ssin: String?,
+        @RequestParam(required = false) refreshable: Boolean?
+    ) = ssoService.exchangeSamlTokenForIamToken(tokenId, keystoreId, passPhrase, clientId, ssin, refreshable ?: false)
 }
