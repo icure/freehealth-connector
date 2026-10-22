@@ -511,7 +511,7 @@ class TherLinkServiceImpl(private val stsService: STSService) : TherLinkService 
                                                                                            ).addDefaulHandlerChain().addHandlerChain(
             HandlerChainUtil.buildChainWithValidator(
                 "validation.incoming.therlink.message",
-                "/ehealth-hubservices/XSD/hubservices_protocol-2_2.xsd"
+                "/ehealth-hubservices/XSD/hubservices_protocol-2_3.xsd"
                                                     )
                                                                                                                                     )
 
