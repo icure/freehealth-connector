@@ -2,6 +2,11 @@ package org.taktik.freehealth.middleware.web.controllers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.nimbusds.jose.crypto.ECDSAVerifier
+import com.nimbusds.jose.crypto.RSASSAVerifier
+import com.nimbusds.jose.jwk.ECKey
+import com.nimbusds.jose.jwk.JWKSet
+import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jwt.SignedJWT
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assume
@@ -20,6 +25,8 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.taktik.freehealth.middleware.MyTestsConfiguration
 import org.taktik.freehealth.middleware.domain.sts.IamTokenResult
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
+import java.net.URL
+import java.util.Date
 
 @RunWith(SpringRunner::class)
 @Import(MyTestsConfiguration::class)
@@ -89,6 +96,26 @@ class STSControllerTest : EhealthTest() {
         assertThat(result.tokenType).isEqualToIgnoringCase("Bearer")
         assertThat(result.validity).isGreaterThan(System.currentTimeMillis())
         assertThat(SignedJWT.parse(result.accessToken).jwtClaimsSet.issuer).isEqualTo("https://api-acpt.ehealth.fgov.be/auth/realms/healthcare")
+        assertSignedByRealm(result.accessToken!!, "https://api-acpt.ehealth.fgov.be/auth/realms/healthcare")
+    }
+
+    /**
+     * Checks the JWT against the keys published by the realm that issued it (OIDC discovery → jwks_uri)
+     */
+    private fun assertSignedByRealm(token: String, realmUrl: String) {
+        val discovery = objectMapper.readValue(URL("$realmUrl/.well-known/openid-configuration"), Map::class.java)
+        assertThat(discovery["issuer"]).isEqualTo(realmUrl)
+        val jwt = SignedJWT.parse(token)
+        val jwk = JWKSet.load(URL(discovery["jwks_uri"] as String)).getKeyByKeyId(jwt.header.keyID)
+        assertThat(jwk).withFailMessage("No key ${jwt.header.keyID} published by $realmUrl").isNotNull()
+        val verifier = when (jwk) {
+            is RSAKey -> RSASSAVerifier(jwk)
+            is ECKey -> ECDSAVerifier(jwk)
+            else -> throw IllegalStateException("Unsupported realm key type ${jwk.keyType}")
+        }
+        assertThat(jwt.verify(verifier)).isTrue()
+        assertThat(jwt.jwtClaimsSet.issuer).isEqualTo(discovery["issuer"])
+        assertThat(jwt.jwtClaimsSet.expirationTime).isAfter(Date())
     }
 
     @Test

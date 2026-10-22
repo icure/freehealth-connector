@@ -104,7 +104,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
         @RequestParam ssin: String,
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @RequestParam(required = false) destination: String?
-    ) = ssoService.getBearerToken(tokenId, keystoreId, passPhrase, destination?.let { StringEscapeUtils.escapeXml(it)})
+    ) = ssoService.getLegacySSOBearerToken(tokenId, keystoreId, passPhrase, destination?.let { StringEscapeUtils.escapeXml(it)})
 
     @Operation(
         summary = "Get a OAuth2 token from a SAML token",
@@ -117,7 +117,7 @@ class STSController(private val stsService: STSService, private val ssoService: 
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
         @PathVariable(name = "cbe") cbe: String,
         @PathVariable(name = "kid") kid: String
-    ) = ssoService.getOauth2Token(tokenId, keystoreId, passPhrase, cbe, kid)
+    ) = ssoService.getM2MOauth2Token(tokenId, keystoreId, passPhrase, cbe, kid)
 
     @Operation(
         summary = "Exchange a SAML HOK token for an IAM Connect JWT",

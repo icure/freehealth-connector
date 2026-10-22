@@ -1,6 +1,5 @@
 package org.taktik.freehealth.middleware.service.impl
 
-import be.fgov.ehealth.etee.crypto.utils.KeyManager
 import com.nimbusds.jose.JOSEObjectType
 import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.JWSHeader
@@ -22,8 +21,6 @@ import com.nimbusds.oauth2.sdk.id.ClientID
 import com.nimbusds.oauth2.sdk.token.TokenTypeURI
 import com.nimbusds.oauth2.sdk.token.TypelessToken
 import com.nimbusds.oauth2.sdk.tokenexchange.TokenExchangeGrant
-import io.jsonwebtoken.Jwts
-import org.apache.commons.lang3.time.DateUtils.addMinutes
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException
@@ -32,7 +29,6 @@ import org.springframework.stereotype.Service
 import org.taktik.connector.technical.enumeration.SsoProfile
 import org.taktik.connector.technical.service.sso.SingleSignOnService
 import org.taktik.connector.technical.service.sso.impl.SingleSignOnServiceImpl
-import org.taktik.connector.technical.service.sts.security.impl.KeyStoreCredential
 import org.taktik.freehealth.middleware.dao.KeystoreProviderService
 import org.taktik.freehealth.middleware.dao.User
 import org.taktik.freehealth.middleware.domain.sts.BearerToken
@@ -45,7 +41,6 @@ import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Element
 import java.io.StringWriter
 import java.net.URI
-import java.security.Key
 import java.security.PrivateKey
 import java.security.Provider
 import java.security.PublicKey
@@ -64,35 +59,15 @@ import javax.xml.transform.stream.StreamResult
 class SSOServiceImpl(private val stsService: STSService, private val userDetailsService: KeystoreProviderService) : SSOService {
     val ssosi: SingleSignOnService = SingleSignOnServiceImpl()
 
-    override fun getBearerToken(tokenId: UUID, keystoreId: UUID, passPhrase: String, destination: String?, profile: String?): BearerToken? {
+    override fun getLegacySSOBearerToken(tokenId: UUID, keystoreId: UUID, passPhrase: String, destination: String?, profile: String?): BearerToken? {
         val samlToken =
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw IllegalArgumentException("Cannot obtain token for Ehealth Box operations")
-        val keystore = stsService.getKeyStore(keystoreId, passPhrase)!!
-
-        val credential = KeyStoreCredential(keystoreId, keystore, "authentication", passPhrase, samlToken.quality)
-        val hokPrivateKeys = KeyManager.getDecryptionKeys(keystore, passPhrase.toCharArray())
-
         return ssosi.signin(profile?.let { SsoProfile.valueOf(it) } ?: SsoProfile.SAML2_POST, samlToken, destination)?.let { BearerToken(it) }
     }
 
-    fun generateClientToken(clientId:String, kid:String, urlOfRealm: String, key: PrivateKey): String? {
-        val now = Date()
-        val header: MutableMap<String, Any> = Jwts.header().type("JWT").build()
-        header["kid"] = kid
-        return Jwts.builder()
-            .id(UUID.randomUUID().toString())
-            .header().add(header).and()
-            .issuedAt(now)
-            .issuer(clientId)
-            .subject(clientId)
-            .audience().add(urlOfRealm).and()
-            .notBefore(addMinutes(now, -5))
-            .expiration(addMinutes(now, 5))
-            .signWith(key, Jwts.SIG.RS256).compact()
-    }
 
-    override fun getOauth2Token(tokenId: UUID, keystoreId: UUID, passPhrase: String, cbe: String, kid: String): TokenResponse {
+    override fun getM2MOauth2Token(tokenId: UUID, keystoreId: UUID, passPhrase: String, cbe: String, kid: String): TokenResponse {
         val isAcceptance = stsService.isAcceptance()
 
         val principal = SecurityContextHolder.getContext().authentication?.principal as? User ?: throw AuthenticationCredentialsNotFoundException("JWT tokens are only available through authenticated accesses")

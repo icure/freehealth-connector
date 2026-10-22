@@ -54,6 +54,9 @@ This controller wraps the eHealth IAM SAML 1.1 token service (`endpoint.sts`, UD
 | GET | `/sts/token/check` | Return `true` if the token is cached and its `NotOnOrAfter` is still in the future. | Header `X-FHC-tokenId`. |
 | GET | `/sts/token/bearer` | Exchange the SAML token for a bearer token through eHealth SSO (SAML2 POST profile). Returns `BearerToken` (`{"token": ...}`). | query `ssin`, `destination?`. Headers `X-FHC-tokenId`, `X-FHC-keystoreId`, `X-FHC-passPhrase`. |
 | GET | `/sts/token/oauth2/{cbe}/{kid}` | Obtain an OAuth2 access token from the eHealth M2M realm with a client-credentials grant and a `private_key_jwt` assertion for client `cbe-{cbe}`. Returns the Nimbus `TokenResponse`. | path `cbe`, `kid`. Headers `X-FHC-tokenId`, `X-FHC-keystoreId`, `X-FHC-passPhrase`. HTTP Basic user required. |
+| POST | `/sts/token/exchange/iam` | Exchange the SAML token for an I.AM Connect access token of the healthcare realm (OAuth2 token exchange, actor token signed with the holder-of-key key). Returns `IamTokenResult`. | query `clientId`, `ssin?`, `refreshable?`. Headers `X-FHC-tokenId`, `X-FHC-keystoreId`, `X-FHC-passPhrase`. |
+
+The three tokens that can be obtained from a SAML token (bearer assertion, M2M access token, healthcare access token) and the eHealth services each one unlocks are described in [Tokens derived from a SAML token](ehealth-tokens.md).
 
 **The authentication flow**
 

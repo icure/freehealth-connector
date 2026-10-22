@@ -7,6 +7,7 @@ The Freehealth Connector (FHC) is a multi-user REST/JSON middleware in front of 
 - [Installation guide](installation.md): build, configuration, Docker, Helm, clustering, tests
 - API reference, by domain:
   - [Authentication, administration and directories](api/authentication-and-utilities.md): STS (keystores and SAML tokens), admin/BCP, crypto, schematron, DAAS, APB, addressbook, national registry (ConsultRN, RnConsult)
+  - [Tokens derived from a SAML token](api/ehealth-tokens.md): IDP bearer assertion, I.AM Connect M2M and healthcare access tokens, and the eHealth services each one unlocks
   - [MyCareNet: insurability, billing and GMD](api/mycarenet-insurance-and-billing.md): GenIns, Member Data (MDA), Tarification, eFact, Medical House Membership (MHM), Mediprima / Mediprima UMA, GMD (DMG)
   - [eAttest, Chapter IV and eAgreement](api/attestations-and-agreements.md): eAttest v1/v2/v3, Chapter IV, eAgreement
   - [Recip-e, eHealthBox, Vaccinnet and RSW](api/prescriptions-and-messaging.md): electronic prescriptions, secure messaging, vaccinations, RSW FHIR
