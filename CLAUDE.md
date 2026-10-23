@@ -71,6 +71,7 @@ Tests require a `test/resources/test.properties` file with real eHealth keystore
 ## Codebase Conventions
 
 - License: GNU AGPL — all source files carry the AGPL header
+- `WHATSNEW.md` lists user-facing API changes, one entry per merged PR (`## #<PR> (<merge date>)`, newest first, short usage notes). Add an entry to every PR that changes the API or its behaviour
 - Hazelcast 5.3 is used for distributed caching (`HazelcastConfiguration.kt`, `CacheConfiguration.kt`)
 - Swagger/SpringFox provides API documentation
 - The project uses Gradle 8.13 with Kotlin DSL (`build.gradle.kts`, `settings.gradle.kts`)
