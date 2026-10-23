@@ -171,6 +171,10 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
             stsService.getSAMLToken(tokenId, keystoreId, passPhrase)
                 ?: throw MissingTokenException("Cannot obtain token for Rn consult operations")
 
+        //GivenNameMatching is mandatory in the xsd: default to the closest equivalent of the v1 (/consultrn) phonetic search
+        val givenNameMatching = matchingType?.takeIf { it.isNotBlank() }
+            ?: if (firstName.isNullOrBlank()) "IGNORE_GIVENNAME" else "COMPLETE_FIRST_GIVENNAME"
+
         val givenNames = mutableListOf<GivenNameType>()
         if(!firstName.isNullOrBlank()){
             givenNames.add(GivenNameType().apply {
@@ -179,7 +183,7 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
             })
         }else{
             //Add empty value if we don't have firstname with IGNORE_GIVENNAME matching type because in the xsd givenName node is mandatory
-            if(matchingType.equals("IGNORE_GIVENNAME")){
+            if(givenNameMatching == "IGNORE_GIVENNAME"){
                 givenNames.add(GivenNameType().apply {
                     value = " "
                     sequence = 1
@@ -202,22 +206,16 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
                 this.name = PhoneticName().apply {
                     this.lastName = lastName.capitalize()
                     this.givenNames.addAll(givenNames)
-                    this.givenNameMatching = GivenNameMatchingType.fromValue(matchingType).value()
+                    this.givenNameMatching = GivenNameMatchingType.fromValue(givenNameMatching).value()
                 }
 
                 this.birth = PhoneticBirth().apply {
                     this.birthDate = dateOfBirth.toString().replace(Regex("(....)(..)(..)"), "$1-$2-$3")
-                    this.variation = tolerance
+                    this.variation = tolerance ?: 0
                 }
 
-                gender.let {
-                    this.gender = PhoneticGender().apply {
-                        if (gender?.uppercase() == "MALE"){
-                            this.genderCode = "M"
-                        }else{
-                            this.genderCode = "F"
-                        }
-                    }
+                genderCode(gender)?.let {
+                    this.gender = PhoneticGender().apply { this.genderCode = it }
                 }
 
                 if(countryCode != 0){
@@ -228,7 +226,7 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
                         }
                     }
                 }
-                this.maximumResultCount = limit
+                this.maximumResultCount = limit ?: 20
             }
         }
 
@@ -295,7 +293,7 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
                         inceptionDate = DateTime.now()
                     }
 
-                    mid?.nationalityCode.let {
+                    mid.nationalityCode?.takeIf { it != 0 }?.let {
                         nationalities = NationalitiesDeclarationType().apply {
                             nationalities.add(NationalityInfoBaseType().apply {
                                 nationalityCode = it
@@ -336,13 +334,9 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
                         }
                     }
 
-                    mid.gender?.let {
+                    genderCode(mid.gender)?.let {
                         gender = GenderInfoDeclarationType().apply {
-                           if(it?.uppercase() == "MALE"){
-                               this.genderCode = "M"
-                           }else{
-                               this.genderCode = "F"
-                           }
+                            this.genderCode = it
                             inceptionDate = DateTime.now()
                         }
                     }
@@ -477,7 +471,7 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
                     request = ConnectorXmlUtils.toString(registerPersonRequest),
                     response = ConnectorXmlUtils.toString(ex)
                 ),
-                error = null
+                error = ErrorDto(code = ex.fault?.faultCode, descr = ex.fault?.faultString ?: ex.message)
             )
         }
 
@@ -567,6 +561,13 @@ class RnConsultServiceImpl(private val stsService: STSService) : RnConsultServic
         return response;
     }
 
+
+    /** Maps MALE/M and FEMALE/F to the RN gender code; anything else (null, UNKNOWN...) means no gender. */
+    private fun genderCode(gender: String?) = when (gender?.trim()?.uppercase()) {
+        "MALE", "M" -> "M"
+        "FEMALE", "F" -> "F"
+        else -> null
+    }
 
     fun <T> unmarshalElement(element: Element, clazz: Class<T>): T {
         val context = JAXBContext.newInstance(clazz)

@@ -50,11 +50,14 @@ import java.util.UUID
  * retrieve SSIN history, and register new persons in the National Registry. This is the v1 API;
  * see [RnConsultController] for the v2 API.
  *
+ * @deprecated Use [RnConsultController] (`/rnconsult`) instead, which covers all of these operations.
+ *
  * All endpoints require a valid keystore and SAML token, supplied via HTTP headers.
  */
 @RestController
 @RequestMapping("/consultrn")
-@Tag(name = "ConsultRn", description = "Consult the Belgian National Registry to look up patient identity information using SSIN or phonetic search.")
+@Tag(name = "ConsultRn", description = "Deprecated: use RnConsult (/rnconsult) instead. Consult the Belgian National Registry to look up patient identity information using SSIN or phonetic search.")
+@Deprecated("Use RnConsultController (/rnconsult) instead")
 class ConsultrnController(val consultRnService: ConsultRnService, val mapper: MapperFacade) {
     /**
      * Identifies a person in the Belgian National Registry by their SSIN.
@@ -70,7 +73,8 @@ class ConsultrnController(val consultRnService: ConsultRnService, val mapper: Ma
      */
     @Operation(
         summary = "Identify a person by SSIN",
-        description = "Looks up a person's identity information in the Belgian National Registry using their SSIN (social security identification number)."
+        deprecated = true,
+        description = "Deprecated: use GET /rnconsult/bySsin/{ssin} instead. Looks up a person's identity information in the Belgian National Registry using their SSIN (social security identification number)."
     )
     @GetMapping("/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun identify(
@@ -82,7 +86,8 @@ class ConsultrnController(val consultRnService: ConsultRnService, val mapper: Ma
 
     @Operation(
         summary = "Get SSIN history for a person",
-        description = "Retrieves the history of SSIN changes for a person from the Belgian National Registry."
+        deprecated = true,
+        description = "Deprecated: use GET /rnconsult/history/{ssin} instead. Retrieves the history of SSIN changes for a person from the Belgian National Registry."
     )
     @GetMapping("/history/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun history(
@@ -94,7 +99,8 @@ class ConsultrnController(val consultRnService: ConsultRnService, val mapper: Ma
 
     @Operation(
         summary = "Search persons phonetically",
-        description = "Performs a phonetic search in the Belgian National Registry using date of birth and last name, with optional filters for first name, gender, and tolerance."
+        deprecated = true,
+        description = "Deprecated: use GET /rnconsult/phonetically/{dateOfBirth}/{lastName} instead. Performs a phonetic search in the Belgian National Registry using date of birth and last name, with optional filters for first name, gender, and tolerance."
     )
     @GetMapping("/{dateOfBirth}/{lastName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun search(
@@ -115,7 +121,8 @@ class ConsultrnController(val consultRnService: ConsultRnService, val mapper: Ma
 
     @Operation(
         summary = "Register a person in the National Registry",
-        description = "Registers a new person in the Belgian National Registry. Returns the registration result, including any business anomalies if the person already exists."
+        deprecated = true,
+        description = "Deprecated: use POST /rnconsult instead. Registers a new person in the Belgian National Registry. Returns the registration result, including any business anomalies if the person already exists."
     )
     @PostMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun registerPerson(

@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultSearchPersonBySsinResponseDto
 import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultSearchPersonPhoneticallyResponseDto
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultPersonMid
 import org.taktik.freehealth.middleware.exception.MissingTokenException
@@ -95,11 +96,15 @@ class RnConsultController(val rnConsultService: RnConsultService, val mapper: Ma
         @PathVariable(value = "lastName") lastName: String,
         @RequestParam(required = false) firstName: String?,
         @RequestParam(required = false) middleName: String?,
+        @Parameter(description = "FIRST_LETTER_FIRST_GIVENNAME, COMPLETE_FIRST_GIVENNAME, ALL_GIVENNAME or IGNORE_GIVENNAME. Defaults to COMPLETE_FIRST_GIVENNAME, or IGNORE_GIVENNAME when no firstName is given")
         @RequestParam(required = false) matchingType: String?,
+        @Parameter(description = "MALE/M or FEMALE/F. Any other value, or no value, does not filter on gender")
         @RequestParam(required = false) gender: String?,
         @RequestParam(required = false) countryCode: Int?,
         @RequestParam(required = false) cityCode: String?,
+        @Parameter(description = "Tolerance on the date of birth. Defaults to 0")
         @RequestParam(required = false) tolerance: Int?,
+        @Parameter(description = "Maximum number of results. Defaults to 20")
         @RequestParam(required = false) limit: Int?
     ): RnConsultSearchPersonPhoneticallyResponseDto?{
         return rnConsultService.searchPersonPhonetically(
