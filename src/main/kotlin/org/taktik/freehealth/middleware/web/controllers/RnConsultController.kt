@@ -22,6 +22,7 @@ package org.taktik.freehealth.middleware.web.controllers
 
 import ma.glasnost.orika.MapperFacade
 import org.springframework.http.HttpStatus
+import io.swagger.annotations.ApiParam
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
@@ -84,12 +85,12 @@ class RnConsultController(val rnConsultService: RnConsultService, val mapper: Ma
         @PathVariable(value = "lastName") lastName: String,
         @RequestParam(required = false) firstName: String?,
         @RequestParam(required = false) middleName: String?,
-        @RequestParam(required = false) matchingType: String?,
-        @RequestParam(required = false) gender: String?,
+        @ApiParam(value = "FIRST_LETTER_FIRST_GIVENNAME, COMPLETE_FIRST_GIVENNAME, ALL_GIVENNAME or IGNORE_GIVENNAME. Defaults to COMPLETE_FIRST_GIVENNAME, or IGNORE_GIVENNAME when no firstName is given") @RequestParam(required = false) matchingType: String?,
+        @ApiParam(value = "MALE/M or FEMALE/F. Any other value, or no value, does not filter on gender") @RequestParam(required = false) gender: String?,
         @RequestParam(required = false) countryCode: Int?,
         @RequestParam(required = false) cityCode: String?,
-        @RequestParam(required = false) tolerance: Int?,
-        @RequestParam(required = false) limit: Int?
+        @ApiParam(value = "Tolerance on the date of birth. Defaults to 0") @RequestParam(required = false) tolerance: Int?,
+        @ApiParam(value = "Maximum number of results. Defaults to 20") @RequestParam(required = false) limit: Int?
     ): RnConsultSearchPersonPhoneticallyResponseDto?{
         return rnConsultService.searchPersonPhonetically(
             keystoreId = keystoreId,

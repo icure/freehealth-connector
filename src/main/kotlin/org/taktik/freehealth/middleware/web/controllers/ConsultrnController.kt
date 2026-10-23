@@ -23,6 +23,7 @@ package org.taktik.freehealth.middleware.web.controllers
 import be.fgov.ehealth.consultrn.commons.core.v3.BusinessAnomalyType
 import be.fgov.ehealth.consultrn.protocol.v2.RegisterPersonResponse
 import ma.glasnost.orika.MapperFacade
+import io.swagger.annotations.ApiOperation
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -41,9 +42,15 @@ import org.taktik.freehealth.middleware.dto.consultrn.SearchPhoneticReplyDto
 import org.taktik.freehealth.middleware.service.ConsultRnService
 import java.util.UUID
 
+/**
+ * @deprecated Use [RnConsultController] (`/rnconsult`) instead, which covers all of these operations.
+ */
 @RestController
 @RequestMapping("/consultrn")
+@Deprecated("Use RnConsultController (/rnconsult) instead")
 class ConsultrnController(val consultRnService: ConsultRnService, val mapper: MapperFacade) {
+    @Deprecated("Use RnConsultController (/rnconsult) instead")
+    @ApiOperation(value = "Identify a person by SSIN", notes = "Deprecated: use GET /rnconsult/bySsin/{ssin} instead. Looks up a person's identity information in the Belgian National Registry using their SSIN (social security identification number).")
     @GetMapping("/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun identify(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -52,6 +59,8 @@ class ConsultrnController(val consultRnService: ConsultRnService, val mapper: Ma
         @PathVariable(value = "ssin") ssin: String
                  ) = consultRnService.identify(keystoreId, tokenId, passPhrase, ssin).let { mapper.map(it, SearchBySSINReplyDto::class.java) }
 
+    @Deprecated("Use RnConsultController (/rnconsult) instead")
+    @ApiOperation(value = "Get SSIN history for a person", notes = "Deprecated: use GET /rnconsult/history/{ssin} instead. Retrieves the history of SSIN changes for a person from the Belgian National Registry.")
     @GetMapping("/history/{ssin}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun history(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -60,6 +69,8 @@ class ConsultrnController(val consultRnService: ConsultRnService, val mapper: Ma
         @PathVariable(value = "ssin") ssin: String
                 ) = consultRnService.history(keystoreId, tokenId, passPhrase, ssin)
 
+    @Deprecated("Use RnConsultController (/rnconsult) instead")
+    @ApiOperation(value = "Search persons phonetically", notes = "Deprecated: use GET /rnconsult/phonetically/{dateOfBirth}/{lastName} instead. Performs a phonetic search in the Belgian National Registry using date of birth and last name, with optional filters for first name, gender, and tolerance.")
     @GetMapping("/{dateOfBirth}/{lastName}", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun search(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,
@@ -77,6 +88,8 @@ class ConsultrnController(val consultRnService: ConsultRnService, val mapper: Ma
     }
 
 
+    @Deprecated("Use RnConsultController (/rnconsult) instead")
+    @ApiOperation(value = "Register a person in the National Registry", notes = "Deprecated: use POST /rnconsult instead. Registers a new person in the Belgian National Registry. Returns the registration result, including any business anomalies if the person already exists.")
     @PostMapping("", produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun registerPerson(
         @RequestHeader(name = "X-FHC-keystoreId") keystoreId: UUID,

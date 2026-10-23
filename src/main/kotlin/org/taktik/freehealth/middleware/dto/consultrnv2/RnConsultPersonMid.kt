@@ -10,7 +10,7 @@ class RnConsultPersonMid(
     var gender: String? = null,
     var residentialAddress: ResidentialAddress? = null,
     var contactAddress: ContactAddress? = null,
-    var language: String
+    var language: String? = null
 
 ){
     class BirthPlace(
