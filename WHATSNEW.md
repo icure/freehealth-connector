@@ -4,7 +4,7 @@ This file summarises the user-facing changes to the Freehealth Connector REST AP
 
 ---
 
-## #128 (pending)
+## #128 (2026-10-23)
 
 ### `/consultrn` is deprecated: use `/rnconsult`
 
