@@ -543,9 +543,9 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
 
         val confirm =
             BuilderFactory.getRequestObjectBuilder("invoicing")
-                .buildConfirmRequestWithHashes(buildOriginType(samlToken.quality, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, false),
-                                               listOf(),
-                                               valueHashes.map { valueHash -> java.util.Base64.getDecoder().decode(valueHash) })
+                .buildConfirmRequestWithReference(buildOriginType(samlToken.quality, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, false),
+                    listOf(),
+                    valueHashes)
 
         genAsyncService.confirmRequest(samlToken, confirm, confirmheader)
 
@@ -604,8 +604,9 @@ class EfactServiceImpl(private val stsService: STSService, private val mapper: M
         val confirmheader = WsAddressingUtil.createHeader("", "urn:be:cin:nip:async:generic:confirm:hash")
         val confirm =
             BuilderFactory.getRequestObjectBuilder("invoicing")
-                .buildConfirmRequestWithHashes(buildOriginType(samlToken.quality, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, false),
-                    valueHashes.map { valueHash -> java.util.Base64.getDecoder().decode(valueHash) },
+                .buildConfirmRequestWithReference(
+                    buildOriginType(samlToken.quality, hcpNihii, hcpSsin, hcpFirstName, hcpLastName, true),
+                    valueHashes,
                     listOf()
                     )
 
