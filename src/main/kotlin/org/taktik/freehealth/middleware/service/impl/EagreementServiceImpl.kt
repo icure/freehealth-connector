@@ -181,6 +181,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
 
         return extractEtk(credential)?.let {
             val requestBundleJSON = this.agreementServiceUtils.getBundleJSON(requestType, "Claim/Claim1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, prescriberNihii, prescriberFirstName, prescriberLastName, orgNihii, organizationType, prescription1, prescription2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForPrescription1, numberOfSessionForPrescription2, insuranceRef, pathologyCode, pathologyStartDate, sctCode, sctDisplay, null, attachments, prescriptionDate) ?: throw IllegalArgumentException("Cannot load fhir")
+            val requestXml = transformXml(convertJsonObjectToXml(requestBundleJSON))
 
             var askAgreementRequest = AskAgreementRequest();
             askAgreementRequest.apply {
@@ -188,9 +189,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 encryptedKnownContent.replyToEtk = it.encoded
                 val businessContent = BusinessContent().apply { id = detailId }
                 encryptedKnownContent.businessContent = businessContent
-
-                val xmlString = convertJsonObjectToXml(requestBundleJSON)
-                val requestXml = transformXml(xmlString)
 
                 val byteArray = requestXml.toByteArray(Charsets.UTF_8)
                 businessContent.value = byteArray
@@ -299,7 +297,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                     transactionRequest = ConnectorXmlUtils.toString(askAgreementRequest)
                     transactionResponse = responseXML
                     agreementResponse.soapResponse?.writeTo(this.soapResponseOutputStream())
-                    agreementResponse.soapRequest?.writeTo(this.soapRequestOutputStream())
+                    soapRequest = requestXml
                 }
                 res.content = responseXML.toByteArray(Charsets.UTF_8)
                 res.xades = xades
@@ -367,6 +365,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 agreementEndDate,
                 agreementType
             )
+            val requestXml = transformXml(convertJsonObjectToXml(requestBundleJSON!!))
 
             var consultAgreementRequest = ConsultAgreementRequest()
             consultAgreementRequest.apply {
@@ -374,9 +373,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 encryptedKnownContent.replyToEtk = it.encoded
                 val businessContent = BusinessContent().apply { id = detailId }
                 encryptedKnownContent.businessContent = businessContent
-
-                val xmlString = convertJsonObjectToXml(requestBundleJSON!!)
-                val requestXml = transformXml(xmlString)
 
                 val byteArray = requestXml.toByteArray(Charsets.UTF_8)
                 businessContent.value = byteArray
@@ -485,7 +481,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                     transactionRequest = ConnectorXmlUtils.toString(consultAgreementResponse)
                     transactionResponse = responseXML
                     consultAgreementResponse.soapResponse?.writeTo(this.soapResponseOutputStream())
-                    consultAgreementResponse.soapRequest?.writeTo(this.soapRequestOutputStream())
+                    soapRequest = requestXml
                 }
                 res.content = responseXML.toByteArray(Charsets.UTF_8)
                 res.xades = xades
