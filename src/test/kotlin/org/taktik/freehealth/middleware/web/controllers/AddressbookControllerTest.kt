@@ -41,6 +41,23 @@ class AddressbookControllerTest : EhealthTest() {
     }
 
     @Test
+    fun searchHcpByCriteria() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val searchHcp = this.restTemplate.exchange("http://localhost:$port/ab/search/hcp?lastName=Steeman*&limit=20", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java).body
+        Assertions.assertThat(searchHcp != null && searchHcp.startsWith("["))
+        val hcps: List<HealthcareParty> = gson.fromJson(searchHcp, object : TypeToken<ArrayList<HealthcareParty>>() {}.getType())
+        Assertions.assertThat(hcps).isNotEmpty
+        Assertions.assertThat(hcps.map { it.lastName?.toUpperCase() }).anyMatch { it != null && it.startsWith("STEEMAN") }
+    }
+
+    @Test
+    fun searchHcpByCriteriaRejectsExclusiveCriteria() {
+        val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
+        val response = this.restTemplate.exchange("http://localhost:$port/ab/search/hcp?lastName=Steeman&zipCode=1000&city=Bruxelles", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java)
+        Assertions.assertThat(response.statusCode.value()).isEqualTo(400)
+    }
+
+    @Test
     fun searchOrg() {
         val (keystoreId, tokenId, passPhrase) = register(restTemplate!!, port, ssin1!!, password1!!)
         val searchOrg = this.restTemplate.exchange("http://localhost:$port/ab/search/org/*clinique*", HttpMethod.GET, HttpEntity<Void>(createHeaders(null, null, keystoreId, tokenId, passPhrase)), String::class.java).body
