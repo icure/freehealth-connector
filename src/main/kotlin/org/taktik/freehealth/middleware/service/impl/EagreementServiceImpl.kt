@@ -294,10 +294,10 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 res.isAcknowledged = true
                 res.commonOutput = commonOutput
                 res.mycarenetConversation = MycarenetConversation().apply {
-                    transactionRequest = ConnectorXmlUtils.toString(askAgreementRequest)
+                    transactionRequest = requestXml
                     transactionResponse = responseXML
                     agreementResponse.soapResponse?.writeTo(this.soapResponseOutputStream())
-                    soapRequest = requestXml
+                    soapRequest = ConnectorXmlUtils.toString(askAgreementRequest)
                 }
                 res.content = responseXML.toByteArray(Charsets.UTF_8)
                 res.xades = xades
