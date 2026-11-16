@@ -20,11 +20,8 @@
 
 package org.taktik.freehealth.middleware.web.controllers
 
-import jakarta.servlet.http.HttpServletRequest
 import org.taktik.freehealth.middleware.mapper.MapperFacade
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -32,8 +29,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultSearchPersonBySsinResponseDto
 import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultSearchPersonPhoneticallyResponseDto
@@ -41,7 +36,6 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.taktik.freehealth.middleware.dto.consultrnv2.RnConsultPersonMid
-import org.taktik.freehealth.middleware.exception.MissingTokenException
 import org.taktik.freehealth.middleware.service.RnConsultService
 import java.util.*
 
@@ -49,21 +43,6 @@ import java.util.*
 @RequestMapping("/rnconsult")
 @Tag(name = "RnConsult", description = "Consult the Belgian National Registry (v2) to search, verify, and register person identity information.")
 class RnConsultController(val rnConsultService: RnConsultService, val mapper: MapperFacade){
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(MissingTokenException::class)
-    @ResponseBody
-    fun handleUnauthorizedRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IllegalArgumentException::class)
-    @ResponseBody
-    fun handleBadRequest(req: HttpServletRequest, ex: Exception): String = ex.message ?: "unknown reason"
-
-    @ResponseStatus(HttpStatus.BAD_GATEWAY)
-    @ExceptionHandler(jakarta.xml.ws.soap.SOAPFaultException::class)
-    @ResponseBody
-    fun handleBadRequest(req: HttpServletRequest, ex: jakarta.xml.ws.soap.SOAPFaultException): String = ex.message ?: "unknown reason"
-
     @Operation(
         summary = "Search a person by SSIN",
         description = "Looks up a person's identity information in the Belgian National Registry using their SSIN (social security identification number)."
