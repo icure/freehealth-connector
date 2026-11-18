@@ -256,12 +256,29 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                         patientSsin?.let {
                             ssin = patientSsin
                         }
-                        patientIoMembership?.let {
+                        patientIo?.let {
                             mutuality = patientIo
+                        }
+                        patientIoMembership?.let {
                             regNrWithMut = patientIoMembership
                         }
                     }
-                    referenceDate = DateTime()
+
+                    val today = DateTime()
+                    referenceDate = when (requestType) {
+                        RequestTypeEnum.ASK,
+                        RequestTypeEnum.EXTEND,
+                        RequestTypeEnum.CANCEL -> {
+                            if (agreementStartDate != null && agreementStartDate.isBefore(today)) {
+                                agreementStartDate
+                            } else {
+                                today
+                            }
+                        }
+                        RequestTypeEnum.COMPLETE_AGREEMENT,
+                        RequestTypeEnum.ARGUE,
+                        RequestTypeEnum.CONSULT_LIST -> today
+                    }
                 }
                 issueInstant = DateTime()
                 this.detail = BlobMapper.mapBlobTypefromBlob(blob)
@@ -441,10 +458,6 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                     careReceiver = CareReceiverIdType().apply {
                         patientSsin?.let {
                             ssin = patientSsin
-                        }
-                        patientIoMembership?.let {
-                            mutuality = patientIo
-                            regNrWithMut = patientIoMembership
                         }
                     }
                     referenceDate = DateTime()
