@@ -365,7 +365,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 agreementEndDate,
                 agreementType
             )
-            val requestXml = transformXml(convertJsonObjectToXml(requestBundleJSON!!))
+            val requestXml = transformXml(convertJsonObjectToXml(requestBundleJSON))
 
             var consultAgreementRequest = ConsultAgreementRequest()
             consultAgreementRequest.apply {
