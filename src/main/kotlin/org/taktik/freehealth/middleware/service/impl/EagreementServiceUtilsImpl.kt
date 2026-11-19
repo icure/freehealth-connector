@@ -574,7 +574,7 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
         subTypeCode: String?,
         attachments: List<EagreementController.Attachment>?,
         prescriptionDate: DateTime?
-    ): JsonObject? {
+    ): JsonObject {
         val uuidGenerator = IdGeneratorFactory.getIdGenerator("uuid")
         val practitionerRole1UUID = uuidGenerator.generateId()
         var entries = mutableListOf<BundleEntry>()
