@@ -179,7 +179,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         val detailId = "_" + IdGeneratorFactory.getIdGenerator("uuid").generateId()
 
         return extractEtk(credential)?.let {
-            val requestBundleJSON = this.agreementServiceUtils.getBundleJSON(requestType, "Claim/Claim1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, prescriberNihii, prescriberFirstName, prescriberLastName, orgNihii, organizationType, prescription1, prescription2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForPrescription1, numberOfSessionForPrescription2, insuranceRef, pathologyCode, pathologyStartDate, sctCode, sctDisplay, null, attachments, prescriptionDate) ?: throw IllegalArgumentException("Cannot load fhir")
+            val requestBundleJSON = this.agreementServiceUtils.getBundleJSON(requestType, "Claim/Claim1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, prescriberNihii, prescriberFirstName, prescriberLastName, orgNihii, organizationType, prescription1, prescription2, agreementStartDate, agreementEndDate, agreementType, numberOfSessionForPrescription1, numberOfSessionForPrescription2, insuranceRef, pathologyCode, pathologyStartDate, sctCode, sctDisplay, null, attachments, prescriptionDate)
             val requestXml = transformXml(convertJsonObjectToXml(requestBundleJSON))
 
             var askAgreementRequest = AskAgreementRequest();
@@ -381,7 +381,7 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
                 agreementEndDate,
                 agreementType
             )
-            val requestXml = transformXml(convertJsonObjectToXml(requestBundleJSON!!))
+            val requestXml = transformXml(convertJsonObjectToXml(requestBundleJSON))
 
             var consultAgreementRequest = ConsultAgreementRequest()
             consultAgreementRequest.apply {
@@ -819,8 +819,8 @@ class EagreementServiceImpl(private val stsService: STSService, private val keyD
         agreementStartDate: DateTime?,
         agreementEndDate: DateTime?,
         agreementType: String?
-    ): ObjectNode?{
-        return this.agreementServiceUtils.getBundleJSON(requestType, "Parameters/Parameters1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, null, null, null, orgNihii, organizationType, null, null, agreementStartDate, agreementEndDate, agreementType, null, null, insuranceRef, null, null, null, null, subTypeCode, attachments = null, prescriptionDate = null) ?: throw IllegalArgumentException("Cannot load fhir")
+    ): ObjectNode {
+        return this.agreementServiceUtils.getBundleJSON(requestType, "Parameters/Parameters1", messageEventSystem, messageEventCode, patientFirstName, patientLastName, patientGender, patientSsin, patientIo, patientIoMembership, hcpNihii, hcpFirstName, hcpLastName, null, null, null, orgNihii, organizationType, null, null, agreementStartDate, agreementEndDate, agreementType, null, null, insuranceRef, null, null, null, null, subTypeCode, attachments = null, prescriptionDate = null)
     }
 
     private fun extractEtk(cred: KeyStoreCredential): EncryptionToken? {

@@ -120,6 +120,6 @@ interface EagreementServiceUtils {
         subTypeCode: String?,
         attachments: List<EagreementController.Attachment>?,
         prescriptionDate: DateTime?
-    ): ObjectNode?
+    ): ObjectNode
 
 }
