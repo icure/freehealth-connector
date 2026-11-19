@@ -4,13 +4,13 @@ This file summarises the user-facing changes to the Freehealth Connector REST AP
 
 ---
 
-## #130, #134 and #135 on `main` (2026-11-19)
+## #130, #134, #135 and #136 on `main` (2026-11-19)
 
 Brings these `master` changes onto `main`.
 
-### eAgreement: care receiver routing and reference date (#134, #135)
+### eAgreement: care receiver routing and reference date (#134, #135, #136)
 
-- **Care receiver identifier:** with an SSIN and a `patientIo`, the SSIN is sent with the insurer as assigner. Without an SSIN, `patientIo` is sent with `patientIoMembership` as assigner. `patientIo` is sent as the mutuality even without a `patientIoMembership`.
+- **Care receiver identifier:** with an SSIN and a `patientIo`, the SSIN is sent with the insurer as assigner. Without an SSIN, `patientIoMembership` is sent with the insurer (`patientIo`) as assigner. `patientIo` is sent as the mutuality even without a `patientIoMembership`.
 - **Reference date:** for `askAgreement`, `extendAgreement` and `cancelAgreement`, the routing reference date is `agreementStartDate` when it is in the past, and today otherwise. Other requests still use today.
 - **`POST /eagreement/cancelAgreement`** takes a new optional `agreementStartDate` parameter (`yyyyMMdd`).
 - **`POST /eagreement/consultList`** no longer sends the mutuality and membership number in the routing.
