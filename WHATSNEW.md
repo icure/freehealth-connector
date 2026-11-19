@@ -4,7 +4,40 @@ This file summarises the user-facing changes to the Freehealth Connector REST AP
 
 ---
 
-## #132 (pending)
+## #130, #134 and #135 on `main` (2026-11-19)
+
+Brings these `master` changes onto `main`.
+
+### eAgreement: care receiver routing and reference date (#134, #135)
+
+- **Care receiver identifier:** with an SSIN and a `patientIo`, the SSIN is sent with the insurer as assigner. Without an SSIN, `patientIo` is sent with `patientIoMembership` as assigner. `patientIo` is sent as the mutuality even without a `patientIoMembership`.
+- **Reference date:** for `askAgreement`, `extendAgreement` and `cancelAgreement`, the routing reference date is `agreementStartDate` when it is in the past, and today otherwise. Other requests still use today.
+- **`POST /eagreement/cancelAgreement`** takes a new optional `agreementStartDate` parameter (`yyyyMMdd`).
+- **`POST /eagreement/consultList`** no longer sends the mutuality and membership number in the routing.
+
+### eFact: `messageReference` on acknowledgements (#130)
+
+`GET /efact/{nihii}/{language}` and `GET /efact/mediprima/{nihii}/{language}` now fill `messageReference` on technical acknowledgements (tAck) with the tAck reference, so they can be confirmed.
+
+---
+
+## #131 (2026-11-19)
+
+### eAgreement: the request sent is in `mycarenetConversation`
+
+For `askAgreement`, `extendAgreement`, `cancelAgreement`, `completeAgreement` and `argueAgreement`, the `mycarenetConversation` of the response now carries the decrypted request (the FHIR XML) in `transactionRequest` and the SOAP request as text in `soapRequest`, instead of the encrypted SOAP payload. `consultList` was changed too: its `transactionResponse` now holds the FHIR request and its `soapRequest` the decrypted response.
+
+---
+
+## #121 (2026-11-19)
+
+### eFact ET 52: zone 10 device types follow the specification
+
+`eidItem.deviceType` accepts `0` (no identity document), `1` (Belgian eID or Kids-ID), `2` (foreign eID or electronic residence document), `4` (ISI+), `7` (vignette), `8` (insured certificate), `9` (loss or theft certificate) and `A` (electronic, itsme). `0` is only accepted when `manualEntryReason` is `7`. The former codes `3`, `5` and `6` are refused.
+
+---
+
+## #132 (2026-11-19)
 
 ### `/eagreement`, `/mhm` and `/rnconsult` return JSON errors
 
