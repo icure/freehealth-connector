@@ -260,11 +260,11 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
                             })
                         }
                         patientSsin.isNullOrEmpty() && !io.isNullOrEmpty() && !ioMembership.isNullOrEmpty() -> {
-                            system = CodingSystemEnum.INSURANCE_NUMBER.codingSystem
-                            value = io
+                            system = CodingSystemEnum.INSURANCY_MEMBERSHIP.codingSystem
+                            value = ioMembership
                             assigner = Reference(identifier = Identifier().apply {
-                                system = CodingSystemEnum.INSURANCY_MEMBERSHIP.codingSystem
-                                value = ioMembership
+                                system = CodingSystemEnum. INSURANCE_NUMBER.codingSystem
+                                value = io
                             })
                         }
                     }
