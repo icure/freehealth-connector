@@ -294,6 +294,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
         @RequestParam(required = false) patientIoMembership: String?,
         @RequestParam(required = false) orgNihii: String?,
         @RequestParam(required = false) organizationType: String?,
+        @RequestParam(required = false) agreementStartDate: Int?,
         @RequestParam(required = false) agreementType: String?
     ): EAgreementResponse? {
         val formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyyMMdd")
@@ -325,7 +326,7 @@ class EagreementController(val eagreementService: EagreementService, val mapper:
             organizationType = organizationType,
             prescription1 = null,
             prescription2 = null,
-            agreementStartDate = null,
+            agreementStartDate = if (agreementStartDate != null ) formatter.parseDateTime(agreementStartDate.toString()) else null,
             agreementEndDate = null,
             agreementType = agreementType,
             numberOfSessionForPrescription1 = null,

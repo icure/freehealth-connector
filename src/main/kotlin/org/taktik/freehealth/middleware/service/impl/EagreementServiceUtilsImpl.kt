@@ -247,24 +247,24 @@ class EagreementServiceUtilsImpl(): EagreementServiceUtils {
             identifier = listOf(
                 Identifier().apply {
                     when{
-                        !patientSsin.isNullOrEmpty() && ioMembership.isNullOrEmpty() -> {
+                        !patientSsin.isNullOrEmpty() && io.isNullOrEmpty() -> {
                             system = CodingSystemEnum.SSIN.codingSystem
                             value = patientSsin
                         }
-                        patientSsin.isNullOrEmpty() && !ioMembership.isNullOrEmpty() && !io.isNullOrEmpty() -> {
-                            system = CodingSystemEnum.INSURANCY_MEMBERSHIP.codingSystem
-                            value = ioMembership
+                        !patientSsin.isNullOrEmpty() && !io.isNullOrEmpty() -> {
+                            system = CodingSystemEnum.SSIN.codingSystem
+                            value = patientSsin
                             assigner = Reference(identifier = Identifier().apply {
                                 system = CodingSystemEnum.INSURANCE_NUMBER.codingSystem
                                 value = io
                             })
                         }
-                        !patientSsin.isNullOrEmpty() && !ioMembership.isNullOrEmpty() -> {
-                            system = CodingSystemEnum.INSURANCY_MEMBERSHIP.codingSystem
-                            value = ioMembership
+                        patientSsin.isNullOrEmpty() && !io.isNullOrEmpty() && !ioMembership.isNullOrEmpty() -> {
+                            system = CodingSystemEnum.INSURANCE_NUMBER.codingSystem
+                            value = io
                             assigner = Reference(identifier = Identifier().apply {
-                                system = CodingSystemEnum.INSURANCE_NUMBER.codingSystem
-                                value = io
+                                system = CodingSystemEnum.INSURANCY_MEMBERSHIP.codingSystem
+                                value = ioMembership
                             })
                         }
                     }
