@@ -220,12 +220,12 @@ class EagreementServiceUtilsTest {
             "John",
             "Doe",
             "male",
-            DateTime(),
+            DateTime(2026, 9, 14, 0, 0),
             "78457845896",
             "109",
             "45464116491BE",
-            null,
-            null
+            "91251008",
+            "Physiotherapy procedure"
         )
 
         println("Result: "+ObjectMapper().registerModule(KotlinModule()).writeValueAsString(serviceRequest))
@@ -242,11 +242,8 @@ class EagreementServiceUtilsTest {
         assertThat(serviceRequest.code?.coding).hasSize(1)
         assertThat(serviceRequest.code?.coding?.first()?.system).isEqualTo("http://snomed.info/sct")
         assertThat(serviceRequest.code?.coding?.first()?.code).isEqualTo("91251008")
-        assertThat(serviceRequest.contained).hasSize(1)
-        assertThat(serviceRequest.contained?.first()?.id).isEqualTo("annexSR1")
-        assertThat(serviceRequest.identifier).hasSize(1)
-        assertThat(serviceRequest.identifier?.first()?.system).isEqualTo("https://www.ehealth.fgov.be/standards/fhir/core/NamingSystem/uhmep")
-        assertThat(serviceRequest.identifier?.first()?.value).isEqualTo("BE789468461564")
+        assertThat(serviceRequest.quantityQuantity?.value).isEqualTo(15f)
+        assertThat(serviceRequest.authoredOn).isEqualTo("2026-09-14")
         assertThat(serviceRequest.requester?.reference).isEqualTo("PractitionerRole/PractitionerRole2")
         assertThat(serviceRequest.subject?.reference).isEqualTo("Patient/Patient1")
         assertThat(serviceRequest.supportingInfo).hasSize(1)
@@ -330,7 +327,7 @@ class EagreementServiceUtilsTest {
             patientSsin,
             io,
             ioMembership,
-            null
+            agreementTypes
         )
 
         println("Result: "+ObjectMapper().registerModule(KotlinModule()).writeValueAsString(parameter))
@@ -367,7 +364,7 @@ class EagreementServiceUtilsTest {
         val insuranceRef = "InsuranceRef123"
         val display = "Insurance Display"
 
-        val insurance = agreementServiceUtils.getInsurance(EagreementServiceImpl.RequestTypeEnum.ASK, insuranceRef, display)
+        val insurance = agreementServiceUtils.getInsurance(EagreementServiceImpl.RequestTypeEnum.EXTEND, insuranceRef, display)
 
         println("Result: "+ObjectMapper().registerModule(KotlinModule()).writeValueAsString(insurance))
 
@@ -376,6 +373,9 @@ class EagreementServiceUtilsTest {
         assertThat(insurance.focal).isTrue()
         assertThat(insurance.coverage.display).isEqualTo(display)
         assertThat(insurance.preAuthRef).containsExactly(insuranceRef)
+
+        val askInsurance = agreementServiceUtils.getInsurance(EagreementServiceImpl.RequestTypeEnum.ASK, insuranceRef, display)
+        assertThat(askInsurance.preAuthRef).isEmpty()
     }
 
     @Test
