@@ -4,6 +4,20 @@ This file summarises the user-facing changes to the Freehealth Connector REST AP
 
 ---
 
+## #132 (pending)
+
+### `/eagreement`, `/mhm` and `/rnconsult` return JSON errors
+
+These endpoints returned errors as plain text, while the response could declare `Content-Type: application/json`, so clients failed to parse them. They now return the same JSON error body as every other endpoint:
+
+```json
+{"timestamp":"…","status":502,"error":"Bad Gateway","message":"ROUTING_INVALID: Mutuality tag value doesn't match ([1234569]([0-9]{2})?)","path":"/eagreement/askAgreement"}
+```
+
+The status codes are unchanged: 401 for a missing token, 400 for invalid input, 502 for a SOAP fault returned by eHealth. The error text is in `message`. A 401 now also carries a `WWW-Authenticate: Bearer` header.
+
+---
+
 ## #128 (2026-10-23)
 
 ### `/consultrn` is deprecated: use `/rnconsult`
