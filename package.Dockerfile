@@ -1,7 +1,7 @@
 ARG version
 FROM --platform=$BUILDPLATFORM docker.taktik.be/icure/freehealth-connector:$version AS builder
 
-FROM gcr.io/distroless/java21-debian12:nonroot
+FROM gcr.io/distroless/java21-debian13:nonroot
 ARG version
 WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar /app/fhc.jar
