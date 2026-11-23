@@ -31,6 +31,41 @@ interface AddressbookService {
         queryLastName: String,
         queryFirstName: String?,
         type: String = "PHYSICIAN"
+    ): List<HealthcareParty> = searchHcp(
+        keystoreId = keystoreId,
+        tokenId = tokenId,
+        passPhrase = passPhrase,
+        lastName = queryLastName,
+        firstName = queryFirstName,
+        profession = type,
+        nihii = null,
+        ssin = null,
+        zipCode = null,
+        city = null,
+        email = null,
+        offset = 0,
+        limit = 100
+    )
+
+    /**
+     * Broader professional search: every criterion is optional, but the query may not be empty.
+     * The eHealth schema declares NIHII/SSIN and City/ZipCode as choices, so those pairs are mutually exclusive.
+     * Leaving [profession] null searches across every profession.
+     */
+    fun searchHcp(
+        keystoreId: UUID,
+        tokenId: UUID,
+        passPhrase: String,
+        lastName: String?,
+        firstName: String?,
+        profession: String?,
+        nihii: String?,
+        ssin: String?,
+        zipCode: String?,
+        city: String?,
+        email: String?,
+        offset: Int = 0,
+        limit: Int = 100
     ): List<HealthcareParty>
 
     fun searchOrg(
