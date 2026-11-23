@@ -58,12 +58,20 @@ class WebMvcConfigurer(val webProperties: WebProperties, val objectMapper: Objec
     }
 
     override fun extendMessageConverters(converters: MutableList<HttpMessageConverter<*>>) {
-        // Remove Smile HTTP converter (auto-configured because jackson-dataformat-smile is on the
-        // classpath via the Elasticsearch transitive dependency). Controllers must only return JSON.
-        converters.removeIf { it.supportedMediaTypes.any { mt -> mt.subtype.contains("smile") } }
-        // Replace default JSON converter with one backed by our configured ObjectMapper
+        // Remove the Smile and CBOR HTTP converters (auto-configured because jackson-dataformat-smile
+        // and jackson-dataformat-cbor are on the classpath via the Elasticsearch transitive
+        // dependency). Controllers must only return JSON: without this, a response that is not
+        // bound by a `produces` constraint (error bodies, endpoints without `produces`) is written
+        // in a binary format for clients sending `Accept: */*`.
+        converters.removeIf {
+            it.supportedMediaTypes.any { mt -> mt.subtype.contains("smile") || mt.subtype.contains("cbor") }
+        }
+        // Replace the default JSON converter with one backed by our configured ObjectMapper, at
+        // the same position so that it keeps its precedence over the remaining converters.
+        val jsonConverter = MappingJackson2HttpMessageConverter(objectMapper)
+        val jsonIndex = converters.indexOfFirst { it is MappingJackson2HttpMessageConverter }
         converters.removeIf { it is MappingJackson2HttpMessageConverter }
-        converters.add(MappingJackson2HttpMessageConverter(objectMapper))
+        if (jsonIndex >= 0) converters.add(jsonIndex, jsonConverter) else converters.add(jsonConverter)
     }
 
     override fun addInterceptors(registry: InterceptorRegistry) {
