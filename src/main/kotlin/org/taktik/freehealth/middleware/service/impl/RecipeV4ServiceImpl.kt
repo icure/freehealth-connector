@@ -128,6 +128,20 @@ import jakarta.xml.bind.JAXBException
 import javax.xml.datatype.XMLGregorianCalendar
 import be.recipe.services.feedback.Feedback as FeedbackText
 
+/**
+ * Expiration date of a prescription: the requested one, defaulting to 3 months minus one day
+ * after the delivery date (or [now]), and never later than one year minus one day from [now].
+ */
+internal fun effectiveExpirationDate(
+    expirationDate: LocalDateTime?,
+    deliveryDate: LocalDateTime?,
+    now: LocalDateTime
+): LocalDateTime {
+    val unconstrainedDate = expirationDate ?: (deliveryDate ?: now).plusMonths(3).minusDays(1)
+    val limitDate = now.plusYears(1).minusDays(1)
+    return if (unconstrainedDate.isAfter(limitDate)) limitDate else unconstrainedDate
+}
+
 @Service
 class RecipeV4ServiceImpl(
     private val codeDao: CodeDao,
@@ -702,6 +716,9 @@ class RecipeV4ServiceImpl(
         visionOthers: VisionOtherPrescribers?
     ): Pair<Kmehrmessage, String> {
         val selectedType: String = inferPrescriptionType(medications, prescriptionType)
+        // The expiration date written in the Kmehr must be the one sent to Recip-e in the request,
+        // otherwise the prescription is rejected as badly formed.
+        val effectiveExpirationDate = effectiveExpirationDate(expirationDate, deliveryDate, LocalDateTime.now())
 
         val m = getKmehrPrescription(
             patient,
@@ -715,7 +732,7 @@ class RecipeV4ServiceImpl(
             packageVersion ?: "",
             vendorEmail,
             vendorPhone,
-            expirationDate,
+            effectiveExpirationDate,
             lang
         )
         val os = ByteArrayOutputStream()
@@ -730,11 +747,6 @@ class RecipeV4ServiceImpl(
             //throw IllegalArgumentException("Invalid $selectedType prescription XML:\n${String(prescription)}", e);
         }
 
-        val unconstrainedDate =
-            expirationDate ?: deliveryDate?.plusMonths(3)?.minusDays(1) ?: LocalDateTime.now().plusMonths(3)
-                .minusDays(1)
-        val limitDate = LocalDateTime.now().plusYears(1).minusDays(1)
-
         val prescriptionId = service.createPrescription(
             samlToken,
             credential,
@@ -742,7 +754,7 @@ class RecipeV4ServiceImpl(
             hcpNihii,
             feedback,
             selectedType,
-            if (unconstrainedDate.isAfter(limitDate)) limitDate else unconstrainedDate,
+            effectiveExpirationDate,
             prescription,
             vision,
             visionOthers,
