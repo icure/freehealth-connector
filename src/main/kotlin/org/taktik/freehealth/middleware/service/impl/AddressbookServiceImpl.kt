@@ -105,9 +105,6 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
         val identifierType = QualityType.forAddressBookOrganization(quality)?.identifierType?.let {
             IdentifierType.lookup(it.getType(IdentifierType.EHBOX), null, IdentifierType.EHBOX)
         }
-        if (identifierType == null) {
-            log.warn("Unknown AddressBook organization quality {}; using NIHII as before", quality)
-        }
         return HealthcareParty(
             name = org.names.joinToString { it.value },
             cbe = if (identifierType == IdentifierType.CBE) org.id.value else null,
