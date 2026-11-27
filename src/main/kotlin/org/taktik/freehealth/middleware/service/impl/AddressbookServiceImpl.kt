@@ -24,10 +24,13 @@ import be.fgov.ehealth.addressbook.core.v1.IndividualContactInformationType
 import be.fgov.ehealth.addressbook.core.v1.OrganizationContactInformationType
 import be.fgov.ehealth.addressbook.protocol.v1.GetOrganizationContactInfoRequest
 import be.fgov.ehealth.addressbook.protocol.v1.GetProfessionalContactInfoRequest
+import be.fgov.ehealth.addressbook.protocol.v1.HealthCareOrganization
 import be.fgov.ehealth.addressbook.protocol.v1.SearchOrganizationsRequest
 import be.fgov.ehealth.addressbook.protocol.v1.SearchProfessionalsRequest
 import org.joda.time.DateTime
 import org.springframework.stereotype.Service
+import org.taktik.connector.business.ehbox.api.utils.QualityType
+import org.taktik.connector.technical.utils.IdentifierType
 import org.taktik.connector.technical.validator.impl.EhealthReplyValidatorImpl
 import org.taktik.freehealth.middleware.dto.Address
 import org.taktik.freehealth.middleware.dto.AddressType
@@ -94,15 +97,21 @@ class AddressbookServiceImpl(val stsService: STSService) : AddressbookService {
                 institutionName = name; issueInstant = DateTime.now(); institutionType = type
                 offset = 0; maxElements = 100
             })
-        return searchProfessionals.healthCareOrganizations.map {
-            HealthcareParty(
-                name = it.names.joinToString { it.value },
-                cbe = if (it.id.type == "CBE") it.id.value else null,
-                ehp = if (it.id.type == "HCI") it.id.value else null,
-                nihii = if (it.id.type == "NIHII") it.id.value else null,
-                ehealthBoxes = listOf()
-                           )
+        return searchProfessionals.healthCareOrganizations.map { makeHealthcareParty(it) }
+    }
+
+    internal fun makeHealthcareParty(org: HealthCareOrganization): HealthcareParty {
+        val quality = org.organizationTypeCodes.find { it.type == "code" }?.value
+        val identifierType = QualityType.forAddressBookOrganization(quality)?.identifierType?.let {
+            IdentifierType.lookup(it.getType(IdentifierType.EHBOX), null, IdentifierType.EHBOX)
         }
+        return HealthcareParty(
+            name = org.names.joinToString { it.value },
+            cbe = if (identifierType == IdentifierType.CBE) org.id.value else null,
+            ehp = if (identifierType == IdentifierType.EHP) org.id.value else null,
+            nihii = if (identifierType == IdentifierType.NIHII || identifierType == null) org.id.value else null,
+            ehealthBoxes = listOf()
+        )
     }
 
     override fun getHcp(

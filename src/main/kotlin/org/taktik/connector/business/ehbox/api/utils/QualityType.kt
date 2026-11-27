@@ -32,6 +32,7 @@ class QualityType private constructor(val quality: String, val identifierType: I
     }
 
     companion object {
+        val AMBU_SERVICE_NIHII: QualityType
         val AMBULANCE_RESCUER_NIHII: QualityType
         val AMBULANCE_RESCUER_SSIN: QualityType
         val APPLIED_PSYCH_BACHELOR_NIHII: QualityType
@@ -49,15 +50,21 @@ class QualityType private constructor(val quality: String, val identifierType: I
         val DIETICIAN_SSIN: QualityType
         val DOCTOR_NIHII: QualityType
         val DOCTOR_SSIN: QualityType
+        val EHP_EHP: QualityType
+        val END_CAREER_NIHII: QualityType
+        val ENTERPRISE_CBE: QualityType
         val FAMILY_SCIENCE_BACHELOR_NIHII: QualityType
         val FAMILY_SCIENCE_BACHELOR_SSIN: QualityType
         val GERONTOLOGY_MASTER_NIHII: QualityType
         val GERONTOLOGY_MASTER_SSIN: QualityType
         val GROUP_NIHII: QualityType
         val GROUP_DOCTORS_NIHII: QualityType
+        val GROUPOFDOCTORS_NIHII: QualityType
+        val GROUPOFNURSES_ADDRESSBOOK_NIHII: QualityType
         val GUARD_POST_NIHII: QualityType
         val HOME_SERVICES_NIHII: QualityType
         val HOSPITAL_NIHII: QualityType
+        val ICP_NIHII: QualityType
         val IMAGING_TECHNOLOGIST_NIHII: QualityType
         val IMAGING_TECHNOLOGIST_SSIN: QualityType
         val IMPLANTPROVIDER_NIHII: QualityType
@@ -65,6 +72,7 @@ class QualityType private constructor(val quality: String, val identifierType: I
         val INSTITUTION_CBE: QualityType
         val INSTITUTION_EHP_EHP: QualityType
         val LABO_NIHII: QualityType
+        val LEGAL_PSY_NIHII: QualityType
         val LAB_TECHNOLOGIST_NIHII: QualityType
         val LAB_TECHNOLOGIST_SSIN: QualityType
         val LOGOPEDIST_NIHII: QualityType
@@ -117,6 +125,7 @@ class QualityType private constructor(val quality: String, val identifierType: I
         val SOCIAL_WORKER_SSIN: QualityType
         val SPECIALIZED_EDUCATOR_NIHII: QualityType
         val SPECIALIZED_EDUCATOR_SSIN: QualityType
+        val SORTING_CENTER_NIHII: QualityType
         val TREATMENT_CENTER_CBE: QualityType
         val TRUSS_MAKER_NIHII: QualityType
         val TRUSS_MAKER_SSIN: QualityType
@@ -130,6 +139,9 @@ class QualityType private constructor(val quality: String, val identifierType: I
         @Deprecated("")
         val GROUPOFNURSES_NIHII: QualityType
         private var predefinedQual: MutableMap<String, QualityType>? = null
+
+        fun forAddressBookOrganization(quality: String?): QualityType? =
+            quality?.let { addressBookOrganizationQualities[it] }
 
         fun getInstance(quality: String, type: IdentifierType): QualityType {
             val `i$` = predefinedQual!!.values.iterator()
@@ -176,6 +188,7 @@ class QualityType private constructor(val quality: String, val identifierType: I
 
 
         init {
+            AMBU_SERVICE_NIHII = QualityType("AMBU_SERVICE", IdentifierType.NIHII)
             AMBULANCE_RESCUER_NIHII = QualityType("AMBULANCE_RESCUER", IdentifierType.NIHII)
             AMBULANCE_RESCUER_SSIN = QualityType("AMBULANCE_RESCUER", IdentifierType.SSIN)
             APPLIED_PSYCH_BACHELOR_NIHII = QualityType("APPLIED_PSYCH_BACHELOR", IdentifierType.NIHII)
@@ -193,15 +206,21 @@ class QualityType private constructor(val quality: String, val identifierType: I
             DIETICIAN_SSIN = QualityType("DIETICIAN", IdentifierType.SSIN)
             DOCTOR_NIHII = QualityType("DOCTOR", IdentifierType.NIHII)
             DOCTOR_SSIN = QualityType("DOCTOR", IdentifierType.SSIN)
+            EHP_EHP = QualityType("EHP", IdentifierType.EHP)
+            END_CAREER_NIHII = QualityType("END_CAREER", IdentifierType.NIHII)
+            ENTERPRISE_CBE = QualityType("ENTERPRISE", IdentifierType.CBE)
             FAMILY_SCIENCE_BACHELOR_NIHII = QualityType("FAMILY_SCIENCE_BACHELOR", IdentifierType.NIHII)
             FAMILY_SCIENCE_BACHELOR_SSIN = QualityType("FAMILY_SCIENCE_BACHELOR", IdentifierType.SSIN)
             GERONTOLOGY_MASTER_NIHII = QualityType("GERONTOLOGY_MASTER", IdentifierType.NIHII)
             GERONTOLOGY_MASTER_SSIN = QualityType("GERONTOLOGY_MASTER", IdentifierType.SSIN)
             GROUP_NIHII = QualityType("GROUP", IdentifierType.NIHII_GROUPOFNURSES)
             GROUP_DOCTORS_NIHII = QualityType("GROUP_DOCTORS", IdentifierType.NIHII_GROUP_DOCTORS)
+            GROUPOFDOCTORS_NIHII = QualityType("GROUPOFDOCTORS", IdentifierType.NIHII_GROUP_DOCTORS)
+            GROUPOFNURSES_ADDRESSBOOK_NIHII = QualityType("GROUPOFNURSES", IdentifierType.NIHII_GROUPOFNURSES)
             GUARD_POST_NIHII = QualityType("GUARD_POST", IdentifierType.NIHII_GUARD_POST)
             HOME_SERVICES_NIHII = QualityType("HOME_SERVICES", IdentifierType.NIHII_HOME_SERVICES)
             HOSPITAL_NIHII = QualityType("HOSPITAL", IdentifierType.NIHII_HOSPITAL)
+            ICP_NIHII = QualityType("ICP", IdentifierType.NIHII)
             IMAGING_TECHNOLOGIST_NIHII = QualityType("IMAGING_TECHNOLOGIST", IdentifierType.NIHII)
             IMAGING_TECHNOLOGIST_SSIN = QualityType("IMAGING_TECHNOLOGIST", IdentifierType.SSIN)
             IMPLANTPROVIDER_NIHII = QualityType("IMPLANTPROVIDER", IdentifierType.NIHII)
@@ -209,6 +228,7 @@ class QualityType private constructor(val quality: String, val identifierType: I
             INSTITUTION_CBE = QualityType("INSTITUTION", IdentifierType.CBE)
             INSTITUTION_EHP_EHP = QualityType("INSTITUTION_EHP", IdentifierType.EHP)
             LABO_NIHII = QualityType("LABO", IdentifierType.NIHII_LABO)
+            LEGAL_PSY_NIHII = QualityType("LEGAL_PSY", IdentifierType.NIHII)
             LAB_TECHNOLOGIST_NIHII = QualityType("LAB_TECHNOLOGIST", IdentifierType.NIHII)
             LAB_TECHNOLOGIST_SSIN = QualityType("LAB_TECHNOLOGIST", IdentifierType.SSIN)
             LOGOPEDIST_NIHII = QualityType("LOGOPEDIST", IdentifierType.NIHII)
@@ -261,6 +281,7 @@ class QualityType private constructor(val quality: String, val identifierType: I
             SOCIAL_WORKER_SSIN = QualityType("SOCIAL_WORKER", IdentifierType.SSIN)
             SPECIALIZED_EDUCATOR_NIHII = QualityType("SPECIALIZED_EDUCATOR", IdentifierType.NIHII)
             SPECIALIZED_EDUCATOR_SSIN = QualityType("SPECIALIZED_EDUCATOR", IdentifierType.SSIN)
+            SORTING_CENTER_NIHII = QualityType("SORTING_CENTER", IdentifierType.NIHII_SORTING_CENTER)
             TREATMENT_CENTER_CBE = QualityType("TREATMENT_CENTER", IdentifierType.CBE_TREATCENTER)
             TRUSS_MAKER_NIHII = QualityType("TRUSS_MAKER", IdentifierType.NIHII)
             TRUSS_MAKER_SSIN = QualityType("TRUSS_MAKER", IdentifierType.SSIN)
@@ -283,5 +304,14 @@ class QualityType private constructor(val quality: String, val identifierType: I
                 }
             }
         }
+
+        private val addressBookOrganizationQualities = listOf(
+            AMBU_SERVICE_NIHII, CONSORTIUM_CBE, CTRL_ORGANISM_EHP, EHP_EHP, END_CAREER_NIHII,
+            ENTERPRISE_CBE, GROUPOFDOCTORS_NIHII, GROUPOFNURSES_ADDRESSBOOK_NIHII, GUARD_POST_NIHII,
+            HOME_SERVICES_NIHII, HOSPITAL_NIHII, ICP_NIHII, LABO_NIHII, LEGAL_PSY_NIHII,
+            MEDICAL_HOUSE_NIHII, OFFICE_DOCTORS_NIHII, OTD_PHARMACY_NIHII, PALLIATIVE_CARE_NIHII,
+            PHARMACY_NIHII, PROT_ACC_NIHII, PSYCH_HOUSE_NIHII, REEDUCATION_NIHII, RETIREMENT_NIHII,
+            SORTING_CENTER_NIHII, TREATMENT_CENTER_CBE
+        ).associateBy { it.quality }
     }
 }
